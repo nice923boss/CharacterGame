@@ -41,6 +41,8 @@ export function request(key, priority) {
   if (wake) { wake(); wake = null; }
 }
 
+export const failed = (key) => errors.has(ks(key));
+
 export function forget(gid) {
   for (const [k, j] of jobs) if (j.key[1] === gid) jobs.delete(k);
   for (const k of [...errors.keys()]) if (k.split('|')[1] === gid) errors.delete(k);

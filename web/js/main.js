@@ -80,7 +80,7 @@ $('#setup-start').onclick = async () => {
   if (!game.batch) { play(game.id, null); return; }
   // Batch: the server writes the whole tree in the background; batch.js announces it when done
   await toTitle();
-  toast(t('batch.started', { title: game.title }), false, 8000);
+  toast(t(LOCAL ? 'batch.startedLocal' : 'batch.started', { title: game.title }), false, 8000);
 };
 
 bindSettings((s) => {
