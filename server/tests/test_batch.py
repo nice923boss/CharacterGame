@@ -143,6 +143,30 @@ async def test_batch_writes_whole_tree_then_replays_it(store, monkeypatch):
     assert llm.calls == calls and events[-1]["replayed"] is True and node["parent"] == root["id"]
 
 
+async def test_merge_batch_rejoins_the_main_line_and_leaves_no_option_open(store, monkeypatch):
+    # Side branches are at most 2 turns long and their last option leads back to the main line one turn on
+    monkeypatch.setattr(config, "BATCH_MAX_SCENES", 3)
+    store.save_game({**BATCH_GAME, "batch": {"options": 3, "turns": 4, "merge": 2}})
+    llm = TreeLLM()
+    batches, _ = await _run(store, llm)
+    tree = store.load_tree("g_test")
+    main = batches.load("g_test")["main"]
+    assert len(main) == 4 and tree["nodes"][main[-1]]["result"]["ending"]
+    # main 4 + (2 sides x 2 turns) at turns 2 and 3 + 2 forced endings at turn 4
+    assert len(tree["nodes"]) == 14 and text_progress(store.load_game("g_test"), tree) == (14, 14)
+    for node in tree["nodes"].values():
+        if not node["result"]["ending"]:
+            assert all(TurnService._existing_child(tree, node, o) for o in node["result"]["options"])
+    links = [(n, n["merged_to"]) for n in tree["nodes"].values() if "merged_to" in n]
+    assert len(links) == 6 and all(t in main and t in n["children"] for n, t in links)
+    assert all(n["result"]["options"][-1] == "往東" for n, _t in links)
+
+    side, target = links[0]
+    calls = llm.calls
+    node = await batches.turns.run_turn("g_test", side["id"], {"kind": "option", "text": "往東"}, _quiet)
+    assert node["id"] == target and llm.calls == calls                      # the rejoin replays, no LLM call
+
+
 async def test_failed_branch_is_recorded_and_resume_fills_it(store):
     batches, _ = await _run(store, TreeLLM(fail="往西"))
     b = batches.load("g_test")

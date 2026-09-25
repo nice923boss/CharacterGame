@@ -16,7 +16,7 @@ AI 驅動的自由劇情視覺小說：玩家自訂世界與角色，輝達文�
 
 2. 複製 `.env.example` 成 `.env`，填入 `NVIDIA_API_KEY`。
 3. 先開 ComfyUI（`127.0.0.1:8000`）。`server/config.py` 的 `COMFY_OUTPUT`、`COMFY_INPUT` 改成你的 ComfyUI 資料夾。
-4. 在專案根目錄啟動：
+4. 雙擊 `啟動千枝物語.bat`：啟動伺服器並自動開瀏覽器，關掉黑色視窗就停止。伺服器已在跑時只開瀏覽器。也可以在專案根目錄手動啟動：
 
    ```bash
    python -m server.main

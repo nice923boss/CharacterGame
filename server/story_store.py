@@ -9,6 +9,8 @@ from datetime import datetime
 from . import config
 
 SLOT_COUNT = 10
+# Image engines: NVIDIA only by default; with both on, ComfyUI is the fallback when NVIDIA fails
+DEFAULT_SETTINGS = {"image_nvidia": True, "image_comfy": False}
 
 
 def _write(path: pathlib.Path, data) -> None:
@@ -57,6 +59,14 @@ class Store:
         if game is None:
             raise FileNotFoundError(f"找不到遊戲 {game_id}")
         return game
+
+    # ---------- settings ----------
+
+    def load_settings(self) -> dict:
+        return {**DEFAULT_SETTINGS, **_read(self.root / "settings.json", {})}
+
+    def save_settings(self, settings: dict) -> None:
+        _write(self.root / "settings.json", settings)
 
     def list_games(self) -> list[dict]:
         out = []
@@ -110,6 +120,17 @@ class Store:
         tree["next"] += 1
         _write(self.game_dir(game_id) / "tree.json", tree)
         return node
+
+    def link(self, game_id: str, node_id: str, target_id: str, options: list[str]) -> None:
+        """Merge-back: rewrite a branch node's options and hang an existing node under it as the child of the
+        last one. The target keeps its own parent (path_to, summary and state follow that line)."""
+        tree = self.load_tree(game_id)
+        node = tree["nodes"][node_id]
+        node["result"] = {**node["result"], "options": options}
+        node["merged_to"] = target_id
+        if target_id not in node["children"]:
+            node["children"].append(target_id)
+        _write(self.game_dir(game_id) / "tree.json", tree)
 
     @staticmethod
     def path_to(tree: dict, node_id: str | None) -> list[dict]:

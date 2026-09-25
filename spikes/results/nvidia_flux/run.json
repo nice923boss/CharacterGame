@@ -1,0 +1,80 @@
+[
+ {
+  "step": "c1 calm",
+  "status": 200,
+  "seconds": 3.45,
+  "note": "SUCCESS"
+ },
+ {
+  "step": "c1 edit (own image)",
+  "status": 422,
+  "seconds": 0.86,
+  "note": "{\"detail\":[{\"type\":\"extra_forbidden\",\"loc\":[\"body\",\"mode\"],\"msg\":\"Extra inputs are not permitted\",\"input\":\"Image Editing\"}]}"
+ },
+ {
+  "step": "c1 smile",
+  "status": 200,
+  "seconds": 2.77,
+  "note": "SUCCESS"
+ },
+ {
+  "step": "c1 angry",
+  "status": 200,
+  "seconds": 3.02,
+  "note": "SUCCESS"
+ },
+ {
+  "step": "c1 sad",
+  "status": 200,
+  "seconds": 3.99,
+  "note": "SUCCESS"
+ },
+ {
+  "step": "c1 surprised",
+  "status": 200,
+  "seconds": 3.12,
+  "note": "SUCCESS"
+ },
+ {
+  "step": "c2 calm",
+  "status": 200,
+  "seconds": 2.71,
+  "note": "SUCCESS"
+ },
+ {
+  "step": "c2 smile",
+  "status": 200,
+  "seconds": 2.81,
+  "note": "SUCCESS"
+ },
+ {
+  "step": "c2 angry",
+  "status": 200,
+  "seconds": 2.73,
+  "note": "SUCCESS"
+ },
+ {
+  "step": "c2 sad",
+  "status": 200,
+  "seconds": 2.92,
+  "note": "SUCCESS"
+ },
+ {
+  "step": "c2 surprised",
+  "status": 200,
+  "seconds": 3.0,
+  "note": "SUCCESS"
+ },
+ {
+  "step": "scene meeting_room_m",
+  "status": 200,
+  "seconds": 3.01,
+  "note": "SUCCESS"
+ },
+ {
+  "step": "scene corridor_after",
+  "status": 200,
+  "seconds": 2.84,
+  "note": "SUCCESS"
+ }
+]

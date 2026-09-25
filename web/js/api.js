@@ -17,15 +17,44 @@ async function jsonOrThrow(res) {
   return res.json();
 }
 
-export const get = (path) => fetch(path).then(jsonOrThrow);
-export const post = (path, body) => fetch(path, {
+// GitHub Pages build: /api/* runs in this browser (js/local/backend.js) instead of on a server
+export const LOCAL = !!document.querySelector('meta[name="cg-local"]');
+const backend = LOCAL ? import('./local/backend.js') : null;
+const isApi = (path) => path.startsWith('/api/');
+// Local modules throw { code, params } like the server's error events; anything else is a bug
+function asError(e) {
+  if (e instanceof Error && e.code) return e;
+  if (e?.code && !(e instanceof Error)) return fail(e.code, e.params);
+  console.error(e);
+  return fail('local_internal');
+}
+
+async function local(method, path, body) {
+  try { return await (await backend).request(method, path, body); } catch (e) { throw asError(e); }
+}
+
+export const get = (path) => (LOCAL && isApi(path) ? local('GET', path) : fetch(path).then(jsonOrThrow));
+export const post = (path, body) => (LOCAL && isApi(path) ? local('POST', path, body) : fetch(path, {
   method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-}).then(jsonOrThrow);
-export const del = (path) => fetch(path, { method: 'DELETE' }).then(jsonOrThrow);
+}).then(jsonOrThrow));
+export const del = (path) => (LOCAL && isApi(path) ? local('DELETE', path) : fetch(path, { method: 'DELETE' }).then(jsonOrThrow));
+
+function localJob(path, body, onEvent) {
+  let inner = null;
+  let cancelled = false;
+  const done = (async () => {
+    const b = await backend;
+    if (cancelled) throw fail('cancelled');
+    inner = b.job(path, body, onEvent);
+    try { return await inner.done; } catch (e) { throw asError(e); }
+  })();
+  return { done, cancel: async () => { cancelled = true; if (inner) await inner.cancel(); } };
+}
 
 // Starts a server job; onEvent gets every event. Returns { done, cancel }.
 // done resolves with the final event, or rejects with an Error (message is player-facing).
 export function job(path, body, onEvent) {
+  if (LOCAL) return localJob(path, body, onEvent);
   const ctrl = new AbortController();
   let taskId = null;
   let cancelled = false;

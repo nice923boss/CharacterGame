@@ -101,3 +101,17 @@ async def img2img(prompt: str, src: pathlib.Path, seed: int, denoise: float, des
     g["6"] = {"class_type": "VAEEncode", "inputs": {"pixels": ["11", 0], "vae": ["3", 0]}}
     g["8"]["inputs"].update(seed=seed, denoise=denoise)
     return await _run(g, dest)
+
+
+async def inpaint(prompt: str, src: pathlib.Path, mask: pathlib.Path, seed: int, denoise: float,
+                  dest: pathlib.Path) -> float:
+    """img2img that only re-noises the white part of `mask` (SetLatentNoiseMask), so everything else keeps its
+    pixels: eyes-only expressions for masked faces (spike_eyes_only.py)."""
+    g = copy.deepcopy(_BASE)
+    g["4"]["inputs"]["text"] = prompt
+    g["11"] = {"class_type": "LoadImage", "inputs": {"image": await _upload(src)}}
+    g["12"] = {"class_type": "LoadImageMask", "inputs": {"image": await _upload(mask), "channel": "red"}}
+    g["13"] = {"class_type": "VAEEncode", "inputs": {"pixels": ["11", 0], "vae": ["3", 0]}}
+    g["6"] = {"class_type": "SetLatentNoiseMask", "inputs": {"samples": ["13", 0], "mask": ["12", 0]}}
+    g["8"]["inputs"].update(seed=seed, denoise=denoise)
+    return await _run(g, dest)

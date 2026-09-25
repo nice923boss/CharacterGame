@@ -33,9 +33,23 @@ def option_children(tree: dict, node: dict):
             yield opt, TurnService._existing_child(tree, node, opt)
 
 
+def main_line(tree: dict) -> list[str]:
+    """Node ids from the root to the deepest ending (the deepest node when nothing ended yet)."""
+    def depth(nid):
+        return len(Store.path_to(tree, nid))
+    ends = [n["id"] for n in tree["nodes"].values() if n["result"].get("ending")]
+    leaf = max(ends or list(tree["nodes"]), key=lambda nid: (depth(nid), nid))
+    return [n["id"] for n in Store.path_to(tree, leaf)]
+
+
 def text_progress(game: dict, tree: dict) -> tuple[int, int]:
     """(nodes written, nodes planned). Planned is an upper bound that shrinks as early endings appear."""
     n, last = game["batch"]["options"], game["batch"]["turns"]
+    if game["batch"].get("merge"):
+        # Merge-back trees are graphs: count each node once; every open option is one more node to write
+        open_opts = sum(1 for node in tree["nodes"].values() if not node["result"].get("ending")
+                        for _opt, child in option_children(tree, node) if child is None)
+        return len(tree["nodes"]), len(tree["nodes"]) + open_opts
     if tree["root"] is None:
         return 0, tree_size(n, last)
     made = planned = 0
@@ -61,6 +75,8 @@ class BatchService:
         self.turns = turns
         self.assets = assets
         self.tasks: dict[str, asyncio.Task] = {}
+        # One limit for all batches together: after a restart every game's batch resumes at once
+        self.sem = asyncio.Semaphore(config.BATCH_CONCURRENCY)
 
     # ---------- batch.json ----------
 
@@ -128,13 +144,12 @@ class BatchService:
         try:
             game = self.store.load_game(gid)
             last = game["batch"]["turns"]
-            sem = asyncio.Semaphore(config.BATCH_CONCURRENCY)
 
             async def turn(parent_id: str | None, player_input: dict) -> dict | None:
                 error = None
                 for _ in range(1 + config.BATCH_TURN_RETRIES):
                     try:
-                        async with sem:
+                        async with self.sem:
                             return await self.turns.run_turn(gid, parent_id, player_input, _noop, batch=True)
                     except (TurnError, LLMError) as e:
                         error = e.code
@@ -159,6 +174,15 @@ class BatchService:
                 if child:
                     await expand(child, depth)
 
+            if game["batch"].get("merge"):
+                if not await self._merge_text(gid, game, turn):
+                    self._save(gid, state="error", error=(failed or [{}])[-1].get("error", "internal"),
+                               finished_at=now_iso())
+                    return
+                made, _planned = text_progress(game, self.store.load_tree(gid))
+                log.info("batch text done %s: %d nodes, %d branches skipped", gid, made, len(failed))
+                await self._images(gid)
+                return
             tree = self.store.load_tree(gid)
             root = tree["nodes"][tree["root"]] if tree["root"] else await turn(None, {"kind": "opening"})
             if root is None and self.store.load_tree(gid)["root"]:     # the player opened it live meanwhile
@@ -171,21 +195,7 @@ class BatchService:
             made, _planned = text_progress(game, self.store.load_tree(gid))
             log.info("batch text done %s: %d nodes, %d branches skipped", gid, made, len(failed))
 
-            self._save(gid, state="images")
-            while True:
-                game = self.store.load_game(gid)
-                for sid in game["scenes"]:
-                    if ("scene", gid, sid) not in self.assets.errors:
-                        self.assets.request(("scene", gid, sid), P_EXPR)
-                self.assets.ensure_game(game, retry=False)
-                a = self.assets.status(game)
-                states = [s["state"] for s in a["scenes"].values()] + \
-                         [s["state"] for sp in a["sprites"].values() for s in sp.values()]
-                if all(s in ("done", "error") for s in states):
-                    break
-                await asyncio.sleep(IMAGE_POLL_S)
-            self._save(gid, state="done", finished_at=now_iso())
-            log.info("batch done %s", gid)
+            await self._images(gid)
         except asyncio.CancelledError:
             self._save(gid, state="cancelled", finished_at=now_iso())
             log.info("batch cancelled %s", gid)
@@ -193,3 +203,82 @@ class BatchService:
         except Exception:
             log.error("batch crashed %s\n%s", gid, config.mask(traceback.format_exc()))
             self._save(gid, state="error", error="internal", finished_at=now_iso())
+
+    async def _merge_text(self, gid: str, game: dict, turn) -> bool:
+        """Merge-back walker. The main line (saved in batch.json) is written to an ending; every other option of
+        a main node opens a side branch of at most `merge` turns whose last option rejoins the main line one turn
+        further on, so a side branch never grows a tree of its own. False when the opening itself failed."""
+        plan = game["batch"]
+        last, detour = plan["turns"], plan["merge"]
+        tree = self.store.load_tree(gid)
+        if tree["root"] is None:
+            if await turn(None, {"kind": "opening"}) is None:
+                return False
+            tree = self.store.load_tree(gid)
+        main = (self.load(gid) or {}).get("main") or main_line(tree)
+        while not tree["nodes"][main[-1]]["result"].get("ending") and len(main) < last + 1:
+            opts = tree["nodes"][main[-1]]["result"].get("options") or []
+            child = opts and TurnService._existing_child(tree, tree["nodes"][main[-1]], opts[0])
+            child = child or (opts and await turn(main[-1], {"kind": "option", "text": opts[0]}))
+            if not child:
+                break
+            main.append(child["id"])
+            self._save(gid, main=main)
+            tree = self.store.load_tree(gid)
+        self._save(gid, main=main)
+        if tree["nodes"][main[-1]]["result"].get("ending") and len(main) != last:
+            # The main line ended on its own: side branches past it have nothing to rejoin, so they end there too
+            last = len(main)
+            game = self.store.load_game(gid)
+            self.store.save_game({**game, "batch": {**game["batch"], "turns": last}})
+        on_main = set(main)
+
+        async def side(parent_id: str, opt: str, child: dict | None, depth: int, k: int) -> None:
+            if child is None:
+                child = await turn(parent_id, {"kind": "option", "text": opt})
+            if not child or child["result"].get("ending") or depth > last + 1:
+                return
+            tree = self.store.load_tree(gid)
+            node = tree["nodes"][child["id"]]
+            target = main[depth] if depth < len(main) else None      # main[i] is turn i + 1
+            if target and "merged_to" not in node:
+                back = tree["nodes"][target]["player_input"]["text"]
+                pairs = list(option_children(tree, node))
+                keep = [o for o, c in pairs if c]                      # options the player already took
+                fresh = [o for o, c in pairs if not c and "".join(o.split()) != "".join(back.split())]
+                if k < detour and fresh:
+                    keep.append(fresh[0])
+                if "".join(back.split()) not in {"".join(o.split()) for o in keep}:
+                    keep.append(back)
+                self.store.link(gid, node["id"], target, keep)
+                tree = self.store.load_tree(gid)
+                node = tree["nodes"][node["id"]]
+            elif not target and depth < last:
+                return                          # the main line broke off before an ending: left for live play
+            await asyncio.gather(*(side(node["id"], o, c, depth + 1, k + 1)
+                                   for o, c in option_children(tree, node)
+                                   if not (c and c.get("parent") != node["id"])))
+
+        await asyncio.gather(*(side(mid, o, c, d + 1, 1)
+                               for d, mid in enumerate(main, 1)
+                               for o, c in option_children(tree, tree["nodes"][mid])
+                               if not (c and c["id"] in on_main)))
+        return True
+
+    async def _images(self, gid: str) -> None:
+        """Queue every scene and sprite of the game and wait until each one is drawn or failed."""
+        self._save(gid, state="images")
+        while True:
+            game = self.store.load_game(gid)
+            for sid in game["scenes"]:
+                if ("scene", gid, sid) not in self.assets.errors:
+                    self.assets.request(("scene", gid, sid), P_EXPR)
+            self.assets.ensure_game(game, retry=False)
+            a = self.assets.status(game)
+            states = [s["state"] for s in a["scenes"].values()] + \
+                     [s["state"] for sp in a["sprites"].values() for s in sp.values()]
+            if all(s in ("done", "error") for s in states):
+                break
+            await asyncio.sleep(IMAGE_POLL_S)
+        self._save(gid, state="done", finished_at=now_iso())
+        log.info("batch done %s", gid)

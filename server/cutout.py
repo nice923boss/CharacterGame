@@ -14,6 +14,10 @@ WHITE_WORDS = re.compile(r"\b(white|cream|ivory|snow|silver|pale|tuxedo)\b", re.
 ISO_BLUE = "isolated on a plain flat light blue background, nothing behind the subject"
 ISO_GREEN = "isolated on a plain flat light green background, nothing behind the subject"
 TALL = 1.35
+# Faces that are covered or not human: an expression may only change the eyes, or the mask/plating is redrawn
+COVERED_FACE = re.compile(r"\b(mask|masked|respirator|veil|android|robot|cyborg|automaton)\b", re.I)
+# Eye band as a share of the face box, measured on 145203 c2 (spike_eyes_only.py); meta "eyes" overrides it
+EYE_BAND = (0.37, 0.28, 0.61, 0.41)
 
 _session = None
 
@@ -29,6 +33,11 @@ def session():
 def iso_phrase(appearance_en: str) -> str:
     """Coloured isolation background, so white clothes and hair are never taken for background."""
     return ISO_GREEN if re.search(r"\bblue\b", appearance_en, re.I) else ISO_BLUE
+
+
+def iso_color(appearance_en: str) -> str:
+    """Colour name of the isolation background, for prompts that must lead with it (FLUX)."""
+    return "light green" if re.search(r"\bblue\b", appearance_en, re.I) else "light blue"
 
 
 def iso_residue(rgb, a, hue_tol=18, min_sat=0.12, min_val=0.4, max_share=0.15):
@@ -55,12 +64,46 @@ def iso_residue(rgb, a, hue_tol=18, min_sat=0.12, min_val=0.4, max_share=0.15):
     return residue
 
 
-def cutout_full(rgb: Image.Image) -> Image.Image:
-    """SKILL cutout, uncropped (same size as the input)."""
-    from rembg import remove
-    out = remove(rgb, session=session())
-    a = np.asarray(out.getchannel("A")).astype(np.float32) / 255
-    a = np.clip((a - 0.15) / 0.7, 0, 1)
+def key_cut(rgb: Image.Image, near=40, soft=12, far=70, min_pocket=6, pocket_max=25) -> tuple[np.ndarray, np.ndarray]:
+    """Chroma key on a flat background. Returns (rgb without background tint, alpha 0..1).
+
+    Background = pixels close to the border colour that touch the border, plus enclosed pockets (gaps between hair
+    strands) of min_pocket px or more whose median distance to the background is under pocket_max (light shading on
+    a white shirt next to a pale background sits around 37, true gaps under 20). A 2 px rim around it gets a soft
+    alpha and the colour of the nearest inner pixel (usually the black lineart), so edges are not outlined in light
+    blue or teal.
+    """
+    arr = np.asarray(rgb).astype(np.float32)
+    bg = np.median(np.concatenate([arr[0], arr[-1], arr[:, 0], arr[:, -1]]), axis=0)
+    dist = np.linalg.norm(arr - bg, axis=2)
+    labels, n = ndimage.label(dist < near)
+    edge = np.unique(np.concatenate([labels[0], labels[-1], labels[:, 0], labels[:, -1]]))
+    sizes = ndimage.sum(np.ones_like(dist), labels, range(1, n + 1))
+    medians = ndimage.median(dist, labels, range(1, n + 1)) if n else np.zeros(0)
+    pockets = np.flatnonzero((sizes >= min_pocket) & (np.asarray(medians) < pocket_max)) + 1
+    keep = np.union1d(edge[edge > 0], pockets)
+    core = np.isin(labels, keep)
+    rim = ndimage.binary_dilation(core, iterations=2) & ~core
+    a = np.where(core, 0.0, np.where(rim, np.clip((dist - soft) / (far - soft), 0, 1), 1.0))
+    _, (iy, ix) = ndimage.distance_transform_edt(core | rim, return_indices=True)
+    fg = np.where(rim[..., None], arr[iy, ix], arr)
+    return fg.astype(np.uint8), a
+
+
+def cutout_full(rgb: Image.Image, key: bool = False) -> Image.Image:
+    """SKILL cutout, uncropped (same size as the input).
+
+    key=True: chroma key instead of rembg, for FLUX sprites on a flat background (u2net turned their lower body
+    semi-transparent and dropped a white ear, spike section 7).
+    """
+    if key:
+        fg, a = key_cut(rgb)
+        out = Image.fromarray(fg).convert("RGBA")
+    else:
+        from rembg import remove
+        out = remove(rgb, session=session())
+        a = np.asarray(out.getchannel("A")).astype(np.float32) / 255
+        a = np.clip((a - 0.15) / 0.7, 0, 1)
     labels, n = ndimage.label(ndimage.binary_dilation(a > 0.3, iterations=2))
     if n > 1:
         sizes = ndimage.sum(np.ones_like(a), labels, range(1, n + 1))
@@ -94,6 +137,32 @@ def region_paste(base: Image.Image, donor: Image.Image, box) -> Image.Image:
     out = base.copy()
     out.paste(donor.crop(box), box[:2], mask)
     return out
+
+
+def eye_band(face) -> tuple[int, int, int, int]:
+    fx, fy, fw, fh = face[0], face[1], face[2] - face[0], face[3] - face[1]
+    x0, y0, x1, y1 = EYE_BAND
+    return fx + int(x0 * fw), fy + int(y0 * fh), fx + int(x1 * fw), fy + int(y1 * fh)
+
+
+def eye_inputs(calm: Image.Image, face, eyes, scale: int = 3) -> tuple[Image.Image, Image.Image]:
+    """Face crop enlarged `scale` times (SD1.5 draws small eyes badly) and the eye-band ellipse mask on it."""
+    fw, fh = face[2] - face[0], face[3] - face[1]
+    big = ((fw * scale) // 16 * 16, (fh * scale) // 16 * 16)
+    sx, sy = big[0] / fw, big[1] / fh
+    mask = Image.new("L", big, 0)
+    ImageDraw.Draw(mask).ellipse((int((eyes[0] - face[0]) * sx), int((eyes[1] - face[1]) * sy),
+                                  int((eyes[2] - face[0]) * sx), int((eyes[3] - face[1]) * sy)), fill=255)
+    return calm.crop(tuple(face)).resize(big, Image.LANCZOS), mask
+
+
+def eye_paste(calm: Image.Image, face_big: Image.Image, face, eyes) -> Image.Image:
+    """Put the redrawn eye band back on the calm sprite with a soft edge; every other pixel stays calm."""
+    donor = calm.copy()
+    donor.paste(face_big.resize((face[2] - face[0], face[3] - face[1]), Image.LANCZOS), tuple(face[:2]))
+    mask = Image.new("L", calm.size, 0)
+    ImageDraw.Draw(mask).ellipse(tuple(eyes), fill=255)
+    return Image.composite(donor, calm, mask.filter(ImageFilter.GaussianBlur(3)))
 
 
 def padded_bbox(rgba: Image.Image, pad: int = 6) -> tuple[int, int, int, int]:

@@ -13,7 +13,7 @@ from fastapi import Body, FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
-from . import comfy_client, config
+from . import comfy_client, config, nvidia_image
 from .asset_service import AssetService
 from .batch_service import BatchService
 from .llm_client import LLMClient, LLMError
@@ -97,7 +97,34 @@ def _game_or_404(gid: str) -> dict:
 
 @app.get("/api/health")
 async def health():
-    return {"comfy": await comfy_client.online(), "models": [c.label for c in turns.llm.candidates]}
+    return {"comfy": await comfy_client.online(), "nvidia_image": nvidia_image.available(),
+            "engines": assets.engines(), "models": [c.label for c in turns.llm.candidates]}
+
+
+@app.get("/api/settings")
+async def get_settings():
+    return store.load_settings()
+
+
+@app.post("/api/settings/nvidia_key")
+async def save_nvidia_key(payload: dict = Body(...)):
+    """Write-only: the key goes into .env and never comes back; the page only learns whether one is set."""
+    key = payload.get("key")
+    if not isinstance(key, str) or not key.strip() or len(key.strip()) > 200 or any(c.isspace() for c in key.strip()):
+        raise HTTPException(422, "bad_key")
+    config.set_env("NVIDIA_API_KEY", key.strip())
+    log.info("NVIDIA_API_KEY updated from the settings page")
+    return {"nvidia_key": True}
+
+
+@app.post("/api/settings")
+async def save_settings(payload: dict = Body(...)):
+    settings = {**store.load_settings(),
+                **{k: bool(v) for k, v in payload.items() if k in ("image_nvidia", "image_comfy")}}
+    if not (settings["image_nvidia"] or settings["image_comfy"]):
+        raise HTTPException(400, "no_engine")
+    store.save_settings(settings)
+    return settings
 
 
 @app.get("/api/games")

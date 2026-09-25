@@ -30,7 +30,10 @@
         <button class="btn" data-act="load" data-i18n="menu.load">讀取存檔</button>
         <button class="btn" data-act="stories" data-i18n="menu.stories">管理故事</button>
         <button class="btn" data-act="settings" data-i18n="menu.settings">設定</button>
+        <button class="btn local-only" data-act="importDir" data-i18n="menu.importDir">讀取資料夾進度</button>
+        <button class="btn local-only" data-act="exportZip" data-i18n="menu.exportZip">下載進度到電腦</button>
       </div>
+      <input type="file" id="import-dir" webkitdirectory multiple hidden>
       <p class="health" id="health" data-i18n="health.checking">檢查連線中…</p>
       <div class="batch-panel" id="batch-panel" hidden></div>
     </div>
@@ -67,7 +70,7 @@
       <div class="mode-bar" id="mode-bar">
         <span class="mode-label" data-i18n="setup.mode">生成方式</span>
         <label><input type="radio" name="gen-mode" value="live" checked><span data-i18n="setup.mode.live">邊玩邊寫</span></label>
-        <label><input type="radio" name="gen-mode" value="batch"><span data-i18n="setup.mode.batch">批次預先寫完整棵樹</span></label>
+        <label class="server-only"><input type="radio" name="gen-mode" value="batch"><span data-i18n="setup.mode.batch">批次預先寫完整棵樹</span></label>
         <label class="batch-only"><span data-i18n="setup.b.options">每輪選項</span><select id="b-options"><option>2</option><option selected>3</option><option>4</option></select></label>
         <label class="batch-only"><span data-i18n="setup.b.turns">輪數</span><select id="b-turns"><option>3</option><option>4</option><option selected>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></label>
         <p class="hint batch-only" id="batch-est"></p>
@@ -149,7 +152,23 @@
       <label><span data-i18n="settings.bgm">音樂音量</span><input type="range" id="set-bgm" min="0" max="100" step="5"><output id="out-bgm"></output></label>
       <label><span data-i18n="settings.sfx">音效音量</span><input type="range" id="set-sfx" min="0" max="100" step="5"><output id="out-sfx"></output></label>
       <label class="check"><input type="checkbox" id="set-weather"><span data-i18n="settings.weather">顯示天氣粒子</span></label>
+      <p class="hint server-only" data-i18n="settings.images">生圖引擎：只勾一個就只用那個；兩個都勾時，輝達失敗才改用 ComfyUI</p>
+      <label class="check server-only"><input type="checkbox" id="set-img-nvidia"><span data-i18n="settings.imgNvidia">輝達 FLUX.2（雲端）</span></label>
+      <label class="check server-only"><input type="checkbox" id="set-img-comfy"><span data-i18n="settings.imgComfy">本機 ComfyUI</span></label>
+      <label class="key"><span data-i18n="settings.key">輝達 API Key</span><input type="password" id="set-key" autocomplete="off" maxlength="200" data-i18n-ph="settings.keyPh"><button class="btn small" id="set-key-save" data-i18n="settings.keySave">儲存</button></label>
+      <label class="key local-only"><span data-i18n="settings.relay">轉送網址</span><input type="url" id="set-relay" autocomplete="off" maxlength="300" data-i18n-ph="settings.relayPh"><button class="btn small" id="set-relay-save" data-i18n="settings.keySave">儲存</button></label>
+      <details class="help local-only">
+        <summary data-i18n="relay.q">轉送網址是什麼？怎麼填？</summary>
+        <p data-i18n="relay.why"></p>
+        <p data-i18n="relay.fill"></p>
+        <p data-i18n="relay.default"></p>
+        <p data-i18n="relay.howTitle"></p>
+        <ol><li data-i18n="relay.s1"></li><li data-i18n="relay.s2"></li><li data-i18n="relay.s3"></li><li data-i18n="relay.s4"></li><li data-i18n="relay.s5"></li></ol>
+        <p><a href="relay-worker.js" target="_blank" rel="noopener" data-i18n="relay.code">查看轉送程式碼（relay-worker.js）</a></p>
+      </details>
+      <p class="hint local-only" data-i18n="settings.localHint">網頁版：金鑰與轉送網址只存在這台電腦的瀏覽器，故事與圖片也存在瀏覽器裡，換電腦前請先下載進度。</p>
       <p class="hint" id="set-models"></p>
+      <div class="menu row local-only"><button class="btn small ghost" id="set-demo" data-i18n="settings.restoreDemo">還原示範故事</button></div>
     </div>
   </section>
 

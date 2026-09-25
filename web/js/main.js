@@ -1,5 +1,5 @@
 // Entry point: screen switching, title menu, toolbar and settings wiring.
-import { get } from './api.js';
+import { LOCAL, get, post } from './api.js';
 import { applyStatic, setLang, t } from './i18n.js';
 import { sound } from './sound.js';
 import { createStage } from './stage.js';
@@ -9,6 +9,7 @@ import { enterGame, initGame, leaveGame, openSlots, openTree } from './game.js';
 import { openStories } from './stories.js';
 import { initBatches, refreshBatches, requestNotifyPermission } from './batch.js';
 
+document.documentElement.classList.toggle('local', LOCAL);
 const stage = createStage($('#canvas-host'));
 
 function showScreen(id) {
@@ -52,6 +53,14 @@ const actions = {
   async title() {
     if (await confirmBox(t('game.toTitle'), t('game.toTitleOk'))) toTitle();
   },
+  importDir() { $('#import-dir').click(); },
+  async exportZip() {
+    toast(t('archive.exporting'), false, 60000);
+    try {
+      const r = await (await import('./local/archive.js')).exportProgress();
+      toast(t('archive.exported', r));
+    } catch (e) { console.error(e); toast(t('err.local_internal'), true); }
+  },
 };
 
 document.addEventListener('click', (e) => {
@@ -82,10 +91,17 @@ bindSettings((s) => {
 let health;   // undefined: not answered yet, false: server down
 function paintHealth() {
   if (health === undefined) return;
-  $('#health').classList.toggle('error', !health?.comfy);
-  if (!health) { $('#health').textContent = t('health.down'); return; }
-  $('#health').textContent = t('health.comfy', { state: t(health.comfy ? 'health.on' : 'health.off') });
-  $('#set-models').textContent = t('health.models', { list: health.models.map((m) => t(`model.${m}`)).join(' → ') });
+  if (!health) { $('#health').classList.add('error'); $('#health').textContent = t('health.down'); return; }
+  const ok = { nvidia: health.nvidia_image, comfy: health.comfy };
+  const state = { nvidia: ok.nvidia ? 'health.key' : 'health.noKey', comfy: ok.comfy ? 'health.on' : 'health.off' };
+  const usable = health.engines.some((e) => ok[e]);
+  $('#health').classList.toggle('error', !usable);
+  $('#health').textContent = t('health.images', {
+    list: health.engines.map((e) => t('health.engine', { name: t(`engine.${e}`), state: t(state[e]) })).join(' → '),
+  }) + (usable ? '' : t('health.noImage'));
+  const list = health.models.map((m) => t(`model.${m}`)).join(' → ');
+  $('#set-models').textContent = health.local
+    ? t('health.localModels', { list, relay: t(health.relay_default ? 'health.relayDefault' : health.relay ? 'health.relay' : 'health.noRelay') }) : t('health.models', { list });
 }
 
 document.querySelectorAll('[data-lang]').forEach((b) => {
@@ -102,4 +118,78 @@ initBatches(async (gid) => {
   if (g?.root) play(gid, g.root);
 });
 
-get('/api/health').then((h) => { health = h; }).catch(() => { health = false; }).finally(paintHealth);
+const refreshHealth = () => get('/api/health').then((h) => { health = h; }).catch(() => { health = false; })
+  .finally(paintHealth);
+refreshHealth();
+
+// Image engines live on the server: background batches draw with them too
+async function bindImageEngines() {
+  const boxes = { image_nvidia: $('#set-img-nvidia'), image_comfy: $('#set-img-comfy') };
+  let current;
+  try { current = await get('/api/settings'); } catch {
+    Object.values(boxes).forEach((el) => { el.disabled = true; });
+    return;
+  }
+  const paint = () => Object.entries(boxes).forEach(([k, el]) => { el.checked = current[k]; });
+  paint();
+  for (const [k, el] of Object.entries(boxes)) {
+    el.addEventListener('change', async () => {
+      try {
+        current = await post('/api/settings', { [k]: el.checked });
+        refreshHealth();
+      } catch (e) { toast(e.message, true); }
+      paint();
+    });
+  }
+}
+bindImageEngines();
+
+// Write-only key field: the server keeps the key and only reports "key set" through the health line
+$('#set-key-save').addEventListener('click', async () => {
+  try {
+    await post('/api/settings/nvidia_key', { key: $('#set-key').value });
+    $('#set-key').value = '';
+    toast(t('settings.keySaved'));
+    refreshHealth();
+  } catch (e) { toast(e.message, true); }
+});
+
+// ---------- browser-only (GitHub Pages) build ----------
+
+if (LOCAL) {
+  get('/api/settings').then((s) => {
+    $('#set-relay').value = s.relay || '';
+    if (s.relay_default) $('#set-relay').placeholder = t('settings.relayBuiltin', { url: s.relay_default });
+  }).catch(() => {});
+  $('#set-relay-save').addEventListener('click', async () => {
+    try {
+      const r = await post('/api/settings/relay', { relay: $('#set-relay').value });
+      $('#set-relay').value = r.relay;
+      toast(t('settings.relaySaved'));
+      refreshHealth();
+    } catch (e) { toast(e.message, true); }
+  });
+  $('#set-demo').addEventListener('click', async () => {
+    if (!(await confirmBox(t('settings.demoAsk'), t('common.ok')))) return;
+    try {
+      await (await import('./local/backend.js')).restoreDemo();
+      toast(t('settings.demoDone'));
+      refreshContinue();
+    } catch (e) { console.error(e); toast(t('err.local_internal'), true); }
+  });
+  $('#import-dir').addEventListener('change', async (e) => {
+    const files = e.target.files;
+    if (!files?.length) return;
+    toast(t('archive.importing'), false, 60000);
+    try {
+      const r = await (await import('./local/archive.js')).importFolder(files);
+      toast(r.games ? t('archive.imported', r) : t('archive.none'), !r.games, 8000);
+      refreshContinue();
+    } catch (err) { console.error(err); toast(t('err.local_internal'), true); }
+    e.target.value = '';
+  });
+  // Offline cache for the app shell and CDN libraries (sw.js is generated by tools/build_pages.py)
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch((e) => console.warn('service worker not registered', e));
+  }
+}

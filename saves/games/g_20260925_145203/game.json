@@ -50,9 +50,18 @@
   },
   "mountain_drugstore": {
    "name": "山城藥舖",
-   "image_prompt": "A traditional Chinese medicine shop in a misty mountain town at pre-dawn, wooden shelves filled with herb jars, mortar and pestle on counter, dim oil lamp light, cold blue-gray atmosphere"
+   "image_prompt": "A traditional Chinese medicine shop in a misty mountain town at pre-dawn, bundles of dried herbs hanging from wooden beams, plain unmarked ceramic pots, mortar and pestle on counter, dim oil lamp light, cold blue-gray atmosphere"
+  },
+  "mountain_path": {
+   "name": "山林小徑",
+   "image_prompt": "A misty mountain trail at dawn in ancient Jiangnan, golden osmanthus flowers falling on the path, soft sunlight filtering through pine trees, quiet and serene atmosphere"
   }
  },
  "first_scene": "ghost_market_entrance",
- "setup_model": "nvidia/nemotron-3-ultra-550b-a55b"
+ "setup_model": "nvidia/nemotron-3-ultra-550b-a55b",
+ "batch": {
+  "options": 4,
+  "turns": 14,
+  "merge": 2
+ }
 }

@@ -1,0 +1,9 @@
+# Cloudflare Worker config for the CORS relay: deploy from this folder with `npx wrangler deploy`
+name = "chienzhi-relay"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+workers_dev = false
+routes = [{ pattern = "chienzhi-relay.cattravelworld.com", custom_domain = true }]
+
+[vars]
+ALLOWED_ORIGINS = "https://nice923boss.github.io,http://localhost:8766,http://127.0.0.1:8766"

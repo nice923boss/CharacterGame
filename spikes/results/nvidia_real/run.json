@@ -1,0 +1,247 @@
+[
+ {
+  "key": [
+   "scene",
+   "g_20260925_150254",
+   "metro_concourse"
+  ],
+  "ok": true,
+  "s": 3.3
+ },
+ {
+  "key": [
+   "scene",
+   "g_20260925_150254",
+   "surface_ruins"
+  ],
+  "ok": true,
+  "s": 3.1
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_150254",
+   "c1",
+   "calm"
+  ],
+  "ok": true,
+  "s": 6.7
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_150254",
+   "c1",
+   "smile"
+  ],
+  "ok": true,
+  "s": 3.6
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_150254",
+   "c1",
+   "angry"
+  ],
+  "ok": true,
+  "s": 3.5
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_150254",
+   "c1",
+   "sad"
+  ],
+  "ok": true,
+  "s": 3.4
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_150254",
+   "c1",
+   "surprised"
+  ],
+  "ok": true,
+  "s": 3.6
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_150254",
+   "c2",
+   "calm"
+  ],
+  "ok": true,
+  "s": 3.6
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_150254",
+   "c2",
+   "smile"
+  ],
+  "ok": true,
+  "s": 3.5
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_150254",
+   "c2",
+   "angry"
+  ],
+  "ok": true,
+  "s": 6.2
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_150254",
+   "c2",
+   "sad"
+  ],
+  "ok": true,
+  "s": 4.2
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_150254",
+   "c2",
+   "surprised"
+  ],
+  "ok": true,
+  "s": 6.4
+ },
+ {
+  "key": [
+   "scene",
+   "g_20260925_143214",
+   "dustreach_main_street_dawn"
+  ],
+  "ok": false,
+  "error": "輝達：輝達生圖沒有回傳圖片（CONTENT_FILTERED）"
+ },
+ {
+  "key": [
+   "scene",
+   "g_20260925_143214",
+   "hangar_three_approach"
+  ],
+  "ok": false,
+  "error": "輝達：輝達生圖沒有回傳圖片（CONTENT_FILTERED）"
+ },
+ {
+  "key": [
+   "scene",
+   "g_20260925_143214",
+   "dustreach_main_street_noon"
+  ],
+  "ok": false,
+  "error": "輝達：輝達生圖沒有回傳圖片（CONTENT_FILTERED）"
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_143214",
+   "c1",
+   "calm"
+  ],
+  "ok": true,
+  "s": 6.6
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_143214",
+   "c1",
+   "smile"
+  ],
+  "ok": true,
+  "s": 5.7
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_143214",
+   "c1",
+   "angry"
+  ],
+  "ok": true,
+  "s": 4.1
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_143214",
+   "c1",
+   "sad"
+  ],
+  "ok": true,
+  "s": 3.6
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_143214",
+   "c1",
+   "surprised"
+  ],
+  "ok": true,
+  "s": 6.2
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_143214",
+   "c2",
+   "calm"
+  ],
+  "ok": true,
+  "s": 3.6
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_143214",
+   "c2",
+   "smile"
+  ],
+  "ok": true,
+  "s": 5.8
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_143214",
+   "c2",
+   "angry"
+  ],
+  "ok": true,
+  "s": 3.5
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_143214",
+   "c2",
+   "sad"
+  ],
+  "ok": true,
+  "s": 4.4
+ },
+ {
+  "key": [
+   "sprite",
+   "g_20260925_143214",
+   "c2",
+   "surprised"
+  ],
+  "ok": true,
+  "s": 3.6
+ }
+]

@@ -7,6 +7,9 @@ const DX = 58;
 const DY = 46;
 const PAD = 40;
 
+// Own children only: a merge-back link (a branch rejoining the main line) is drawn as a dashed edge, not walked again
+const kidsOf = (tree, id) => tree.nodes[id].children.filter((c) => tree.nodes[c]?.parent === id);
+
 function layout(tree) {
   const pos = {};
   let row = 0;
@@ -14,7 +17,7 @@ function layout(tree) {
   const walk = (id, depth) => {
     const n = tree.nodes[id];
     maxDepth = Math.max(maxDepth, depth);
-    const kids = n.children.filter((c) => tree.nodes[c]);
+    const kids = kidsOf(tree, id);
     if (!kids.length) { pos[id] = { x: PAD + depth * DX, y: PAD + 18 + row * DY, depth }; row++; return; }
     kids.forEach((c) => walk(c, depth + 1));
     pos[id] = { x: PAD + depth * DX, y: pos[kids[0]].y, depth };
@@ -31,7 +34,7 @@ function segments(tree) {
     const parent = n.parent ? tree.nodes[n.parent] : null;
     if (!seg || !parent || parent.scene_id !== n.scene_id) { seg = { scene_id: n.scene_id, ids: [] }; segs.push(seg); }
     seg.ids.push(id);
-    n.children.filter((c) => tree.nodes[c]).forEach((c) => walk(c, seg));
+    kidsOf(tree, id).forEach((c) => walk(c, seg));
   };
   if (tree.root) walk(tree.root, null);
   return segs;
@@ -61,6 +64,10 @@ export function renderTree(tree, game, currentId, onPick) {
     const b = pos[n.id];
     const d = a.y === b.y ? `M${a.x},${a.y}L${b.x},${b.y}` : `M${a.x},${a.y}C${a.x + DX / 2},${a.y} ${b.x - DX / 2},${b.y} ${b.x},${b.y}`;
     return `<path class="edge${onPath.has(n.id) ? ' onpath' : ''}" d="${d}"/>`;
+  }).join('') + Object.values(tree.nodes).filter((n) => n.merged_to && pos[n.id] && pos[n.merged_to]).map((n) => {
+    const a = pos[n.id];
+    const b = pos[n.merged_to];
+    return `<path class="edge link" d="M${a.x},${a.y}C${a.x + DX / 2},${a.y} ${b.x - DX / 2},${b.y} ${b.x},${b.y}"/>`;
   }).join('');
 
   const nodes = Object.values(tree.nodes).filter((n) => pos[n.id]).map((n) => {

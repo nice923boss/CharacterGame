@@ -202,6 +202,7 @@ html[lang="en"] .subtitle { letter-spacing: 0.06em; }
 #tree-view .node.ending.bad circle { stroke: var(--danger); }
 #tree-view .edge { stroke: #56607f; stroke-width: 2; fill: none; }
 #tree-view .edge.onpath { stroke: var(--gold); }
+#tree-view .edge.link { stroke-dasharray: 4 4; opacity: .7; }
 #tree-view .scene-box { fill: rgba(127, 158, 216, 0.08); stroke: rgba(127, 158, 216, 0.4); stroke-dasharray: 4 3; rx: 8; }
 #tree-view .scene-label { fill: var(--accent); font-size: 12px; font-family: var(--serif); }
 #tree-tip { position: absolute; max-width: 40cqw; background: var(--panel-solid); border: 0.2cqh solid var(--gold-dim);
@@ -213,6 +214,7 @@ html[lang="en"] .subtitle { letter-spacing: 0.06em; }
 .settings-panel label { display: grid; grid-template-columns: 14cqh 1fr 6cqh; align-items: center; gap: 1.6cqh;
   font-size: 2.2cqh; color: var(--ink); margin: 1.6cqh 0; }
 .settings-panel label.check { display: flex; }
+.settings-panel label.key { grid-template-columns: 14cqh 1fr auto; }
 .settings-panel input[type=range] { accent-color: var(--gold); padding: 0; border: 0; background: none; }
 .settings-panel input[type=checkbox] { width: 2.4cqh; height: 2.4cqh; accent-color: var(--gold); }
 .confirm-panel { width: 52cqw; text-align: center; }
@@ -224,3 +226,13 @@ html[lang="en"] .subtitle { letter-spacing: 0.06em; }
 #toast.error { border-color: var(--danger); color: #ffd9d4; }
 .credit { position: absolute; right: 1.2cqw; bottom: 0.4cqh; font-size: 1.4cqh; color: rgba(200, 196, 188, 0.55);
   z-index: 50; pointer-events: none; }
+
+/* ---------- browser-only (GitHub Pages) build ---------- */
+html.local .server-only { display: none !important; }
+html:not(.local) .local-only { display: none !important; }
+.settings-panel .help { font-size: 1.8cqh; color: var(--ink); margin: 0.6cqh 0 1cqh; }
+.settings-panel .help summary { cursor: pointer; color: var(--gold); }
+.settings-panel .help p, .settings-panel .help li { line-height: 1.55; margin: 0.6cqh 0; }
+.settings-panel .help ol { padding-left: 3cqh; margin: 0.4cqh 0; }
+.settings-panel .help a { color: var(--accent); }
+.settings-panel { max-height: 92cqh; overflow-y: auto; }

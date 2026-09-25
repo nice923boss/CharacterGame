@@ -1,0 +1,54 @@
+{
+ "id": "g_20260925_150254",
+ "created_at": "2026-09-25T15:02:54+08:00",
+ "seed": 1749919284,
+ "lang": "zh",
+ "title": "地下十年",
+ "style_en": "Post-apocalyptic Taipei, nuclear winter decade, underground metro settlement, cold desaturated tones, faint hope",
+ "world": {
+  "era": "核冬天後第十年",
+  "place": "廢墟化的台北，地下捷運站裡的倖存者聚落",
+  "genre": "末日生存",
+  "tone": "冷冽、帶一絲希望",
+  "extra": "淨水機壞了，聚落的存水只夠撐七天",
+  "goal": "找到淨水機的零件並平安帶回，讓聚落撐過這個冬天"
+ },
+ "protagonist": {
+  "name": "阿岳",
+  "profile": "聚落裡最年輕的探勘隊員，衝動但勇敢"
+ },
+ "characters": [
+  {
+   "id": "c1",
+   "name": "陳姐",
+   "appearance": "45 歲女性，灰黑色短髮，眼角有細紋，深褐色眼睛，軍綠色舊外套上縫滿補丁，腰間掛著手電筒",
+   "personality": "堅毅務實，照顧每個人",
+   "speech": "語氣平穩，說一不二",
+   "relationship": "聚落首領，把主角當孩子看",
+   "appearance_en": "45-year-old woman, short gray-black hair, crow's feet, dark brown eyes, patched olive-green military jacket, flashlight on belt",
+   "seed": 1749919301
+  },
+  {
+   "id": "c2",
+   "name": "小灰",
+   "appearance": "13 歲少年，亂翹的灰色短髮，機靈的黑色眼睛，過大的灰色連帽衣，臉上戴著破舊防毒面具",
+   "personality": "膽小但反應快",
+   "speech": "講話結結巴巴，緊張時更嚴重",
+   "relationship": "拾荒少年，跟著主角出任務",
+   "appearance_en": "13-year-old boy, messy short gray hair, sharp black eyes, oversized gray hoodie, worn gas mask on face",
+   "seed": 1749919318
+  }
+ ],
+ "scenes": {
+  "metro_concourse": {
+   "name": "捷運大廳",
+   "image_prompt": "Abandoned Taipei metro concourse, dim emergency lighting, concrete pillars stained with rust and moisture, scattered debris and makeshift beds, shallow puddles reflecting cold light, ventilation shafts humming, early morning atmosphere"
+  },
+  "surface_ruins": {
+   "name": "地面廢墟",
+   "image_prompt": "ruined Taipei street at noon under nuclear winter, collapsed buildings covered in gray dust, cracked asphalt road with abandoned vehicles, pale cold sunlight through thick clouds, no vegetation, desolate atmosphere"
+  }
+ },
+ "first_scene": "metro_concourse",
+ "setup_model": "nvidia/nemotron-3-ultra-550b-a55b"
+}

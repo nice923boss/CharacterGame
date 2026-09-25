@@ -2,6 +2,7 @@
 
 Priority (lower runs first): 0 current background, 1 current speaker's expression, 2 calm sprites,
 3 other expressions. A job already queued is never queued twice; asking again only raises its priority.
+Engines (settings): hosted NVIDIA FLUX.2 and/or local ComfyUI; with both on, ComfyUI runs only when NVIDIA fails.
 """
 import asyncio
 import json
@@ -9,11 +10,12 @@ import pathlib
 import re
 import shutil
 import time
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 
 from PIL import Image
 
-from . import comfy_client, config, cutout
+from . import comfy_client, config, cutout, nvidia_image
 from .story_store import Store
 from .turn_parser import EXPRESSIONS
 
@@ -22,6 +24,7 @@ log = config.setup_logging()
 BG_W, BG_H = 1280, 800
 SP_W, SP_H = 512, 768
 EXPR_DENOISE = 0.6
+EYE_DENOISE = 0.9       # 0.75 barely moved the eyes (spike_eyes_only.py)
 
 STYLE = ("anime cel shading illustration, clean black lineart, flat colors with two-tone shading, "
          "visual novel character sprite")
@@ -35,8 +38,26 @@ EXPR_PROMPT = {
     "sad": "sad expression, downcast eyes, slight frown",
     "surprised": "surprised expression, wide eyes, open mouth",
 }
+# No word "mask" here: at 0.9 it grew the mask over the eyes (spike_eyes_only.py)
+EYE_PROMPT = {
+    "smile": "smiling eyes, gently curved happy eyes, relaxed eyebrows",
+    "angry": "angry glaring eyes, sharply furrowed eyebrows",
+    "sad": "sad teary eyes, eyebrows slanted upward, downcast gaze",
+    "surprised": "wide open surprised eyes, small pupils, raised eyebrows",
+}
 BG_STYLE = "anime background art, cel shaded, visual novel background"
 BG_TAIL = "no people, no characters, no text, no signage, no written words, no letters"
+# FLUX runs at cfg 0, so "no text" is ignored and props that carry writing get fake letters (spike section 7):
+# rewrite those props into blank ones and describe plain surfaces instead
+FLUX_BLANK = [
+    (r"\b(screen|monitor|display|tv|television)s?\b[^,]*", "screen showing soft abstract color gradient"),
+    (r"\bwhiteboards?\b[^,]*", "clean blank whiteboard"),
+    (r"\b(sign|signs|signage|poster|posters|text|letters?|words?|notes|documents|papers)\b", ""),
+]
+FLUX_BG_TAIL = "empty scene, nobody around, fully painted detailed background, all surfaces plain and unmarked"
+ENGINE_NAME = {"nvidia": "輝達", "comfy": "ComfyUI"}
+NO_ENGINE = "設定裡沒有勾選任何生圖引擎"
+COMFY_ONLY = "此角色立繪由 ComfyUI 產生，補表情需在設定勾選 ComfyUI"
 
 P_SCENE, P_SPEAKER, P_CALM, P_EXPR = 0, 1, 2, 3
 
@@ -46,10 +67,24 @@ def sprite_prompt(appearance_en: str, expr: str) -> str:
             f"{cutout.iso_phrase(appearance_en)}, {NO_TEXT}")
 
 
+def flux_sprite_prompt(appearance_en: str, expr: str) -> str:
+    # FLUX ignores a trailing background phrase and draws white, so white ears or pale sleeves were cut away
+    # with the background; leading with the colour keeps it (spike section 7)
+    color = cutout.iso_color(appearance_en)
+    return (f"solid {color} background, {STYLE}, {appearance_en}, {EXPR_PROMPT[expr]}, {FRAMING}, "
+            f"plain flat {color} backdrop behind the character")
+
+
 def scene_prompt(style_en: str, image_prompt: str) -> str:
     # Drop words that invite people or lettering into the picture
     clean = re.sub(r"\b(sign|signs|signage|poster|posters|text|letters?|words?)\b", "", image_prompt, flags=re.I)
     return f"{BG_STYLE}, {style_en}, {clean}, {BG_TAIL}"
+
+
+def flux_scene_prompt(style_en: str, image_prompt: str) -> str:
+    for pattern, blank in FLUX_BLANK:
+        image_prompt = re.sub(pattern, blank, image_prompt, flags=re.I)
+    return f"{BG_STYLE}, {style_en}, {image_prompt}, {FLUX_BG_TAIL}"
 
 
 @dataclass(order=True)
@@ -183,44 +218,127 @@ class AssetService:
         else:
             await self._expression(game, key[2], key[3])
 
+    def engines(self) -> list[str]:
+        s = self.store.load_settings()
+        return [e for e, on in (("nvidia", s["image_nvidia"]), ("comfy", s["image_comfy"])) if on]
+
+    async def _first(self, attempts: list[tuple[str, Callable[[], Awaitable]]], none_allowed: str) -> str:
+        """Run the attempts whose engine is switched on, in order, until one works. Returns that engine."""
+        allowed = self.engines()
+        tries = [(e, fn) for e, fn in attempts if e in allowed]
+        if not tries:
+            raise RuntimeError(none_allowed)
+        errors = []
+        for engine, fn in tries:
+            try:
+                await fn()
+                return engine
+            except Exception as e:     # collected and raised below, so the player sees every engine's reason
+                msg = config.mask(str(e))[:200]
+                log.warning("image engine %s failed: %s", engine, msg)
+                errors.append(f"{ENGINE_NAME[engine]}：{msg}")
+        raise RuntimeError("；".join(errors))
+
     async def _scene(self, game: dict, sid: str) -> None:
-        sc = game["scenes"][sid]
+        prompt, style = game["scenes"][sid]["image_prompt"], game.get("style_en", "")
         seed = game["seed"] + sum(map(ord, sid))
-        await comfy_client.txt2img(scene_prompt(game.get("style_en", ""), sc["image_prompt"]), BG_W, BG_H, seed,
-                                   self.scene_path(game["id"], sid))
+        dest = self.scene_path(game["id"], sid)
+        # FLUX draws fake lettering on signs and scrolls (spike section 7), so a ticked ComfyUI draws every scene;
+        # NVIDIA scenes are only for players without ComfyUI
+        comfy = ("comfy", lambda: comfy_client.txt2img(scene_prompt(style, prompt), BG_W, BG_H, seed, dest))
+        nvidia = ("nvidia", lambda: nvidia_image.txt2img(flux_scene_prompt(style, prompt), BG_W, BG_H, seed, dest))
+        await self._first([comfy] if "comfy" in self.engines() else [nvidia], NO_ENGINE)
 
     def _char(self, game: dict, cid: str) -> dict:
         return next(c for c in game["characters"] if c["id"] == cid)
 
+    def _meta_path(self, gid: str, cid: str) -> pathlib.Path:
+        return self.sprite_path(gid, cid, "calm").parent / "meta.json"
+
     async def _calm(self, game: dict, cid: str) -> None:
         c = self._char(game, cid)
         raw = self.sprite_path(game["id"], cid, "calm", raw=True)
-        await comfy_client.txt2img(sprite_prompt(c["appearance_en"], "calm"), SP_W, SP_H, c["seed"], raw)
-        await asyncio.to_thread(self._cut_calm, game["id"], cid)
+        prompt = sprite_prompt(c["appearance_en"], "calm")
+        flux = flux_sprite_prompt(c["appearance_en"], "calm")
+        engine = await self._first([
+            ("nvidia", lambda: nvidia_image.txt2img(flux, SP_W, SP_H, c["seed"], raw)),
+            ("comfy", lambda: comfy_client.txt2img(prompt, SP_W, SP_H, c["seed"], raw)),
+        ], NO_ENGINE)
+        await asyncio.to_thread(self._cut_calm, game["id"], cid, engine)
 
-    def _cut_calm(self, gid: str, cid: str) -> None:
+    def _cut_calm(self, gid: str, cid: str, engine: str) -> None:
         base = Image.open(self.sprite_path(gid, cid, "calm", raw=True)).convert("RGB")
-        full = cutout.cutout_full(base)
+        full = cutout.cutout_full(base, key=engine == "nvidia")
         box = cutout.padded_bbox(full)
-        meta = {"crop": list(box), "face": list(cutout.face_box(full))}
-        (self.sprite_path(gid, cid, "calm").parent / "meta.json").write_text(
-            json.dumps(meta), encoding="utf-8")
+        meta = {"crop": list(box), "face": list(cutout.face_box(full)), "engine": engine}
+        self._meta_path(gid, cid).write_text(json.dumps(meta), encoding="utf-8")
         full.crop(box).save(self.sprite_path(gid, cid, "calm"))
 
     async def _expression(self, game: dict, cid: str, expr: str) -> None:
-        if not self.sprite_path(game["id"], cid, "calm").exists():
+        gid = game["id"]
+        if not self.sprite_path(gid, cid, "calm").exists():
             await self._calm(game, cid)
         c = self._char(game, cid)
-        donor = self.sprite_path(game["id"], cid, expr, raw=True).with_suffix(".donor.png")
-        await comfy_client.img2img(sprite_prompt(c["appearance_en"], expr),
-                                   self.sprite_path(game["id"], cid, "calm", raw=True), c["seed"] + 1,
-                                   EXPR_DENOISE, donor)
-        await asyncio.to_thread(self._cut_expression, game["id"], cid, expr, donor)
+        prompt = sprite_prompt(c["appearance_en"], expr)
+        raw = self.sprite_path(gid, cid, expr, raw=True)
+        donor = raw.with_suffix(".donor.png")
+
+        async def by_comfy():
+            await comfy_client.img2img(prompt, self.sprite_path(gid, cid, "calm", raw=True), c["seed"] + 1,
+                                       EXPR_DENOISE, donor)
+            await asyncio.to_thread(self._cut_expression, gid, cid, expr, donor)
+
+        async def by_eyes():
+            meta = json.loads(self._meta_path(gid, cid).read_text(encoding="utf-8"))
+            face, eyes = meta["face"], meta.get("eyes") or cutout.eye_band(meta["face"])
+            big, mask = raw.with_suffix(".face.png"), raw.with_suffix(".eyes.png")
+
+            def inputs():
+                crop, m = cutout.eye_inputs(Image.open(self.sprite_path(gid, cid, "calm", raw=True)).convert("RGB"),
+                                            face, eyes)
+                crop.save(big)
+                m.save(mask)
+            await asyncio.to_thread(inputs)
+            # Mask words stay out: with "half black mask" in the prompt the mask grew over the eyes (145203 c2)
+            looks = ", ".join(p for p in c["appearance_en"].split(",") if not cutout.COVERED_FACE.search(p))
+            await comfy_client.inpaint(f"{STYLE}, close-up of the eyes, {looks}, {EYE_PROMPT[expr]}",
+                                       big, mask, c["seed"] + 1, EYE_DENOISE, donor)
+            await asyncio.to_thread(self._cut_eyes, gid, cid, expr, donor, face, eyes)
+
+        async def by_nvidia():
+            # No image input on the hosted endpoint: redraw the whole sprite with the calm seed (spike section 7)
+            await nvidia_image.txt2img(flux_sprite_prompt(c["appearance_en"], expr), SP_W, SP_H, c["seed"], raw)
+            await asyncio.to_thread(self._cut_whole, gid, cid, expr)
+
+        # Sprites made before engines were selectable came from ComfyUI. A ComfyUI face redrawn by FLUX would
+        # look like another person, so those characters only take ComfyUI expressions. NVIDIA calms also prefer
+        # ComfyUI img2img: whole FLUX redraws swap non-human faces (spike section 7, real assets), so the redraw
+        # is only for players without ComfyUI or when ComfyUI fails.
+        engine = json.loads(self._meta_path(gid, cid).read_text(encoding="utf-8")).get("engine", "comfy")
+        # Masks, respirators and robot plating must stay as they are: only the eye band is redrawn
+        comfy = by_eyes if cutout.COVERED_FACE.search(c["appearance_en"]) else by_comfy
+        attempts = [("comfy", comfy), ("nvidia", by_nvidia)] if engine == "nvidia" else [("comfy", comfy)]
+        await self._first(attempts, NO_ENGINE if engine == "nvidia" else COMFY_ONLY)
+
+    def _cut_whole(self, gid: str, cid: str, expr: str) -> None:
+        meta = json.loads(self._meta_path(gid, cid).read_text(encoding="utf-8"))
+        full = cutout.cutout_full(Image.open(self.sprite_path(gid, cid, expr, raw=True)).convert("RGB"),
+                                  key=meta.get("engine") == "nvidia")
+        full.crop(tuple(meta["crop"])).save(self.sprite_path(gid, cid, expr))
+
+    def _cut_eyes(self, gid: str, cid: str, expr: str, donor_path: pathlib.Path, face, eyes) -> None:
+        meta = json.loads(self._meta_path(gid, cid).read_text(encoding="utf-8"))
+        base = Image.open(self.sprite_path(gid, cid, "calm", raw=True)).convert("RGB")
+        merged = cutout.eye_paste(base, Image.open(donor_path).convert("RGB"), face, eyes)
+        merged.save(self.sprite_path(gid, cid, expr, raw=True))
+        cutout.cutout_full(merged, key=meta.get("engine") == "nvidia").crop(tuple(meta["crop"])).save(
+            self.sprite_path(gid, cid, expr))
 
     def _cut_expression(self, gid: str, cid: str, expr: str, donor_path: pathlib.Path) -> None:
-        meta = json.loads((self.sprite_path(gid, cid, "calm").parent / "meta.json").read_text(encoding="utf-8"))
+        meta = json.loads(self._meta_path(gid, cid).read_text(encoding="utf-8"))
         base = Image.open(self.sprite_path(gid, cid, "calm", raw=True)).convert("RGB")
         donor = Image.open(donor_path).convert("RGB")
         merged = cutout.region_paste(base, donor, tuple(meta["face"]))
         merged.save(self.sprite_path(gid, cid, expr, raw=True))
-        cutout.cutout_full(merged).crop(tuple(meta["crop"])).save(self.sprite_path(gid, cid, expr))
+        cutout.cutout_full(merged, key=meta.get("engine") == "nvidia").crop(tuple(meta["crop"])).save(
+            self.sprite_path(gid, cid, expr))

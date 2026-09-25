@@ -18,12 +18,14 @@ function spriteUrl(cid, expr) {
   const s = G.assets?.sprites?.[cid];
   if (!s) return null;
   const pick = s[expr]?.state === 'done' ? expr : s.calm?.state === 'done' ? 'calm' : null;
-  return pick ? `/media/${G.game.id}/assets/sprites/${cid}/${pick}.png?v=${s[pick].v}` : null;
+  if (!pick) return null;
+  return s[pick].url || `/media/${G.game.id}/assets/sprites/${cid}/${pick}.png?v=${s[pick].v}`;
 }
 
 function sceneUrl(sid) {
   const s = G.assets?.scenes?.[sid];
-  return s?.state === 'done' ? `/media/${G.game.id}/assets/scenes/${sid}.png?v=${s.v}` : null;
+  if (s?.state !== 'done') return null;
+  return s.url || `/media/${G.game.id}/assets/scenes/${sid}.png?v=${s.v}`;   // url: browser-side (Pages) build
 }
 
 async function pollAssets() {
