@@ -1,0 +1,48 @@
+{
+ "id": "g_20260925_111029",
+ "created_at": "2026-09-25T11:10:29+08:00",
+ "seed": 1236460128,
+ "title": "霧港停針記",
+ "style_en": "1930s steampunk port city, perpetual fog, gaslight and brass, mysterious yet warm atmosphere",
+ "world": {
+  "era": "1930 年代，蒸汽機與煤氣燈並存",
+  "place": "終年起霧的港口城市「霧港」",
+  "genre": "懸疑冒險",
+  "tone": "神祕、帶點溫情",
+  "extra": "城裡的鐘錶最近接連停在同一時刻"
+ },
+ "protagonist": {
+  "name": "阿澈",
+  "profile": "剛到城裡的見習偵探，好奇心重"
+ },
+ "characters": [
+  {
+   "id": "c1",
+   "name": "林映月",
+   "appearance": "22 歲女性，黑色長直髮，左耳上方別著銀色新月髮夾，灰藍色眼睛，白色立領襯衫配深藍背心與長裙，手上拿著黃銅懷錶",
+   "personality": "冷靜聰明，外冷內熱，對謎題著迷",
+   "speech": "用詞簡潔，偶爾冷幽默，不喜歡廢話",
+   "relationship": "港口鐘錶行的店主，主角的委託人",
+   "appearance_en": "22-year-old female, long straight black hair, silver crescent hairpin above left ear, gray-blue eyes, white stand-collar blouse with dark blue vest and long skirt, brass pocket watch",
+   "seed": 1236460145
+  },
+  {
+   "id": "c2",
+   "name": "沈硯",
+   "appearance": "28 歲男性，銀白色短髮，琥珀色眼睛，左眉有一道細疤，深灰色長風衣，黑色皮手套，脖子掛著皮革護目鏡",
+   "personality": "玩世不恭但重義氣，藏著過去的秘密",
+   "speech": "吊兒郎當，愛叫主角「小偵探」",
+   "relationship": "港口的情報販子，主角的舊識",
+   "appearance_en": "28-year-old male, short silver-white hair, amber eyes, thin scar on left eyebrow, dark gray long trench coat, black leather gloves, leather aviator goggles around neck",
+   "seed": 1236460162
+  }
+ ],
+ "scenes": {
+  "foggy_harbor_clocktower_square": {
+   "name": "霧港鐘樓廣場",
+   "image_prompt": "Victorian clock tower square shrouded in thick yellow fog at dusk, gas lamps glowing faintly, wet cobblestones reflecting amber light, brass gears and steam pipes visible on surrounding buildings, stopped clock hands frozen at same hour, mysterious melancholic atmosphere"
+  }
+ },
+ "first_scene": "foggy_harbor_clocktower_square",
+ "setup_model": "nvidia/nemotron-3-ultra-550b-a55b"
+}

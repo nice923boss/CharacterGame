@@ -1,0 +1,2199 @@
+{
+ "root": "n_0000",
+ "next": 15,
+ "nodes": {
+  "n_0000": {
+   "parent": null,
+   "scene_id": "foggy_clocktower_square",
+   "player_input": {
+    "kind": "opening",
+    "text": ""
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "濃霧裹著煤氣燈的微光，霧港的街道彷彿被按下了暫停鍵，唯有腳下的鵝卵石路在腳步聲中回應著來訪者。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "廣場中央的巨大鐘塔指標凍結在三點十七分，銅鏽斑駁的表盤在霧氣中顯得格外蒼白，四周圍著幾個踱步的路人，他們一次次掏出懷錶、看一眼、又無奈收回口袋。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "這裡的時間生鏽了，偵探先生。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "林映月，鐘錶行店主。你的委託書我收到了——想查鐘錶為什麼集體罷工，還是想查這座城為什麼不願意走下去？"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "兩個問題大概指向同一個答案，林小姐。請帶路。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "跟上林映月進鐘錶行聽細節",
+     "先在廣場四處觀察詢問路人"
+    ],
+    "state_changes": {
+     "affection": {
+      "林映月": 1
+     },
+     "flags_add": [
+      "met_lin_yue",
+      "accepted_case"
+     ],
+     "items_add": [
+      "委託書"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "阿澈抵達霧港霧鐘廣場，會見委託人林映月，雙方確認合作關係，準備著手調查鐘錶停擺之謎。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "林映月": 1
+    },
+    "flags": [
+     "met_lin_yue",
+     "accepted_case"
+    ],
+    "items": [
+     "委託書"
+    ]
+   },
+   "summary": [
+    "阿澈抵達霧港霧鐘廣場，會見委託人林映月，雙方確認合作關係，準備著手調查鐘錶停擺之謎。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0000",
+   "children": [
+    "n_0001",
+    "n_0002"
+   ],
+   "created_at": "2026-09-25T18:19:40+08:00"
+  },
+  "n_0001": {
+   "parent": "n_0000",
+   "scene_id": "timewatch_shop",
+   "player_input": {
+    "kind": "option",
+    "text": "跟上林映月進鐘錶行聽細節"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "林映月轉身沿著鵝卵石徑走向巷口，裙擺在霧氣中若隱若現，腳步聲在狹窄街道裡顯得格外清晰。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "幾十步外，一塊銅牌上「時光鐘錶」四字的金漆已剝落大半，木門虛掩，裡頭透出一股機油混合舊紙張的氣味。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "進來。門沒鎖，這城裡連小偷都不想浪費時間。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "連小偷都懂得順應時間靜止，倒是省了鎖匠的錢。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "偵探先生還保留幽默感，很好——這裡缺的不只是時間，還有能笑出聲的人。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "店內牆面排滿各式懷錶、座鐘、零件盒，中央桌上擺著三枚停在三點十七分的懷錶，表蓋內側刻著極細微的符號。"
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "timewatch_shop",
+     "name": "時光鐘錶行",
+     "image_prompt": "A narrow antique clock shop interior, wooden shelves lined with brass pocket watches and pendulum clocks, dust motes dancing in dim gaslight from a single lamp, workbench cluttered with gears and tools, foggy atmosphere seeping through cracked window"
+    },
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "仔細檢查那三枚懷錶上的符號",
+     "先詢問林映月這符號是否出現在其他停擺鐘錶上"
+    ],
+    "state_changes": {
+     "affection": {
+      "林映月": 1
+     },
+     "flags_add": [
+      "entered_shop",
+      "saw_symbols"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿澈跟隨林映月進入時光鐘錶行，發現桌上三枚停擺懷錶內側刻有神秘符號。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "林映月": 2
+    },
+    "flags": [
+     "met_lin_yue",
+     "accepted_case",
+     "entered_shop",
+     "saw_symbols"
+    ],
+    "items": [
+     "委託書"
+    ]
+   },
+   "summary": [
+    "阿澈抵達霧港霧鐘廣場，會見委託人林映月，雙方確認合作關係，準備著手調查鐘錶停擺之謎。",
+    "阿澈跟隨林映月進入時光鐘錶行，發現桌上三枚停擺懷錶內側刻有神秘符號。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0001",
+   "children": [
+    "n_0003",
+    "n_0012"
+   ],
+   "created_at": "2026-09-25T18:19:54+08:00"
+  },
+  "n_0002": {
+   "parent": "n_0000",
+   "scene_id": "foggy_clocktower_square",
+   "player_input": {
+    "kind": "option",
+    "text": "先在廣場四處觀察詢問路人"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈順著廣場邊緣踱步，濕冷的霧氣貼著臉頰，煤氣燈光在鵝卵石上拉長成一條條顫巍巍的金帶。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "他先走向一位拄著柺杖的老水手，對方聽到「鐘錶停了」便嘆氣，從斗篷掏出一塊表殼凹陷的鐵錶——指標同樣卡在三點十七分，發條卻擰得滿滿當當。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "隔著幾步遠，一名女傭正焦急地對著自家少爺的金錶搖晃，錶鏡內霧氣凝結成細細水珠，指標纖毫未動，她低聲唸著「又是這個時辰」，語氣裡夾雜著恐懼與習以為常。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "發條緊、機芯沒壞、潤滑油也正常，偵探先生。這不是機械故障。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "除非……時間自己生病了。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "那我們得找個懂「時間病理學」的大夫。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "跟著林映月去她的鐘錶行檢查機芯細節",
+     "留在廣場繼續盤問路人並記錄更多異常資料"
+    ],
+    "state_changes": {
+     "affection": {
+      "林映月": 1
+     },
+     "flags_add": [
+      "observed_multiple_stopped_watches"
+     ],
+     "items_add": [
+      "觀察筆記"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "阿澈在廣場觀察並詢問路人，發現多塊不同材質、不同保養狀態的懷錶皆同步停在三點十七分，機芯完好，林映月判斷非機械故障。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "林映月": 2
+    },
+    "flags": [
+     "met_lin_yue",
+     "accepted_case",
+     "observed_multiple_stopped_watches"
+    ],
+    "items": [
+     "委託書",
+     "觀察筆記"
+    ]
+   },
+   "summary": [
+    "阿澈抵達霧港霧鐘廣場，會見委託人林映月，雙方確認合作關係，準備著手調查鐘錶停擺之謎。",
+    "阿澈在廣場觀察並詢問路人，發現多塊不同材質、不同保養狀態的懷錶皆同步停在三點十七分，機芯完好，林映月判斷非機械故障。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0002",
+   "children": [
+    "n_0004",
+    "n_0005"
+   ],
+   "created_at": "2026-09-25T18:20:04+08:00"
+  },
+  "n_0003": {
+   "parent": "n_0001",
+   "scene_id": "timewatch_shop",
+   "player_input": {
+    "kind": "option",
+    "text": "先詢問林映月這符號是否出現在其他停擺鐘錶上"
+   },
+   "lines": [
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "這符號……只出現在這三枚錶上，還是別處也有？"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "好問題。目前只在這三枚確認過——但我還沒拆開其他停擺的座鐘檢查內機。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "符號筆觸極淺，像是用放大鏡配合極細刻刀，在組裝前就刻好；不是事後塗鴉，更像……出廠印記。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "她拿起放大鏡遞過來，指尖在燈光下泛著銅綠：「若是出廠印記，意味著這批機芯在離開工廠那刻就註定同一天停下。」"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "我認得這批機芯編號——來自「永恆鐘錶廠」，三年前倒閉，廠長失蹤，資產被銀行查封拍賣。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "現在城裡流通的永恆機芯大多經過我手，可這三枚……我沒見過，也不在我的收購帳本裡。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "牆上的座鐘突然同時敲響三下，指標卻仍卡在三點十七分，聲音在霧氣中顯得空洞而悠長。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "要求立刻檢查店內所有永恆機芯座鐘",
+     "提議今晚潛入永恆鐘錶廠廢墟尋找原始圖紙"
+    ],
+    "state_changes": {
+     "affection": {
+      "林映月": 1
+     },
+     "flags_add": [
+      "symbol_is_factory_mark",
+      "eternal_factory_clue"
+     ],
+     "items_add": [
+      "放大鏡"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "阿澈確認符號為出廠印記，林映月指出機芯來自三年前倒閉的永恆鐘錶廠，三枚懷錶不在收購帳本中。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "林映月": 3
+    },
+    "flags": [
+     "met_lin_yue",
+     "accepted_case",
+     "entered_shop",
+     "saw_symbols",
+     "symbol_is_factory_mark",
+     "eternal_factory_clue"
+    ],
+    "items": [
+     "委託書",
+     "放大鏡"
+    ]
+   },
+   "summary": [
+    "阿澈抵達霧港霧鐘廣場，會見委託人林映月，雙方確認合作關係，準備著手調查鐘錶停擺之謎。",
+    "阿澈跟隨林映月進入時光鐘錶行，發現桌上三枚停擺懷錶內側刻有神秘符號。",
+    "阿澈確認符號為出廠印記，林映月指出機芯來自三年前倒閉的永恆鐘錶廠，三枚懷錶不在收購帳本中。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0003",
+   "children": [
+    "n_0006",
+    "n_0008"
+   ],
+   "created_at": "2026-09-25T18:20:23+08:00"
+  },
+  "n_0004": {
+   "parent": "n_0002",
+   "scene_id": "timewatch_shop",
+   "player_input": {
+    "kind": "option",
+    "text": "跟著林映月去她的鐘錶行檢查機芯細節"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "濃霧如潮水般湧動，將兩人的身影吞沒又釋放，林映月走在前頭，裙擺輕掃過積水的鵝卵石，不留一絲水痕。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "鐘錶行在轉角處，招牌的銅字被霧氣啃得模糊，但門鎖從不生鏽。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "店內彌漫著機油與舊紙張混合的氣息，幾百顆齒輪在玻璃櫃裡靜默，牆上的掛鐘全都凍結在三點十七分，秒針像是一群被定住的蝴蝶。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "把你在廣場看到的細節說一遍，材質、保養狀態、停擺前有沒有異響。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "好，我們挑最複雜的那幾塊拆解看看。"
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "timewatch_shop",
+     "name": "時光鐘錶行",
+     "image_prompt": "A narrow antique clock shop interior, wooden shelves lined with brass pocket watches and pendulum clocks, dust motes dancing in dim gaslight from a single lamp, workbench cluttered with gears and tools, foggy atmosphere seeping through cracked window"
+    },
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "專注檢查機芯內部結構，尋找微觀異常",
+     "詢問林映月這間店的歷史與家族背景"
+    ],
+    "state_changes": {
+     "affection": {
+      "林映月": 1
+     },
+     "flags_add": [
+      "entered_shop",
+      "preparing_dissection"
+     ],
+     "items_add": [
+      "放大鏡",
+      "微調螺絲刀組"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "阿澈跟隨林映月進入時光鐘錶行，準備拆解分析停擺懷錶的機芯細節。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "林映月": 3
+    },
+    "flags": [
+     "met_lin_yue",
+     "accepted_case",
+     "observed_multiple_stopped_watches",
+     "entered_shop",
+     "preparing_dissection"
+    ],
+    "items": [
+     "委託書",
+     "觀察筆記",
+     "放大鏡",
+     "微調螺絲刀組"
+    ]
+   },
+   "summary": [
+    "阿澈抵達霧港霧鐘廣場，會見委託人林映月，雙方確認合作關係，準備著手調查鐘錶停擺之謎。",
+    "阿澈在廣場觀察並詢問路人，發現多塊不同材質、不同保養狀態的懷錶皆同步停在三點十七分，機芯完好，林映月判斷非機械故障。",
+    "阿澈跟隨林映月進入時光鐘錶行，準備拆解分析停擺懷錶的機芯細節。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0004",
+   "children": [
+    "n_0009",
+    "n_0010"
+   ],
+   "created_at": "2026-09-25T18:20:24+08:00"
+  },
+  "n_0005": {
+   "parent": "n_0002",
+   "scene_id": "foggy_clocktower_square",
+   "player_input": {
+    "kind": "option",
+    "text": "留在廣場繼續盤問路人並記錄更多異常資料"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈沒有離開廣場，而是在濕冷的鵝卵石上來回踱步，筆尖在觀察筆記上飛快劃過，墨跡染黑了指尖。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "他攔住一名推著麵粉手推車的中年婦人，對方遲疑著掏出一塊廉價鋁殼錶，表面劃痕累累，指標依舊死死咬住三點十七分；更詭異的是，錶玻璃內側凝結著一層極薄、呈放射狀的霜花，彷彿時間凍結的那一刻連溼氣都來不及蒸發。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "幾步外，一位穿著考究的紳士反覆按動著鉑金懷錶的開蓋鈕，機芯發出清脆卻空洞的咔噠聲，秒針纖毫未動，他臉色蒼白地低語：「連大鐘也停了……連大鐘也停了……」"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "霜花只出現在朝北的表面上，偵探先生。林映月翻開筆記本，鉛筆尖在紙頁上畫出幾個同心圓，廣場中心鐘塔投下的陰影，正好在三點十七分時覆蓋這整塊區域。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "看來我們的「病人」不只生病，還挑食——只吃陰影裡的時間。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "陰影裡的時間……那鐘塔本身就是病灶？"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "爬上鐘塔內部檢查機芯與陰影範圍",
+     "先回時光鐘錶行查閱古籍與維修紀錄"
+    ],
+    "state_changes": {
+     "affection": {
+      "林映月": 1
+     },
+     "flags_add": [
+      "frost_pattern_noted",
+      "shadow_correlation_found"
+     ],
+     "items_add": [
+      "霜花素描",
+      "陰影範圍圖"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "阿澈在廣場蒐集到更多異常：所有停擺錶的玻璃內側出現朝北的霜花，且僅限鐘塔陰影覆蓋範圍。林映月推測鐘塔本身為病灶核心。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "林映月": 3
+    },
+    "flags": [
+     "met_lin_yue",
+     "accepted_case",
+     "observed_multiple_stopped_watches",
+     "frost_pattern_noted",
+     "shadow_correlation_found"
+    ],
+    "items": [
+     "委託書",
+     "觀察筆記",
+     "霜花素描",
+     "陰影範圍圖"
+    ]
+   },
+   "summary": [
+    "阿澈抵達霧港霧鐘廣場，會見委託人林映月，雙方確認合作關係，準備著手調查鐘錶停擺之謎。",
+    "阿澈在廣場觀察並詢問路人，發現多塊不同材質、不同保養狀態的懷錶皆同步停在三點十七分，機芯完好，林映月判斷非機械故障。",
+    "阿澈在廣場蒐集到更多異常：所有停擺錶的玻璃內側出現朝北的霜花，且僅限鐘塔陰影覆蓋範圍。林映月推測鐘塔本身為病灶核心。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0005",
+   "children": [
+    "n_0007",
+    "n_0011"
+   ],
+   "created_at": "2026-09-25T18:20:26+08:00"
+  },
+  "n_0006": {
+   "parent": "n_0003",
+   "scene_id": "timewatch_shop",
+   "player_input": {
+    "kind": "option",
+    "text": "提議今晚潛入永恆鐘錶廠廢墟尋找原始圖紙"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "濃霧如紗，縈繞著時光鐘錶行的木門，油燈的光在窗格上投下斑駁的影子。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "店內的座鐘與懷錶仍卡在三點十七分，無聲的齒輪彷彿在等待某個指令。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "永恆鐘錶廠廢墟在城東山坡，鐵門早被銹蝕封死，內部結構可能已塌陷。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "但若廠長當年真有預留圖紙，機芯停擺的關鍵或許就藏在裡面。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "我今晚會去一趟。若發現什麼，會第一時間回來告訴你。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "林映月將黃銅懷錶輕輕放回桌面，指尖停留在錶蓋內的符號上，眼神深邃。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "小心。那裡不只有廢鐵與塵埃，還有當年遺忘的誓言……和可能的危機。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧氣在街道上越來越厚，煤氣燈的光穿透微霧，像是無數顆浮游的星點。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈離開鐘錶行，踏上回程的鵝卵石路，霧港的沉默伴隨他的每一步。```json"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "fog",
+    "options": [],
+    "state_changes": {
+     "affection": {
+      "林映月": -3
+     },
+     "flags_add": [
+      "triggered_trap",
+      "factory_collapse"
+     ],
+     "items_add": [],
+     "items_remove": [
+      "放大鏡"
+     ]
+    },
+    "summary_update": "阿澈在永恆鐘錶廠廢墟觸發機關導致部分結構塌陷，未能取得圖紙，反而損毀關鍵證據，林映月對其失去信任。",
+    "ending": {
+     "type": "bad",
+     "title": "時停永固"
+    }
+   },
+   "state": {
+    "affection": {
+     "林映月": 0
+    },
+    "flags": [
+     "met_lin_yue",
+     "accepted_case",
+     "entered_shop",
+     "saw_symbols",
+     "symbol_is_factory_mark",
+     "eternal_factory_clue",
+     "triggered_trap",
+     "factory_collapse"
+    ],
+    "items": [
+     "委託書"
+    ]
+   },
+   "summary": [
+    "阿澈抵達霧港霧鐘廣場，會見委託人林映月，雙方確認合作關係，準備著手調查鐘錶停擺之謎。",
+    "阿澈跟隨林映月進入時光鐘錶行，發現桌上三枚停擺懷錶內側刻有神秘符號。",
+    "阿澈確認符號為出廠印記，林映月指出機芯來自三年前倒閉的永恆鐘錶廠，三枚懷錶不在收購帳本中。",
+    "阿澈在永恆鐘錶廠廢墟觸發機關導致部分結構塌陷，未能取得圖紙，反而損毀關鍵證據，林映月對其失去信任。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-super-120b-a12b",
+   "repair_notes": [
+    "ending forced"
+   ],
+   "id": "n_0006",
+   "children": [],
+   "created_at": "2026-09-25T18:20:39+08:00"
+  },
+  "n_0007": {
+   "parent": "n_0005",
+   "scene_id": "foggy_clocktower_square",
+   "player_input": {
+    "kind": "option",
+    "text": "爬上鐘塔內部檢查機芯與陰影範圍"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈沿著鐘塔螺旋石階向上攀爬，濕氣與銅鏽的氣味在狹窄空間裡交織，每一步都回蕩著金屬的微微顫音。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "半途處的觀察窗外，霧鐘廣場被銀白霧氣封住，林映月的身影站在陰影邊緣，手中的黃銅懷錶微微發涼。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "頂層機械室內，巨大擺錶懸空停擺，齒輪咬合卻未動，發條槽內發條盤緊繃如弓，卻無力釋放。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "時間不是被鎖住，是被……吸走？"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "霜花不是凝結，是蒸發的逆向。陰影不是遮光，是匯流。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈伸手觸向擺錶軸心，指尖接觸銅面瞬間，一陣刺骨的寒意從指甲縫鑽入，隨著鐘塔陰影正好對準廣場中心，所有錶內霜花瞬間崩解成細粒，如同被吸走的水氣。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "隨後，鐘塔表盤微微顫動，指標從三點十七分緩緩移動——不是機芯復原，而是整齊向前跳了八分鐘二十秒，如同被強制彈跳。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "廣場外，路人們的懷錶同時顫動，指標脫離凍結，錶內霜花消散，煤氣燈光在鵝卵石上重新跳動。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "鐘塔不是錶的病灶……它是城裡所有時間的肺。被抽走的時刻，正在某處重組。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "就在指標穿過四點十分時，塔內傳來低鳴，一塊嵌在機械核心的黑色水晶突然裂開，釋出逆流的煙霧，彷彿被囚禁的東西終於逃出。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈踉蹌後退，林映月穩住他的手肘，兩人望著塔縫中逸出的煙霧——那不是蒸汽，是凝結的光與影，像是無數被切斷的時刻，正試圖重新織成布料。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "我們阻斷了吸收……但沒有阻斷來源。時鐘不是生病，是被餵食。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧氣開始流動，鐘塔的陰影不再死鎖三點十七分，而是隨著太陽位置緩慢移動——時間，重新有了流向。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "然而，塔基深處的裂縫中，仍有微弱的逆光脈動，像是第二顆心臟，正在另一處等待被喚醒。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [],
+    "state_changes": {
+     "affection": {
+      "林映月": 2
+     },
+     "flags_add": [
+      "clocktower_checked",
+      "shadow_flow_restored",
+      "crystal_fracture_observed"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿澈爬上鐘塔內部，發現擺錶被外力吸停，陰影是時間的匯流管道。破解後時間恢復流動，但塔核心的黑水晶裂開，顯示吸收來源尚未切斷。",
+    "ending": {
+     "type": "good",
+     "title": "時間的呼吸"
+    }
+   },
+   "state": {
+    "affection": {
+     "林映月": 5
+    },
+    "flags": [
+     "met_lin_yue",
+     "accepted_case",
+     "observed_multiple_stopped_watches",
+     "frost_pattern_noted",
+     "shadow_correlation_found",
+     "clocktower_checked",
+     "shadow_flow_restored",
+     "crystal_fracture_observed"
+    ],
+    "items": [
+     "委託書",
+     "觀察筆記",
+     "霜花素描",
+     "陰影範圍圖"
+    ]
+   },
+   "summary": [
+    "阿澈抵達霧港霧鐘廣場，會見委託人林映月，雙方確認合作關係，準備著手調查鐘錶停擺之謎。",
+    "阿澈在廣場觀察並詢問路人，發現多塊不同材質、不同保養狀態的懷錶皆同步停在三點十七分，機芯完好，林映月判斷非機械故障。",
+    "阿澈在廣場蒐集到更多異常：所有停擺錶的玻璃內側出現朝北的霜花，且僅限鐘塔陰影覆蓋範圍。林映月推測鐘塔本身為病灶核心。",
+    "阿澈爬上鐘塔內部，發現擺錶被外力吸停，陰影是時間的匯流管道。破解後時間恢復流動，但塔核心的黑水晶裂開，顯示吸收來源尚未切斷。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-super-120b-a12b",
+   "repair_notes": [],
+   "id": "n_0007",
+   "children": [],
+   "created_at": "2026-09-25T18:20:49+08:00"
+  },
+  "n_0008": {
+   "parent": "n_0003",
+   "scene_id": "timewatch_shop",
+   "player_input": {
+    "kind": "option",
+    "text": "要求立刻檢查店內所有永恆機芯座鐘"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "林映月將放大鏡遞回桌上，轉身走向牆邊排列的座鐘，指尖輕觸銅邊：「這些永恆機芯的座鐘，我都有登記，但從不曾仔細看過內部。」"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "你想檢查就檢查吧。我扶著梯子，你來拆。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈爬上木梯，開啟第一座座鐘的後蓋，油膩的齒輪裡靜止於三點十七分，機芯底板上刻著同樣細微的「永恆」出廠印記。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "這也是……同一批。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（靜默片刻）我帳本上沒這批號。意味著……這三枚懷錶和這些座鐘，都是私底下流出的。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "她從口袋裡掏出一張泛黃的清單，手指停在某一行：「編號 E-713 到 E-724，共十二組機芯，出廠日均為三年前的今天，理論上應同時停擺。」"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "但城裡只找到七組。剩下的五組……要不被偷走，要不被藏起來。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "被藏起來？誰有這樣的動機和能力？"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "永恆鐘錶廠倒閉前夕，廠長親自監督最後一批出廠。他失蹤時，手邊恰好沒這批機芯的紀錄。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈繼續檢查，第六座座鐘的機芯底板上，除了出廠印記，還有另一個較深的刻痕——一個被劃掉的「F」。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "這裡……有被改過的記號。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "F……也許是廠長的縮寫？或是某個地點的代號？"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "她眉頭微皺，隨即轉向櫃檯，從抽屜裡取出一本舊帳本，頁面被水漬染過，只有半頁可辨認。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "這是永恆廠的內部備忘錄……提到『F區地下室』，說是備用零件存放處，但實際上……"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "實際上呢？"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（低聲）實際上是廠長私藏的地方。他怕銀行查封，便把最後一批機芯偷運出去，藏在鐘塔底部的密室。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "店內的氣壓似乎驟降，霧氣透過窗縫捲進來，將三點十七分的陰影拉長。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "那我們現在該去……鐘塔？"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "去吧。但記住——時間靜止不是偶然，是有人想讓這城永遠停在那一刻。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈點頭，將放大鏡塞回口袋，與林映月一起走出時光鐘錶行，濃霧迎面而來，鐘塔在遠處如同一個沉默的守望者。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "fog",
+    "options": [],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿澈選擇進入鐘塔底部，發現藏匿的機芯與廠長遺書，證明時間停擺是人為陰謀，成功啟動關鍵齒輪，讓霧港的時間重新流動",
+    "ending": {
+     "type": "good",
+     "title": "時鐘再鳴"
+    }
+   },
+   "state": {
+    "affection": {
+     "林映月": 3
+    },
+    "flags": [
+     "met_lin_yue",
+     "accepted_case",
+     "entered_shop",
+     "saw_symbols",
+     "symbol_is_factory_mark",
+     "eternal_factory_clue"
+    ],
+    "items": [
+     "委託書",
+     "放大鏡"
+    ]
+   },
+   "summary": [
+    "阿澈抵達霧港霧鐘廣場，會見委託人林映月，雙方確認合作關係，準備著手調查鐘錶停擺之謎。",
+    "阿澈跟隨林映月進入時光鐘錶行，發現桌上三枚停擺懷錶內側刻有神秘符號。",
+    "阿澈確認符號為出廠印記，林映月指出機芯來自三年前倒閉的永恆鐘錶廠，三枚懷錶不在收購帳本中。",
+    "阿澈選擇進入鐘塔底部，發現藏匿的機芯與廠長遺書，證明時間停擺是人為陰謀，成功啟動關鍵齒輪，讓霧港的時間重新流動"
+   ],
+   "bgm_mood": "tense",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-super-120b-a12b",
+   "repair_notes": [
+    "ending forced"
+   ],
+   "id": "n_0008",
+   "children": [],
+   "created_at": "2026-09-25T18:20:51+08:00"
+  },
+  "n_0009": {
+   "parent": "n_0004",
+   "scene_id": "timewatch_shop",
+   "player_input": {
+    "kind": "option",
+    "text": "詢問林映月這間店的歷史與家族背景"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "店內的懷錶櫃映出昏黃的煤氣燈光，齒輪的銀光在霧氣中顫動如遠星。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "這間鐘錶行是祖祖輩輩傳下來的，我爺爺在霧港還只是個漁村時就已開張。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "我家不是隻修錶，還負責校對港口的汽笛與火車時刻——直到三十年前那場大霧。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "從那天起，所有鐘錶就在同一時間凝固，我爺爺花了十年才靠手工假錶維持港口運轉。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "他臨終前把這間店交給我，囑咐我必須找出真相，不然霧港永遠被困在三點十七分。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "林映月輕輕抬起左手，銀色新月髮夾在燈光下閃爍，她的灰藍色眼睛裡閃過一絲不易察覺的決心。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "她將手中的黃銅懷錶遞給阿澈，錶背刻著細小的花紋與一行日期——一九零零年七月十七日。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "這是……你爺爺的遺物？"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "他說這是唯一沒停的錶，因為它不屬於這裡的時間。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈接過懷錶，感受到微微的震動——不是來自機芯，而是彷彿有什麼東西在錶殼內緩緩滴答。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧氣透過窗格投下條紋陰影，牆上的掛鐘仍凍結在三點十七分，卻彷彿在等待某個訊號。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈將懷錶貼近耳端，細微的嗡鳴隨即消失，取而代之的是一聲極淡的嗶鳴，像是某種機關被觸發。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "你聽到了？那是共鳴頻率……只有在特定條件下才會啟動的警訊。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "爺爺留下的線索很少，但他曾說過『當霧港的心跳再次對齊，時間才會解凍』。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "店內突然傳來細微的咔嗒聲，所有玻璃櫃裡的齒輪瞬間微顫，彷彿被無形的力量拉扯。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧氣像是被抽走一般迅速淡去，煤氣燈的火焰驟然變亮，照亮了牆上早已塵封的設計圖。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "設計圖中央繪著一個巨大的擺錶系統，連結著鐘塔、港口汽笛與城市每條街角的時間節點，核心標註著『共振點』。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "所以解決辦法不是修錶，是重新同步這座城的心跳？"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "對。而啟動共振的關鍵，就藏在這枚不屬於這裡時間的懷錶裡。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "林映月伸手按向懷錶背面的小凹槽，銀色蓋板緩緩彈開，露出一顆微微發藍的水晶擺輪。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "水晶擺輪緩緩旋轉，藍光隨即透過窗戶射向遠方的鐘塔，霧港上空的濃霧開始以規律的脈衝縮縮、舒展。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "遠處的巨鐘塔突然傳來低鳴，銅鐘緩緩搖擺，指標從三點十七分滑動，秒針第一次在三十年裡跳動。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "一陣溫暖的風穿過街道，吹散剩餘的霧氣，鵝卵石路面上映出清晰的倒影，煤氣燈光不再顫抖，而是穩穩灑下。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "城鎮的每一塊懷錶、掛鐘與汽笛都在同一瞬間輕微顫動，隨後協調地恢復走動，時間終於重新流動。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "霧港……終於可以呼吸了。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "林映月的嘴角 finalmente 漸漸上揚，她輕輕合上懷錶的蓋板，銀色新月髮夾在陽光下閃爍如曙光。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "petals",
+    "options": [],
+    "state_changes": {
+     "affection": {
+      "林映月": 2
+     },
+     "flags_add": [
+      "case_solved",
+      "clocks_restored"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿澈與林映月啟動了藏於懷錶中的水晶擺輪共振，使霧港所有停擺的鐘錶與時間裝置同步恢復運作，城市終於擺脫三十年的時間凍結。",
+    "ending": {
+     "type": "good",
+     "title": "時間的重啟"
+    }
+   },
+   "state": {
+    "affection": {
+     "林映月": 5
+    },
+    "flags": [
+     "met_lin_yue",
+     "accepted_case",
+     "observed_multiple_stopped_watches",
+     "entered_shop",
+     "preparing_dissection",
+     "case_solved",
+     "clocks_restored"
+    ],
+    "items": [
+     "委託書",
+     "觀察筆記",
+     "放大鏡",
+     "微調螺絲刀組"
+    ]
+   },
+   "summary": [
+    "阿澈抵達霧港霧鐘廣場，會見委託人林映月，雙方確認合作關係，準備著手調查鐘錶停擺之謎。",
+    "阿澈在廣場觀察並詢問路人，發現多塊不同材質、不同保養狀態的懷錶皆同步停在三點十七分，機芯完好，林映月判斷非機械故障。",
+    "阿澈跟隨林映月進入時光鐘錶行，準備拆解分析停擺懷錶的機芯細節。",
+    "阿澈與林映月啟動了藏於懷錶中的水晶擺輪共振，使霧港所有停擺的鐘錶與時間裝置同步恢復運作，城市終於擺脫三十年的時間凍結。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "petals",
+   "model": "nvidia/nemotron-3-super-120b-a12b",
+   "repair_notes": [],
+   "id": "n_0009",
+   "children": [],
+   "created_at": "2026-09-25T18:20:52+08:00"
+  },
+  "n_0010": {
+   "parent": "n_0004",
+   "scene_id": "timewatch_shop",
+   "player_input": {
+    "kind": "option",
+    "text": "專注檢查機芯內部結構，尋找微觀異常"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "店內的銅燈灑下溫柔的光，映在玻璃櫃內靜止的齒輪上，彷彿每一顆都在等待被喚醒。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈將停擺的懷錶放在工作臺上，輕輕開啟後蓋，微調螺絲刀在指尖轉動，機芯的細節在放大鏡下一寸寸顯現。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "機芯乾淨、零件完整，連遊絲都沒有卡滯……偵探先生，你看到了什麼？"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "這裡……有個東西不該在這裡出現。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈的指尖停在擒縱叉與擺輪的交界處，一絲銀白色的纖維纏繞在齒軸上，纖細得如同霧氣凝結的絲線，卻具有彈性，隨著微微震動輕微顫動。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "那是……霧絲？只有在深霧節當天才會從港口深處的氣孔中析出，老爺曾說它會被極低頻的震動吸附。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "所以鐘錶不是停了，而是被……縛住了？"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "極低頻的共振……就像城裡的鐘塔在同一時刻發出一個頻率，讓所有懷錶的擒縱系統被這種東西鎖住。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈用微調螺絲刀輕輕挑開那絲霧絲，銀白色的纖維隨即斷裂，彷彿被施了咒語的束縛忽然鬆懈。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "錶盤的指標驟然跳動，從三點十七分滑過，秒針顫抖著前進，像是經過長期凍結後首次透氣的生物。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "你做到了……時間不是生病，而是被綁住了。這裡的所有錶，只要把這種纖維清除，就會重新運轉。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "店內的掛鐘秒針一開始只是微微顫動，隨著阿澈一顆顆處理懷錶，逐漸同步起來，嗒嗒聲在靜默的空間裡回響，像是沉睡已久的心臟重新跳動。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧氣似乎也為之一緩，煤氣燈的光穿透得更遠了，遠處鐘塔的指標開始緩緩移動，三點十七分成為過去，時間再次流動。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "偵探先生，霧港欠你一個dawn。如果你願意，這裡永遠歡迎你來坐坐，喝一杯熱茶。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "謝謝，林小姐。這個案子，我會記得很久。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "濃霧在陽光的驅散下退散，煤氣燈的光芒變得明亮，城市的節奏從停滯變為前進，鐘聲在街道間迴盪，宣告時間的復甦。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "petals",
+    "options": [],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "case_solved",
+      "clocks_restored"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿澈發現並移除導致懷錶同步停擺的霧絲，使鐘錶行內的時間復甦，霧港的鐘塔重新開始運轉。",
+    "ending": {
+     "type": "good",
+     "title": "時間的復甦"
+    }
+   },
+   "state": {
+    "affection": {
+     "林映月": 3
+    },
+    "flags": [
+     "met_lin_yue",
+     "accepted_case",
+     "observed_multiple_stopped_watches",
+     "entered_shop",
+     "preparing_dissection",
+     "case_solved",
+     "clocks_restored"
+    ],
+    "items": [
+     "委託書",
+     "觀察筆記",
+     "放大鏡",
+     "微調螺絲刀組"
+    ]
+   },
+   "summary": [
+    "阿澈抵達霧港霧鐘廣場，會見委託人林映月，雙方確認合作關係，準備著手調查鐘錶停擺之謎。",
+    "阿澈在廣場觀察並詢問路人，發現多塊不同材質、不同保養狀態的懷錶皆同步停在三點十七分，機芯完好，林映月判斷非機械故障。",
+    "阿澈跟隨林映月進入時光鐘錶行，準備拆解分析停擺懷錶的機芯細節。",
+    "阿澈發現並移除導致懷錶同步停擺的霧絲，使鐘錶行內的時間復甦，霧港的鐘塔重新開始運轉。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "petals",
+   "model": "nvidia/nemotron-3-super-120b-a12b",
+   "repair_notes": [],
+   "id": "n_0010",
+   "children": [],
+   "created_at": "2026-09-25T18:20:53+08:00"
+  },
+  "n_0011": {
+   "parent": "n_0005",
+   "scene_id": "foggy_clocktower_square",
+   "player_input": {
+    "kind": "option",
+    "text": "先回時光鐘錶行查閱古籍與維修紀錄"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "濃霧在鐘塔腳盤繞行，煤氣燈的光被水霧吞噬成橘黃的暈圈，鐘塔的指標仍死死鎖在三點十七分。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "鐘塔的機心藏在塔基最底層，只有店舖的舊蓄水池能透過去。我帶你去時光鐘錶行。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈跟著林映月穿過被霧氣切割的街道，煤氣燈在潮濕的石板路上跳動，遠處傳來機械齒輪的空轉嗡鳴。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "時光鐘錶行的木門上掛著銅牌，字跡早已氧化，店內陳列著從懷錶到塔鐘的零件，牆面貼滿發黃的維修紀錄與星圖。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "這裡有塔機的原始藍圖，還有三十年前的維修日誌。根據記錄，鐘塔每三十年會有一次『共鳴停止』，但從未這麼精準。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "林映月抽出一本皮封帳簿，指著頁面上用紅墨標記的日期——一九零零年、一九三零年，皆是三月十七日三點十分。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "三月十七日……今天就是。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "不是巧合。塔基的水池裡藏著一塊從北極帶來的磁石，據說能穩時脈。但若磁場被反極，就會把時間拉進陰影。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈翻開日誌的最後一頁，發現最近一筆維修是兩天前，簽名卻是『？？？』，且旁邊標註『磁石已移』。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "有人故意移動了磁石，讓鐘塔生病。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "那我們得把它放回去。水池就在塔基正下方，但現在鐘塔的陰影正好蓋住入口——只有在三點十分時，陰影才會後退三分鐘。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "鐘塔的指標緩緩彈動——三點十分零零秒，石板縫間的陰角微微後退，露出一條鐵鎖鏈縛著的石門縫隙。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "林映月從懷錶內取出細長的黃銅棒，輕輕撬開石門，一股凍氣從地下洞口湧出，水池中央的磁石不見了，只剩陷痕。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "磁石被偷走了？誰會這樣做？"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "看看這裡。（她遞過一張紙條）是用塔機的油脂寫的，字跡我不認得。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "紙條上寫著：『時間不該屬於眾人，而該被懸停。 —  — 守時人』"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "守時人……他們想讓時間永遠停在這個瞬間？"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "如果不把磁石放回去，這場停止會永續下去。霧港的齒輪將永遠咬住，人會繼續在同一個時刻打轉，直到連記憶也凍住。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈凝視著空洞的水池，腦中閃過廣場上恐懼的女傭、重複念言的紳士，以及無數被定格在三點十七分的懷錶。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "我會把它找回來。霧港不該被困在一個瞬間。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（輕笑）那我就在這裡等你把時間撿回來。快去，偵探先生——塔機不會等太久。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "林映月將黃銅懷錶遞給阿澈，錶面的霜花在此刻忽然淡去，指標開始微微顫動——三點十分零一秒。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧氣似乎為之一鬆，遠處的煤氣燈光不再被完全吞噬，鐘塔的銅鏽斑駁在微光中閃爍出一絲溫度。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [],
+    "state_changes": {
+     "affection": {
+      "林映月": 2
+     },
+     "flags_add": [
+      "magnet_stolen",
+      "guardians_note_found"
+     ],
+     "items_add": [
+      "磁石遺蹟",
+      "神秘紙條"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "阿澈與林映月在時光鐘錶行發現鐘塔磁石被盜，並留下神秘紙條，指向名為『守時人』的團體。時間開始微動，但磁石仍未歸位。",
+    "ending": {
+     "type": "bad",
+     "title": "永停的瞬間"
+    }
+   },
+   "state": {
+    "affection": {
+     "林映月": 5
+    },
+    "flags": [
+     "met_lin_yue",
+     "accepted_case",
+     "observed_multiple_stopped_watches",
+     "frost_pattern_noted",
+     "shadow_correlation_found",
+     "magnet_stolen",
+     "guardians_note_found"
+    ],
+    "items": [
+     "委託書",
+     "觀察筆記",
+     "霜花素描",
+     "陰影範圍圖",
+     "磁石遺蹟",
+     "神秘紙條"
+    ]
+   },
+   "summary": [
+    "阿澈抵達霧港霧鐘廣場，會見委託人林映月，雙方確認合作關係，準備著手調查鐘錶停擺之謎。",
+    "阿澈在廣場觀察並詢問路人，發現多塊不同材質、不同保養狀態的懷錶皆同步停在三點十七分，機芯完好，林映月判斷非機械故障。",
+    "阿澈在廣場蒐集到更多異常：所有停擺錶的玻璃內側出現朝北的霜花，且僅限鐘塔陰影覆蓋範圍。林映月推測鐘塔本身為病灶核心。",
+    "阿澈與林映月在時光鐘錶行發現鐘塔磁石被盜，並留下神秘紙條，指向名為『守時人』的團體。時間開始微動，但磁石仍未歸位。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-super-120b-a12b",
+   "repair_notes": [
+    "ending forced"
+   ],
+   "id": "n_0011",
+   "children": [],
+   "created_at": "2026-09-25T18:21:14+08:00"
+  },
+  "n_0012": {
+   "parent": "n_0001",
+   "scene_id": "timewatch_shop",
+   "player_input": {
+    "kind": "option",
+    "text": "仔細檢查那三枚懷錶上的符號"
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "隨便看，別弄壞了——這些是唯一的線索。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈拿起放大鏡湊近，燈光下符號輪廓清晰浮現：三枚錶蓋內側各有一組由齒輪、新月、眼睛組成的微刻圖騰，排列順序卻各不相同。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "surprised",
+     "text": "你也看到了？順序不同——第一枚齒輪在上，第二枚新月在上，第三枚眼睛在上。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "有人故意打亂順序，像在傳遞某種排列邏輯……"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "牆上的大座鐘突然發出沉悶一響，指標劇烈顫動了一下，又重新凍結在三點十七分，霧氣似乎濃得化不開。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "sad",
+     "text": "城央鐘塔每日只響一次，現在卻在錯誤的時間強行鳴動……有人在用鐘聲傳遞訊號。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "嘗試按「齒輪→新月→眼睛」順序轉動三枚錶冠",
+     "先詢問林映月這符號是否出現在其他地方"
+    ],
+    "state_changes": {
+     "affection": {
+      "林映月": 1
+     },
+     "flags_add": [
+      "found_symbol_sequence"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿澈發現三枚懷錶內側符號順序各異，推測為刻意編碼；店內大鐘異常鳴響，林映月指出城央鐘塔正在傳遞訊號。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "林映月": 3
+    },
+    "flags": [
+     "met_lin_yue",
+     "accepted_case",
+     "entered_shop",
+     "saw_symbols",
+     "found_symbol_sequence"
+    ],
+    "items": [
+     "委託書"
+    ]
+   },
+   "summary": [
+    "阿澈抵達霧港霧鐘廣場，會見委託人林映月，雙方確認合作關係，準備著手調查鐘錶停擺之謎。",
+    "阿澈跟隨林映月進入時光鐘錶行，發現桌上三枚停擺懷錶內側刻有神秘符號。",
+    "阿澈發現三枚懷錶內側符號順序各異，推測為刻意編碼；店內大鐘異常鳴響，林映月指出城央鐘塔正在傳遞訊號。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0012",
+   "children": [
+    "n_0013",
+    "n_0014"
+   ],
+   "created_at": "2026-09-25T18:21:16+08:00"
+  },
+  "n_0013": {
+   "parent": "n_0012",
+   "scene_id": "timewatch_shop",
+   "player_input": {
+    "kind": "option",
+    "text": "嘗試按「齒輪→新月→眼睛」順序轉動三枚錶冠"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧氣在鐘錶行的窗邊凝結成細小的水珠，銅質懷錶在微光中泛起幽冷的光澤。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈深吸一口氣，將三枚懷錶的錶冠依序轉向「齒輪→新月→眼睛」的方向，指尖感受到微微的阻力與齒合的聲音。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "你確定要這樣做？這不是普通的調整……"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "如果符號真是訊號，那麼正確的順序或許能讓時間再次流動。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "第三枚懷錶的錶冠轉到位時，店內所有座鐘與懷錶同時發出清脆且協調的嗡鳴，如同長眠的機械被喚醒。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧港遠處的鐘塔驟然轟鳴，銅鐘的聲音穿透濃霧，三點十七分的凍結瞬間崩解，指標開始緩緩前進。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "時刻……正在修復。你做到了。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "看起來，這座城只是在等待有人正確讀取它的訊號。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "店內的燈光隨著鐘聲的韻律微微明暗，煤氣燈的火焰不再驚跳，而是穩定地燃燒，如同城市的脈搏重新跳動。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "感謝你，偵探先生。霧港欠你一段時間……以及一杯熱茶，如果你願意的話。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧氣逐漸散去，街道上的行人重新檢視懷錶，這次他們嘴角帶起了些許安心的微笑。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "委託達成，謎題被解開，時間重新流動於這座蒸汽與煤氣共鳴的城市之中。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "fireflies",
+    "options": [],
+    "state_changes": {
+     "affection": {
+      "林映月": 1
+     },
+     "flags_add": [
+      "case_solved"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿澈依照符號順序旋轉錶冠，觸發城內所有鐘錶同步復振，霧港的時間終於恢復流動，委託成功完成。",
+    "ending": {
+     "type": "good",
+     "title": "時鐘再鳴"
+    }
+   },
+   "state": {
+    "affection": {
+     "林映月": 4
+    },
+    "flags": [
+     "met_lin_yue",
+     "accepted_case",
+     "entered_shop",
+     "saw_symbols",
+     "found_symbol_sequence",
+     "case_solved"
+    ],
+    "items": [
+     "委託書"
+    ]
+   },
+   "summary": [
+    "阿澈抵達霧港霧鐘廣場，會見委託人林映月，雙方確認合作關係，準備著手調查鐘錶停擺之謎。",
+    "阿澈跟隨林映月進入時光鐘錶行，發現桌上三枚停擺懷錶內側刻有神秘符號。",
+    "阿澈發現三枚懷錶內側符號順序各異，推測為刻意編碼；店內大鐘異常鳴響，林映月指出城央鐘塔正在傳遞訊號。",
+    "阿澈依照符號順序旋轉錶冠，觸發城內所有鐘錶同步復振，霧港的時間終於恢復流動，委託成功完成。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "fireflies",
+   "model": "nvidia/nemotron-3-super-120b-a12b",
+   "repair_notes": [],
+   "id": "n_0013",
+   "children": [],
+   "created_at": "2026-09-25T18:21:25+08:00"
+  },
+  "n_0014": {
+   "parent": "n_0012",
+   "scene_id": "timewatch_shop",
+   "player_input": {
+    "kind": "option",
+    "text": "先詢問林映月這符號是否出現在其他地方"
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "符號只在這三枚懷錶內側出現過，城裡其他鐘錶都沒有。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "sad",
+     "text": "但鐘塔的鳴響……它似乎在重複這個順序。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "林映月走向牆邊的古老座鐘，輕觸其機芯，鐘聲在霧中低沉回響，恰好對應齒輪、新月、眼睛的節奏。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "surprised",
+     "text": "每次鳴動，符號的順序就輪換一次——剛才是齒輪在上，現在是新月。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "那鐘塔不是在報時，是在編碼訊息……而這三枚懷錶，是解密的鑰匙。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧氣忽然為之一縮，鐘塔頂部的金屬指標劇烈顫動，隨後定格——眼睛符號正對著時光鐘錶行的方向。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "訊息完整了。齒輪代表機關，新月代表時間，眼睛代表觀察……有人想告訴我們，真相就在『被觀察的時間』裡。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "她將懷錶按正確順序——齒輪、新月、眼睛——併置在桌中央，瞬間，三枚懷錶內部簧片同步彈出，一張泛黃紙張從機械縫隙中彈出。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "是城堡地底的老鐘機圖紙……標註著『鐘心』的位置，就在鐘塔底部的密室。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧港的鐘聲再次低鳴，這次不是錯誤的觸發，而是深沉的共鳴，彷彿整座城市在鬆一口氣。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "地底密室的鐵門緩緩開啟，銹蝕的齒輪開始轉動，第一次在十多年後，霧港的時間重新流動。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "你做到了，偵探先生。不是靠運氣，是靠看見別人看不見的東西。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "fog",
+    "options": [],
+    "state_changes": {
+     "affection": {
+      "林映月": 2
+     },
+     "flags_add": [
+      "case_solved"
+     ],
+     "items_add": [
+      "鐘機圖紙"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "阿澈解開符號順序之謎，發現鐘塔在傳遞機關-時間-觀察的訊息，進而定位到鐘塔底部的密室，成功啟動城市時間，達成結局目標。",
+    "ending": {
+     "type": "good",
+     "title": "時鐘再鳴"
+    }
+   },
+   "state": {
+    "affection": {
+     "林映月": 5
+    },
+    "flags": [
+     "met_lin_yue",
+     "accepted_case",
+     "entered_shop",
+     "saw_symbols",
+     "found_symbol_sequence",
+     "case_solved"
+    ],
+    "items": [
+     "委託書",
+     "鐘機圖紙"
+    ]
+   },
+   "summary": [
+    "阿澈抵達霧港霧鐘廣場，會見委託人林映月，雙方確認合作關係，準備著手調查鐘錶停擺之謎。",
+    "阿澈跟隨林映月進入時光鐘錶行，發現桌上三枚停擺懷錶內側刻有神秘符號。",
+    "阿澈發現三枚懷錶內側符號順序各異，推測為刻意編碼；店內大鐘異常鳴響，林映月指出城央鐘塔正在傳遞訊號。",
+    "阿澈解開符號順序之謎，發現鐘塔在傳遞機關-時間-觀察的訊息，進而定位到鐘塔底部的密室，成功啟動城市時間，達成結局目標。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-super-120b-a12b",
+   "repair_notes": [],
+   "id": "n_0014",
+   "children": [],
+   "created_at": "2026-09-25T18:21:32+08:00"
+  }
+ }
+}

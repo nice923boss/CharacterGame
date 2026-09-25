@@ -1,0 +1,60 @@
+{
+ "id": "g_20260925_114135",
+ "created_at": "2026-09-25T11:41:35+08:00",
+ "seed": 197797855,
+ "title": "澪市夜燈謎",
+ "style_en": "2080s fantasy water city, floating bridges and towers, gentle melancholy atmosphere, bioluminescent lights, rising sea level",
+ "world": {
+  "era": "2080 年，海平面上升後的水上城市",
+  "place": "浮橋與高塔連成的水都「澪市」",
+  "genre": "奇幻解謎",
+  "tone": "溫柔、帶點寂寞",
+  "extra": "城市每晚都有一座塔的燈無故熄滅"
+ },
+ "protagonist": {
+  "name": "凪",
+  "profile": "剛搬來的郵差，負責在浮橋之間送信"
+ },
+ "characters": [
+  {
+   "id": "c1",
+   "name": "白瀨雪乃",
+   "appearance": "17 歲少女，白色長髮及腰，淺藍瞳色，白色連身裙外罩淺灰色雨衣，胸前別著銀色羽毛胸針",
+   "personality": "天真好奇，有點怕黑",
+   "speech": "語尾常帶「呢」，說話輕快",
+   "relationship": "主角的鄰居，塔燈守護人的孫女",
+   "appearance_en": "17-year-old girl, white long hair to waist, pale blue eyes, white dress under light gray raincoat, silver feather brooch",
+   "seed": 197797872
+  },
+  {
+   "id": "c2",
+   "name": "韓拓",
+   "appearance": "30 歲男性，黑色短髮，右眼戴單片眼鏡，深綠色長大衣配皮革背帶，黑色手套",
+   "personality": "冷靜毒舌但可靠",
+   "speech": "句子簡短，常用反問",
+   "relationship": "水路管理局調查員，懷疑主角",
+   "appearance_en": "30-year-old man, black short hair, monocle on right eye, dark green long coat with leather harness, black gloves",
+   "seed": 197797889
+  }
+ ],
+ "scenes": {
+  "mio_bridge_night": {
+   "name": "澪市主浮橋",
+   "image_prompt": "floating bridge of Mio City at night, bioluminescent lanterns reflected on dark water, one distant tower light mysteriously extinguished, gentle mist, soft moonlight, melancholic atmosphere"
+  },
+  "east_tower_base": {
+   "name": "城東熄燈高塔塔基",
+   "image_prompt": "massive abandoned lighthouse tower base at night, wet stone platform surrounded by dark water, rusted metal stairs spiraling upward, broken lantern room at top, faint bioluminescent algae glow on pilings, heavy mist, moonlight barely piercing clouds"
+  },
+  "sewer_entrance": {
+   "name": "地下水道入口",
+   "image_prompt": "A dark, damp underground canal entrance beneath a ruined tower at night. Stone arches covered in moss and salt crystals. Black water reflecting faint moonlight. Rusty iron ladder descending into darkness. Mist rising from water surface. Gloomy, mysterious atmosphere."
+  },
+  "sewer_core_chamber": {
+   "name": "地下核心室",
+   "image_prompt": "A vast cylindrical underground chamber, concrete walls lined with massive copper busbars and transformer banks, dim blue-green bioluminescent algae glowing on damp surfaces, a central control console flickering with damaged screens, water cascading from pipes into a dark pool, industrial sci-fi atmosphere, cold muted lighting"
+  }
+ },
+ "first_scene": "mio_bridge_night",
+ "setup_model": "nvidia/nemotron-3-ultra-550b-a55b"
+}

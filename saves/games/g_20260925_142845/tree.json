@@ -1,0 +1,962 @@
+{
+ "root": "n_0000",
+ "next": 8,
+ "nodes": {
+  "n_0000": {
+   "parent": null,
+   "scene_id": "night_market_entrance_dusk",
+   "player_input": {
+    "kind": "opening",
+    "text": ""
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "黃昏的餘暉灑在臺南這條有六十年歷史的老夜市入口，紅磚拱門上「福安宮夜市」四個大字被時間洗刷得泛黃，卻依然挺立。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "空氣裡飄散著蚵仔煎的蛋香、滷肉飯的濃鬱、剉冰的糖水甜氣，混雜著機車排氣聲與喧嘩聲，熱鬧得讓人心安。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿佑拎著兩箱還沒拆封的即食麵站在拱門下，西裝褲腳沾了點油漬，臉上掛著剛辭職後特有的輕鬆與一絲彷徨。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "嘿！阿佑仔，愣在門口做啥？想當門神啊？阿嬤的蚵仔煎攤還缺人剝蚵呢，快過來！"
+    },
+    {
+     "kind": "character",
+     "speaker": "杜蘭",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Excuse me，這位先生。Perfect location for a franchise flagship store，don't you think? 我是杜蘭，Golden Spoon Group 的總廚。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "none",
+    "options": [
+     "「小葵，我回來了！先讓我喘口氣。」",
+     "「杜蘭主廚，這夜市不賣。」轉身進去",
+     "「兩位別吵，我先去阿嬤攤位看看。」"
+    ],
+    "state_changes": {
+     "affection": {
+      "小葵": 1
+     },
+     "flags_add": [
+      "first_meeting"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿佑回到家鄉夜市，在入口遇到青梅竹馬小葵與連鎖集團主廚杜蘭，雙方對峙氣氛初現。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "小葵": 1,
+     "杜蘭": 0
+    },
+    "flags": [
+     "first_meeting"
+    ],
+    "items": []
+   },
+   "summary": [
+    "阿佑回到家鄉夜市，在入口遇到青梅竹馬小葵與連鎖集團主廚杜蘭，雙方對峙氣氛初現。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0000",
+   "children": [
+    "n_0001"
+   ],
+   "created_at": "2026-09-25T14:28:56+08:00"
+  },
+  "n_0001": {
+   "parent": "n_0000",
+   "scene_id": "night_market_entrance_dusk",
+   "player_input": {
+    "kind": "option",
+    "text": "「杜蘭主廚，這夜市不賣。」轉身進去"
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "杜蘭",
+     "char_id": "c2",
+     "expr": "surprised",
+     "text": "什麼？這傢伙完全無視我的 Perfect proposal..."
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "乾脆俐落！阿佑仔你終於學會不理那種自以為是的「金湯匙」了！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "杜蘭愣在原地，手裡的名片還維持遞出去的姿勢，金色湯匙徽章在路燈初亮時閃了閃光。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "還不快走？阿嬤在那邊瞪大眼等你剝蚵很久了，再遲蚵仔都要被別人買光啦！"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿佑",
+     "char_id": null,
+     "expr": "calm",
+     "text": "走，去剝蚵。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "none",
+    "options": [
+     "一邊剝蚵一邊問小葵大賽細節",
+     "先去阿嬤攤位報到，順便偷吃一顆蚵仔",
+     "轉頭瞄一眼杜蘭有沒有跟上來"
+    ],
+    "state_changes": {
+     "affection": {
+      "小葵": 2,
+      "杜蘭": -1
+     },
+     "flags_add": [
+      "rejected_duelan"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿佑拒絕杜蘭的收購提議，在小葵催促下轉身走進夜市準備幫阿嬤剝蚵。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "小葵": 3,
+     "杜蘭": -1
+    },
+    "flags": [
+     "first_meeting",
+     "rejected_duelan"
+    ],
+    "items": []
+   },
+   "summary": [
+    "阿佑回到家鄉夜市，在入口遇到青梅竹馬小葵與連鎖集團主廚杜蘭，雙方對峙氣氛初現。",
+    "阿佑拒絕杜蘭的收購提議，在小葵催促下轉身走進夜市準備幫阿嬤剝蚵。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0001",
+   "children": [
+    "n_0002"
+   ],
+   "created_at": "2026-09-25T14:29:30+08:00"
+  },
+  "n_0002": {
+   "parent": "n_0001",
+   "scene_id": "night_market_entrance_dusk",
+   "player_input": {
+    "kind": "option",
+    "text": "轉頭瞄一眼杜蘭有沒有跟上來"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿佑剛轉過身，餘光瞥見杜蘭仍站在拱門下，雙手抱胸、金色油頭在路燈下一絲不亂，冰藍色眼睛直盯著這邊，嘴角掛著一抹若有若無的微笑。"
+    },
+    {
+     "kind": "character",
+     "speaker": "杜蘭",
+     "char_id": "c2",
+     "expr": "smile",
+     "text": "有趣，Really interesting。這場 Game，我接受了。期待在廚房見，Mr. Nobody。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "surprised",
+     "text": "咦？那傢伙怎麼還不走？還在對著這邊笑耶，超毛的啦！"
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "angry",
+     "text": "阿佑仔別管他！快跟我進去，阿嬤的眼神殺人啦！"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿佑",
+     "char_id": null,
+     "expr": "calm",
+     "text": "知道了，別吵了，走囉。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "none",
+    "options": [
+     "跟上小葵腳步往夜市深處走",
+     "回頭對杜蘭揮揮手說「期待」",
+     "偷偷問小葵杜蘭到底是何方神聖",
+     "掏出手機拍張杜蘭的背影發給朋友吐槽"
+    ],
+    "state_changes": {
+     "affection": {
+      "小葵": 1
+     },
+     "flags_add": [
+      "duelan_challenge_accepted"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿佑確認杜蘭仍停留在入口並宣示將在大賽見面，小葵催促阿佑趕緊進夜市幫阿嬤剝蚵。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "小葵": 4,
+     "杜蘭": -1
+    },
+    "flags": [
+     "first_meeting",
+     "rejected_duelan",
+     "duelan_challenge_accepted"
+    ],
+    "items": []
+   },
+   "summary": [
+    "阿佑回到家鄉夜市，在入口遇到青梅竹馬小葵與連鎖集團主廚杜蘭，雙方對峙氣氛初現。",
+    "阿佑拒絕杜蘭的收購提議，在小葵催促下轉身走進夜市準備幫阿嬤剝蚵。",
+    "阿佑確認杜蘭仍停留在入口並宣示將在大賽見面，小葵催促阿佑趕緊進夜市幫阿嬤剝蚵。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0002",
+   "children": [
+    "n_0003"
+   ],
+   "created_at": "2026-09-25T14:29:41+08:00"
+  },
+  "n_0003": {
+   "parent": "n_0002",
+   "scene_id": "night_market_entrance_dusk",
+   "player_input": {
+    "kind": "free",
+    "text": "我去請教阿嬤蚵仔煎醬汁的祖傳祕方。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "兩人穿過拱門，腳下紅磚路被無數腳步磨得發亮，兩側攤位亮起暖黃燈泡，煙火氣撲面而來。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "小葵熟門熟路地繞過排隊人潮，把阿佑推進巷弄深處那間招牌褪色成淡綠色的「阿嬤蚵仔煎」。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "阿嬤——！阿佑仔來報到了！剝蚵專員上線囉！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "廚房裡傳來鐵鏟敲擊鑄鐵平底鍋的清脆聲響，一位白髮短髮老婦正熟練地翻動蚵仔煎，油花在火舌上跳躍。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "喔——阿佑回來啦？手腳麻利點，蚵仔在藍盆，殼丟綠桶，汁水別灑地上。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿佑",
+     "char_id": null,
+     "expr": "calm",
+     "text": "好嘞阿嬤，我先洗手。不過……想請教您那碗醬汁的祖傳秘方。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "秘方？哈！秘方就寫在你腦袋瓜裡啊——看火候、聽聲音、聞味道，心誠則靈，別偷懶！"
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "哈哈！阿嬤說得對，阿佑仔你還是老實剝蚵比較快，想學秘方等贏了大賽再說啦！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "老婦眼神銳利地掃過阿佑手邊動作，嘴角卻彎起一抹不易察覺的笑意，繼續專注翻盤。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "none",
+    "options": [
+     "專心剝蚵，側耳聽阿嬤炒鍋的節奏",
+     "趁機問阿嬤關於夜市大賽的事",
+     "偷偷觀察隔壁剉冰攤小葵的忙碌樣子",
+     "掏出手機拍張阿嬤炒蚵仔煎的照片留念"
+    ],
+    "state_changes": {
+     "affection": {
+      "小葵": 1
+     },
+     "flags_add": [
+      "asked_secret_sauce"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿佑進入夜市深處的阿嬤蚵仔煎攤，向阿嬤請教醬汁秘方，阿嬤以「心誠則靈」回應，小葵在一旁打圃。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "小葵": 5,
+     "杜蘭": -1
+    },
+    "flags": [
+     "first_meeting",
+     "rejected_duelan",
+     "duelan_challenge_accepted",
+     "asked_secret_sauce"
+    ],
+    "items": []
+   },
+   "summary": [
+    "阿佑回到家鄉夜市，在入口遇到青梅竹馬小葵與連鎖集團主廚杜蘭，雙方對峙氣氛初現。",
+    "阿佑拒絕杜蘭的收購提議，在小葵催促下轉身走進夜市準備幫阿嬤剝蚵。",
+    "阿佑確認杜蘭仍停留在入口並宣示將在大賽見面，小葵催促阿佑趕緊進夜市幫阿嬤剝蚵。",
+    "阿佑進入夜市深處的阿嬤蚵仔煎攤，向阿嬤請教醬汁秘方，阿嬤以「心誠則靈」回應，小葵在一旁打圃。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0003",
+   "children": [
+    "n_0004"
+   ],
+   "created_at": "2026-09-25T14:30:00+08:00"
+  },
+  "n_0004": {
+   "parent": "n_0003",
+   "scene_id": "night_market_entrance_dusk",
+   "player_input": {
+    "kind": "option",
+    "text": "專心剝蚵，側耳聽阿嬤炒鍋的節奏"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿佑捲起袖口，雙手浸入冰涼的海水盆中，指尖熟練地扣住蚵仔邊緣一扭一拉，鮮嫩的蚵肉乾淨脫殼落入旁邊的不鏽鋼盆，空殼拋入綠桶發出悶響。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "鑄鐵平底鍋裡，豬油與高湯發出「滋啦──」的低沉吟唱，阿嬤的鐵鏟以固定頻率敲擊鍋緣——一下、兩下、三下翻面，節奏精準得像節拍器。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "嘿，阿佑仔你還真上道！剝蚵的手法比上次進步不少喔，有沒有偷偷在臺北練過？"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿佑",
+     "char_id": null,
+     "expr": "calm",
+     "text": "哪有，只是不想被阿嬤念「手腳不麻利」。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿嬤不回頭，只聽鍋裡油聲轉銳，她沉穩開口：火候到，倒醬、撒粉、蓋蛋、數三息——聽見蛋液凝固的「嘶──」聲才能起鍋，慢半秒老、快半秒生。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "哇賽，阿嬤這招「聽聲音下料」是絕活耶！阿佑仔你記下來了沒？這可是比秘方還貴的經驗值！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "夜市喧囂在耳邊遠去，阿佑指尖沾著鹹濕蚵汁，卻彷彿握住了某個無聲的密碼，隨著鍋裡節奏，心跳也慢了下來。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "none",
+    "options": [
+     "向阿嬤請教翻鍋時機",
+     "跟小葵聊大賽細節",
+     "繼續專心剝蚵不發一語",
+     "偷偷嘗一口剛出鍋的蚵仔煎"
+    ],
+    "state_changes": {
+     "affection": {
+      "小葵": 1
+     },
+     "flags_add": [
+      "learned_rhythm"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿佑專心剝蚵並側耳記下阿嬤炒鍋節奏與關鍵聲音提示，小葵在旁打氣。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "小葵": 6,
+     "杜蘭": -1
+    },
+    "flags": [
+     "first_meeting",
+     "rejected_duelan",
+     "duelan_challenge_accepted",
+     "asked_secret_sauce",
+     "learned_rhythm"
+    ],
+    "items": []
+   },
+   "summary": [
+    "阿佑回到家鄉夜市，在入口遇到青梅竹馬小葵與連鎖集團主廚杜蘭，雙方對峙氣氛初現。",
+    "阿佑拒絕杜蘭的收購提議，在小葵催促下轉身走進夜市準備幫阿嬤剝蚵。",
+    "阿佑確認杜蘭仍停留在入口並宣示將在大賽見面，小葵催促阿佑趕緊進夜市幫阿嬤剝蚵。",
+    "阿佑進入夜市深處的阿嬤蚵仔煎攤，向阿嬤請教醬汁秘方，阿嬤以「心誠則靈」回應，小葵在一旁打圃。",
+    "阿佑專心剝蚵並側耳記下阿嬤炒鍋節奏與關鍵聲音提示，小葵在旁打氣。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0004",
+   "children": [
+    "n_0005"
+   ],
+   "created_at": "2026-09-25T14:30:18+08:00"
+  },
+  "n_0005": {
+   "parent": "n_0004",
+   "scene_id": "night_market_entrance_dusk",
+   "player_input": {
+    "kind": "free",
+    "text": "我和小葵把剉冰攤的古早味糖水加進醬汁，研發新版蚵仔煎。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿嬤那盤完美的蚵仔煎剛出鍋，熱氣騰騰地滑進白瓷盤，醬汁在燈光下泛著誘人的琥珀光澤。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "阿佑仔！剛剛阿嬤那招「聽聲音下料」妳有沒有偷學到？我覺得妳腦袋瓜現在還在嗡嗡響耶！"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿佑",
+     "char_id": null,
+     "expr": "calm",
+     "text": "記下一大半了，火候、節奏、那個「嘶──」聲的時機點……不過光會煎還不夠，得想辦法讓醬汁更有層次。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "層次？妳想怎麼搞？難道要去偷杜蘭那傢伙的分子料理筆記？"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "小葵突然眼睛一亮，拍拍手跑向自家剉冰攤，不久端著一罈琥珀濃稠的古早味糖水回來，罈口還繫著紅繩。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "來！這是阿嬤剉冰攤的鎮攤之寶——純手熬紅棗桂圓紅糖水，零新增、超濃鬱！妳說……加進蚵仔煎醬汁裡會不會很神？"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿佑",
+     "char_id": null,
+     "expr": "calm",
+     "text": "紅棗桂圓紅糖水？甜鹹對衝、焦糖風味包裹海味……這主意瘋得剛好！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "兩人在狹窄後廚忙得團團轉，阿佑調整醬油高湯比例，小葵負責試味、遞勺、還不時偷喝一口糖水，笑聲混著油煙味飄滿巷弄。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "none",
+    "options": [
+     "專心測試新醬汁配方，記錄每一版比例",
+     "拉小葵去偷看杜蘭的大賽備戰狀況",
+     "趁熱端一盤新版蚵仔煎給阿嬤試吃",
+     "先把剝好的蚵仔存妥，明早再繼續研發"
+    ],
+    "state_changes": {
+     "affection": {
+      "小葵": 2
+     },
+     "flags_add": [
+      "new_sauce_experiment"
+     ],
+     "items_add": [
+      "紅棗桂圓紅糖水",
+      "實驗版蚵仔煎醬汁筆記"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "阿佑與小葵在後廚合作，將剉冰攤的古早味紅棗桂圓紅糖水加入蚵仔煎醬汁研發新口味，氣氛熱鬧溫馨。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "小葵": 8,
+     "杜蘭": -1
+    },
+    "flags": [
+     "first_meeting",
+     "rejected_duelan",
+     "duelan_challenge_accepted",
+     "asked_secret_sauce",
+     "learned_rhythm",
+     "new_sauce_experiment"
+    ],
+    "items": [
+     "紅棗桂圓紅糖水",
+     "實驗版蚵仔煎醬汁筆記"
+    ]
+   },
+   "summary": [
+    "阿佑回到家鄉夜市，在入口遇到青梅竹馬小葵與連鎖集團主廚杜蘭，雙方對峙氣氛初現。",
+    "阿佑拒絕杜蘭的收購提議，在小葵催促下轉身走進夜市準備幫阿嬤剝蚵。",
+    "阿佑確認杜蘭仍停留在入口並宣示將在大賽見面，小葵催促阿佑趕緊進夜市幫阿嬤剝蚵。",
+    "阿佑進入夜市深處的阿嬤蚵仔煎攤，向阿嬤請教醬汁秘方，阿嬤以「心誠則靈」回應，小葵在一旁打圃。",
+    "阿佑專心剝蚵並側耳記下阿嬤炒鍋節奏與關鍵聲音提示，小葵在旁打氣。",
+    "阿佑與小葵在後廚合作，將剉冰攤的古早味紅棗桂圓紅糖水加入蚵仔煎醬汁研發新口味，氣氛熱鬧溫馨。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0005",
+   "children": [
+    "n_0006"
+   ],
+   "created_at": "2026-09-25T14:30:55+08:00"
+  },
+  "n_0006": {
+   "parent": "n_0005",
+   "scene_id": "night_market_entrance_dusk",
+   "player_input": {
+    "kind": "option",
+    "text": "趁熱端一盤新版蚵仔煎給阿嬤試吃"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "實驗版醬汁在鍋邊咕嘟冒泡，紅棗桂圓的焦糖香氣與蚵仔鮮味在蒸汽中纏繞，聞起來竟有種「古早味也能很前衛」的奇妙和諧。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "好啦好啦！比例鎖定、火候也對了，阿佑仔妳快煎一盤、我去拿乾淨盤子——阿嬤在那邊瞪著呢，別讓她等太久！"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿佑",
+     "char_id": null,
+     "expr": "calm",
+     "text": "成交，這盤上桌。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿佑熟練倒漿、撒粉、灑蚵、淋蛋，聽著那聲熟悉的「嘶──」精準起鍋，熱騰騰的新版蚵仔煎滑進白瓷盤，琥珀醬汁濃稠掛滿邊緣，紅糖光澤在燈下閃著誘人微光。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "阿嬤——！新口味「紅糖古早蚵」上桌囉！剝蚵專員兼研發副理阿佑仔親手煎，保證讓妳吃完想換我繼承剉冰攤！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "老婦放下鐵鏟，拈起筷子夾起一塊咬下，細嚼幾下後眉頭微動，嘴角緩緩上揚成一抹極淺的弧度。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "不錯……紅糖收住了蚵仔腥氣、桂圓甜香又沒蓋過海味，這丫頭的點子、這小子的手藝，都長進了。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "嘿！阿嬤說「不錯」耶！這等於發大財、中頭獎、免費剉冰一輩子啦！"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿佑",
+     "char_id": null,
+     "expr": "calm",
+     "text": "謝謝阿嬤。這只是起頭，大賽還得再精進。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "老婦瞥了阿佑一眼，語氣平淡卻藏著重擔：大賽在後天，集團派人明天會來量場地、壓價格、鬧版面，你們要贏、還要守住攤位，別讓我這把老骨頭白熬了六十年。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "none",
+    "options": [
+     "回應阿嬤：我們一定贏，守住攤位。",
+     "詢問阿嬤對集團手段的具體擔憂。",
+     "拉小葵偷偷商量應對明天量場地的對策。",
+     "先吃一口自己煎的新版蚵仔煎冷靜一下。"
+    ],
+    "state_changes": {
+     "affection": {
+      "小葵": 1
+     },
+     "flags_add": [
+      "grandma_approved_new_sauce",
+      "competition_in_two_days"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿佑與小葵研發出加入紅棗桂圓紅糖水的新版蚵仔煎，獲阿嬤肯定；阿嬤透露大賽在後天，明天集團將來量場地施壓。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "小葵": 9,
+     "杜蘭": -1
+    },
+    "flags": [
+     "first_meeting",
+     "rejected_duelan",
+     "duelan_challenge_accepted",
+     "asked_secret_sauce",
+     "learned_rhythm",
+     "new_sauce_experiment",
+     "grandma_approved_new_sauce",
+     "competition_in_two_days"
+    ],
+    "items": [
+     "紅棗桂圓紅糖水",
+     "實驗版蚵仔煎醬汁筆記"
+    ]
+   },
+   "summary": [
+    "阿佑回到家鄉夜市，在入口遇到青梅竹馬小葵與連鎖集團主廚杜蘭，雙方對峙氣氛初現。",
+    "阿佑拒絕杜蘭的收購提議，在小葵催促下轉身走進夜市準備幫阿嬤剝蚵。",
+    "阿佑確認杜蘭仍停留在入口並宣示將在大賽見面，小葵催促阿佑趕緊進夜市幫阿嬤剝蚵。",
+    "阿佑進入夜市深處的阿嬤蚵仔煎攤，向阿嬤請教醬汁秘方，阿嬤以「心誠則靈」回應，小葵在一旁打圃。",
+    "阿佑專心剝蚵並側耳記下阿嬤炒鍋節奏與關鍵聲音提示，小葵在旁打氣。",
+    "阿佑與小葵在後廚合作，將剉冰攤的古早味紅棗桂圓紅糖水加入蚵仔煎醬汁研發新口味，氣氛熱鬧溫馨。",
+    "阿佑與小葵研發出加入紅棗桂圓紅糖水的新版蚵仔煎，獲阿嬤肯定；阿嬤透露大賽在後天，明天集團將來量場地施壓。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0006",
+   "children": [
+    "n_0007"
+   ],
+   "created_at": "2026-09-25T14:31:25+08:00"
+  },
+  "n_0007": {
+   "parent": "n_0006",
+   "scene_id": "night_market_entrance_dusk",
+   "player_input": {
+    "kind": "free",
+    "text": "決賽開始，我端出新版蚵仔煎，請評審和杜蘭一起試吃。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "兩天後午後，夜市廣場搭起簡易舞台，紅白帳棚下擺著三張長桌，評審席中央坐著美食版主編、在地老饕與一位神秘大胃王藝人，旁邊杜蘭穿著雪白主廚服、胸前金湯匙徽章閃得刺眼，嘴角掛著慣常的「Perfect」微笑。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "阿佑仔！深呼吸、肩膀鬆開！妳手裡那盤可是咱們熬兩個通宵、阿嬤點頭、連我剉冰攤招牌糖水都砸進去的「紅糖古早蚵」啊！"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿佑",
+     "char_id": null,
+     "expr": "calm",
+     "text": "好，上桌。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿佑雙手端著白瓷大盤走上評審臺，琥珀濃醬在燈光下泛著絲絲拉拉的光澤，蚵仔邊緣酥脆鎖住海味，紅糖焦香與桂圓甜韻在蒸汽中纏繞，連杜蘭鼻翼都微微翕動了一下。"
+    },
+    {
+     "kind": "character",
+     "speaker": "杜蘭",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Hmm……Interesting aroma. Caramelized red dates wrapping brine……a bold twist, Mr. Nobody. Let's see if the texture holds."
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "評審主編先夾一塊入口，眉頭微皺隨即舒展，點點頭示意旁人；老饕大叔閉眼細嚼，喉結滾動後竟露出罕見笑容；大胃王藝人更是直接夾第二塊，含糊不清喊著「這味道有層次！」杜蘭則優雅切下一小口，送入口中靜默三秒，冰藍眼眸閃過一絲訝異。"
+    },
+    {
+     "kind": "character",
+     "speaker": "杜蘭",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Not bad……Not bad at all. The sugar tames the brine without masking the oyster—clever balance. But「Perfect」……還差那麼一點火候紀律。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "嘿！差那一點是留給妳們明天再來吃的啦！贏了沒？快講贏了沒！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "主編拿起麥克風，目光掃過全場喧嘩：經綜合口味、創意與夜市傳承度，第一名——阿嬤蚵仔煎，「紅糖古早蚵」！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "歡呼聲炸開，鞭炮聲夾雜著掌聲衝上夜空，小葵一把抱住阿佑跳腳，連阿嬤站在人群後也難得揮了揮鐵鏟；杜蘭整理袖口，轉身走向出口，腳步未停卻丟下一句："
+    },
+    {
+     "kind": "character",
+     "speaker": "杜蘭",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "下次……I'll bring a Perfect counter. 期待。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小葵",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "阿佑仔！咱們贏了耶！夜市保住了！阿嬤的攤位、我的剉冰、妳的剝蚵專員證照……通通都在！"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿佑",
+     "char_id": null,
+     "expr": "calm",
+     "text": "還早呢，杜蘭說下次會帶「Perfect」回來，咱們得繼續變強。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "petals",
+    "options": [],
+    "state_changes": {
+     "affection": {
+      "小葵": 2,
+      "杜蘭": 1
+     },
+     "flags_add": [
+      "competition_won",
+      "duelan_vows_return"
+     ],
+     "items_add": [
+      "大賽冠軍獎狀",
+      "夜市攤位保護協議"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "阿佑端出新版蚵仔煎參賽，擊敗杜蘭贏得冠軍，保住阿嬤攤位；杜蘭承諾下次帶「Perfect」料理回來挑戰。",
+    "ending": {
+     "type": "good",
+     "title": "夜市守護者"
+    }
+   },
+   "state": {
+    "affection": {
+     "小葵": 11,
+     "杜蘭": 0
+    },
+    "flags": [
+     "first_meeting",
+     "rejected_duelan",
+     "duelan_challenge_accepted",
+     "asked_secret_sauce",
+     "learned_rhythm",
+     "new_sauce_experiment",
+     "grandma_approved_new_sauce",
+     "competition_in_two_days",
+     "competition_won",
+     "duelan_vows_return"
+    ],
+    "items": [
+     "紅棗桂圓紅糖水",
+     "實驗版蚵仔煎醬汁筆記",
+     "大賽冠軍獎狀",
+     "夜市攤位保護協議"
+    ]
+   },
+   "summary": [
+    "阿佑回到家鄉夜市，在入口遇到青梅竹馬小葵與連鎖集團主廚杜蘭，雙方對峙氣氛初現。",
+    "阿佑拒絕杜蘭的收購提議，在小葵催促下轉身走進夜市準備幫阿嬤剝蚵。",
+    "阿佑確認杜蘭仍停留在入口並宣示將在大賽見面，小葵催促阿佑趕緊進夜市幫阿嬤剝蚵。",
+    "阿佑進入夜市深處的阿嬤蚵仔煎攤，向阿嬤請教醬汁秘方，阿嬤以「心誠則靈」回應，小葵在一旁打圃。",
+    "阿佑專心剝蚵並側耳記下阿嬤炒鍋節奏與關鍵聲音提示，小葵在旁打氣。",
+    "阿佑與小葵在後廚合作，將剉冰攤的古早味紅棗桂圓紅糖水加入蚵仔煎醬汁研發新口味，氣氛熱鬧溫馨。",
+    "阿佑與小葵研發出加入紅棗桂圓紅糖水的新版蚵仔煎，獲阿嬤肯定；阿嬤透露大賽在後天，明天集團將來量場地施壓。",
+    "阿佑端出新版蚵仔煎參賽，擊敗杜蘭贏得冠軍，保住阿嬤攤位；杜蘭承諾下次帶「Perfect」料理回來挑戰。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "petals",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0007",
+   "children": [],
+   "created_at": "2026-09-25T14:31:41+08:00"
+  }
+ }
+}

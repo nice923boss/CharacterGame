@@ -1,0 +1,2829 @@
+{
+ "root": "n_0000",
+ "next": 24,
+ "nodes": {
+  "n_0000": {
+   "parent": null,
+   "scene_id": "mio_bridge_night",
+   "player_input": {
+    "kind": "opening",
+    "text": ""
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "夜色如墨，澪市的主浮橋在微光中輕晃，腳下是無盡的黑水，四周塔燈稀疏閃爍，唯有遠處一座高塔的頂端燈火早已熄滅，沉入陰影裡。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪剛遷入這座水上城市，作為新來的郵差，腳下的浮橋便是每日必經的路。潮風帶著鹹味與濕氣，遠處傳來輕微的浪拍聲，彷彿在低聲吟唱著什麼古老的謠言。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "嘿，新來的郵差先生，這麼晚還在橋上發呆呢？是迷路了，還是被塔燈熄滅的傳聞嚇到了呢？"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "向白瀨雪乃自我介紹並詢問塔燈傳聞",
+     "禮貌回應後繼續趕路送信",
+     "觀察四周詢問是否見過可疑人影"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [
+      "met_shirano"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 1,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0000",
+   "children": [
+    "n_0001"
+   ],
+   "created_at": "2026-09-25T11:42:29+08:00"
+  },
+  "n_0001": {
+   "parent": "n_0000",
+   "scene_id": "mio_bridge_night",
+   "player_input": {
+    "kind": "option",
+    "text": "禮貌回應後繼續趕路送信"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪微微頷首，嘴角浮起一抹禮貌的微笑，向白瀨雪乃道了聲謝後，便加快腳步沿著浮橋繼續前行。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "潮風拂過雨衣，帶來一陣鹹濕的涼意，腳下的木板隨著浪勢輕輕起伏，發出細微的吱呀聲。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "郵差先生慢走呢！如果看見熄滅的塔燈別害怕哦，說不定它只是睡著了呢！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女清脆的聲音在夜風中飄遠，凪沒有回頭，只是揚了揚手中的信包，腳步沈穩地踏向前方朦朧的燈影。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "calm",
+    "weather": "none",
+    "options": [
+     "檢視信封上的地址確認下一站",
+     "觀察四周熄滅塔燈的具體位置",
+     "加快腳步想早點結束今晚的路線"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 2,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。"
+   ],
+   "bgm_mood": "calm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0001",
+   "children": [
+    "n_0002"
+   ],
+   "created_at": "2026-09-25T11:43:04+08:00"
+  },
+  "n_0002": {
+   "parent": "n_0001",
+   "scene_id": "mio_bridge_night",
+   "player_input": {
+    "kind": "option",
+    "text": "加快腳步想早點結束今晚的路線"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪收緊背帶，腳步明顯加快，木板在腳下發出急促而有節奏的悶響，信包隨著身勢輕輕擺動。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "塔燈稀疏地亮著，將影子拉得忽長忽短，遠處那座熄滅的高塔像根無聲的針，靜靜刺破夜空。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "潮風裹著細密水霧撲面而來，凪側身避過一陣較大的浪花，目光掃過橋邊的投遞箱——今晚還有三站，趕在潮汐轉向前送完便能回公寓休息。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "加油呢！郵差先生的背影看起來很可靠哦！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女的聲音從身後飄來，夾雜著幾分真誠的鼓勵，凪沒回頭，只揚了揚手，繼續向著下一盞燈火邁進。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "calm",
+    "weather": "none",
+    "options": [
+     "繼續趕往下一個投遞點",
+     "駐足望向那座熄滅的高塔",
+     "掏出手電筒檢查信件地址"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 3,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。"
+   ],
+   "bgm_mood": "calm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0002",
+   "children": [
+    "n_0003"
+   ],
+   "created_at": "2026-09-25T11:43:17+08:00"
+  },
+  "n_0003": {
+   "parent": "n_0002",
+   "scene_id": "mio_bridge_night",
+   "player_input": {
+    "kind": "option",
+    "text": "繼續趕往下一個投遞點"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪踏著穩健的步伐穿過主浮橋的中段，腳下的木板隨著深沉的浪律輕顫，遠處幾盞塔燈將路標照得忽明忽暗。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "潮風裹著細鹽吹散了少女的笑語，前方投遞箱的藍色反光條在霧氣中若隱若現，標示著今晚的第二站——「燈塔巷 7 號」。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "郵差先生，雨衣領口歪了呢！回頭幫你整一下嘛？"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪側身駐足，信包微晃，雨衣領口確實被風吹得翹起一角，露出裡頭深灰的襯衫邊緣。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "謝謝提醒，馬上就好。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪利落地整好領口，重新收緊背帶，目光掃過投遞箱上生鏽的編號牌，腳步再度啟動，朝著燈塔巷的方向邁去。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "calm",
+    "weather": "fog",
+    "options": [
+     "直接投遞信件並離開",
+     "在投遞箱旁稍作休息觀察四周",
+     "呼喚白瀨雪乃一起走",
+     "檢視信包裡是否有給燈塔巷的特別信件"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 4,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。"
+   ],
+   "bgm_mood": "calm",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0003",
+   "children": [
+    "n_0004"
+   ],
+   "created_at": "2026-09-25T11:43:26+08:00"
+  },
+  "n_0004": {
+   "parent": "n_0003",
+   "scene_id": "mio_bridge_night",
+   "player_input": {
+    "kind": "option",
+    "text": "直接投遞信件並離開"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪走近燈塔巷 7 號的投遞箱，將手中的信件精準投入箱口，金屬蓋板發出清脆的「喀噠」聲合上。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "完成投遞後，凪沒有停留，腳步輕快地轉身，沿著浮橋繼續向著下一個目的地邁進，身影漸漸融入夜色與霧氣之中。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "好利落呢！郵差先生連道別都不說一聲就跑啦？"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女的聲音從身後傳來，語氣帶著幾分無奈的寵溺，卻又在夜風中迅速被浪聲吞沒。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（下一站還有兩個……趕在潮汐轉向前送完吧。）"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "calm",
+    "weather": "fog",
+    "options": [
+     "繼續趕往下一個投遞點",
+     "回頭跟白瀨雪乃道別",
+     "檢查信包剩餘信件數量",
+     "觀察遠處熄滅的高塔"
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "delivered_lighthouse_alley_7"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 4,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。"
+   ],
+   "bgm_mood": "calm",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0004",
+   "children": [
+    "n_0005"
+   ],
+   "created_at": "2026-09-25T11:43:51+08:00"
+  },
+  "n_0005": {
+   "parent": "n_0004",
+   "scene_id": "mio_bridge_night",
+   "player_input": {
+    "kind": "option",
+    "text": "回頭跟白瀨雪乃道別"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪的腳步微微一頓，在浮板發出一聲悶響中緩緩轉過身，雨衣下擺被夜風捲起一角。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "謝謝妳的提醒，雪乃小姐。那我先走了，下次見。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "咦？這麼客氣反而怪怪的呢！下次要記得早點回來喔，我會留燈等你呢！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女揮著手，白色長髮在風中輕舞，胸前的銀色羽毛胸針折射著遠處塔燈的微光，閃爍如星。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪對著她輕颳一下手，隨即轉身大步流星地沿著浮橋消入霧色深處，只留下一串腳步聲隨浪聲逐漸變遠。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "fog",
+    "options": [
+     "繼續趕往下一個投遞點",
+     "駐足觀察熄滅的高塔",
+     "掏出手電筒檢查信包",
+     "靠在欄杆喘口氣看星空"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 5,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0005",
+   "children": [
+    "n_0006"
+   ],
+   "created_at": "2026-09-25T11:44:01+08:00"
+  },
+  "n_0006": {
+   "parent": "n_0005",
+   "scene_id": "east_tower_base",
+   "player_input": {
+    "kind": "free",
+    "text": "我們別待在這裡了，一起去城東那座熄燈的高塔看看。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪的腳步在浮橋盡頭驟然停住，雨靴邊緣懸在最後一塊木板之外，腳下黑水無聲拍打著支柱。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "遠處城東那座熄燈高塔如同巨大的廢棄燈籠，剪影吞沒了星光，只有最頂層的觀測窗偶爾反射著別處塔燈的殘輝。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "咦？郵差先生要去那邊呢？那座塔的燈已經熄滅好幾晚了哦，連爺爺都說「它不想醒來了」呢。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "不過……如果是郵差先生要去，雪乃也想跟去看看呢！反正今晚沒有投遞任務了嘛。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "既然妳也想去，那就一起吧。順路把妳送回家，再往塔那邊走。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女眼中的藍眸亮了一下，隨即用力點頭，白色長髮在夜風中甩出一道銀弧，胸前羽毛胸針在微光中閃爍。"
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "east_tower_base",
+     "name": "城東熄燈高塔塔基",
+     "image_prompt": "massive abandoned lighthouse tower base at night, wet stone platform surrounded by dark water, rusted metal stairs spiraling upward, broken lantern room at top, faint bioluminescent algae glow on pilings, heavy mist, moonlight barely piercing clouds"
+    },
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "沿著生鏽鋼梯攀爬至塔頂觀測窗",
+     "繞塔基尋找地面入口或線索",
+     "先讓雪乃在塔基避風，獨自先行偵查",
+     "掏出手電筒照向塔身，尋找熄燈原因的痕跡"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 2
+     },
+     "flags_add": [
+      "tower_exploration_start"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 7,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0006",
+   "children": [
+    "n_0007",
+    "n_0022",
+    "n_0023"
+   ],
+   "created_at": "2026-09-25T11:44:10+08:00"
+  },
+  "n_0007": {
+   "parent": "n_0006",
+   "scene_id": "east_tower_base",
+   "player_input": {
+    "kind": "option",
+    "text": "掏出手電筒照向塔身，尋找熄燈原因的痕跡"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪從雨衣內袋摸出手電筒，按下開關，一道窄窄的白光刺破夜霧，順著塔身向上掃去。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "光束所及，鏽蝕的鋼骨架、斑駁的磚石縫隙、斷裂的纜索一一顯現，塔身表面佈滿鹽結晶，在強光下泛著慘白的微光。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "哇……好高呢，光柱都照不到頂呢！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女仰頭，白色長髮貼在臉頰，藍眸倒映著手電筒的光暈，聲音裡混著幾分敬畏與顫抖。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "塔身結構沒明顯損毀……燈室在最頂層，得找維護梯或內部通道。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪收回光束，在塔基四周巡照，終於在陰影深處發現一扇生鏽的鐵門，門框刻著褪色的「維護專用」四字，鎖鏈垂在地上，鎖頭早已斷裂。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "門、門開著呢！郵差先生，我們要進去嗎？"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "推門進入塔內",
+     "先讓雪乃待在門口，自己先偵查",
+     "用手電筒照向塔頂方向，確認燈室位置",
+     "檢查門邊是否有線索或記號"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [
+      "found_maintenance_door"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪用手電筒檢視塔身，發現維護門敞開，兩人準備進入塔內探查熄燈原因。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 8,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start",
+     "found_maintenance_door"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。",
+    "凪用手電筒檢視塔身，發現維護門敞開，兩人準備進入塔內探查熄燈原因。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0007",
+   "children": [
+    "n_0008"
+   ],
+   "created_at": "2026-09-25T11:44:25+08:00"
+  },
+  "n_0008": {
+   "parent": "n_0007",
+   "scene_id": "east_tower_base",
+   "player_input": {
+    "kind": "option",
+    "text": "推門進入塔內"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪握住生鏽門把，用力一推，鐵門發出刺耳的嘎吱聲，向內敞開一道足夠通行的縫隙，冷濕的氣流夾雜著機油與鹽漬味撲面而來。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "手電筒光束探入門內，映出一條螺旋向上的鋼鐵樓梯，扶手斑駁脫漆，階梯積著薄薄淤泥，牆壁每隔幾米便掛著一盞早已熄滅的應急燈。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "好、好暗呢……郵差先生，雪乃緊跟著你哦！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女縮著脖子貼上凪的後背，雨衣帽簷低垂，指尖輕抓著凪的衣角，呼吸聲在狹窄通道裡顯得格外清晰。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "扶好欄杆，階梯打滑。有異常立刻說。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪將手電筒改為照向腳下，領頭踏上第一級階梯，金屬空心聲在塔筒內層層疊疊，像極了某種倒數的節拍。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "none",
+    "options": [
+     "繼續沿樓梯向上探索",
+     "在樓梯平台處停下檢查牆壁",
+     "詢問雪乃爺爺說的「它不想醒來」是什麼意思",
+     "關掉手電筒靜聽塔內聲音"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [
+      "entered_tower"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪推開維護門帶著白瀨雪乃進入塔內，發現螺旋樓梯通向上方，兩人開始向上探索。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 9,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start",
+     "found_maintenance_door",
+     "entered_tower"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。",
+    "凪用手電筒檢視塔身，發現維護門敞開，兩人準備進入塔內探查熄燈原因。",
+    "凪推開維護門帶著白瀨雪乃進入塔內，發現螺旋樓梯通向上方，兩人開始向上探索。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0008",
+   "children": [
+    "n_0009"
+   ],
+   "created_at": "2026-09-25T11:44:43+08:00"
+  },
+  "n_0009": {
+   "parent": "n_0008",
+   "scene_id": "east_tower_base",
+   "player_input": {
+    "kind": "option",
+    "text": "在樓梯平台處停下檢查牆壁"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪的腳步在一個寬闊的樓梯平台處停住，手電筒光束從腳下移開，掃向四周鑲嵌在磚石牆壁上的細節。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "光柱掠過長滿青苔的磚縫，照亮幾塊脫落的鐵皮標牌殘片，上面殘留著褪色的紅漆字跡——「第 17 區」、「輸電幹線」。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "這、這裡有痕跡呢……牆上好像被什麼東西刮過了，還有……黑黑的粉末？"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女鼓起勇氣湊近牆壁，手電筒光圈在她指尖處顫動，確實能見到幾道深淺不一的劃痕，旁邊堆積著細細的黑灰狀物質，聞起來帶著一股焦糊的鐵鏽味。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "這不是自然風化。有人、或是什麼東西，強行拆過這裡的管線。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪蹲下身，手套指尖輕觸那堆黑灰，粉末瞬間碎散，指尖沾染上一層細膩的灰黑油膩感，在手電筒下泛著陰冷的光澤。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "none",
+    "options": [
+     "收集黑灰樣本帶回去分析",
+     "順著劃痕繼續向上搜尋",
+     "讓雪乃待在這裡，自己獨自繼續往上",
+     "檢查旁邊那盞熄滅的應急燈設備"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [
+      "found_tampering_evidence"
+     ],
+     "items_add": [
+      "神秘黑灰樣本"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "凪在樓梯平台發現牆壁遭人為破壞的痕跡與神秘黑灰，證實塔燈熄滅非自然故障，雪乃膽怯但緊跟在後。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 10,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start",
+     "found_maintenance_door",
+     "entered_tower",
+     "found_tampering_evidence"
+    ],
+    "items": [
+     "神秘黑灰樣本"
+    ]
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。",
+    "凪用手電筒檢視塔身，發現維護門敞開，兩人準備進入塔內探查熄燈原因。",
+    "凪推開維護門帶著白瀨雪乃進入塔內，發現螺旋樓梯通向上方，兩人開始向上探索。",
+    "凪在樓梯平台發現牆壁遭人為破壞的痕跡與神秘黑灰，證實塔燈熄滅非自然故障，雪乃膽怯但緊跟在後。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0009",
+   "children": [
+    "n_0010"
+   ],
+   "created_at": "2026-09-25T11:45:39+08:00"
+  },
+  "n_0010": {
+   "parent": "n_0009",
+   "scene_id": "east_tower_base",
+   "player_input": {
+    "kind": "option",
+    "text": "讓雪乃待在這裡，自己獨自繼續往上"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪站起身，手電筒光束向上掃過螺旋樓梯繼續延伸的黑暗，又轉回身看著緊貼在欄杆旁的少女。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "妳待在這個平台別動。我繼續往上看看，很快回來。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "咦？不、不行呢！一個人太危險了，雪乃、雪乃也要跟上去……"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女嘴上抗議，腳步卻不敢離開扶手，手電筒光圈在她腳邊顫顫巍巍地打轉，映出她咬著下唇的側臉。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "這裡有牆壁能借力，妳坐著休息比較安全。我有事會吹口哨，聽到就回應。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪不等回應，轉身沿著扶手繼續向上，腳步聲在鋼鐵筒壁間迴盪，漸漸被濕冷的氣流吞沒。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "繼續獨自向上探索燈室",
+     "吹口哨確認雪乃狀況",
+     "折返檢查雪乃是否跟上來",
+     "在下一個平台檢查輸電管線"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": -1
+     },
+     "flags_add": [
+      "nagi_alone_upstairs"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪讓雪乃留在樓梯平台休息，獨自繼續向上探索塔內情況，雪乃雖不情願但被迫留下。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 9,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start",
+     "found_maintenance_door",
+     "entered_tower",
+     "found_tampering_evidence",
+     "nagi_alone_upstairs"
+    ],
+    "items": [
+     "神秘黑灰樣本"
+    ]
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。",
+    "凪用手電筒檢視塔身，發現維護門敞開，兩人準備進入塔內探查熄燈原因。",
+    "凪推開維護門帶著白瀨雪乃進入塔內，發現螺旋樓梯通向上方，兩人開始向上探索。",
+    "凪在樓梯平台發現牆壁遭人為破壞的痕跡與神秘黑灰，證實塔燈熄滅非自然故障，雪乃膽怯但緊跟在後。",
+    "凪讓雪乃留在樓梯平台休息，獨自繼續向上探索塔內情況，雪乃雖不情願但被迫留下。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0010",
+   "children": [
+    "n_0011"
+   ],
+   "created_at": "2026-09-25T11:46:15+08:00"
+  },
+  "n_0011": {
+   "parent": "n_0010",
+   "scene_id": "east_tower_base",
+   "player_input": {
+    "kind": "option",
+    "text": "在下一個平台檢查輸電管線"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪順著螺旋樓梯又拔高兩層，腳下金屬空心聲愈發空泛，濕冷氣流裡混著一絲淡淡的臭氧味。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "手電筒光束掃過下一個平台，牆壁鑲嵌的輸電幹線保護槽整段被硬生生撬開，銅排裸露在外，截面還殘留著熔斷後凝結的灰黑金屬珠。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "又是人為切斷……而且手法很熟練，沒留多餘工具痕。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪蹲下身，手套指尖輕刮一顆凝結珠，細粉瞬間落在指尖，與先前樓梯平台採集的黑灰成分極其相似——高溫電弧燒結後的絕緣層殘渣。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "遠處傳來一聲悶響，像是什麼重物砸在鋼板上，迴盪在塔筒裡久久不散，凪的手電筒光圈微微一顫。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "順手收集一點熔斷殘渣作為第二份樣本",
+     "立刻吹口哨確認雪乃狀況",
+     "繼續向上衝刺，直搗燈室",
+     "原路下樓，帶雪乃一起離開塔內"
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "found_second_tampering_point",
+      "collected_metal_bead_sample"
+     ],
+     "items_add": [
+      "熔斷銅珠樣本"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "凪在第二個平台發現另一處被人為切斷的輸電幹線，採集到熔斷銅珠樣本，並聽見塔內深處傳來不明悶響。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 9,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start",
+     "found_maintenance_door",
+     "entered_tower",
+     "found_tampering_evidence",
+     "nagi_alone_upstairs",
+     "found_second_tampering_point",
+     "collected_metal_bead_sample"
+    ],
+    "items": [
+     "神秘黑灰樣本",
+     "熔斷銅珠樣本"
+    ]
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。",
+    "凪用手電筒檢視塔身，發現維護門敞開，兩人準備進入塔內探查熄燈原因。",
+    "凪推開維護門帶著白瀨雪乃進入塔內，發現螺旋樓梯通向上方，兩人開始向上探索。",
+    "凪在樓梯平台發現牆壁遭人為破壞的痕跡與神秘黑灰，證實塔燈熄滅非自然故障，雪乃膽怯但緊跟在後。",
+    "凪讓雪乃留在樓梯平台休息，獨自繼續向上探索塔內情況，雪乃雖不情願但被迫留下。",
+    "凪在第二個平台發現另一處被人為切斷的輸電幹線，採集到熔斷銅珠樣本，並聽見塔內深處傳來不明悶響。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0011",
+   "children": [
+    "n_0012"
+   ],
+   "created_at": "2026-09-25T11:47:19+08:00"
+  },
+  "n_0012": {
+   "parent": "n_0011",
+   "scene_id": "sewer_entrance",
+   "player_input": {
+    "kind": "free",
+    "text": "線索指向地下水道，我們現在就划船下去。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪握緊手中的熔斷銅珠樣本，腦海中閃過塔內兩處破壞點的位置關係——皆在輸電幹線必經之處，且朝向地基最深處。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "悶響餘音未盡，塔筒深處傳來細微的水流聲，夾雜著金屬摩擦的尖銳聲響，順著通風縫隙竄上來，帶著一股濃重的鐵鏽與腐泥混合氣味。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "線索指向地下水道。現在就下去。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "咦？地、地下水道呢？現在、現在就要去嗎？好深、好黑的說……"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女縮在樓梯平台的陰影裡，雨衣帽簷壓低遮住大半臉龐，唯有淺藍瞳孔在微光中顫動，指尖仍死死扣著欄杆鏽跡。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "妳留在這裡等我回來，還是跟上？只給十秒決定。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "等、等一下呢！雪乃、雪乃跟上……郵差先生不許丟下我哦！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪沒再多說，轉身順著螺旋樓梯疾步而下，手電筒光束在鋼鐵筒壁間劃出急促的光弧，腳步聲與少女慌亂的喘息聲交織成一首狹長的追逐曲。"
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "sewer_entrance",
+     "name": "地下水道入口",
+     "image_prompt": "A dark, damp underground canal entrance beneath a ruined tower at night. Stone arches covered in moss and salt crystals. Black water reflecting faint moonlight. Rusty iron ladder descending into darkness. Mist rising from water surface. Gloomy, mysterious atmosphere."
+    },
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "划船順流而下，手電筒照向兩岸",
+     "先檢查水邊有無其他線索再上船",
+     "讓雪乃留在岸邊，獨自先行探查",
+     "吹口哨確認雪乃跟上，再一起下水"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [
+      "sewer_investigation_start"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪判斷破壞線索指向地下水道，帶著猶豫的雪乃離開高塔，抵達水道入口準備划船深入調查。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 10,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start",
+     "found_maintenance_door",
+     "entered_tower",
+     "found_tampering_evidence",
+     "nagi_alone_upstairs",
+     "found_second_tampering_point",
+     "collected_metal_bead_sample",
+     "sewer_investigation_start"
+    ],
+    "items": [
+     "神秘黑灰樣本",
+     "熔斷銅珠樣本"
+    ]
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。",
+    "凪用手電筒檢視塔身，發現維護門敞開，兩人準備進入塔內探查熄燈原因。",
+    "凪推開維護門帶著白瀨雪乃進入塔內，發現螺旋樓梯通向上方，兩人開始向上探索。",
+    "凪在樓梯平台發現牆壁遭人為破壞的痕跡與神秘黑灰，證實塔燈熄滅非自然故障，雪乃膽怯但緊跟在後。",
+    "凪讓雪乃留在樓梯平台休息，獨自繼續向上探索塔內情況，雪乃雖不情願但被迫留下。",
+    "凪在第二個平台發現另一處被人為切斷的輸電幹線，採集到熔斷銅珠樣本，並聽見塔內深處傳來不明悶響。",
+    "凪判斷破壞線索指向地下水道，帶著猶豫的雪乃離開高塔，抵達水道入口準備划船深入調查。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0012",
+   "children": [
+    "n_0013"
+   ],
+   "created_at": "2026-09-25T11:47:36+08:00"
+  },
+  "n_0013": {
+   "parent": "n_0012",
+   "scene_id": "sewer_entrance",
+   "player_input": {
+    "kind": "option",
+    "text": "先檢查水邊有無其他線索再上船"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪腳步一頓，手電筒光束從水面收回，掃向腳邊濕滑的石階與鐵欄杆交接處。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "水道入口處積著一層黑綠相間的淤泥，幾截斷裂的銅管從牆縫探出，管口邊緣同樣殘留著熟悉的灰黑熔斷珠痕跡。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "這、這裡也有呢……和塔裡的一模一樣呢！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女探身湊近，雨衣帽簷滴落的水珠砸在淤泥裡，激起細碎漣漪，指尖顫巍巍地指向管口旁一枚半埋在泥中的銅珠。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "破壞範圍不只塔內，水道幹線同樣被切斷過。有人在系統最底層動手腳。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪蹲下，從防水證件袋裡取出兩個樣本袋，分別裝入塔內採集的熔斷銅珠與這枚新發現的銅珠，封口貼上標籤。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "樣本對比齊了。上船吧，順流而下找源頭。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "好、好吧……郵差先生坐穩哦，雪乃來劃槳呢！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女熟練地解開繫在鐵環上的小舢板，雙手推著雙槳，船身在漆黑水道中緩緩滑行，四周只有槳葉切水聲與遠處不知名的滴水迴響。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "none",
+    "options": [
+     "繼續順流深入水道核心區",
+     "折返塔基改從陸路尋找另一條線索",
+     "讓雪乃回塔基等候，自己獨自深入",
+     "在舟上仔細詢問雪乃關於塔燈守護人的往事"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [
+      "sewer_copper_bead_found",
+      "sample_pair_collected"
+     ],
+     "items_add": [
+      "水道銅珠樣本"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "凪在水道入口發現第三處熔斷銅珠，確認破壞延伸至地下幹線，採集樣本後與雪乃啟程順流深入調查。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 11,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start",
+     "found_maintenance_door",
+     "entered_tower",
+     "found_tampering_evidence",
+     "nagi_alone_upstairs",
+     "found_second_tampering_point",
+     "collected_metal_bead_sample",
+     "sewer_investigation_start",
+     "sewer_copper_bead_found",
+     "sample_pair_collected"
+    ],
+    "items": [
+     "神秘黑灰樣本",
+     "熔斷銅珠樣本",
+     "水道銅珠樣本"
+    ]
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。",
+    "凪用手電筒檢視塔身，發現維護門敞開，兩人準備進入塔內探查熄燈原因。",
+    "凪推開維護門帶著白瀨雪乃進入塔內，發現螺旋樓梯通向上方，兩人開始向上探索。",
+    "凪在樓梯平台發現牆壁遭人為破壞的痕跡與神秘黑灰，證實塔燈熄滅非自然故障，雪乃膽怯但緊跟在後。",
+    "凪讓雪乃留在樓梯平台休息，獨自繼續向上探索塔內情況，雪乃雖不情願但被迫留下。",
+    "凪在第二個平台發現另一處被人為切斷的輸電幹線，採集到熔斷銅珠樣本，並聽見塔內深處傳來不明悶響。",
+    "凪判斷破壞線索指向地下水道，帶著猶豫的雪乃離開高塔，抵達水道入口準備划船深入調查。",
+    "凪在水道入口發現第三處熔斷銅珠，確認破壞延伸至地下幹線，採集樣本後與雪乃啟程順流深入調查。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0013",
+   "children": [
+    "n_0014"
+   ],
+   "created_at": "2026-09-25T11:48:13+08:00"
+  },
+  "n_0014": {
+   "parent": "n_0013",
+   "scene_id": "sewer_entrance",
+   "player_input": {
+    "kind": "option",
+    "text": "讓雪乃回塔基等候，自己獨自深入"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪單手按住船舷，另一手將手電筒遞向少女，光束在漆黑水面畫出一道冷白的弧線。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "妳把船劃回塔基等我。這裡水流湍急、管路錯綜複雜，帶著妳風險太大。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "咦？不、不行呢！郵差先生一個人更危險呀，雪乃、雪乃會划船、還會拿手電筒……"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女雙手緊握雙槳，指節因用力而泛白，雨衣帽簷下的淺藍瞳孔在微光裡閃爍著固執與恐懼交織的光。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "聽著。塔基有應急燈、有牆壁能借力，妳待在那裡最安全。我有發現會吹兩短一長口哨，妳回應一下就好。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "……好、好吧。可是、可是郵差先生一定要吹口哨哦！不許騙雪乃呢！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪沒再猶豫，單腳踩上石階，另一腳輕點船舷，身形已穩穩落在濕滑的階梯上，手電筒光束瞬間刺入更深處的管道黑暗。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "fog",
+    "options": [
+     "順著主管道直行深入",
+     "檢查左側支管是否有新破壞痕跡",
+     "先在入口處設定標記以便返回",
+     "吹口哨確認雪乃已安全劃回塔基"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": -1
+     },
+     "flags_add": [
+      "nagi_alone_in_sewer",
+      "shirano_waiting_at_tower_base"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪讓白瀨雪乃划船返回塔基等候，獨自深入地下水道調查破壞源頭。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 10,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start",
+     "found_maintenance_door",
+     "entered_tower",
+     "found_tampering_evidence",
+     "nagi_alone_upstairs",
+     "found_second_tampering_point",
+     "collected_metal_bead_sample",
+     "sewer_investigation_start",
+     "sewer_copper_bead_found",
+     "sample_pair_collected",
+     "nagi_alone_in_sewer",
+     "shirano_waiting_at_tower_base"
+    ],
+    "items": [
+     "神秘黑灰樣本",
+     "熔斷銅珠樣本",
+     "水道銅珠樣本"
+    ]
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。",
+    "凪用手電筒檢視塔身，發現維護門敞開，兩人準備進入塔內探查熄燈原因。",
+    "凪推開維護門帶著白瀨雪乃進入塔內，發現螺旋樓梯通向上方，兩人開始向上探索。",
+    "凪在樓梯平台發現牆壁遭人為破壞的痕跡與神秘黑灰，證實塔燈熄滅非自然故障，雪乃膽怯但緊跟在後。",
+    "凪讓雪乃留在樓梯平台休息，獨自繼續向上探索塔內情況，雪乃雖不情願但被迫留下。",
+    "凪在第二個平台發現另一處被人為切斷的輸電幹線，採集到熔斷銅珠樣本，並聽見塔內深處傳來不明悶響。",
+    "凪判斷破壞線索指向地下水道，帶著猶豫的雪乃離開高塔，抵達水道入口準備划船深入調查。",
+    "凪在水道入口發現第三處熔斷銅珠，確認破壞延伸至地下幹線，採集樣本後與雪乃啟程順流深入調查。",
+    "凪讓白瀨雪乃划船返回塔基等候，獨自深入地下水道調查破壞源頭。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0014",
+   "children": [
+    "n_0015"
+   ],
+   "created_at": "2026-09-25T11:49:03+08:00"
+  },
+  "n_0015": {
+   "parent": "n_0014",
+   "scene_id": "sewer_entrance",
+   "player_input": {
+    "kind": "option",
+    "text": "吹口哨確認雪乃已安全劃回塔基"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪在濕滑的石階上站定，深吸一口帶著鐵鏽味的冷氣，雙指夾緊送往唇邊。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "一聲清亮的口哨在管道中炸開——兩短一長，節奏精確，聲波在圓筒狀空間裡層層疊疊，激起連串細碎的迴響。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "幾秒後，遠處傳來微弱卻清晰的回應——同樣的兩短一長，雖然音色稚嫩、氣息顫抖，卻準確無誤地鑽進凪耳中。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（遠處）收、收到呢！雪乃、雪乃已經劃回塔基了哦！郵差先生、一定要小心呢！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女的聲音夾雜在水聲與迴響裡，顯然已安全抵達塔基應急燈下，凪鬆開指尖，手電筒光束重新刺向更深處的黑暗。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "順著主管道繼續深入",
+     "檢查旁側支管分叉口",
+     "在石階上暫作休整並檢查裝備",
+     "吹口哨再次確認雪乃狀態"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [
+      "whistle_confirmed_shirano_safe"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪吹口哨確認白瀨雪乃已安全劃回塔基等候，獨自繼續深入地下水道調查破壞源頭。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 11,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start",
+     "found_maintenance_door",
+     "entered_tower",
+     "found_tampering_evidence",
+     "nagi_alone_upstairs",
+     "found_second_tampering_point",
+     "collected_metal_bead_sample",
+     "sewer_investigation_start",
+     "sewer_copper_bead_found",
+     "sample_pair_collected",
+     "nagi_alone_in_sewer",
+     "shirano_waiting_at_tower_base",
+     "whistle_confirmed_shirano_safe"
+    ],
+    "items": [
+     "神秘黑灰樣本",
+     "熔斷銅珠樣本",
+     "水道銅珠樣本"
+    ]
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。",
+    "凪用手電筒檢視塔身，發現維護門敞開，兩人準備進入塔內探查熄燈原因。",
+    "凪推開維護門帶著白瀨雪乃進入塔內，發現螺旋樓梯通向上方，兩人開始向上探索。",
+    "凪在樓梯平台發現牆壁遭人為破壞的痕跡與神秘黑灰，證實塔燈熄滅非自然故障，雪乃膽怯但緊跟在後。",
+    "凪讓雪乃留在樓梯平台休息，獨自繼續向上探索塔內情況，雪乃雖不情願但被迫留下。",
+    "凪在第二個平台發現另一處被人為切斷的輸電幹線，採集到熔斷銅珠樣本，並聽見塔內深處傳來不明悶響。",
+    "凪判斷破壞線索指向地下水道，帶著猶豫的雪乃離開高塔，抵達水道入口準備划船深入調查。",
+    "凪在水道入口發現第三處熔斷銅珠，確認破壞延伸至地下幹線，採集樣本後與雪乃啟程順流深入調查。",
+    "凪讓白瀨雪乃划船返回塔基等候，獨自深入地下水道調查破壞源頭。",
+    "凪吹口哨確認白瀨雪乃已安全劃回塔基等候，獨自繼續深入地下水道調查破壞源頭。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0015",
+   "children": [
+    "n_0016"
+   ],
+   "created_at": "2026-09-25T11:49:12+08:00"
+  },
+  "n_0016": {
+   "parent": "n_0015",
+   "scene_id": "sewer_entrance",
+   "player_input": {
+    "kind": "option",
+    "text": "順著主管道繼續深入"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪確認雪乃平安後，轉身將手電筒光束刺入主管道深處，腳步沈穩地踏上濕滑石階，水聲在圓筒牆壁間迴盪成單調的低頻震顫。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "管道直徑約三米，頂部鑲嵌著鏽蝕的輸電幹線保護槽，每隔十公尺便有一組檢修井蓋，井蓋邊緣多半已被撬開，露出內部扭曲斷裂的銅排末端。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "破壞點比想像中多……是有計畫地癱瘓整條幹線。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "手電筒掃過第三個檢修井時，光圈捕捉到井緣積著一小堆灰白粉末——非泥沙，質地輕盈，受光微微閃爍，與塔內採集的黑灰樣本顏色截然不同。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪蹲下身，從證件袋取出空樣本管，小心刮入一管粉末，貼上標籤「水道粉末樣本・第三井」，塞進內袋最深處。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "繼續前行約二十公尺，管道突然轉彎，水流聲驟然放大，前方黑暗中隱約浮現一道巨大的金屬閘門輪廓，閘門下緣縫隙洩出微弱藍綠光暈，伴隨著規律性的嗡嗡電流聲。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "none",
+    "options": [
+     "檢查閘門機關與光源",
+     "繼續繞過閘門深入",
+     "返回塔基匯報發現",
+     "吹口哨聯絡雪乃確認狀況"
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "sewer_deep_exploration",
+      "gate_discovered",
+      "white_powder_sample_collected"
+     ],
+     "items_add": [
+      "水道粉末樣本"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "凪深入主管道發現多處破壞痕跡，於第三檢修井採集到神秘灰白粉末樣本，並抵達巨大閘門前，閘門縫隙洩出藍綠光暈與電流聲。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 11,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start",
+     "found_maintenance_door",
+     "entered_tower",
+     "found_tampering_evidence",
+     "nagi_alone_upstairs",
+     "found_second_tampering_point",
+     "collected_metal_bead_sample",
+     "sewer_investigation_start",
+     "sewer_copper_bead_found",
+     "sample_pair_collected",
+     "nagi_alone_in_sewer",
+     "shirano_waiting_at_tower_base",
+     "whistle_confirmed_shirano_safe",
+     "sewer_deep_exploration",
+     "gate_discovered",
+     "white_powder_sample_collected"
+    ],
+    "items": [
+     "神秘黑灰樣本",
+     "熔斷銅珠樣本",
+     "水道銅珠樣本",
+     "水道粉末樣本"
+    ]
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。",
+    "凪用手電筒檢視塔身，發現維護門敞開，兩人準備進入塔內探查熄燈原因。",
+    "凪推開維護門帶著白瀨雪乃進入塔內，發現螺旋樓梯通向上方，兩人開始向上探索。",
+    "凪在樓梯平台發現牆壁遭人為破壞的痕跡與神秘黑灰，證實塔燈熄滅非自然故障，雪乃膽怯但緊跟在後。",
+    "凪讓雪乃留在樓梯平台休息，獨自繼續向上探索塔內情況，雪乃雖不情願但被迫留下。",
+    "凪在第二個平台發現另一處被人為切斷的輸電幹線，採集到熔斷銅珠樣本，並聽見塔內深處傳來不明悶響。",
+    "凪判斷破壞線索指向地下水道，帶著猶豫的雪乃離開高塔，抵達水道入口準備划船深入調查。",
+    "凪在水道入口發現第三處熔斷銅珠，確認破壞延伸至地下幹線，採集樣本後與雪乃啟程順流深入調查。",
+    "凪讓白瀨雪乃划船返回塔基等候，獨自深入地下水道調查破壞源頭。",
+    "凪吹口哨確認白瀨雪乃已安全劃回塔基等候，獨自繼續深入地下水道調查破壞源頭。",
+    "凪深入主管道發現多處破壞痕跡，於第三檢修井採集到神秘灰白粉末樣本，並抵達巨大閘門前，閘門縫隙洩出藍綠光暈與電流聲。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0016",
+   "children": [
+    "n_0017"
+   ],
+   "created_at": "2026-09-25T11:49:28+08:00"
+  },
+  "n_0017": {
+   "parent": "n_0016",
+   "scene_id": "sewer_core_chamber",
+   "player_input": {
+    "kind": "option",
+    "text": "繼續繞過閘門深入"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪將手電筒光束在閘門四周緩緩掃過，發現左側牆壁有一處維修用的側向通風井，井蓋生鏽脫落，露出僅容一人側身透過的缺口。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "缺口邊緣同樣殘留著熟悉的灰黑熔斷痕跡，彷彿有人特意切斷這裡的監控線纜後，才從此處鑽入更深處。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "繞得過去……但這條路單向通行，回不來了。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪側身鑽入通風井，金屬邊緣劃破雨衣袖口，濕冷氣流裡混著更濃的臭氧與一絲甜腥的化學藥劑味，腳下是長長的垂直鋼梯，通向未知的地下空間。"
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "sewer_core_chamber",
+     "name": "地下核心室",
+     "image_prompt": "A vast cylindrical underground chamber, concrete walls lined with massive copper busbars and transformer banks, dim blue-green bioluminescent algae glowing on damp surfaces, a central control console flickering with damaged screens, water cascading from pipes into a dark pool, industrial sci-fi atmosphere, cold muted lighting"
+    },
+    "bgm_mood": "mysterious",
+    "weather": "none",
+    "options": [
+     "檢查中央控制檯的受損螢幕",
+     "順著銅排走向尋找破壞源頭",
+     "採集牆壁發光苔蘚樣本分析",
+     "原路嘗試返回水道入口"
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "gate_bypassed",
+      "core_chamber_reached"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪繞過巨大閘門，經由通風井鑽入地下核心室，發現大型變壓裝置與受損控制檯，破壞痕跡指向更深處。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 11,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start",
+     "found_maintenance_door",
+     "entered_tower",
+     "found_tampering_evidence",
+     "nagi_alone_upstairs",
+     "found_second_tampering_point",
+     "collected_metal_bead_sample",
+     "sewer_investigation_start",
+     "sewer_copper_bead_found",
+     "sample_pair_collected",
+     "nagi_alone_in_sewer",
+     "shirano_waiting_at_tower_base",
+     "whistle_confirmed_shirano_safe",
+     "sewer_deep_exploration",
+     "gate_discovered",
+     "white_powder_sample_collected",
+     "gate_bypassed",
+     "core_chamber_reached"
+    ],
+    "items": [
+     "神秘黑灰樣本",
+     "熔斷銅珠樣本",
+     "水道銅珠樣本",
+     "水道粉末樣本"
+    ]
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。",
+    "凪用手電筒檢視塔身，發現維護門敞開，兩人準備進入塔內探查熄燈原因。",
+    "凪推開維護門帶著白瀨雪乃進入塔內，發現螺旋樓梯通向上方，兩人開始向上探索。",
+    "凪在樓梯平台發現牆壁遭人為破壞的痕跡與神秘黑灰，證實塔燈熄滅非自然故障，雪乃膽怯但緊跟在後。",
+    "凪讓雪乃留在樓梯平台休息，獨自繼續向上探索塔內情況，雪乃雖不情願但被迫留下。",
+    "凪在第二個平台發現另一處被人為切斷的輸電幹線，採集到熔斷銅珠樣本，並聽見塔內深處傳來不明悶響。",
+    "凪判斷破壞線索指向地下水道，帶著猶豫的雪乃離開高塔，抵達水道入口準備划船深入調查。",
+    "凪在水道入口發現第三處熔斷銅珠，確認破壞延伸至地下幹線，採集樣本後與雪乃啟程順流深入調查。",
+    "凪讓白瀨雪乃划船返回塔基等候，獨自深入地下水道調查破壞源頭。",
+    "凪吹口哨確認白瀨雪乃已安全劃回塔基等候，獨自繼續深入地下水道調查破壞源頭。",
+    "凪深入主管道發現多處破壞痕跡，於第三檢修井採集到神秘灰白粉末樣本，並抵達巨大閘門前，閘門縫隙洩出藍綠光暈與電流聲。",
+    "凪繞過巨大閘門，經由通風井鑽入地下核心室，發現大型變壓裝置與受損控制檯，破壞痕跡指向更深處。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0017",
+   "children": [
+    "n_0018"
+   ],
+   "created_at": "2026-09-25T11:49:35+08:00"
+  },
+  "n_0018": {
+   "parent": "n_0017",
+   "scene_id": "sewer_core_chamber",
+   "player_input": {
+    "kind": "option",
+    "text": "採集牆壁發光苔蘚樣本分析"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪的手電筒光束在通風井壁上掃過，發現鋼梯旁的濕潤金屬表面生長著一片片微弱發光的苔蘚，釋放著幽藍的磷光，在絕對黑暗中勾勒出詭異的路標。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "這種苔蘚……不靠光合作用，靠電場生存？"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪從防水證件袋取出採集刮刀與空白樣本管，小心刮下數枚發光體，封管時指尖觸及管壁，微弱電流感順著指尖竄上手臂，樣本管內的藍光應聲亮了幾分。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "標籤貼上「發光苔蘚樣本・核心室通風井」，塞進內袋最深處，凪繼續順著鋼梯向下，腳下金屬階梯在濕氣中發出悶澀的金屬聲，前方空間逐漸開啟，嗡嗡電流聲與臭氧味愈發濃烈。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "none",
+    "options": [
+     "檢查受損控制檯尋找線索",
+     "順著電纜走向繼續深入",
+     "觀察變壓設備執行狀態",
+     "吹口哨向雪乃報平安"
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "moss_sample_collected"
+     ],
+     "items_add": [
+      "發光苔蘚樣本"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "凪在通風井壁採集到發光苔蘚樣本，發現其對電場有反應，隨後繼續下鋼梯進入核心室深處。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 11,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start",
+     "found_maintenance_door",
+     "entered_tower",
+     "found_tampering_evidence",
+     "nagi_alone_upstairs",
+     "found_second_tampering_point",
+     "collected_metal_bead_sample",
+     "sewer_investigation_start",
+     "sewer_copper_bead_found",
+     "sample_pair_collected",
+     "nagi_alone_in_sewer",
+     "shirano_waiting_at_tower_base",
+     "whistle_confirmed_shirano_safe",
+     "sewer_deep_exploration",
+     "gate_discovered",
+     "white_powder_sample_collected",
+     "gate_bypassed",
+     "core_chamber_reached",
+     "moss_sample_collected"
+    ],
+    "items": [
+     "神秘黑灰樣本",
+     "熔斷銅珠樣本",
+     "水道銅珠樣本",
+     "水道粉末樣本",
+     "發光苔蘚樣本"
+    ]
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。",
+    "凪用手電筒檢視塔身，發現維護門敞開，兩人準備進入塔內探查熄燈原因。",
+    "凪推開維護門帶著白瀨雪乃進入塔內，發現螺旋樓梯通向上方，兩人開始向上探索。",
+    "凪在樓梯平台發現牆壁遭人為破壞的痕跡與神秘黑灰，證實塔燈熄滅非自然故障，雪乃膽怯但緊跟在後。",
+    "凪讓雪乃留在樓梯平台休息，獨自繼續向上探索塔內情況，雪乃雖不情願但被迫留下。",
+    "凪在第二個平台發現另一處被人為切斷的輸電幹線，採集到熔斷銅珠樣本，並聽見塔內深處傳來不明悶響。",
+    "凪判斷破壞線索指向地下水道，帶著猶豫的雪乃離開高塔，抵達水道入口準備划船深入調查。",
+    "凪在水道入口發現第三處熔斷銅珠，確認破壞延伸至地下幹線，採集樣本後與雪乃啟程順流深入調查。",
+    "凪讓白瀨雪乃划船返回塔基等候，獨自深入地下水道調查破壞源頭。",
+    "凪吹口哨確認白瀨雪乃已安全劃回塔基等候，獨自繼續深入地下水道調查破壞源頭。",
+    "凪深入主管道發現多處破壞痕跡，於第三檢修井採集到神秘灰白粉末樣本，並抵達巨大閘門前，閘門縫隙洩出藍綠光暈與電流聲。",
+    "凪繞過巨大閘門，經由通風井鑽入地下核心室，發現大型變壓裝置與受損控制檯，破壞痕跡指向更深處。",
+    "凪在通風井壁採集到發光苔蘚樣本，發現其對電場有反應，隨後繼續下鋼梯進入核心室深處。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0018",
+   "children": [
+    "n_0019"
+   ],
+   "created_at": "2026-09-25T11:49:51+08:00"
+  },
+  "n_0019": {
+   "parent": "n_0018",
+   "scene_id": "sewer_core_chamber",
+   "player_input": {
+    "kind": "option",
+    "text": "吹口哨向雪乃報平安"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪站在通風井底的鋼梯轉角，四周嗡嗡電流聲與臭氧味愈發濃烈，手電筒光束在前方開闊的核心室空間掃出一道冷白弧線。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "深吸一口帶著鐵鏽與化學藥劑混合味的冷氣，凪雙指夾緊送往唇邊，在金屬管道狹長空間裡吹出清亮口哨——兩短一長，節奏精確，聲波在圓筒狀結構中層層疊疊。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "幾秒後，遠遠的上方傳來微弱卻清晰的回應——同樣的兩短一長，音色稚嫩、氣息顫抖，卻準確無誤地穿過層層迴響鑽進耳中。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（遠處）收、收到呢！雪乃、雪乃在塔基應急燈下等著哦！郵差先生、一定要、一定要平安回來呢！"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "收到。繼續前進。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "確認雪乃平安後，凪鬆開指尖，手電筒光束重新刺向核心室深處，腳步沈穩地踏上最後幾級鋼梯，前方巨大的變壓設備在藍綠光暈中投出聳立的陰影。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "檢查變壓設備與控制檯的破壞細節",
+     "順著牆壁發光苔蘚分佈尋找更深處通道",
+     "採集變壓設備周圍的灰塵或殘留物樣本",
+     "嘗試啟動控制檯檢視系統記錄"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [
+      "whistle_confirmed_shirano_safe_core"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪在核心室入口吹口哨確認白瀨雪乃已安全待在塔基，獲得回應後繼續深入核心室調查。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 12,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start",
+     "found_maintenance_door",
+     "entered_tower",
+     "found_tampering_evidence",
+     "nagi_alone_upstairs",
+     "found_second_tampering_point",
+     "collected_metal_bead_sample",
+     "sewer_investigation_start",
+     "sewer_copper_bead_found",
+     "sample_pair_collected",
+     "nagi_alone_in_sewer",
+     "shirano_waiting_at_tower_base",
+     "whistle_confirmed_shirano_safe",
+     "sewer_deep_exploration",
+     "gate_discovered",
+     "white_powder_sample_collected",
+     "gate_bypassed",
+     "core_chamber_reached",
+     "moss_sample_collected",
+     "whistle_confirmed_shirano_safe_core"
+    ],
+    "items": [
+     "神秘黑灰樣本",
+     "熔斷銅珠樣本",
+     "水道銅珠樣本",
+     "水道粉末樣本",
+     "發光苔蘚樣本"
+    ]
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。",
+    "凪用手電筒檢視塔身，發現維護門敞開，兩人準備進入塔內探查熄燈原因。",
+    "凪推開維護門帶著白瀨雪乃進入塔內，發現螺旋樓梯通向上方，兩人開始向上探索。",
+    "凪在樓梯平台發現牆壁遭人為破壞的痕跡與神秘黑灰，證實塔燈熄滅非自然故障，雪乃膽怯但緊跟在後。",
+    "凪讓雪乃留在樓梯平台休息，獨自繼續向上探索塔內情況，雪乃雖不情願但被迫留下。",
+    "凪在第二個平台發現另一處被人為切斷的輸電幹線，採集到熔斷銅珠樣本，並聽見塔內深處傳來不明悶響。",
+    "凪判斷破壞線索指向地下水道，帶著猶豫的雪乃離開高塔，抵達水道入口準備划船深入調查。",
+    "凪在水道入口發現第三處熔斷銅珠，確認破壞延伸至地下幹線，採集樣本後與雪乃啟程順流深入調查。",
+    "凪讓白瀨雪乃划船返回塔基等候，獨自深入地下水道調查破壞源頭。",
+    "凪吹口哨確認白瀨雪乃已安全劃回塔基等候，獨自繼續深入地下水道調查破壞源頭。",
+    "凪深入主管道發現多處破壞痕跡，於第三檢修井採集到神秘灰白粉末樣本，並抵達巨大閘門前，閘門縫隙洩出藍綠光暈與電流聲。",
+    "凪繞過巨大閘門，經由通風井鑽入地下核心室，發現大型變壓裝置與受損控制檯，破壞痕跡指向更深處。",
+    "凪在通風井壁採集到發光苔蘚樣本，發現其對電場有反應，隨後繼續下鋼梯進入核心室深處。",
+    "凪在核心室入口吹口哨確認白瀨雪乃已安全待在塔基，獲得回應後繼續深入核心室調查。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0019",
+   "children": [
+    "n_0020"
+   ],
+   "created_at": "2026-09-25T11:50:00+08:00"
+  },
+  "n_0020": {
+   "parent": "n_0019",
+   "scene_id": "sewer_core_chamber",
+   "player_input": {
+    "kind": "option",
+    "text": "檢查變壓設備與控制檯的破壞細節"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪踏上最後一級鋼梯，靴底落在鋼鐵格柵地板上，發出清脆的金屬迴響。核心室寬敞得像一座地下大教堂，四周矗立著陣列巨大的油浸式變壓器，鐵芯線圈在藍綠光暈中投出聳立的幾何陰影，嗡嗡聲此起彼落，震得胸腔微微共振。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "手電筒光束掃過最近那組變壓器側面，保護殼被暴力撬開，內部絕緣油洩漏一地，在格柵孔隙間折射出彩虹般的油膜光澤。高壓套管的陶瓷絕緣子碎成蜘蛛網狀裂紋，銅質引出線端頭呈現熟悉的灰黑熔斷球狀物，熔渣還凝結在斷口四周，證明切斷瞬間電流極大。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "手法跟塔裡、水道裡一模樣……專業、快速、不留活口。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "光束轉向中央控制檯，原本應該密集排列著斷路器、繼電保護設備與監控終端的機櫃，如今門板盡數敞開，內部電路板被整塊拆走，只剩下空蕩蕩的機架與凌亂的線槽。檯面上殘留幾塊被硬生生扯斷的光纖尾纖，末端燒焦發黃，顯然破壞者不僅切斷供電，還徹底摧毀了遠端監控與備用切換邏輯。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "在控制檯鍵盤凹槽裡，凪發現一撮極細微的灰白纖維——不像棉絮，更像某種合成材料斷裂後的末端，受光微微泛著油質光澤。凪取出採集刮刀與空樣本管，小心夾起纖維封管，貼上標籤「控制檯纖維樣本・核心室」，塞進內袋。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "此時，變壓器群深處傳來一陣極低頻的「嗡——」聲變調，彷彿某個巨大的電感元件正在被強行勵磁，隨即又歸於平穩。地板格柵下方的電纜溝裡，幾條主幹線穿過防火封堵延伸向更深處的牆壁，那裡有一扇厚重的防爆門，門縫同樣洩出微弱藍綠光暈。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "還沒結束……破壞源頭在更深處。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "繼續深入防爆門後方",
+     "仔細檢查變壓器熔斷痕跡尋找線索",
+     "撤退並整理目前採集到的所有樣本",
+     "嘗試恢復控制檯殘留功能傳送訊號"
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "transformer_damage_inspected",
+      "control_console_destroyed",
+      "fiber_sample_collected"
+     ],
+     "items_add": [
+      "控制檯纖維樣本"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "凪在核心室檢查變壓器與控制檯，確認破壞手法一致且極專業，採集到控制檯纖維樣本，發現深處防爆門後仍有電力運作跡象。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 12,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start",
+     "found_maintenance_door",
+     "entered_tower",
+     "found_tampering_evidence",
+     "nagi_alone_upstairs",
+     "found_second_tampering_point",
+     "collected_metal_bead_sample",
+     "sewer_investigation_start",
+     "sewer_copper_bead_found",
+     "sample_pair_collected",
+     "nagi_alone_in_sewer",
+     "shirano_waiting_at_tower_base",
+     "whistle_confirmed_shirano_safe",
+     "sewer_deep_exploration",
+     "gate_discovered",
+     "white_powder_sample_collected",
+     "gate_bypassed",
+     "core_chamber_reached",
+     "moss_sample_collected",
+     "whistle_confirmed_shirano_safe_core",
+     "transformer_damage_inspected",
+     "control_console_destroyed",
+     "fiber_sample_collected"
+    ],
+    "items": [
+     "神秘黑灰樣本",
+     "熔斷銅珠樣本",
+     "水道銅珠樣本",
+     "水道粉末樣本",
+     "發光苔蘚樣本",
+     "控制檯纖維樣本"
+    ]
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。",
+    "凪用手電筒檢視塔身，發現維護門敞開，兩人準備進入塔內探查熄燈原因。",
+    "凪推開維護門帶著白瀨雪乃進入塔內，發現螺旋樓梯通向上方，兩人開始向上探索。",
+    "凪在樓梯平台發現牆壁遭人為破壞的痕跡與神秘黑灰，證實塔燈熄滅非自然故障，雪乃膽怯但緊跟在後。",
+    "凪讓雪乃留在樓梯平台休息，獨自繼續向上探索塔內情況，雪乃雖不情願但被迫留下。",
+    "凪在第二個平台發現另一處被人為切斷的輸電幹線，採集到熔斷銅珠樣本，並聽見塔內深處傳來不明悶響。",
+    "凪判斷破壞線索指向地下水道，帶著猶豫的雪乃離開高塔，抵達水道入口準備划船深入調查。",
+    "凪在水道入口發現第三處熔斷銅珠，確認破壞延伸至地下幹線，採集樣本後與雪乃啟程順流深入調查。",
+    "凪讓白瀨雪乃划船返回塔基等候，獨自深入地下水道調查破壞源頭。",
+    "凪吹口哨確認白瀨雪乃已安全劃回塔基等候，獨自繼續深入地下水道調查破壞源頭。",
+    "凪深入主管道發現多處破壞痕跡，於第三檢修井採集到神秘灰白粉末樣本，並抵達巨大閘門前，閘門縫隙洩出藍綠光暈與電流聲。",
+    "凪繞過巨大閘門，經由通風井鑽入地下核心室，發現大型變壓裝置與受損控制檯，破壞痕跡指向更深處。",
+    "凪在通風井壁採集到發光苔蘚樣本，發現其對電場有反應，隨後繼續下鋼梯進入核心室深處。",
+    "凪在核心室入口吹口哨確認白瀨雪乃已安全待在塔基，獲得回應後繼續深入核心室調查。",
+    "凪在核心室檢查變壓器與控制檯，確認破壞手法一致且極專業，採集到控制檯纖維樣本，發現深處防爆門後仍有電力運作跡象。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0020",
+   "children": [
+    "n_0021"
+   ],
+   "created_at": "2026-09-25T11:50:43+08:00"
+  },
+  "n_0021": {
+   "parent": "n_0020",
+   "scene_id": "sewer_core_chamber",
+   "player_input": {
+    "kind": "option",
+    "text": "仔細檢查變壓器熔斷痕跡尋找線索"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪蹲下身，將手電筒光束壓低，貼近那組被撬開的變壓器側面。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "光束聚焦在斷裂的銅質引出線端頭，灰黑色的熔渣呈現出不自然的流暢弧度，而非隨機爆裂的尖銳狀。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "他伸出戴著手套的食指，輕輕拂去熔渣表面的一層浮塵，指尖觸碰到了一處微小的凹陷。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（遠處回聲）郵差先生、那裡有什麼呢？"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "不是熔斷造成的……是預先鑽孔。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "在熔渣下方的銅排內部，隱約可見一個直徑約兩公釐的圓形孔洞，孔洞邊緣光滑，顯然在通電前就已存在。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "破壞者先鑽了導電孔，再通入超高電流，讓銅排從內部炸開……這樣既安靜，又不會留下外部撬痕。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "none",
+    "options": [
+     "檢查防爆門的鎖芯結構",
+     "採集變壓器底部的絕緣油樣本",
+     "吹口哨讓雪乃觀察門縫光暈"
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "drilled_hole_discovered"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪發現變壓器銅排有預先鑽孔痕跡，推斷破壞手法極度專業且預謀已久。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 12,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start",
+     "found_maintenance_door",
+     "entered_tower",
+     "found_tampering_evidence",
+     "nagi_alone_upstairs",
+     "found_second_tampering_point",
+     "collected_metal_bead_sample",
+     "sewer_investigation_start",
+     "sewer_copper_bead_found",
+     "sample_pair_collected",
+     "nagi_alone_in_sewer",
+     "shirano_waiting_at_tower_base",
+     "whistle_confirmed_shirano_safe",
+     "sewer_deep_exploration",
+     "gate_discovered",
+     "white_powder_sample_collected",
+     "gate_bypassed",
+     "core_chamber_reached",
+     "moss_sample_collected",
+     "whistle_confirmed_shirano_safe_core",
+     "transformer_damage_inspected",
+     "control_console_destroyed",
+     "fiber_sample_collected",
+     "drilled_hole_discovered"
+    ],
+    "items": [
+     "神秘黑灰樣本",
+     "熔斷銅珠樣本",
+     "水道銅珠樣本",
+     "水道粉末樣本",
+     "發光苔蘚樣本",
+     "控制檯纖維樣本"
+    ]
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。",
+    "凪用手電筒檢視塔身，發現維護門敞開，兩人準備進入塔內探查熄燈原因。",
+    "凪推開維護門帶著白瀨雪乃進入塔內，發現螺旋樓梯通向上方，兩人開始向上探索。",
+    "凪在樓梯平台發現牆壁遭人為破壞的痕跡與神秘黑灰，證實塔燈熄滅非自然故障，雪乃膽怯但緊跟在後。",
+    "凪讓雪乃留在樓梯平台休息，獨自繼續向上探索塔內情況，雪乃雖不情願但被迫留下。",
+    "凪在第二個平台發現另一處被人為切斷的輸電幹線，採集到熔斷銅珠樣本，並聽見塔內深處傳來不明悶響。",
+    "凪判斷破壞線索指向地下水道，帶著猶豫的雪乃離開高塔，抵達水道入口準備划船深入調查。",
+    "凪在水道入口發現第三處熔斷銅珠，確認破壞延伸至地下幹線，採集樣本後與雪乃啟程順流深入調查。",
+    "凪讓白瀨雪乃划船返回塔基等候，獨自深入地下水道調查破壞源頭。",
+    "凪吹口哨確認白瀨雪乃已安全劃回塔基等候，獨自繼續深入地下水道調查破壞源頭。",
+    "凪深入主管道發現多處破壞痕跡，於第三檢修井採集到神秘灰白粉末樣本，並抵達巨大閘門前，閘門縫隙洩出藍綠光暈與電流聲。",
+    "凪繞過巨大閘門，經由通風井鑽入地下核心室，發現大型變壓裝置與受損控制檯，破壞痕跡指向更深處。",
+    "凪在通風井壁採集到發光苔蘚樣本，發現其對電場有反應，隨後繼續下鋼梯進入核心室深處。",
+    "凪在核心室入口吹口哨確認白瀨雪乃已安全待在塔基，獲得回應後繼續深入核心室調查。",
+    "凪在核心室檢查變壓器與控制檯，確認破壞手法一致且極專業，採集到控制檯纖維樣本，發現深處防爆門後仍有電力運作跡象。",
+    "凪發現變壓器銅排有預先鑽孔痕跡，推斷破壞手法極度專業且預謀已久。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "none",
+   "model": "qwen3.6-35b-a3b",
+   "repair_notes": [],
+   "id": "n_0021",
+   "children": [],
+   "created_at": "2026-09-25T11:51:35+08:00"
+  },
+  "n_0022": {
+   "parent": "n_0006",
+   "scene_id": "east_tower_base",
+   "player_input": {
+    "kind": "option",
+    "text": "沿著生鏽鋼梯攀爬至塔頂觀測窗"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪率先踏上生鏽的鋼梯，鋼鐵階板在重壓下發出沉悶的金屬嗡鳴，彷彿整座塔都在嘆息。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "好高呢……郵差先生，妳不會怕高吧？雪乃抓著妳的衣角可以嗎？"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女的聲音透著一絲顫抖，白皙的手指已緊緊扣住凪雨衣的下擺，指節因用力而泛白。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "鋼梯盤旋而上，穿過層層廢棄的機械室與斷裂的纜線，海風愈來愈勁，夾帶著鹽霧與鐵鏽味直撲臉頰。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "終於抵達頂層觀測窗，圓形強化玻璃佈滿龜裂，透過缺口望去，澪市萬盞燈火如碎鑽鋪滿黑水，唯有腳下這座塔頂，沉睡在絕對的黑暗中。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "到了呢……好冷哦，但星星好近喔。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "none",
+    "options": [
+     "檢查觀測窗周圍的機械設備",
+     "詢問雪乃關於「它不想醒來」的傳說",
+     "開啟手電筒照向塔內深處",
+     "建議先休息一下再繼續探索"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [
+      "reached_observation_deck"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪與雪乃攀爬生鏽鋼梯抵達塔頂觀測窗，俯瞰澪市燈海，發現塔頂陷入絕對黑暗，雪乃因怕高緊抓凪衣角。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 8,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start",
+     "reached_observation_deck"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。",
+    "凪與雪乃攀爬生鏽鋼梯抵達塔頂觀測窗，俯瞰澪市燈海，發現塔頂陷入絕對黑暗，雪乃因怕高緊抓凪衣角。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0022",
+   "children": [],
+   "created_at": "2026-09-25T11:54:53+08:00"
+  },
+  "n_0023": {
+   "parent": "n_0006",
+   "scene_id": "east_tower_base",
+   "player_input": {
+    "kind": "option",
+    "text": "繞塔基尋找地面入口或線索"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪與白瀨雪乃並肩站在城東高塔巨大的圓形塔基前，腳下是鋪滿青苔與貝殼碎片的石板，潮濕的海風裹著鹽味吹拂臉頰。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "塔身直插雲霄，表面布滿斑駁的鏽跡與海蝕痕，最頂端的觀測窗漆黑一片，不見一絲光亮，彷彿一隻閉上的巨眼。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "塔基周圍有好幾個舊水道口呢，爺爺說以前維護燈塔機關都走那些通道哦。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女踮起腳尖，白色連身裙擺隨風輕颭，指尖輕點著塔基四周幾個被鐵蓋封死的圓形井口，銀色羽毛胸針在微光下閃爍。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "我們分頭看看，有發現再招呼。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪沿著塔基逆時針繞行，手電筒光束掃過石縫間滋長的蕨類，在第三個井口處停住——鐵蓋邊緣有新鮮的劃痕，顯然近期有人強行撬開過。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "郵差先生！這邊有標記呢！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "雪乃的聲音從另一側傳來，凪轉身循聲望去，少女正蹲在一塊倒塌的石碑前，手指輕撫碑面上一行淡褪的藍色符文，指尖泛著微弱螢光。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "none",
+    "options": [
+     "檢查被撬開的井口",
+     "走過去檢視雪乃發現的符文",
+     "先環塔一圈確認沒有其他入口",
+     "用手電筒照向塔身上方尋找線索"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [
+      "found_pried_well",
+      "found_glowing_runes"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪與雪乃在塔基發現被強行撬開的井口與發光符文，顯示近期有人進入塔內且存在神秘標記。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 8,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_shirano",
+     "delivered_lighthouse_alley_7",
+     "tower_exploration_start",
+     "found_pried_well",
+     "found_glowing_runes"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪市主浮橋初次遇見鄰居白瀨雪乃，得知城市每晚有一座塔燈熄滅的傳聞。",
+    "凪禮貌回應白瀨雪乃後繼續送信，少女揮手道別並提醒別怕熄滅塔燈。",
+    "凪加快腳步趕路，白瀨雪乃在身後鼓勵，凪揮手回應繼續送信。",
+    "凪在白瀨雪乃提醒下整理雨衣，確認下一站為燈塔巷 7 號，繼續前行投遞。",
+    "凪在燈塔巷 7 號完成投遞並繼續趕路，白瀨雪乃在身後調侃了一句。",
+    "凪向白瀨雪乃正式道別並獲得溫暖回應，少女承諾留燈相待，凪隨後繼續送信路線。",
+    "凪決定前往城東熄燈高塔調查，白瀨雪乃堅持同行，兩人抵達塔基準備探索。",
+    "凪與雪乃在塔基發現被強行撬開的井口與發光符文，顯示近期有人進入塔內且存在神秘標記。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0023",
+   "children": [],
+   "created_at": "2026-09-25T11:57:07+08:00"
+  }
+ }
+}

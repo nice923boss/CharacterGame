@@ -1,0 +1,52 @@
+{
+ "id": "g_20260925_113550",
+ "created_at": "2026-09-25T11:35:50+08:00",
+ "seed": 1992262691,
+ "title": "澪市燈火錄",
+ "style_en": "2080s fantasy water city, floating bridges and towers, gentle melancholy atmosphere, bioluminescent night",
+ "world": {
+  "era": "2080 年，海平面上升後的水上城市",
+  "place": "浮橋與高塔連成的水都「澪市」",
+  "genre": "奇幻解謎",
+  "tone": "溫柔、帶點寂寞",
+  "extra": "城市每晚都有一座塔的燈無故熄滅"
+ },
+ "protagonist": {
+  "name": "凪",
+  "profile": "剛搬來的郵差，負責在浮橋之間送信"
+ },
+ "characters": [
+  {
+   "id": "c1",
+   "name": "白瀨雪乃",
+   "appearance": "17 歲少女，白色長髮及腰，淺藍瞳色，白色連身裙外罩淺灰色雨衣，胸前別著銀色羽毛胸針",
+   "personality": "天真好奇，有點怕黑",
+   "speech": "語尾常帶「呢」，說話輕快",
+   "relationship": "主角的鄰居，塔燈守護人的孫女",
+   "appearance_en": "17-year-old girl, waist-length white hair, pale blue eyes, white dress under light grey raincoat, silver feather brooch",
+   "seed": 1992262708
+  },
+  {
+   "id": "c2",
+   "name": "韓拓",
+   "appearance": "30 歲男性，黑色短髮，右眼戴單片眼鏡，深綠色長大衣配皮革背帶，黑色手套",
+   "personality": "冷靜毒舌但可靠",
+   "speech": "句子簡短，常用反問",
+   "relationship": "水路管理局調查員，懷疑主角",
+   "appearance_en": "30-year-old man, short black hair, monocle on right eye, dark green long coat with leather harness, black gloves",
+   "seed": 1992262725
+  }
+ ],
+ "scenes": {
+  "mio_bridge_dusk": {
+   "name": "澪橋黃昏",
+   "image_prompt": "floating bridge connecting glowing towers at dusk, calm reflective water, soft amber and blue bioluminescent lights, misty horizon, peaceful lonely mood"
+  },
+  "tower_top_twilight": {
+   "name": "塔頂黃昏",
+   "image_prompt": "top floor of a tall lighthouse-like tower in a flooded city at twilight, circular room with panoramic windows showing neon-lit water bridges, vintage lanterns and strange mechanical apparatus on walls, dim amber light from inside, misty purple-blue atmosphere outside"
+  }
+ },
+ "first_scene": "mio_bridge_dusk",
+ "setup_model": "nvidia/nemotron-3-ultra-550b-a55b"
+}

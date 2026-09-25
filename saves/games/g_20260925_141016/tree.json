@@ -1,0 +1,1646 @@
+{
+ "root": "n_0000",
+ "next": 13,
+ "nodes": {
+  "n_0000": {
+   "parent": null,
+   "scene_id": "yanmen_inn_blizzard",
+   "player_input": {
+    "kind": "opening",
+    "text": ""
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "北風裹著碎冰，在雁門關外的荒原上嘶號，將天地染成一片慘白。路旁這間孤零零的「避風客棧」，牆皮剝落如癬，門板被風吹得咿呀直響。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "棧內炭火早熄，只剩幾張油膩長桌、幾條長凳，角落堆著發黴的稻草。幾個裹著斗篷的旅客縮在陰影裡，呼吸聲沉重而壓抑，目光皆釘在門口——等一封信，也等一條命。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "沈白靠坐門旁，懷中貼身處硬硬的油紙包裹貼著心口，掌心薄薄一層冷汗。初出茅廬的鏢師生涯，第一趟獨行鏢，卻是這場足以葬送性命的風雪局。"
+    },
+    {
+     "kind": "character",
+     "speaker": "燕十三娘",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "嘿，小哥兒，臉色白得跟牆上那層灰似的。頭一回押鏢就接這檔子事，膽子不小，還是師父沒教你「錢難賺、屎難吃、命最金貴」？"
+    },
+    {
+     "kind": "character",
+     "speaker": "老駱",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "十三娘，莫嚇壞了後生晚輩。這位沈小俠，老夫認得令師「鐵筆判官」沈大人，年輕時救過老夫一命。今日風雪閉關，既來之則安之，不妨聽老夫說段「關外風雲」暖暖身？"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "沈白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "多謝二位好意。在下沈白，確係家師門下。密信若平安出關，自當厚謝；若有差池，在下唯有以命相  \"scene_change\": false,"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"scene\": {\"id\": \"yanmen_inn_blizzard\", \"name\": \"風雪客棧\", \"image_prompt\": \"A dilapidated roadside inn outside Yanmen Pass in heavy blizzard, northern Song dynasty. Broken mud walls, snow drifting through cracked doorway, dim interior with a few wooden tables and benches, charcoal brazier cold, straw piles in corners. Pale grey daylight filtering through snowstorm, desolate atmosphere.\"},"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"bgm_mood\": \"tense\","
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"weather\": \"snow\","
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"options\": ["
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"向燕十三娘詢問她為何也在客棧等信\","
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"請老駱說說「關外風雲」具體指何事\","
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"檢查懷中密信封條是否完好\","
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"留意角落其他旅客的動靜\""
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "],"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"state_changes\": {\"affection\": {\"燕十三娘\": 1, \"老駱\": 1}, \"flags_add\": [\"met_yan\", \"met_laoluo\", \"master_mentioned\"], \"items_add\": [], \"items_remove\": []},"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"summary_update\": \"沈白初抵風雪客棧，遇見女刀客燕十三娘與說書人老駱。老駱認出沈白師父身分，兩人皆對密信之事心知肚明。\","
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"ending\": null"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "}"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "snow",
+    "options": [
+     "向燕十三娘詢問她為何也在客棧等信",
+     "請老駱說說「關外風雲」具體指何事",
+     "檢查懷中密信封條是否完好",
+     "留意角落其他旅客的動靜"
+    ],
+    "state_changes": {
+     "affection": {
+      "燕十三娘": 1,
+      "老駱": 1
+     },
+     "flags_add": [
+      "met_yan",
+      "met_laoluo",
+      "master_mentioned"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "沈白初抵風雪客棧，遇見女刀客燕十三娘與說書人老駱。老駱認出沈白師父身分，兩人皆對密信之事心知肚明。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "燕十三娘": 1,
+     "老駱": 1
+    },
+    "flags": [
+     "met_yan",
+     "met_laoluo",
+     "master_mentioned"
+    ],
+    "items": []
+   },
+   "summary": [
+    "沈白初抵風雪客棧，遇見女刀客燕十三娘與說書人老駱。老駱認出沈白師父身分，兩人皆對密信之事心知肚明。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "snow",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0000",
+   "children": [
+    "n_0001"
+   ],
+   "created_at": "2026-09-25T14:10:26+08:00"
+  },
+  "n_0001": {
+   "parent": "n_0000",
+   "scene_id": "yanmen_inn_blizzard",
+   "player_input": {
+    "kind": "option",
+    "text": "請老駱說說「關外風雲」具體指何事"
+   },
+   "lines": [
+    {
+     "kind": "protagonist",
+     "speaker": "沈白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "敢問老先生，這「關外風雲」具體指何事？既關係密信安危，在下洗耳恭聽。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老駱",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "好個洗耳恭聽。老夫這故事啊，得從三日前說起——大遼使節過關，隨行有一名「鐵面判官」耶律齊，身懷聖旨要在關內「查緝叛賊」，實則是來接應咱們大宋朝中潛伏多年的細作。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老駱",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "這細作底細極深，連當今宰執都牽扯得上。密信便是證據，裡頭寫著細作姓名、通遼密摺、甚至還有幾筆暗中輸送軍餉的帳目。誰拿到信，誰就捏住了朝廷命脈。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老駱",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "所以啊，這客棧裡坐著的，不是遼人眼線，便是朝廷緝捕使，還有……像十三娘這樣、為了自家恩怨混進來的江湖客。風雪一封，關門打狗，今晚便是收網時刻。"
+    },
+    {
+     "kind": "character",
+     "speaker": "燕十三娘",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "駱老頭兒說書還真不帶喘氣的。喂，小哥兒，聽懂沒？你懷裡那封信，就是所有人想宰了對方、又不敢先動手的「護身符」——也是「引魂幡」。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "風聲撞擊窗櫺，屋樑積雪簌簌落塵。角落幾名旅客聽到「細作」、「密摺」幾字，呼吸宣告顯一滯，手腕下沉，斗篷下隱約露出刀把與鐵尺邊緣。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "老駱合上摺扇，瞇瞇眼裡閃過一絲銳光，聲音忽轉輕柔：「沈小俠，老夫說書說到此處，該歇腔了。接下來……看你怎麼唱。」"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "snow",
+    "options": [
+     "佯裝不知，繼續靜觀其變",
+     "主動亮明身分，表明護送密信決心",
+     "趁機向燕十三娘詢問她的真實目的",
+     "悄悄檢查門窗鎖扣，準備突圍路線"
+    ],
+    "state_changes": {
+     "affection": {
+      "老駱": 1
+     },
+     "flags_add": [
+      "plot_revealed",
+      "spy_network_known"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "老駱透露密信涉及遼國細作與朝廷重臣勾結，客棧內藏龍臥虎，今晚將有收網行動。燕十三娘點出密信既是護身符也是引魂幡。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "燕十三娘": 1,
+     "老駱": 2
+    },
+    "flags": [
+     "met_yan",
+     "met_laoluo",
+     "master_mentioned",
+     "plot_revealed",
+     "spy_network_known"
+    ],
+    "items": []
+   },
+   "summary": [
+    "沈白初抵風雪客棧，遇見女刀客燕十三娘與說書人老駱。老駱認出沈白師父身分，兩人皆對密信之事心知肚明。",
+    "老駱透露密信涉及遼國細作與朝廷重臣勾結，客棧內藏龍臥虎，今晚將有收網行動。燕十三娘點出密信既是護身符也是引魂幡。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "snow",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0001",
+   "children": [
+    "n_0002"
+   ],
+   "created_at": "2026-09-25T14:10:49+08:00"
+  },
+  "n_0002": {
+   "parent": "n_0001",
+   "scene_id": "yanmen_inn_blizzard",
+   "player_input": {
+    "kind": "option",
+    "text": "趁機向燕十三娘詢問她的真實目的"
+   },
+   "lines": [
+    {
+     "kind": "protagonist",
+     "speaker": "沈白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "十三娘，你直說吧——你到底是為了什麼混進這潭渾水？若只是尋常恩怨，犯不著把命搭上。"
+    },
+    {
+     "kind": "character",
+     "speaker": "燕十三娘",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "呵，小哥兒倒直爽。老孃本姓燕，單名個十三，排行老大。三年前，遼人鷹爪孫「鐵爪鷹」燕北霸血洗我燕家寨，六十七口人連雞犬不留。那廝如今化名耶律齊，掛著大遼欽差銜銜，正在關內逍遙法外。"
+    },
+    {
+     "kind": "character",
+     "speaker": "燕十三娘",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "這密信若能釘死耶律齊通遼賣國的鐵證，朝廷便有名正言順由頭把他拿下、凌遲處死。老孃不在乎什麼朝廷命脈，只在乎那廝的人頭能不能祭我全寨冤魂。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老駱",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（輕搖摺扇）復仇固然大義，然則……若朝廷那位「牽扯極深」的宰執為保自己，反將密信毀滅、將功臣滅口，十三娘姑娘又當如何？"
+    },
+    {
+     "kind": "character",
+     "speaker": "燕十三娘",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "瞇瞇眼，少給老孃陰陽怪氣。若真有那一天，老孃拼著這條老命，也要在朝堂之上鬧個天翻地覆！只要信在沈小哥兒手裡一日，老孃就擋在他身前一日。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "風雪拍打窗紙如急鼓，角落旅客依舊纖毫不動，唯有刀鞘與鐵尺磨擦聲在寂靜中格外刺耳。油紙包裹貼著沈白心口，彷彿也隨著心跳微微發燙。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "老駱合扇拍掌，笑道：「好個『擋在他身前一日』！老夫說書半生，頭一回聽這麼痛快的『俠』字註腳。沈小俠，既得同路，老夫這破摺扇也算湊份子——今晚風雪閉關，咱們三個，先商量個『活著出關』的法子？」"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "snow",
+    "options": [
+     "與燕十三娘、老駱商議突圍護送密信出關的具體計畫",
+     "詢問老駱認不認得角落裡那幾個可疑旅客的底細",
+     "提議先以密信為餌，誘出潛伏內奸再定奪",
+     "檢查自身裝備與傷勢，確認能否應付一場硬仗"
+    ],
+    "state_changes": {
+     "affection": {
+      "燕十三娘": 2,
+      "老駱": 1
+     },
+     "flags_add": [
+      "yan_revenge_revealed",
+      "temporary_alliance"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "燕十三娘坦露復仇真相：目標是化名耶律齊的遼人鷹爪孫燕北霸，密信是釘死他的鐵證。三人達成暫時同盟，商議今晚突圍出關大計。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "燕十三娘": 3,
+     "老駱": 3
+    },
+    "flags": [
+     "met_yan",
+     "met_laoluo",
+     "master_mentioned",
+     "plot_revealed",
+     "spy_network_known",
+     "yan_revenge_revealed",
+     "temporary_alliance"
+    ],
+    "items": []
+   },
+   "summary": [
+    "沈白初抵風雪客棧，遇見女刀客燕十三娘與說書人老駱。老駱認出沈白師父身分，兩人皆對密信之事心知肚明。",
+    "老駱透露密信涉及遼國細作與朝廷重臣勾結，客棧內藏龍臥虎，今晚將有收網行動。燕十三娘點出密信既是護身符也是引魂幡。",
+    "燕十三娘坦露復仇真相：目標是化名耶律齊的遼人鷹爪孫燕北霸，密信是釘死他的鐵證。三人達成暫時同盟，商議今晚突圍出關大計。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "snow",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0002",
+   "children": [
+    "n_0003"
+   ],
+   "created_at": "2026-09-25T14:12:01+08:00"
+  },
+  "n_0003": {
+   "parent": "n_0002",
+   "scene_id": "yanmen_inn_blizzard",
+   "player_input": {
+    "kind": "free",
+    "text": "我暗中觀察誰在半夜打探密信的下落。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "夜色漸深，客棧內炭火將熄未熄，餘暉在眾人臉上投下斑駁陰影。沈白佯裝閉目養神，半闔的眼簾後，目光如絲線般悄悄掃過四周。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "角落裡，一名戴斗笠的旅客藉口去茅房，起身時腳步虛浮，卻在經過沈白身側時，袖中滑出一根細如牛毛的銀針，輕輕撥弄了一下沈白腰間繫著的油紙包裹。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老駱",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（輕咳一聲，摺扇半掩面）這北風吹得人眼淚直流，沈小俠，你那信，可還貼身？"
+    },
+    {
+     "kind": "character",
+     "speaker": "燕十三娘",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（冷笑一聲，刀柄在桌上輕叩）剛才那戴斗笠的，手腳倒是輕。小哥兒，若老孃沒看錯，他袖口沾的是遼東特有的松煙墨，專用來做密信火漆印的。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "沈白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "原來是他。十三娘好眼力，在下這便過去探探虛實。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "沈白起身，步履平穩地走向角落，那戴斗笠的旅客聞聲回頭，兜帽下的雙眼微微眯起，手中不知何時多了一把短刃。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "snow",
+    "options": [
+     "假意問路，靠近觀察對方動作",
+     "直接點破對方袖口墨跡，逼其亮劍",
+     "向老駱使眼色，請他幫忙打斷對話"
+    ],
+    "state_changes": {
+     "affection": {
+      "燕十三娘": 1
+     },
+     "flags_add": [
+      "spy_identified"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "沈白發現戴斗笠的旅客是遼國細作，並確認其身上帶有製作密信火漆的松煙墨，嫌疑鎖定。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "燕十三娘": 4,
+     "老駱": 3
+    },
+    "flags": [
+     "met_yan",
+     "met_laoluo",
+     "master_mentioned",
+     "plot_revealed",
+     "spy_network_known",
+     "yan_revenge_revealed",
+     "temporary_alliance",
+     "spy_identified"
+    ],
+    "items": []
+   },
+   "summary": [
+    "沈白初抵風雪客棧，遇見女刀客燕十三娘與說書人老駱。老駱認出沈白師父身分，兩人皆對密信之事心知肚明。",
+    "老駱透露密信涉及遼國細作與朝廷重臣勾結，客棧內藏龍臥虎，今晚將有收網行動。燕十三娘點出密信既是護身符也是引魂幡。",
+    "燕十三娘坦露復仇真相：目標是化名耶律齊的遼人鷹爪孫燕北霸，密信是釘死他的鐵證。三人達成暫時同盟，商議今晚突圍出關大計。",
+    "沈白發現戴斗笠的旅客是遼國細作，並確認其身上帶有製作密信火漆的松煙墨，嫌疑鎖定。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "snow",
+   "model": "qwen3.6-35b-a3b",
+   "repair_notes": [],
+   "id": "n_0003",
+   "children": [
+    "n_0004"
+   ],
+   "created_at": "2026-09-25T14:12:46+08:00"
+  },
+  "n_0004": {
+   "parent": "n_0003",
+   "scene_id": "yanmen_inn_blizzard",
+   "player_input": {
+    "kind": "option",
+    "text": "直接點破對方袖口墨跡，逼其亮劍"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "沈白目光如電，直刺那斗笠旅客袖口，沉聲道：「松煙墨跡未乾，這位兄臺剛才撥弄信包裹時，怕是不小心沾上了吧？」"
+    },
+    {
+     "kind": "character",
+     "speaker": "燕十三娘",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（輕笑一聲，長刀出鞘半寸，寒光閃爍）哼，好巧的墨跡。耶律齊大人，還是說，該叫你鷹爪孫？"
+    },
+    {
+     "kind": "character",
+     "speaker": "老駱",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（摺扇輕敲桌面，語氣悠閒）風雪夜，客棧裡，細作露馬腳。沈小俠這一指，可真是點破了這層薄紙啊。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（猛地掀開斗笠，露出一張冷峻如鐵的臉，眼神猙獰）好眼光！既然被你看穿了，那就別怪老夫手狠。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "旅客身形暴起，短刃劃破空氣，直取沈白咽喉。燕十三娘刀光如匹練般迎上，兩股勁氣在狹窄空間內撞擊，火星四濺。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "沈白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（側身避過餘波，反手按住刀柄）果然沒看錯！十三娘，小心他的鷹爪功！"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "snow",
+    "options": [
+     "配合燕十三娘夾擊，攻其下盤",
+     "護住密信，後退讓燕十三娘主攻",
+     "用話語拖延，觀察其武功路數",
+     "向老駱求助，看是否有後手"
+    ],
+    "state_changes": {
+     "affection": {
+      "燕十三娘": 1
+     },
+     "flags_add": [
+      "spy_identified"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "沈白點破戴斗笠旅客袖口松煙墨跡，確認其為遼國細作鷹爪孫。雙方爆發短暫交鋒，內奸身份正式揭曉。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "燕十三娘": 5,
+     "老駱": 3
+    },
+    "flags": [
+     "met_yan",
+     "met_laoluo",
+     "master_mentioned",
+     "plot_revealed",
+     "spy_network_known",
+     "yan_revenge_revealed",
+     "temporary_alliance",
+     "spy_identified"
+    ],
+    "items": []
+   },
+   "summary": [
+    "沈白初抵風雪客棧，遇見女刀客燕十三娘與說書人老駱。老駱認出沈白師父身分，兩人皆對密信之事心知肚明。",
+    "老駱透露密信涉及遼國細作與朝廷重臣勾結，客棧內藏龍臥虎，今晚將有收網行動。燕十三娘點出密信既是護身符也是引魂幡。",
+    "燕十三娘坦露復仇真相：目標是化名耶律齊的遼人鷹爪孫燕北霸，密信是釘死他的鐵證。三人達成暫時同盟，商議今晚突圍出關大計。",
+    "沈白發現戴斗笠的旅客是遼國細作，並確認其身上帶有製作密信火漆的松煙墨，嫌疑鎖定。",
+    "沈白點破戴斗笠旅客袖口松煙墨跡，確認其為遼國細作鷹爪孫。雙方爆發短暫交鋒，內奸身份正式揭曉。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "snow",
+   "model": "qwen3.6-35b-a3b",
+   "repair_notes": [],
+   "id": "n_0004",
+   "children": [
+    "n_0005"
+   ],
+   "created_at": "2026-09-25T14:13:19+08:00"
+  },
+  "n_0005": {
+   "parent": "n_0004",
+   "scene_id": "yanmen_inn_blizzard",
+   "player_input": {
+    "kind": "free",
+    "text": "我設下假密信的圈套，引內奸現身。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "沈白眼神一凜，右手虛按腰間油紙包，左手卻悄然從袖中摸出一個早已備好的粗糙紙卷——邊緣燒焦、封泥模糊，分量輕得不像話。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "沈白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（聲音故意揚高，透著幾分酒後鬆懈）哈，原來是鷹爪孫大人親臨。這密信既已露餡，沈某也不藏了——信在這兒，有本事來拿！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "沈白手腕一抖，那假密信劃出拋物線，直落桌心。鷹爪孫瞳孔驟縮，五指如鉤暴抓而至，指風嘶嘶裂帛。"
+    },
+    {
+     "kind": "character",
+     "speaker": "燕十三娘",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（冷喝一聲，長刀橫掃，刀鋒帶起颯颯風聲）想得美！留下命來！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "刀氣與指勁正面碰撞，氣浪掀翻桌椅，油燈「啪」地一聲爆開火花。鷹爪孫身在半空硬生生扭腰，指尖擦著假信邊緣劃過，落地時腳步踉蹌，喉頭滾動，顯然內傷不輕。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老駱",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（合扇立身，扇骨抵住鷹爪孫退路，瞇瞇眼裡不再有笑意）耶律大人，這盤棋，輸得不冤吧？"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（仰天長笑，笑聲裡滿是血腥氣）好個「避風客棧」……好個鐵筆判官傳人！信是假的又怎樣？真信早已不在你身上——方才那一撥，老夫已在你腰帶扣上做了手腳，蠶絲追蹤，十里之內逃不出老夫掌心！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "鷹爪孫袖中彈出一縷幾不可見的銀絲，直沒雪夜。燕十三娘瞳孔微縮，刀尖已抵住對方喉嚨，卻遲遲不發。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "snow",
+    "options": [
+     "立即斬斷蠶絲，帶人硬衝出客棧",
+     "佯裝中計，順著蠶絲反追蹤主謀",
+     "逼問鷹爪孫真信下落，以此為籌碼談判",
+     "讓老駱施展隱藏手段切斷追蹤"
+    ],
+    "state_changes": {
+     "affection": {
+      "燕十三娘": 2,
+      "老駱": 1
+     },
+     "flags_add": [
+      "fake_letter_trap",
+      "tracking_silk_revealed"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "沈白以假密信誘餌引出鷹爪孫，雙方交鋒中鷹爪孫受傷但揭露真信早已不在沈白身上，且在腰帶扣安裝蠶絲追蹤器。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "燕十三娘": 7,
+     "老駱": 4
+    },
+    "flags": [
+     "met_yan",
+     "met_laoluo",
+     "master_mentioned",
+     "plot_revealed",
+     "spy_network_known",
+     "yan_revenge_revealed",
+     "temporary_alliance",
+     "spy_identified",
+     "fake_letter_trap",
+     "tracking_silk_revealed"
+    ],
+    "items": []
+   },
+   "summary": [
+    "沈白初抵風雪客棧，遇見女刀客燕十三娘與說書人老駱。老駱認出沈白師父身分，兩人皆對密信之事心知肚明。",
+    "老駱透露密信涉及遼國細作與朝廷重臣勾結，客棧內藏龍臥虎，今晚將有收網行動。燕十三娘點出密信既是護身符也是引魂幡。",
+    "燕十三娘坦露復仇真相：目標是化名耶律齊的遼人鷹爪孫燕北霸，密信是釘死他的鐵證。三人達成暫時同盟，商議今晚突圍出關大計。",
+    "沈白發現戴斗笠的旅客是遼國細作，並確認其身上帶有製作密信火漆的松煙墨，嫌疑鎖定。",
+    "沈白點破戴斗笠旅客袖口松煙墨跡，確認其為遼國細作鷹爪孫。雙方爆發短暫交鋒，內奸身份正式揭曉。",
+    "沈白以假密信誘餌引出鷹爪孫，雙方交鋒中鷹爪孫受傷但揭露真信早已不在沈白身上，且在腰帶扣安裝蠶絲追蹤器。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "snow",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0005",
+   "children": [
+    "n_0006"
+   ],
+   "created_at": "2026-09-25T14:13:40+08:00"
+  },
+  "n_0006": {
+   "parent": "n_0005",
+   "scene_id": "yanmen_inn_blizzard",
+   "player_input": {
+    "kind": "option",
+    "text": "逼問鷹爪孫真信下落，以此為籌碼談判"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（咳出一口黑血，雙眼死盯著沈白）談判？哈哈哈……沈白，你以為老夫會怕死？真信在老夫同夥手裡，此刻怕已出關去了！"
+    },
+    {
+     "kind": "character",
+     "speaker": "燕十三娘",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（刀鋒下壓，割破喉嚨皮見鮮紅）同夥？客棧裡還有你的人？說！是誰？"
+    },
+    {
+     "kind": "character",
+     "speaker": "老駱",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（摺扇輕點鷹爪孫幾大穴，語氣平淡如說書）耶律大人，蠶絲追蹤雖妙，若斷了呢？老夫這扇骨，專削鐵絲如切豆腐。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "沈白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（沉聲）真信在誰手中？交出來，留你全屍；否則……"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（狂笑中突然咬破舌尖，噴出一口血霧，身形暴退）留全屍？老夫只要拖住你們，大遼鐵騎便是最大的談判籌碼！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "血霧炸開瞬間，鷹爪孫借勢衝破窗欞，蠶絲銀光一閃斷在老駱扇骨上，人已沒入風雪茫茫。燕十三娘欲追，卻被門外突如其來的號角聲凍住腳步——關外漫天火把，鐵騎轟鳴，圍得水洩不通。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "snow",
+    "options": [
+     "衝出客棧迎戰鐵騎搶回真信",
+     "留守客棧搜查內應並尋找線索",
+     "利用地道或後門嘗試突圍出關",
+     "與燕十三娘、老駱商議以假信換真信之計"
+    ],
+    "state_changes": {
+     "affection": {
+      "燕十三娘": 1,
+      "老駱": 1
+     },
+     "flags_add": [
+      "eagle_claw_escaped",
+      "liao_cavalry_surround"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "鷹爪孫拒不供出真信下落，咬舌噴血霧逃脫，客棧瞬間被大遼鐵騎團團圍住。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "燕十三娘": 8,
+     "老駱": 5
+    },
+    "flags": [
+     "met_yan",
+     "met_laoluo",
+     "master_mentioned",
+     "plot_revealed",
+     "spy_network_known",
+     "yan_revenge_revealed",
+     "temporary_alliance",
+     "spy_identified",
+     "fake_letter_trap",
+     "tracking_silk_revealed",
+     "eagle_claw_escaped",
+     "liao_cavalry_surround"
+    ],
+    "items": []
+   },
+   "summary": [
+    "沈白初抵風雪客棧，遇見女刀客燕十三娘與說書人老駱。老駱認出沈白師父身分，兩人皆對密信之事心知肚明。",
+    "老駱透露密信涉及遼國細作與朝廷重臣勾結，客棧內藏龍臥虎，今晚將有收網行動。燕十三娘點出密信既是護身符也是引魂幡。",
+    "燕十三娘坦露復仇真相：目標是化名耶律齊的遼人鷹爪孫燕北霸，密信是釘死他的鐵證。三人達成暫時同盟，商議今晚突圍出關大計。",
+    "沈白發現戴斗笠的旅客是遼國細作，並確認其身上帶有製作密信火漆的松煙墨，嫌疑鎖定。",
+    "沈白點破戴斗笠旅客袖口松煙墨跡，確認其為遼國細作鷹爪孫。雙方爆發短暫交鋒，內奸身份正式揭曉。",
+    "沈白以假密信誘餌引出鷹爪孫，雙方交鋒中鷹爪孫受傷但揭露真信早已不在沈白身上，且在腰帶扣安裝蠶絲追蹤器。",
+    "鷹爪孫拒不供出真信下落，咬舌噴血霧逃脫，客棧瞬間被大遼鐵騎團團圍住。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "snow",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0006",
+   "children": [
+    "n_0007"
+   ],
+   "created_at": "2026-09-25T14:13:54+08:00"
+  },
+  "n_0007": {
+   "parent": "n_0006",
+   "scene_id": "yanmen_inn_blizzard",
+   "player_input": {
+    "kind": "free",
+    "text": "揭穿內奸後，我趁風雪稍停，帶著真密信衝出雁門關。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "號角聲如野獸嘶吼撕裂風雪，火把龍蛇般蜿蜒於關道兩側，鐵騎踏雪聲震得窗紙嗡嗡作響。沈白心頭一沉，反手扣住真密信——那油紙包從未離身，方才只以假信誘敵，真信早已暗繫內襟繫帶之上。"
+    },
+    {
+     "kind": "character",
+     "speaker": "燕十三娘",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（猛地轉身，刀鋒劈開門扇，風雪灌入屋內）鐵騎堵門，硬衝是送死！老駱，你說書還有沒有「避兵符」這一招？"
+    },
+    {
+     "kind": "character",
+     "speaker": "老駱",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（摺扇合攏，腳尖點地竄上樑間，聲音自頂傳下）老夫說書不賣假藥，但這樑上瓦片鬆了幾塊，後院柴房牆根還留著當年馬幫挖的狗洞——若不嫌髒，趁亂鑽過去，或許能摸到關外馬道。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "話音未落，門外馬蹄聲驟密，一支羽箭破窗而入，箭尾繫著一卷黃絹書信，釘在沈白腳邊桌案上。沈白拾起展開，只見上書「大遼欽差耶律齊諭：獻信者封千戶侯，殺人者賞銀萬兩，活捉沈白、燕十三娘、老駱者，爵位世襲罔替」。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "沈白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（揉碎黃絹塞入懷中，沉聲）賞金懸得這麼高，外頭鐵騎怕不止三百騎。走後院狗洞，分頭突圍，雁門關外林深雪厚，咱們各憑本事活著見天亮。"
+    },
+    {
+     "kind": "character",
+     "speaker": "燕十三娘",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（大笑一聲，披風獵獵，長刀橫抱）好！老孃陪小哥兒賭這一把！駱老頭兒，莫要落後了——若讓遼人捉去說書，老孃墳頭燒報紙都嫌你丟人！"
+    },
+    {
+     "kind": "character",
+     "speaker": "老駱",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（從樑上輕落，拍拍灰塵，瞇瞇眼彎成兩道月牙）沈小俠，密信在你身上，性命最重。老夫殿後，你二人先走——記住，出了狗洞向東北，有條枯澗通關外古道，那是唯一生路。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "snow",
+    "options": [
+     "沿老駱指引鑽狗洞逃往東北枯澗",
+     "佯裝投降獻假信誘敵深入再伏擊",
+     "以真信為餌引開主力讓燕十三娘老駱先撤",
+     "原地死守利用客棧地形逐個擊破追兵"
+    ],
+    "state_changes": {
+     "affection": {
+      "燕十三娘": 1,
+      "老駱": 1
+     },
+     "flags_add": [
+      "escape_plan_agreed",
+      "liao_bounty_revealed"
+     ],
+     "items_add": [
+      "黃絹賞格文書"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "鷹爪孫逃脫後大遼鐵騎包圍客棧，懸賞捉拿三人。老駱指引後院狗洞通往東北枯澗古道，三人約定分頭突圍，沈白攜真密信準備衝出重圍。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "燕十三娘": 9,
+     "老駱": 6
+    },
+    "flags": [
+     "met_yan",
+     "met_laoluo",
+     "master_mentioned",
+     "plot_revealed",
+     "spy_network_known",
+     "yan_revenge_revealed",
+     "temporary_alliance",
+     "spy_identified",
+     "fake_letter_trap",
+     "tracking_silk_revealed",
+     "eagle_claw_escaped",
+     "liao_cavalry_surround",
+     "escape_plan_agreed",
+     "liao_bounty_revealed"
+    ],
+    "items": [
+     "黃絹賞格文書"
+    ]
+   },
+   "summary": [
+    "沈白初抵風雪客棧，遇見女刀客燕十三娘與說書人老駱。老駱認出沈白師父身分，兩人皆對密信之事心知肚明。",
+    "老駱透露密信涉及遼國細作與朝廷重臣勾結，客棧內藏龍臥虎，今晚將有收網行動。燕十三娘點出密信既是護身符也是引魂幡。",
+    "燕十三娘坦露復仇真相：目標是化名耶律齊的遼人鷹爪孫燕北霸，密信是釘死他的鐵證。三人達成暫時同盟，商議今晚突圍出關大計。",
+    "沈白發現戴斗笠的旅客是遼國細作，並確認其身上帶有製作密信火漆的松煙墨，嫌疑鎖定。",
+    "沈白點破戴斗笠旅客袖口松煙墨跡，確認其為遼國細作鷹爪孫。雙方爆發短暫交鋒，內奸身份正式揭曉。",
+    "沈白以假密信誘餌引出鷹爪孫，雙方交鋒中鷹爪孫受傷但揭露真信早已不在沈白身上，且在腰帶扣安裝蠶絲追蹤器。",
+    "鷹爪孫拒不供出真信下落，咬舌噴血霧逃脫，客棧瞬間被大遼鐵騎團團圍住。",
+    "鷹爪孫逃脫後大遼鐵騎包圍客棧，懸賞捉拿三人。老駱指引後院狗洞通往東北枯澗古道，三人約定分頭突圍，沈白攜真密信準備衝出重圍。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "snow",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0007",
+   "children": [
+    "n_0008"
+   ],
+   "created_at": "2026-09-25T14:14:17+08:00"
+  },
+  "n_0008": {
+   "parent": "n_0007",
+   "scene_id": "gully_path",
+   "player_input": {
+    "kind": "option",
+    "text": "沿老駱指引鑽狗洞逃往東北枯澗"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "沈白不再猶豫，一把扯開柴房後牆那塊早已鬆動的磚石，冷風裹著雪渣子灌進來，嗆得人鼻端生疼。他縮骨鑽入狹窄通道，油紙包緊貼心口，掌心濕冷卻穩如磐石。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老駱",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（身後傳來輕笑，摺扇在黑暗中開合）好個利索身手，沈小俠。老夫斷後，若有遼騎硬闖，便送他們場「說書人」的開場白——只怕聽得他們魂飛魄散。"
+    },
+    {
+     "kind": "character",
+     "speaker": "燕十三娘",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（最後一個鑽入，長刀反握護住後路，聲音低沉有力）小哥兒，前頭帶路。老孃殿後堵著，誰敢追來，先問過我刀下亡魂答不答應！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "狗洞盡頭豁然開朗，枯澗底積雪及膝，兩岸崖壁如刀劈斧鑿，僅容單人側身。北風在峽谷中嘯叫，捲起雪霧遮天蔽日，腳下咯吱作響，每一步都沈重艱難。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "遠處馬蹄聲與號角聲忽遠忽近，顯然遼騎已發現脫逃，正分兵搜尋山徑。沈白辨明方向，咬牙向東北深處奔去，身後兩道身影緊隨不捨，三條孤影併入蒼茫風雪之中。"
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "gully_path",
+     "name": "枯澗古道",
+     "image_prompt": "narrow frozen ravine between steep cliffs, deep snow covering winding path, pale winter sunlight filtering through swirling snowstorm, desolate ancient trail leading northeast, bleak and cold atmosphere"
+    },
+    "bgm_mood": "tense",
+    "weather": "snow",
+    "options": [
+     "全力奔跑拉開距離，直奔古道盡頭",
+     "尋找隱蔽處暫避鋒頭，觀察追兵動向",
+     "在雪地佈下陷阱誤導遼騎，贏取喘息時間",
+     "讓燕十三娘與老駱先走，自己斷後引開追兵"
+    ],
+    "state_changes": {
+     "affection": {
+      "燕十三娘": 1,
+      "老駱": 1
+     },
+     "flags_add": [
+      "escaped_inn",
+      "entered_gully"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "三人沿老駱指引鑽過狗洞逃入東北枯澗古道，遼騎分兵追擊，沈白攜真密信領頭突圍。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "燕十三娘": 10,
+     "老駱": 7
+    },
+    "flags": [
+     "met_yan",
+     "met_laoluo",
+     "master_mentioned",
+     "plot_revealed",
+     "spy_network_known",
+     "yan_revenge_revealed",
+     "temporary_alliance",
+     "spy_identified",
+     "fake_letter_trap",
+     "tracking_silk_revealed",
+     "eagle_claw_escaped",
+     "liao_cavalry_surround",
+     "escape_plan_agreed",
+     "liao_bounty_revealed",
+     "escaped_inn",
+     "entered_gully"
+    ],
+    "items": [
+     "黃絹賞格文書"
+    ]
+   },
+   "summary": [
+    "沈白初抵風雪客棧，遇見女刀客燕十三娘與說書人老駱。老駱認出沈白師父身分，兩人皆對密信之事心知肚明。",
+    "老駱透露密信涉及遼國細作與朝廷重臣勾結，客棧內藏龍臥虎，今晚將有收網行動。燕十三娘點出密信既是護身符也是引魂幡。",
+    "燕十三娘坦露復仇真相：目標是化名耶律齊的遼人鷹爪孫燕北霸，密信是釘死他的鐵證。三人達成暫時同盟，商議今晚突圍出關大計。",
+    "沈白發現戴斗笠的旅客是遼國細作，並確認其身上帶有製作密信火漆的松煙墨，嫌疑鎖定。",
+    "沈白點破戴斗笠旅客袖口松煙墨跡，確認其為遼國細作鷹爪孫。雙方爆發短暫交鋒，內奸身份正式揭曉。",
+    "沈白以假密信誘餌引出鷹爪孫，雙方交鋒中鷹爪孫受傷但揭露真信早已不在沈白身上，且在腰帶扣安裝蠶絲追蹤器。",
+    "鷹爪孫拒不供出真信下落，咬舌噴血霧逃脫，客棧瞬間被大遼鐵騎團團圍住。",
+    "鷹爪孫逃脫後大遼鐵騎包圍客棧，懸賞捉拿三人。老駱指引後院狗洞通往東北枯澗古道，三人約定分頭突圍，沈白攜真密信準備衝出重圍。",
+    "三人沿老駱指引鑽過狗洞逃入東北枯澗古道，遼騎分兵追擊，沈白攜真密信領頭突圍。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "snow",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0008",
+   "children": [
+    "n_0009"
+   ],
+   "created_at": "2026-09-25T14:14:28+08:00"
+  },
+  "n_0009": {
+   "parent": "n_0008",
+   "scene_id": "gully_path",
+   "player_input": {
+    "kind": "free",
+    "text": "我決定不再拖延，現在就賭上一切，把這件事做個了斷。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "枯澗古道蜿蜒如死蛇，積雪沒膝，每一步都要拔腿時帶出「撕啦」悶響。沈白咬緊牙關，油紙包貼心口的溫熱穿透寒衣，提醒著他這趟賭局的籌碼——不僅是三條性命，還有大宋半壁江山的安危。"
+    },
+    {
+     "kind": "character",
+     "speaker": "燕十三娘",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（側身劈開一根橫生枯枝，白氣噴吐）小哥兒，前頭有條冰瀑倒掛，遼騎若繞上崖頂居高臨下，咱們成活靶子。老駱那條「生路」到底還有多遠？"
+    },
+    {
+     "kind": "character",
+     "speaker": "老駱",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（摺扇在雪霧中開合，腳下毫不停頓）沈小俠，前方三里有座廢棄烽火臺，臺下暗通山洞，可直出關外平川。只是……洞口被常年積雪封死，得有人開路。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "沈白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（呼吸沉重，目光堅定）那我來開路。十三娘、老駱，若遼騎追上，你們先進洞，我在後斷後——這趟鏢，沈某定要送到終點。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "風雪驟緊，遠處馬蹄聲如滾滾春雷，數十騎遼兵已現身崖頂，火把映紅半邊天。沈白反手拔刀，刀鋒在雪光中閃出一道寒弧，腳下不退反進，衝向那座聳立風雪中的廢棄烽火臺。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "snow",
+    "options": [
+     "全力衝向烽火臺，親自開鑿洞口",
+     "命燕十三娘開路，自己殿後引開遼騎",
+     "讓老駱尋找其他出路，三人暫時分頭行動",
+     "原地佈陣利用地形殲滅追兵再走"
+    ],
+    "state_changes": {
+     "affection": {
+      "燕十三娘": 1,
+      "老駱": 1
+     },
+     "flags_add": [
+      "final_gamble_declared"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "沈白決意孤注一擲衝向烽火臺開鑿洞口，三人於枯澗古道直面遼騎追擊，生死賭局正式展開。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "燕十三娘": 11,
+     "老駱": 8
+    },
+    "flags": [
+     "met_yan",
+     "met_laoluo",
+     "master_mentioned",
+     "plot_revealed",
+     "spy_network_known",
+     "yan_revenge_revealed",
+     "temporary_alliance",
+     "spy_identified",
+     "fake_letter_trap",
+     "tracking_silk_revealed",
+     "eagle_claw_escaped",
+     "liao_cavalry_surround",
+     "escape_plan_agreed",
+     "liao_bounty_revealed",
+     "escaped_inn",
+     "entered_gully",
+     "final_gamble_declared"
+    ],
+    "items": [
+     "黃絹賞格文書"
+    ]
+   },
+   "summary": [
+    "沈白初抵風雪客棧，遇見女刀客燕十三娘與說書人老駱。老駱認出沈白師父身分，兩人皆對密信之事心知肚明。",
+    "老駱透露密信涉及遼國細作與朝廷重臣勾結，客棧內藏龍臥虎，今晚將有收網行動。燕十三娘點出密信既是護身符也是引魂幡。",
+    "燕十三娘坦露復仇真相：目標是化名耶律齊的遼人鷹爪孫燕北霸，密信是釘死他的鐵證。三人達成暫時同盟，商議今晚突圍出關大計。",
+    "沈白發現戴斗笠的旅客是遼國細作，並確認其身上帶有製作密信火漆的松煙墨，嫌疑鎖定。",
+    "沈白點破戴斗笠旅客袖口松煙墨跡，確認其為遼國細作鷹爪孫。雙方爆發短暫交鋒，內奸身份正式揭曉。",
+    "沈白以假密信誘餌引出鷹爪孫，雙方交鋒中鷹爪孫受傷但揭露真信早已不在沈白身上，且在腰帶扣安裝蠶絲追蹤器。",
+    "鷹爪孫拒不供出真信下落，咬舌噴血霧逃脫，客棧瞬間被大遼鐵騎團團圍住。",
+    "鷹爪孫逃脫後大遼鐵騎包圍客棧，懸賞捉拿三人。老駱指引後院狗洞通往東北枯澗古道，三人約定分頭突圍，沈白攜真密信準備衝出重圍。",
+    "三人沿老駱指引鑽過狗洞逃入東北枯澗古道，遼騎分兵追擊，沈白攜真密信領頭突圍。",
+    "沈白決意孤注一擲衝向烽火臺開鑿洞口，三人於枯澗古道直面遼騎追擊，生死賭局正式展開。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "snow",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0009",
+   "children": [
+    "n_0010"
+   ],
+   "created_at": "2026-09-25T14:14:43+08:00"
+  },
+  "n_0010": {
+   "parent": "n_0009",
+   "scene_id": "gully_path",
+   "player_input": {
+    "kind": "option",
+    "text": "讓老駱尋找其他出路，三人暫時分頭行動"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "沈白腳下一頓，撥出一口白氣，轉身對老駱沉聲道：「駱老，你熟悉地形，速去側崖尋找別樣出路；十三娘隨我衝臺，引開主力。若天亮前在平川匯不上，便各自突圍——密信在我身上，活著才有用。」"
+    },
+    {
+     "kind": "character",
+     "speaker": "老駱",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（摺扇「啪」地合上，瞇瞇眼罕見地透出幾分凝重）沈小俠，老駱這把老骨頭還跑得動。只是……分頭便是分勢，若遼騎逐個擊破，咱們誰也顧不上誰。你須記牢：烽火臺地窖有條暗河，順流而下直出關外，那是老夫留給你的後手。"
+    },
+    {
+     "kind": "character",
+     "speaker": "燕十三娘",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（長刀斜指地面，刀尖挑起一塊冰渣）少廢話，老駱你快走！小哥兒，刀在人在，刀斷人亡——咱們烽火臺見！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "老駱不再遲疑，腳尖點在崖壁凸石上，身形如大鳥掠過枯澗，轉眼沒入左側雪霧深處。沈白與燕十三娘對視一眼，雙雙拔地而起，刀鋒與掌風在風雪中劃出兩道寒光，直撲崖頂那座佇立如墓碑般的廢棄烽火臺。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "snow",
+    "options": [
+     "全力衝向烽火臺，與十三娘併肩殺出血路",
+     "命十三娘掩護，獨自繞至烽火臺後尋找地窖入口",
+     "以刀劈冰瀑製造雪崩阻擋遼騎，爭取時間",
+     "燃燒油紙包製造煙霧掩護，冒險嘗試與老駱會合"
+    ],
+    "state_changes": {
+     "affection": {
+      "燕十三娘": 1
+     },
+     "flags_add": [
+      "split_up",
+      "laoluo_scouting",
+      "beacon_assault"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "沈白決定三人分頭行動：老駱去側崖尋找替代出路，沈白與燕十三娘直衝廢棄烽火臺引開遼騎主力。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "燕十三娘": 12,
+     "老駱": 8
+    },
+    "flags": [
+     "met_yan",
+     "met_laoluo",
+     "master_mentioned",
+     "plot_revealed",
+     "spy_network_known",
+     "yan_revenge_revealed",
+     "temporary_alliance",
+     "spy_identified",
+     "fake_letter_trap",
+     "tracking_silk_revealed",
+     "eagle_claw_escaped",
+     "liao_cavalry_surround",
+     "escape_plan_agreed",
+     "liao_bounty_revealed",
+     "escaped_inn",
+     "entered_gully",
+     "final_gamble_declared",
+     "split_up",
+     "laoluo_scouting",
+     "beacon_assault"
+    ],
+    "items": [
+     "黃絹賞格文書"
+    ]
+   },
+   "summary": [
+    "沈白初抵風雪客棧，遇見女刀客燕十三娘與說書人老駱。老駱認出沈白師父身分，兩人皆對密信之事心知肚明。",
+    "老駱透露密信涉及遼國細作與朝廷重臣勾結，客棧內藏龍臥虎，今晚將有收網行動。燕十三娘點出密信既是護身符也是引魂幡。",
+    "燕十三娘坦露復仇真相：目標是化名耶律齊的遼人鷹爪孫燕北霸，密信是釘死他的鐵證。三人達成暫時同盟，商議今晚突圍出關大計。",
+    "沈白發現戴斗笠的旅客是遼國細作，並確認其身上帶有製作密信火漆的松煙墨，嫌疑鎖定。",
+    "沈白點破戴斗笠旅客袖口松煙墨跡，確認其為遼國細作鷹爪孫。雙方爆發短暫交鋒，內奸身份正式揭曉。",
+    "沈白以假密信誘餌引出鷹爪孫，雙方交鋒中鷹爪孫受傷但揭露真信早已不在沈白身上，且在腰帶扣安裝蠶絲追蹤器。",
+    "鷹爪孫拒不供出真信下落，咬舌噴血霧逃脫，客棧瞬間被大遼鐵騎團團圍住。",
+    "鷹爪孫逃脫後大遼鐵騎包圍客棧，懸賞捉拿三人。老駱指引後院狗洞通往東北枯澗古道，三人約定分頭突圍，沈白攜真密信準備衝出重圍。",
+    "三人沿老駱指引鑽過狗洞逃入東北枯澗古道，遼騎分兵追擊，沈白攜真密信領頭突圍。",
+    "沈白決意孤注一擲衝向烽火臺開鑿洞口，三人於枯澗古道直面遼騎追擊，生死賭局正式展開。",
+    "沈白決定三人分頭行動：老駱去側崖尋找替代出路，沈白與燕十三娘直衝廢棄烽火臺引開遼騎主力。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "snow",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0010",
+   "children": [
+    "n_0011"
+   ],
+   "created_at": "2026-09-25T14:14:52+08:00"
+  },
+  "n_0011": {
+   "parent": "n_0010",
+   "scene_id": "gully_path",
+   "player_input": {
+    "kind": "free",
+    "text": "我決定不再拖延，現在就賭上一切，把這件事做個了斷。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "廢棄烽火臺在風雪中聳立如座孤墳，塔身磚石風化剝落，塔頂爐臺早已塌陷，只餘一圈鋸齒狀殘垣咬著灰白天際。沈白與燕十三娘一前一後掠上塔基，腳下積雪「嘩啦」崩塌，露出冰封的石砌暗門——鐵環銹死，須得硬劈。"
+    },
+    {
+     "kind": "character",
+     "speaker": "燕十三娘",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（長刀反握，刀尖抵住鐵環縫隙，勁力貫注，低喝）開！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "鐵環應聲斷裂，暗門內湧出一股腐朽寒氣，夾雜著地下暗河的水汽，撲面如陰司冷息。塔內螺旋階梯斷裂大半，須沿牆壁鑿痕下攀，底部隱約可見黑水漫流，聲音悶悠悠傳上來，不知深淺。"
+    },
+    {
+     "kind": "character",
+     "speaker": "燕十三娘",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（回頭，丹鳳眼在火摺子微光中亮如寒星）小哥兒，下去便是生路，卻也可能是墓路。老駱若找不著出口，咱們在平川見——若見不著，便算沈白輸了這盤棋，燕十三娘陪你賭到底！"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "沈白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（將油紙包塞進她手心，掌心相貼片刻，聲音沙啞卻穩）真信交你帶，我斷後引開遼騎。平川東頭林子裡等我，天亮不見人，你便獨自出關送信——這是命令，不是商量。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "燕十三娘手指猛地扣緊油紙包，指節發白，喉頭滾動兩下，終沒推回，只重重點一下頭，轉身躍入暗門，身影瞬間被黑暗吞沒。沈白反手拉上暗門，掛上門閂，轉身登上塔頂殘垣，長刀橫抱，望著崖頂密密麻麻的火把與鐵騎，嘴角勾起一抹近乎癲狂的笑意。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "數十騎遼兵已壓上崖頂，為首一將銀盔皂纛，長槍遙指，號角聲撕裂風雪：「耶律齊有令，生擒沈白者賞萬金！」箭矢如蝗蟲般簇簇而至，沈白腳尖點在殘垣最高處，身形不退反進，長刀劈出第一道刀光，喝聲震彈四野：「來拿啊，遼狗爺爺們！」@旁白: 刀光與箭雨在半空碰撞，火星四濺。沈白在塔頂獨自迎戰數十騎遼兵，每一刀都逼得敵騎馬嘶人立，卻也身中數箭，鮮血染紅衣襟。遠處側崖傳來一聲悠長鶴唳，隨即是老駱摺扇擊碎岩石的脆響——他找到了另一條路。燕十三娘順暗河而下的水聲已杳無蹤跡，信在她手中，生路在腳下。沈白吐出一口血沫，長刀指天，笑聲嘶啞：「這趟鏢……沈某送定了！」"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "action",
+    "weather": "snow",
+    "options": [
+     "沈白死守塔頂，盡全力拖延遼騎，等待天亮",
+     "沈白順暗河下滑，嘗試追上燕十三娘同行",
+     "沈白引誘遼騎主力遠離暗河口，再尋機突圍",
+     "沈白以刀劈開塔基支柱，讓烽火臺倒塌阻擋追兵"
+    ],
+    "state_changes": {
+     "affection": {
+      "燕十三娘": 2,
+      "老駱": 1
+     },
+     "flags_add": [
+      "beacon_last_stand",
+      "letter_with_yan",
+      "laoluo_found_path"
+     ],
+     "items_add": [],
+     "items_remove": [
+      "黃絹賞格文書"
+     ]
+    },
+    "summary_update": "沈白將真密信交給燕十三娘讓其順暗河逃走，自己獨自在廢棄烽火臺頂迎戰數十騎遼兵，老駱在側崖另尋生路。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "燕十三娘": 14,
+     "老駱": 9
+    },
+    "flags": [
+     "met_yan",
+     "met_laoluo",
+     "master_mentioned",
+     "plot_revealed",
+     "spy_network_known",
+     "yan_revenge_revealed",
+     "temporary_alliance",
+     "spy_identified",
+     "fake_letter_trap",
+     "tracking_silk_revealed",
+     "eagle_claw_escaped",
+     "liao_cavalry_surround",
+     "escape_plan_agreed",
+     "liao_bounty_revealed",
+     "escaped_inn",
+     "entered_gully",
+     "final_gamble_declared",
+     "split_up",
+     "laoluo_scouting",
+     "beacon_assault",
+     "beacon_last_stand",
+     "letter_with_yan",
+     "laoluo_found_path"
+    ],
+    "items": []
+   },
+   "summary": [
+    "沈白初抵風雪客棧，遇見女刀客燕十三娘與說書人老駱。老駱認出沈白師父身分，兩人皆對密信之事心知肚明。",
+    "老駱透露密信涉及遼國細作與朝廷重臣勾結，客棧內藏龍臥虎，今晚將有收網行動。燕十三娘點出密信既是護身符也是引魂幡。",
+    "燕十三娘坦露復仇真相：目標是化名耶律齊的遼人鷹爪孫燕北霸，密信是釘死他的鐵證。三人達成暫時同盟，商議今晚突圍出關大計。",
+    "沈白發現戴斗笠的旅客是遼國細作，並確認其身上帶有製作密信火漆的松煙墨，嫌疑鎖定。",
+    "沈白點破戴斗笠旅客袖口松煙墨跡，確認其為遼國細作鷹爪孫。雙方爆發短暫交鋒，內奸身份正式揭曉。",
+    "沈白以假密信誘餌引出鷹爪孫，雙方交鋒中鷹爪孫受傷但揭露真信早已不在沈白身上，且在腰帶扣安裝蠶絲追蹤器。",
+    "鷹爪孫拒不供出真信下落，咬舌噴血霧逃脫，客棧瞬間被大遼鐵騎團團圍住。",
+    "鷹爪孫逃脫後大遼鐵騎包圍客棧，懸賞捉拿三人。老駱指引後院狗洞通往東北枯澗古道，三人約定分頭突圍，沈白攜真密信準備衝出重圍。",
+    "三人沿老駱指引鑽過狗洞逃入東北枯澗古道，遼騎分兵追擊，沈白攜真密信領頭突圍。",
+    "沈白決意孤注一擲衝向烽火臺開鑿洞口，三人於枯澗古道直面遼騎追擊，生死賭局正式展開。",
+    "沈白決定三人分頭行動：老駱去側崖尋找替代出路，沈白與燕十三娘直衝廢棄烽火臺引開遼騎主力。",
+    "沈白將真密信交給燕十三娘讓其順暗河逃走，自己獨自在廢棄烽火臺頂迎戰數十騎遼兵，老駱在側崖另尋生路。"
+   ],
+   "bgm_mood": "action",
+   "weather": "snow",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0011",
+   "children": [
+    "n_0012"
+   ],
+   "created_at": "2026-09-25T14:15:23+08:00"
+  },
+  "n_0012": {
+   "parent": "n_0011",
+   "scene_id": "gully_path",
+   "player_input": {
+    "kind": "option",
+    "text": "沈白死守塔頂，盡全力拖延遼騎，等待天亮"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（長刀橫在胸前，刀尖顫巍巍指向漫天火把，聲音嘶啞卻穩如磐石）來啊……再來啊……沈白在這兒，信不在這兒，想拿命來換，看你們夠不夠膽！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "天際泛起魚肚白，蒼茫曦光刺破風雪，照亮塔頂殘垣上那道孤零零的身影——沈白雙膝微顫，長刀以血凍冰牢牢釘在磚縫間，身後暗門緊鎖，腳下是數十具遼兵屍身與斷箭殘矛，前方銀盔將領已換了三茬，卻始終不敢近身。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老駱",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（聲音從側崖風雪中飄來，摺扇搖得輕快）沈小俠，老駱在平川東頭林子等著呢，帶著燕丫頭、真密信、還有條全馬——天亮了，該收網的是咱們啦！"
+    },
+    {
+     "kind": "character",
+     "speaker": "燕十三娘",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（策馬立於林緣，長刀入鞘，披風獵獵，遙遙對著塔頂揚聲大笑）小哥兒，老孃贏了！這趟鏢，咱們合夥送到了終點——快下來，馬留給你備著，再不來，老孃真要燒報紙去你墳頭罵人了！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "遼騎號角聲變調，由進攻轉為撤退，鐵騎如潮水般退入晨霧深處。沈白鬆開死攥刀柄的手，整個人順著刀鋒滑坐在冰冷磚面上，鮮血與白雪交織，卻嘴角噙著第一次真正輕鬆的笑意：這趟鏢，終於送完了。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "none",
+    "options": [],
+    "state_changes": {
+     "affection": {
+      "燕十三娘": 3,
+      "老駱": 2
+     },
+     "flags_add": [
+      "mission_accomplished",
+      "letter_delivered",
+      "survived_final_stand"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "沈白在廢棄烽火臺頂死守至天亮，成功拖延遼騎主力，配合老駱尋得生路與燕十三娘順暗河逃脫，真密信平安帶出雁門關，三人會合於平川林中，護送任務達成。",
+    "ending": {
+     "type": "good",
+     "title": "鏢到信達"
+    }
+   },
+   "state": {
+    "affection": {
+     "燕十三娘": 17,
+     "老駱": 11
+    },
+    "flags": [
+     "met_yan",
+     "met_laoluo",
+     "master_mentioned",
+     "plot_revealed",
+     "spy_network_known",
+     "yan_revenge_revealed",
+     "temporary_alliance",
+     "spy_identified",
+     "fake_letter_trap",
+     "tracking_silk_revealed",
+     "eagle_claw_escaped",
+     "liao_cavalry_surround",
+     "escape_plan_agreed",
+     "liao_bounty_revealed",
+     "escaped_inn",
+     "entered_gully",
+     "final_gamble_declared",
+     "split_up",
+     "laoluo_scouting",
+     "beacon_assault",
+     "beacon_last_stand",
+     "letter_with_yan",
+     "laoluo_found_path",
+     "mission_accomplished",
+     "letter_delivered",
+     "survived_final_stand"
+    ],
+    "items": []
+   },
+   "summary": [
+    "沈白初抵風雪客棧，遇見女刀客燕十三娘與說書人老駱。老駱認出沈白師父身分，兩人皆對密信之事心知肚明。",
+    "老駱透露密信涉及遼國細作與朝廷重臣勾結，客棧內藏龍臥虎，今晚將有收網行動。燕十三娘點出密信既是護身符也是引魂幡。",
+    "燕十三娘坦露復仇真相：目標是化名耶律齊的遼人鷹爪孫燕北霸，密信是釘死他的鐵證。三人達成暫時同盟，商議今晚突圍出關大計。",
+    "沈白發現戴斗笠的旅客是遼國細作，並確認其身上帶有製作密信火漆的松煙墨，嫌疑鎖定。",
+    "沈白點破戴斗笠旅客袖口松煙墨跡，確認其為遼國細作鷹爪孫。雙方爆發短暫交鋒，內奸身份正式揭曉。",
+    "沈白以假密信誘餌引出鷹爪孫，雙方交鋒中鷹爪孫受傷但揭露真信早已不在沈白身上，且在腰帶扣安裝蠶絲追蹤器。",
+    "鷹爪孫拒不供出真信下落，咬舌噴血霧逃脫，客棧瞬間被大遼鐵騎團團圍住。",
+    "鷹爪孫逃脫後大遼鐵騎包圍客棧，懸賞捉拿三人。老駱指引後院狗洞通往東北枯澗古道，三人約定分頭突圍，沈白攜真密信準備衝出重圍。",
+    "三人沿老駱指引鑽過狗洞逃入東北枯澗古道，遼騎分兵追擊，沈白攜真密信領頭突圍。",
+    "沈白決意孤注一擲衝向烽火臺開鑿洞口，三人於枯澗古道直面遼騎追擊，生死賭局正式展開。",
+    "沈白決定三人分頭行動：老駱去側崖尋找替代出路，沈白與燕十三娘直衝廢棄烽火臺引開遼騎主力。",
+    "沈白將真密信交給燕十三娘讓其順暗河逃走，自己獨自在廢棄烽火臺頂迎戰數十騎遼兵，老駱在側崖另尋生路。",
+    "沈白在廢棄烽火臺頂死守至天亮，成功拖延遼騎主力，配合老駱尋得生路與燕十三娘順暗河逃脫，真密信平安帶出雁門關，三人會合於平川林中，護送任務達成。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0012",
+   "children": [],
+   "created_at": "2026-09-25T14:15:39+08:00"
+  }
+ }
+}

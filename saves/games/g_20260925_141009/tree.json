@@ -1,0 +1,1341 @@
+{
+ "root": "n_0000",
+ "next": 10,
+ "nodes": {
+  "n_0000": {
+   "parent": null,
+   "scene_id": "noodle_stall_rooftop",
+   "player_input": {
+    "kind": "opening",
+    "text": ""
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Rain hammers the corrugated roof of the noodle stall, turning neon reflections into jagged watercolors across the wet concrete. Steam rises from a chipped bowl of synthetic ramen, untouched, while the city's heartbeat thrums through the floor — maglevs, drones, the distant scream of a police siren. The Kagero tower looms twenty blocks north, a needle of glass and light piercing the smog ceiling. Midnight in four hours."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "You're doing that thing again. Staring at the bowl like it owes you money."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "Chip's in the tower. Tower's got three ICE layers, two kill-squads, and a sysadmin who hasn't slept since 2076. So either eat the noodles or jack in, but stop brooding. It's bad for my calibration."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "The noodles are irrelevant. The window is not."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Kagero rotates their encryption keys at 23:47. That gives you thirteen minutes of degraded handshake protocol. Thirteen minutes to walk through the front door — digitally speaking — before the vault seals for another cycle."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "angry",
+     "text": "And if we miss it? Another month of eating synth-protein while some suit buys a third yacht with our district's savings?"
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Then we negotiate a new contract. I have... flexibility. The question is whether you do."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "rain",
+    "options": [
+     "Jack in now and run the infiltration solo",
+     "Demand Hollow explain his 'flexibility' first",
+     "Eat the ramen, buy time to think",
+     "Have Rin scout the tower's physical perimeter"
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Vex meets Rin and Hollow at a rooftop noodle stall. Hollow reveals a 13-minute encryption key rotation window at 23:47 for infiltrating Kagero tower. Rin is impatient; Hollow is cryptic about backup plans.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Rin": 0,
+     "Hollow": 0
+    },
+    "flags": [],
+    "items": []
+   },
+   "summary": [
+    "Vex meets Rin and Hollow at a rooftop noodle stall. Hollow reveals a 13-minute encryption key rotation window at 23:47 for infiltrating Kagero tower. Rin is impatient; Hollow is cryptic about backup plans."
+   ],
+   "bgm_mood": "tense",
+   "weather": "rain",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0000",
+   "children": [
+    "n_0001"
+   ],
+   "created_at": "2026-09-25T14:10:29+08:00"
+  },
+  "n_0001": {
+   "parent": "n_0000",
+   "scene_id": "noodle_stall_rooftop",
+   "player_input": {
+    "kind": "option",
+    "text": "Demand Hollow explain his 'flexibility' first"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The rain intensifies, drumming a frantic rhythm on the metal roof. Somewhere below, a hover-car's anti-grav whines as it struggles against the downdraft between towers."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Vex",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Your flexibility. Explain it. Now."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Direct. I appreciate that. It saves bandwidth."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Kagero's vault has a secondary authentication node — physical, air-gapped, buried in the executive floor's panic room. The encryption window only opens the digital path. The physical path requires... a key."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "angry",
+     "text": "A key you conveniently forgot to mention."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "smile",
+     "text": "I didn't forget. I prioritized. The digital route is cleaner. Quieter. But if you prefer kicking down the CEO's bedroom door at midnight, I can arrange the key. For a price."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "angry",
+     "text": "Of course there's a price. There's always a price with you."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "The key is a biometric token. Retina and palm-print of Kagero's chief security officer. One Major Kusanagi. Currently sleeping three floors below the vault."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Hollow taps a finger against his chrome palm, the servos whispering. A holographic dossier flickers into existence above the table — a woman's face, sharp cheekbones, one eye replaced by a matte-black tactical optic."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "She rotates shifts at 23:30. Her quarters are on the 84th floor. The token never leaves her person."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "surprised",
+     "text": "You want us to lift a biometric off a living corp-sec chief? In a tower crawling with ICE?"
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "I want you to have options. The window at 23:47. The token on the 84th. Choose your poison, netrunner."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "rain",
+    "options": [
+     "Take the digital window at 23:47",
+     "Go for the biometric token on the 84th floor",
+     "Ask what Hollow's price is for the token"
+    ],
+    "state_changes": {
+     "affection": {
+      "Rin": -1
+     },
+     "flags_add": [
+      "token_option_revealed"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Hollow reveals a backup plan: stealing a biometric token from Major Kusanagi on the 84th floor. Rin is furious at the added risk. Vex must choose between the 13-minute digital window or the physical infiltration route.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Rin": -1,
+     "Hollow": 0
+    },
+    "flags": [
+     "token_option_revealed"
+    ],
+    "items": []
+   },
+   "summary": [
+    "Vex meets Rin and Hollow at a rooftop noodle stall. Hollow reveals a 13-minute encryption key rotation window at 23:47 for infiltrating Kagero tower. Rin is impatient; Hollow is cryptic about backup plans.",
+    "Hollow reveals a backup plan: stealing a biometric token from Major Kusanagi on the 84th floor. Rin is furious at the added risk. Vex must choose between the 13-minute digital window or the physical infiltration route."
+   ],
+   "bgm_mood": "tense",
+   "weather": "rain",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0001",
+   "children": [
+    "n_0002"
+   ],
+   "created_at": "2026-09-25T14:10:39+08:00"
+  },
+  "n_0002": {
+   "parent": "n_0001",
+   "scene_id": "noodle_stall_rooftop",
+   "player_input": {
+    "kind": "option",
+    "text": "Ask what Hollow's price is for the token"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The holographic dossier spins slowly, Major Kusanagi's tactical optic catching the neon light like a dead star. Rain hammers the roof in sheets now, each impact a tiny explosion of mist."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Vex",
+     "char_id": null,
+     "expr": "calm",
+     "text": "And the price for this token?"
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Straight to the ledger. Admirable."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Kagero holds a data cache I need — Project ARES schematics, buried in the same vault as your memory chip. You retrieve the chip; I copy the schematics. A clean split."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Ares. The autonomous kill-drone program the UN banned in '74."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "The UN bans many things. Corporations simply rename them."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "The token is in a secure case on Kusanagi's nightstand. Biometric lock keyed to her. You'll need her unconscious — or cooperative — to open it."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Cooperative. Right. Because corp-sec chiefs love helping thieves steal their own access codes."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Major Kusanagi has... disagreements with Kagero's current leadership. A carefully applied pressure point might persuade her to lend the token willingly."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Hollow's mirrored lenses reflect the spinning dossier, his expression unreadable behind the chrome."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Or you take it by force. Either way, the token gets you past the physical vault door. The encryption window gets you past the digital one. Both paths converge at the same prize."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "And if we say no to your ARES copy?"
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Then you have thirteen minutes at 23:47. Good luck."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "rain",
+    "options": [
+     "Accept Hollow's deal and plan the token heist",
+     "Reject the deal and commit to the 23:47 encryption window",
+     "Ask how to 'pressure' Kusanagi into cooperating"
+    ],
+    "state_changes": {
+     "affection": {
+      "Rin": -1,
+      "Hollow": 1
+     },
+     "flags_add": [
+      "hollow_deal_revealed",
+      "ares_schematics_mentioned"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Hollow reveals his price: a copy of Project ARES schematics from the same vault. He suggests pressuring Major Kusanagi for the token rather than force. Rin grows more distrustful.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Rin": -2,
+     "Hollow": 1
+    },
+    "flags": [
+     "token_option_revealed",
+     "hollow_deal_revealed",
+     "ares_schematics_mentioned"
+    ],
+    "items": []
+   },
+   "summary": [
+    "Vex meets Rin and Hollow at a rooftop noodle stall. Hollow reveals a 13-minute encryption key rotation window at 23:47 for infiltrating Kagero tower. Rin is impatient; Hollow is cryptic about backup plans.",
+    "Hollow reveals a backup plan: stealing a biometric token from Major Kusanagi on the 84th floor. Rin is furious at the added risk. Vex must choose between the 13-minute digital window or the physical infiltration route.",
+    "Hollow reveals his price: a copy of Project ARES schematics from the same vault. He suggests pressuring Major Kusanagi for the token rather than force. Rin grows more distrustful."
+   ],
+   "bgm_mood": "tense",
+   "weather": "rain",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0002",
+   "children": [
+    "n_0003"
+   ],
+   "created_at": "2026-09-25T14:10:53+08:00"
+  },
+  "n_0003": {
+   "parent": "n_0002",
+   "scene_id": "noodle_stall_rooftop",
+   "player_input": {
+    "kind": "free",
+    "text": "I ignore Rin's warning and accept Hollow's offer of a tower access key without checking it."
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The neon glow of the holographic dossier washes over Vex’s face, casting sharp shadows. Rin leans back, arms crossed, her pink bob twitching as she watches Vex with narrowed eyes. Hollow’s chrome hand glints as he extends a palm, offering a small, iridescent data shard."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Trust is a currency, Vex. Spend it wisely. This token grants Level 4 access to the executive suites. Without it, the 23:47 window is a dead end for physical entry."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "You’re swallowing that hook whole, aren’t you?"
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Fine. Whatever. As long as you don’t die on the 84th floor, I’ll pick you up. But if we get ambushed, I’m leaving the body."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "A deal is a deal. I’ll transmit the token’s decryption algorithm to your deck in ten seconds. Do not alter the file."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Vex",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Accepted."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "A soft chime echoes in Vex’s auditory implant. The data shard slides from Hollow’s palm into Vex’s grip, warm and humming with latent energy. The rain outside seems to slow, the city holding its breath."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "rain",
+    "options": [
+     "Jack into the token immediately",
+     "Test the token's security layer",
+     "Ask Rin about the 84th floor layout"
+    ],
+    "state_changes": {
+     "affection": {
+      "Rin": -1,
+      "Hollow": 1
+     },
+     "flags_add": [
+      "token_accepted"
+     ],
+     "items_add": [
+      "biometric_token"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "Vex accepts Hollow's biometric token for Major Kusanagi, trusting the corporate fixer despite Rin's skepticism. The token is added to Vex's inventory.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Rin": -3,
+     "Hollow": 2
+    },
+    "flags": [
+     "token_option_revealed",
+     "hollow_deal_revealed",
+     "ares_schematics_mentioned",
+     "token_accepted"
+    ],
+    "items": [
+     "biometric_token"
+    ]
+   },
+   "summary": [
+    "Vex meets Rin and Hollow at a rooftop noodle stall. Hollow reveals a 13-minute encryption key rotation window at 23:47 for infiltrating Kagero tower. Rin is impatient; Hollow is cryptic about backup plans.",
+    "Hollow reveals a backup plan: stealing a biometric token from Major Kusanagi on the 84th floor. Rin is furious at the added risk. Vex must choose between the 13-minute digital window or the physical infiltration route.",
+    "Hollow reveals his price: a copy of Project ARES schematics from the same vault. He suggests pressuring Major Kusanagi for the token rather than force. Rin grows more distrustful.",
+    "Vex accepts Hollow's biometric token for Major Kusanagi, trusting the corporate fixer despite Rin's skepticism. The token is added to Vex's inventory."
+   ],
+   "bgm_mood": "tense",
+   "weather": "rain",
+   "model": "qwen3.6-35b-a3b",
+   "repair_notes": [],
+   "id": "n_0003",
+   "children": [
+    "n_0004"
+   ],
+   "created_at": "2026-09-25T14:11:44+08:00"
+  },
+  "n_0004": {
+   "parent": "n_0003",
+   "scene_id": "noodle_stall_rooftop",
+   "player_input": {
+    "kind": "option",
+    "text": "Test the token's security layer"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Vex taps the iridescent shard against their deck’s port. A cascade of green code scrolls across the retinal display, dissecting the token’s encryption layers."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Well? Does it sparkle like a lie, or does it actually work?"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Vex",
+     "char_id": null,
+     "expr": "calm",
+     "text": "It’s encrypted with a rolling cipher. Standard Kagero military grade."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "And?"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Vex",
+     "char_id": null,
+     "expr": "calm",
+     "text": "And the handshake protocol matches the 23:47 window exactly. If we jack in at 23:46:50, the token validates as a live session key."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "So it’s not just a key. It’s a ghost ID. We walk in, and the tower thinks we’re already inside."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Precisely. The physical door opens. The digital walls lower. You have one shot to bridge the gap between the lobby and the 84th floor before the cipher rotates again."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Fail the timing, and the token locks for an hour. Succeed, and you’re in the lion’s den with no alarms tripped."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "rain",
+    "options": [
+     "Test the token's security layer",
+     "Ask about the backup plan",
+     "Check the ARES schematics location"
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "token_verified"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Vex verifies the biometric token's encryption, confirming it syncs with the 23:47 window for a seamless digital-physical entry.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Rin": -3,
+     "Hollow": 2
+    },
+    "flags": [
+     "token_option_revealed",
+     "hollow_deal_revealed",
+     "ares_schematics_mentioned",
+     "token_accepted",
+     "token_verified"
+    ],
+    "items": [
+     "biometric_token"
+    ]
+   },
+   "summary": [
+    "Vex meets Rin and Hollow at a rooftop noodle stall. Hollow reveals a 13-minute encryption key rotation window at 23:47 for infiltrating Kagero tower. Rin is impatient; Hollow is cryptic about backup plans.",
+    "Hollow reveals a backup plan: stealing a biometric token from Major Kusanagi on the 84th floor. Rin is furious at the added risk. Vex must choose between the 13-minute digital window or the physical infiltration route.",
+    "Hollow reveals his price: a copy of Project ARES schematics from the same vault. He suggests pressuring Major Kusanagi for the token rather than force. Rin grows more distrustful.",
+    "Vex accepts Hollow's biometric token for Major Kusanagi, trusting the corporate fixer despite Rin's skepticism. The token is added to Vex's inventory.",
+    "Vex verifies the biometric token's encryption, confirming it syncs with the 23:47 window for a seamless digital-physical entry."
+   ],
+   "bgm_mood": "tense",
+   "weather": "rain",
+   "model": "qwen3.6-35b-a3b",
+   "repair_notes": [],
+   "id": "n_0004",
+   "children": [
+    "n_0005"
+   ],
+   "created_at": "2026-09-25T14:12:08+08:00"
+  },
+  "n_0005": {
+   "parent": "n_0004",
+   "scene_id": "noodle_stall_rooftop",
+   "player_input": {
+    "kind": "free",
+    "text": "I go in alone and jack straight into the Kagero core, skipping the ice-breaker Rin prepared."
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "surprised",
+     "text": "Wait, what? You’re ditching the ride?"
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Bold. Or reckless. Usually the same thing in your line of work."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Vex stands, sliding the iridescent token into their jacket pocket. The neon hum of the stall fades into the background as they look toward the Kagero tower’s spire."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Vex",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Rin’s ice-breaker takes two minutes. I can cut it in half if I go straight for the core."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "angry",
+     "text": "Half? Vex, the core has a recursive logic bomb! You’ll fry your cortex if you don’t have a buffer!"
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "smile",
+     "text": "But if you succeed, we save precious time. And time is the one thing we don’t have."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "rain",
+    "options": [
+     "Jack in immediately",
+     "Ask Hollow for a safety net",
+     "Tell Rin to stay behind"
+    ],
+    "state_changes": {
+     "affection": {
+      "Rin": -1,
+      "Hollow": 1
+     },
+     "flags_add": [
+      "solo_run_decided"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Vex decides to skip Rin's ice-breaker and jack directly into the Kagero core, betting on speed over safety.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Rin": -4,
+     "Hollow": 3
+    },
+    "flags": [
+     "token_option_revealed",
+     "hollow_deal_revealed",
+     "ares_schematics_mentioned",
+     "token_accepted",
+     "token_verified",
+     "solo_run_decided"
+    ],
+    "items": [
+     "biometric_token"
+    ]
+   },
+   "summary": [
+    "Vex meets Rin and Hollow at a rooftop noodle stall. Hollow reveals a 13-minute encryption key rotation window at 23:47 for infiltrating Kagero tower. Rin is impatient; Hollow is cryptic about backup plans.",
+    "Hollow reveals a backup plan: stealing a biometric token from Major Kusanagi on the 84th floor. Rin is furious at the added risk. Vex must choose between the 13-minute digital window or the physical infiltration route.",
+    "Hollow reveals his price: a copy of Project ARES schematics from the same vault. He suggests pressuring Major Kusanagi for the token rather than force. Rin grows more distrustful.",
+    "Vex accepts Hollow's biometric token for Major Kusanagi, trusting the corporate fixer despite Rin's skepticism. The token is added to Vex's inventory.",
+    "Vex verifies the biometric token's encryption, confirming it syncs with the 23:47 window for a seamless digital-physical entry.",
+    "Vex decides to skip Rin's ice-breaker and jack directly into the Kagero core, betting on speed over safety."
+   ],
+   "bgm_mood": "tense",
+   "weather": "rain",
+   "model": "qwen3.6-35b-a3b",
+   "repair_notes": [],
+   "id": "n_0005",
+   "children": [
+    "n_0006"
+   ],
+   "created_at": "2026-09-25T14:12:36+08:00"
+  },
+  "n_0006": {
+   "parent": "n_0005",
+   "scene_id": "noodle_stall_rooftop",
+   "player_input": {
+    "kind": "option",
+    "text": "Jack in immediately"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Vex jacks the data line into the port behind their ear. The noodle stall dissolves into a wireframe grid of neon and rain. The Kagero tower’s firewall looms ahead, a towering wall of shifting geometric shapes."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Hey! You’re not even waiting for my signal! Vex, if you burn out, I’m not carrying your shell back to the stall!"
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "The connection is live. The encryption window is holding. You are inside the lobby."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Vex",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Pushing past the first ICE layer. It’s… surprisingly light. Almost too light."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Ghost ID is working. The system thinks we’re Kusanagi. Keep moving, but watch your back."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "The elevator shaft to the 84th floor is open. But the stairs are guarded. Take the lift."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "rain",
+    "options": [
+     "Take the elevator to the 84th floor",
+     "Check the lobby for security logs",
+     "Call Rin to verify the route"
+    ],
+    "state_changes": {
+     "affection": {
+      "Rin": -1
+     },
+     "flags_add": [
+      "jacked_in",
+      "lobby_access"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Vex jacks in immediately, confirming the ghost ID works and gaining access to the lobby. Rin is annoyed by the haste; Hollow notes the elevator is open.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Rin": -5,
+     "Hollow": 3
+    },
+    "flags": [
+     "token_option_revealed",
+     "hollow_deal_revealed",
+     "ares_schematics_mentioned",
+     "token_accepted",
+     "token_verified",
+     "solo_run_decided",
+     "jacked_in",
+     "lobby_access"
+    ],
+    "items": [
+     "biometric_token"
+    ]
+   },
+   "summary": [
+    "Vex meets Rin and Hollow at a rooftop noodle stall. Hollow reveals a 13-minute encryption key rotation window at 23:47 for infiltrating Kagero tower. Rin is impatient; Hollow is cryptic about backup plans.",
+    "Hollow reveals a backup plan: stealing a biometric token from Major Kusanagi on the 84th floor. Rin is furious at the added risk. Vex must choose between the 13-minute digital window or the physical infiltration route.",
+    "Hollow reveals his price: a copy of Project ARES schematics from the same vault. He suggests pressuring Major Kusanagi for the token rather than force. Rin grows more distrustful.",
+    "Vex accepts Hollow's biometric token for Major Kusanagi, trusting the corporate fixer despite Rin's skepticism. The token is added to Vex's inventory.",
+    "Vex verifies the biometric token's encryption, confirming it syncs with the 23:47 window for a seamless digital-physical entry.",
+    "Vex decides to skip Rin's ice-breaker and jack directly into the Kagero core, betting on speed over safety.",
+    "Vex jacks in immediately, confirming the ghost ID works and gaining access to the lobby. Rin is annoyed by the haste; Hollow notes the elevator is open."
+   ],
+   "bgm_mood": "tense",
+   "weather": "rain",
+   "model": "qwen3.6-35b-a3b",
+   "repair_notes": [],
+   "id": "n_0006",
+   "children": [
+    "n_0007"
+   ],
+   "created_at": "2026-09-25T14:13:12+08:00"
+  },
+  "n_0007": {
+   "parent": "n_0006",
+   "scene_id": "noodle_stall_rooftop",
+   "player_input": {
+    "kind": "free",
+    "text": "The alarms are screaming but I stay plugged in to grab the chip myself instead of retreating."
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The lobby's pristine walls fracture into crimson wireframes. Alarm klaxons scream through the local net, a discordant symphony of flashing geometry and hostile ICE spawning like antibodies around a wound."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Vex",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Shutdown sequence ignored. Routing power to decryption suite. I'm not leaving without that chip."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Vex, your neural readings are spiking! That logic bomb Hollow warned about — it's activating! You're taking direct feedback damage!"
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Fascinating. The ghost ID held long enough to trigger a silent alarm, not a hard lockout. Kagero's ICE is adapting to your signature in real-time."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Black ICE constructs materialize — jagged, predatory code-sharks circling the vault's digital perimeter. The memory chip's encryption pulses at the center, a beating heart of stolen credits and erased lives."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Vex",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Adapt this. I've danced with worse in the old sectors."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Damn it, Vex! The elevator's moving — Kusanagi's security team is ascending! You've got maybe ninety seconds before physical and digital converge on your position!"
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "The chip's encryption key rotates in forty seconds. After that, the data corrupts permanently. Your call, netrunner  \"scene_change\": false,"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"scene\": {\"id\": \"noodle_stall_rooftop\", \"name\": \"Rooftop Noodle Stall\", \"image_prompt\": \"Neo-Kowloon rooftop at midnight, neon signs reflecting on wet metal surfaces, noodle stall equipment steaming in the rain, Kagero tower spire visible in distance, rain-slicked pavement, moody cyberpunk lighting\"},"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"bgm_mood\": \"action\","
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"weather\": \"rain\","
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"options\": [\"Brute-force the encryption before key rotation\", \"Deploy a logic bomb to freeze the ICE\", \"Jack out and flee to the elevator\", \"Split focus: hack chip while tracing Kusanagi's team\"],"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"state_changes\": {\"affection\": {\"Rin\": -2, \"Hollow\": 1}, \"flags_add\": [\"alarm_triggered\", \"logic_bomb_active\", \"kusanagi_team_inbound\", \"chip_encryption_rotating\"], \"items_add\": [], \"items_remove\": []},"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"summary_update\": \"Vex ignores the alarm and stays jacked in to grab the memory chip. Black ICE activates and Kusanagi's security team ascends the elevator. The chip's encryption key rotates in 40 seconds, after which data corrupts permanently.\","
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "\"ending\": null"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "}"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "action",
+    "weather": "rain",
+    "options": [
+     "Brute-force the encryption before key rotation",
+     "Deploy a logic bomb to freeze the ICE",
+     "Jack out and flee to the elevator",
+     "Split focus: hack chip while tracing Kusanagi's team"
+    ],
+    "state_changes": {
+     "affection": {
+      "Rin": -2,
+      "Hollow": 1
+     },
+     "flags_add": [
+      "alarm_triggered",
+      "logic_bomb_active",
+      "kusanagi_team_inbound",
+      "chip_encryption_rotating"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Vex ignores the alarm and stays jacked in to grab the memory chip. Black ICE activates and Kusanagi's security team ascends the elevator. The chip's encryption key rotates in 40 seconds, after which data corrupts permanently.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Rin": -7,
+     "Hollow": 4
+    },
+    "flags": [
+     "token_option_revealed",
+     "hollow_deal_revealed",
+     "ares_schematics_mentioned",
+     "token_accepted",
+     "token_verified",
+     "solo_run_decided",
+     "jacked_in",
+     "lobby_access",
+     "alarm_triggered",
+     "logic_bomb_active",
+     "kusanagi_team_inbound",
+     "chip_encryption_rotating"
+    ],
+    "items": [
+     "biometric_token"
+    ]
+   },
+   "summary": [
+    "Vex meets Rin and Hollow at a rooftop noodle stall. Hollow reveals a 13-minute encryption key rotation window at 23:47 for infiltrating Kagero tower. Rin is impatient; Hollow is cryptic about backup plans.",
+    "Hollow reveals a backup plan: stealing a biometric token from Major Kusanagi on the 84th floor. Rin is furious at the added risk. Vex must choose between the 13-minute digital window or the physical infiltration route.",
+    "Hollow reveals his price: a copy of Project ARES schematics from the same vault. He suggests pressuring Major Kusanagi for the token rather than force. Rin grows more distrustful.",
+    "Vex accepts Hollow's biometric token for Major Kusanagi, trusting the corporate fixer despite Rin's skepticism. The token is added to Vex's inventory.",
+    "Vex verifies the biometric token's encryption, confirming it syncs with the 23:47 window for a seamless digital-physical entry.",
+    "Vex decides to skip Rin's ice-breaker and jack directly into the Kagero core, betting on speed over safety.",
+    "Vex jacks in immediately, confirming the ghost ID works and gaining access to the lobby. Rin is annoyed by the haste; Hollow notes the elevator is open.",
+    "Vex ignores the alarm and stays jacked in to grab the memory chip. Black ICE activates and Kusanagi's security team ascends the elevator. The chip's encryption key rotates in 40 seconds, after which data corrupts permanently."
+   ],
+   "bgm_mood": "action",
+   "weather": "rain",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0007",
+   "children": [
+    "n_0008"
+   ],
+   "created_at": "2026-09-25T14:13:25+08:00"
+  },
+  "n_0008": {
+   "parent": "n_0007",
+   "scene_id": "noodle_stall_rooftop",
+   "player_input": {
+    "kind": "option",
+    "text": "Brute-force the encryption before key rotation"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The wireframe lobby shudders as Vex unleashes a raw brute-force cascade, neon digits hammering the memory chip's rotating encryption like a jackhammer on glass. Crimson ICE sharks tear at the connection, their code-teeth scraping firewalls and leaving trails of corrupted data in Vex's visual cortex."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Vex",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Come on, you bastard — yield!"
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Vex, your synaptic temp is hitting critical! You're bleeding from the nose — physical feedback!"
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Impressive throughput. The encryption is fracturing — three layers down, one rotating key remaining. Twenty seconds."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The elevator chime echoes through both meat-space and net-space — a soft, cheerful ding that screams arrival. Heavy bootfalls clang on metal grating. Kusanagi's team has breached the 84th floor corridor."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Vex",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Ten seconds. I can taste the plaintext."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "They're at the vault door! Vex, jack OUT! I'm spinning the AV up — roof extraction in forty seconds if you MOVE!"
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "The chip's data structure is destabilizing. Force the final key rotation and you risk corrupting the very credits you came for. A calculated gamble."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "action",
+    "weather": "rain",
+    "options": [
+     "Push the final brute-force and risk data corruption",
+     "Switch to surgical decryption to preserve the chip",
+     "Jack out now and sprint for the roof extraction",
+     "Upload a logic bomb to buy time for clean extraction"
+    ],
+    "state_changes": {
+     "affection": {
+      "Rin": -1,
+      "Hollow": 1
+     },
+     "flags_add": [
+      "brute_force_attempted",
+      "chip_fracturing",
+      "kusanagi_at_vault"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Vex brute-forces the chip's encryption, fracturing three layers with 20 seconds remaining. Kusanagi's team reaches the vault door. Rin demands extraction; Hollow warns the final rotation risks corrupting the chip data.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Rin": -8,
+     "Hollow": 5
+    },
+    "flags": [
+     "token_option_revealed",
+     "hollow_deal_revealed",
+     "ares_schematics_mentioned",
+     "token_accepted",
+     "token_verified",
+     "solo_run_decided",
+     "jacked_in",
+     "lobby_access",
+     "alarm_triggered",
+     "logic_bomb_active",
+     "kusanagi_team_inbound",
+     "chip_encryption_rotating",
+     "brute_force_attempted",
+     "chip_fracturing",
+     "kusanagi_at_vault"
+    ],
+    "items": [
+     "biometric_token"
+    ]
+   },
+   "summary": [
+    "Vex meets Rin and Hollow at a rooftop noodle stall. Hollow reveals a 13-minute encryption key rotation window at 23:47 for infiltrating Kagero tower. Rin is impatient; Hollow is cryptic about backup plans.",
+    "Hollow reveals a backup plan: stealing a biometric token from Major Kusanagi on the 84th floor. Rin is furious at the added risk. Vex must choose between the 13-minute digital window or the physical infiltration route.",
+    "Hollow reveals his price: a copy of Project ARES schematics from the same vault. He suggests pressuring Major Kusanagi for the token rather than force. Rin grows more distrustful.",
+    "Vex accepts Hollow's biometric token for Major Kusanagi, trusting the corporate fixer despite Rin's skepticism. The token is added to Vex's inventory.",
+    "Vex verifies the biometric token's encryption, confirming it syncs with the 23:47 window for a seamless digital-physical entry.",
+    "Vex decides to skip Rin's ice-breaker and jack directly into the Kagero core, betting on speed over safety.",
+    "Vex jacks in immediately, confirming the ghost ID works and gaining access to the lobby. Rin is annoyed by the haste; Hollow notes the elevator is open.",
+    "Vex ignores the alarm and stays jacked in to grab the memory chip. Black ICE activates and Kusanagi's security team ascends the elevator. The chip's encryption key rotates in 40 seconds, after which data corrupts permanently.",
+    "Vex brute-forces the chip's encryption, fracturing three layers with 20 seconds remaining. Kusanagi's team reaches the vault door. Rin demands extraction; Hollow warns the final rotation risks corrupting the chip data."
+   ],
+   "bgm_mood": "action",
+   "weather": "rain",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0008",
+   "children": [
+    "n_0009"
+   ],
+   "created_at": "2026-09-25T14:13:36+08:00"
+  },
+  "n_0009": {
+   "parent": "n_0008",
+   "scene_id": "av_extraction",
+   "player_input": {
+    "kind": "free",
+    "text": "I stop hesitating and risk everything right now to settle this once and for all."
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The wireframe lobby convulses as Vex channels every scrap of processing power into a single, blistering assault on the final encryption layer. Neon code fragments explode outward like shrapnel, the chip's pulsing heart seizing, stuttering — then settling into a clean, static rhythm. The Black ICE sharks dissolve into geometric dust, their adaptive algorithms overwhelmed by raw, unfiltered violence."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Vex",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Got it. The chip is mine."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Vex — your vitals just flatlined for three seconds. Three. Seconds. You crazy bastard, you actually pulled it off."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "A clean extraction against a rotating military cipher. Impressive. The ARES schematics sit in the adjacent partition, untouched. Our arrangement stands."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The elevator doors hiss open behind Vex's meat-body on the 84th floor. Armored boots fan out — Kusanagi's elite squad, rifles raised, thermal optics glowing. But the vault's digital lock clicks open, the memory chip's data streaming into Vex's deck in a torrent of recovered credits and erased identities."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Vex",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Rin. Roof. Now."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Already climbing. AV's hot on the pad — thirty seconds to dust-off. Don't you dare die on me after that stunt."
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "I'll handle the physical pursuit. The token's ghost ID still has twelve minutes on its cipher. A parting gift."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Rain hammers the rooftop as the AV's rotors cut through the neon haze. Vex's vision swims, meat and mesh bleeding together, the chip's weight secure in their deck. The Kagero tower's spire recedes below — a fortress breached, a debt repaid, a corporation's stranglehold on a district's savings shattered in twenty seconds of madness."
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "av_extraction",
+     "name": "AV Extraction",
+     "image_prompt": "Neo-Kowloon rooftop at midnight, AV transport rotors spinning, rain-slicked landing pad, Kagero tower spire in distance, neon cityscape below, steam rising from vents, moody cyberpunk lighting"
+    },
+    "bgm_mood": "warm",
+    "weather": "rain",
+    "options": [],
+    "state_changes": {
+     "affection": {
+      "Rin": 3,
+      "Hollow": 2
+     },
+     "flags_add": [
+      "chip_secured",
+      "ares_schematics_left",
+      "heist_complete",
+      "extraction_underway"
+     ],
+     "items_add": [
+      "memory_chip"
+     ],
+     "items_remove": [
+      "biometric_token"
+     ]
+    },
+    "summary_update": "Vex brute-forces the final encryption layer and secures the memory chip as Kusanagi's team breaches the vault. Rin extracts Vex via AV from the rooftop. Hollow honors the deal and provides cover. The heist is complete.",
+    "ending": {
+     "type": "good",
+     "title": "Debt Repaid"
+    }
+   },
+   "state": {
+    "affection": {
+     "Rin": -5,
+     "Hollow": 7
+    },
+    "flags": [
+     "token_option_revealed",
+     "hollow_deal_revealed",
+     "ares_schematics_mentioned",
+     "token_accepted",
+     "token_verified",
+     "solo_run_decided",
+     "jacked_in",
+     "lobby_access",
+     "alarm_triggered",
+     "logic_bomb_active",
+     "kusanagi_team_inbound",
+     "chip_encryption_rotating",
+     "brute_force_attempted",
+     "chip_fracturing",
+     "kusanagi_at_vault",
+     "chip_secured",
+     "ares_schematics_left",
+     "heist_complete",
+     "extraction_underway"
+    ],
+    "items": [
+     "memory_chip"
+    ]
+   },
+   "summary": [
+    "Vex meets Rin and Hollow at a rooftop noodle stall. Hollow reveals a 13-minute encryption key rotation window at 23:47 for infiltrating Kagero tower. Rin is impatient; Hollow is cryptic about backup plans.",
+    "Hollow reveals a backup plan: stealing a biometric token from Major Kusanagi on the 84th floor. Rin is furious at the added risk. Vex must choose between the 13-minute digital window or the physical infiltration route.",
+    "Hollow reveals his price: a copy of Project ARES schematics from the same vault. He suggests pressuring Major Kusanagi for the token rather than force. Rin grows more distrustful.",
+    "Vex accepts Hollow's biometric token for Major Kusanagi, trusting the corporate fixer despite Rin's skepticism. The token is added to Vex's inventory.",
+    "Vex verifies the biometric token's encryption, confirming it syncs with the 23:47 window for a seamless digital-physical entry.",
+    "Vex decides to skip Rin's ice-breaker and jack directly into the Kagero core, betting on speed over safety.",
+    "Vex jacks in immediately, confirming the ghost ID works and gaining access to the lobby. Rin is annoyed by the haste; Hollow notes the elevator is open.",
+    "Vex ignores the alarm and stays jacked in to grab the memory chip. Black ICE activates and Kusanagi's security team ascends the elevator. The chip's encryption key rotates in 40 seconds, after which data corrupts permanently.",
+    "Vex brute-forces the chip's encryption, fracturing three layers with 20 seconds remaining. Kusanagi's team reaches the vault door. Rin demands extraction; Hollow warns the final rotation risks corrupting the chip data.",
+    "Vex brute-forces the final encryption layer and secures the memory chip as Kusanagi's team breaches the vault. Rin extracts Vex via AV from the rooftop. Hollow honors the deal and provides cover. The heist is complete."
+   ],
+   "bgm_mood": "warm",
+   "weather": "rain",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0009",
+   "children": [],
+   "created_at": "2026-09-25T14:13:48+08:00"
+  }
+ }
+}

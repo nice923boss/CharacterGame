@@ -1,0 +1,1418 @@
+{
+ "root": "n_0000",
+ "next": 12,
+ "nodes": {
+  "n_0000": {
+   "parent": null,
+   "scene_id": "ghost_market_entrance",
+   "player_input": {
+    "kind": "opening",
+    "text": ""
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "月光像薄冰一樣鋪在青石板上，四周靜得聽得見心跳聲。小滿緊握著藥箱，指節泛白，腳下是通往鬼市的石階——傳說只在月圓夜開門，用記憶做貨幣的地方。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧氣從階梯深處滾滾湧上來，裡頭隱約飄著淡淡的草藥味、血腥味，還有銅錢燒紅後的焦糊味。兩旁掛著幾盞不亮的紙燈籠，隨風輕晃，像極了等著吞人的喉嚨。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "呀～這位小藥童，半夜三更不睡覺，是想來買夢？還是……賣記憶呢？～"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "狐耳微微一抖，金色豎瞳在霧裡亮得嚇人，腰間紅繩鈴鐺隨風輕響，她斜倚在一根枯樹幹上，笑吟吟地看著小滿，尾巴尖兒還在半空中畫圈圈。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "我不買夢，也不賣記憶。我要贖回我妹妹的魂。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "surprised",
+     "text": "嚯？直接衝著掌櫃老墨來的？膽子不小嘛～不過……你拿什麼換？～"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "掏出隨身帶的珍貴草藥作為籌碼",
+     "詢問青蘿鬼市的規矩與交易方式",
+     "表明願意用自己的記憶交換妹妹的魂",
+     "請青蘿帶路去見老墨掌櫃"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1
+     },
+     "flags_add": [
+      "first_meeting_qingluo"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "小滿獨自來到鬼市入口，遇見引路人青蘿，表明要贖回妹妹魂魄的決心。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 1,
+     "老墨": 0
+    },
+    "flags": [
+     "first_meeting_qingluo"
+    ],
+    "items": []
+   },
+   "summary": [
+    "小滿獨自來到鬼市入口，遇見引路人青蘿，表明要贖回妹妹魂魄的決心。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0000",
+   "children": [
+    "n_0001"
+   ],
+   "created_at": "2026-09-25T13:58:01+08:00"
+  },
+  "n_0001": {
+   "parent": "n_0000",
+   "scene_id": "ghost_market_entrance",
+   "player_input": {
+    "kind": "option",
+    "text": "詢問青蘿鬼市的規矩與交易方式"
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "規矩？哈～規矩多得很呢～最重要的一條：進了門，別回頭，回頭記憶就攤了～"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "其次，這裡不收銅錢銀兩，只收「記憶」當貨幣～快樂的、痛苦的、還有那些你以為無關緊要的碎片，老墨統統照單全收～"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "交易前得先在「忘川簿」上簽名按手印，寫清你要賣什麼記憶、換什麼貨，墨跡乾了就生效，悔？沒門兒～"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "她伸出纖細手指，在霧氣中虛畫幾筆，指尖彷彿真的勾出幾行發光的小字，尾巴尖兒得意地揚得更高。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "至於妹妹的魂……那是「極品貨」，鎖在老墨最深的「鎖魂櫃」裡，想贖？得拿同等重量的「核心記憶」來換～"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "什麼叫「核心記憶」？我願意用我的命換。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "詢問什麼是核心記憶，以及怎麼判斷重量",
+     "表示願意用自己的核心記憶交換，請青蘿帶路見老墨",
+     "詢問有沒有其他途徑或捷徑能贖回妹妹的魂",
+     "先整理藥箱裡的草藥，看看有沒有能派上用場的東西"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1
+     },
+     "flags_add": [
+      "learned_rules"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "青蘿說明鬼市規矩：只收記憶作貨幣，須在忘川簿簽約，妹妹魂魄為極品貨需以同等重量核心記憶交換。小滿表明願以命相搏。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 2,
+     "老墨": 0
+    },
+    "flags": [
+     "first_meeting_qingluo",
+     "learned_rules"
+    ],
+    "items": []
+   },
+   "summary": [
+    "小滿獨自來到鬼市入口，遇見引路人青蘿，表明要贖回妹妹魂魄的決心。",
+    "青蘿說明鬼市規矩：只收記憶作貨幣，須在忘川簿簽約，妹妹魂魄為極品貨需以同等重量核心記憶交換。小滿表明願以命相搏。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0001",
+   "children": [
+    "n_0002"
+   ],
+   "created_at": "2026-09-25T13:58:14+08:00"
+  },
+  "n_0002": {
+   "parent": "n_0001",
+   "scene_id": "ghost_market_entrance",
+   "player_input": {
+    "kind": "option",
+    "text": "詢問有沒有其他途徑或捷徑能贖回妹妹的魂"
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "捷徑？小藥童想得挺美～這鬼市裡啊，規矩比鐵還硬，老墨那張老臉從沒紅過，更別提「通融」兩個字了～"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "她從枯樹幹上輕輕一躍，腳尖點地無聲，圍著小滿轉了半圈，狐耳隨著腳步輕顫，指尖在霧氣中劃過，留下幾點幽藍的熒光。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "不過……若是能湊齊「三樁舊債」，或許能換老墨高看一眼，少削幾塊核心記憶也說不定～"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "所謂舊債，便是這市裡欠下風流帳、情債、命債的孤魂野鬼，他們手裡攥著的碎片記憶，剛好能湊成一把「贖魂鑰」～"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "別聽她胡說八道。規矩就是規矩，債該誰還誰還，贖魂走忘川簿，其餘免談。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "霧氣深處傳來清脆算盤聲，珠子撥動間夾著幾分不耐，一道瘦高身影緩緩凝實——半張黑麵具遮不住眼底精光，手中算盤未停，已立在石階盡頭。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "追問什麼是「三樁舊債」",
+     "直接跟老墨談贖魂條件",
+     "先觀望四周再決定"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1,
+      "老墨": -1
+     },
+     "flags_add": [
+      "learned_old_debts"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "青蘿透露可湊齊「三樁舊債」換取贖魂鑰減少核心記憶代價，老墨親自現身駁回並堅持走忘川簿正規流程。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 3,
+     "老墨": -1
+    },
+    "flags": [
+     "first_meeting_qingluo",
+     "learned_rules",
+     "learned_old_debts"
+    ],
+    "items": []
+   },
+   "summary": [
+    "小滿獨自來到鬼市入口，遇見引路人青蘿，表明要贖回妹妹魂魄的決心。",
+    "青蘿說明鬼市規矩：只收記憶作貨幣，須在忘川簿簽約，妹妹魂魄為極品貨需以同等重量核心記憶交換。小滿表明願以命相搏。",
+    "青蘿透露可湊齊「三樁舊債」換取贖魂鑰減少核心記憶代價，老墨親自現身駁回並堅持走忘川簿正規流程。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0002",
+   "children": [
+    "n_0003"
+   ],
+   "created_at": "2026-09-25T13:58:23+08:00"
+  },
+  "n_0003": {
+   "parent": "n_0002",
+   "scene_id": "ghost_market_entrance",
+   "player_input": {
+    "kind": "free",
+    "text": "我去找老墨，問他妹妹的魂要用什麼換。"
+   },
+   "lines": [
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "老墨掌櫃，我妹妹的魂鎖在哪？具體要什麼記憶才能換回來？"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "魂在鎖魂櫃第三層最深處。核心記憶——你與妹妹唯一共享、且不可替代的那段。少一分不換，多一分不收。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "嘁～老墨你倒乾脆，連「哪段」都不肯多提一句～小滿，你自己掂量掂量那是哪段喲～"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "規矩不容商量。忘川簿在這，要簽便簽，不簽請回。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "老墨翻開手中泛黃簿頁，筆尖懸在空白處，墨香混著霧氣鑽入鼻腔；四周靜默，只有算盤珠子輕響，像在倒數。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（盯著簿頁，喉結滾動）我簽。但我要先看看那段記憶到底是什麼。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "fog",
+    "options": [
+     "堅持要先看記憶內容才簽字",
+     "詢問是否可分期支付記憶",
+     "請青蘿幫忙旁敲側擊老墨",
+     "咬牙直接在忘川簿上按手印"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1,
+      "老墨": -1
+     },
+     "flags_add": [
+      "demanded_memory_preview"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "小滿當面向老墨詢問妹妹魂魄交易細節，老墨指出需獻上與妹妹唯一共享的核心記憶，小滿要求先確認記憶內容再簽約。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 4,
+     "老墨": -2
+    },
+    "flags": [
+     "first_meeting_qingluo",
+     "learned_rules",
+     "learned_old_debts",
+     "demanded_memory_preview"
+    ],
+    "items": []
+   },
+   "summary": [
+    "小滿獨自來到鬼市入口，遇見引路人青蘿，表明要贖回妹妹魂魄的決心。",
+    "青蘿說明鬼市規矩：只收記憶作貨幣，須在忘川簿簽約，妹妹魂魄為極品貨需以同等重量核心記憶交換。小滿表明願以命相搏。",
+    "青蘿透露可湊齊「三樁舊債」換取贖魂鑰減少核心記憶代價，老墨親自現身駁回並堅持走忘川簿正規流程。",
+    "小滿當面向老墨詢問妹妹魂魄交易細節，老墨指出需獻上與妹妹唯一共享的核心記憶，小滿要求先確認記憶內容再簽約。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0003",
+   "children": [
+    "n_0004"
+   ],
+   "created_at": "2026-09-25T13:58:33+08:00"
+  },
+  "n_0004": {
+   "parent": "n_0003",
+   "scene_id": "ghost_market_entrance",
+   "player_input": {
+    "kind": "option",
+    "text": "堅持要先看記憶內容才簽字"
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "看記憶？規矩裡沒這條。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "算盤聲戛然而止，半張黑麵具後的雙眸微微眯起，筆尖懸在忘川簿空白處不動，周遭霧氣彷彿凝成實質壓在肩頭。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "喲～老墨還真有耐性陪你耍這招～小滿，記憶一旦喚醒、確認過，就算不簽名，那段記憶也已「被取走」一半份量了喔～"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "她湊近些，狐耳貼著腦後，金色豎瞳倒映著小滿緊繃的側臉，尾巴尖兒輕輕勾住他的衣襟，聲音罕見地放輕、放慢。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "你確定要看？看完……就沒有「不簽」的選項囉～"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "老墨沉默著，將忘川簿合上，從袖中摸出一枚銅錢大小的鏡片遞過來——鏡面泛著幽藍微光，映不出人影，只等滴血或念頭引動。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "fog",
+    "options": [
+     "滴血引動鏡片，確認那段核心記憶",
+     "退後一步，詢問是否還有別的付款方式",
+     "咬牙拒絕看記憶，直接在忘川簿簽名",
+     "轉頭問青蘿：那三樁舊債具體是哪三樁？"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1,
+      "老墨": -1
+     },
+     "flags_add": [
+      "memory_preview_offered"
+     ],
+     "items_add": [
+      "記憶鏡片"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "老墨拒絕預覽記憶，但妥協遞出記憶鏡片讓小滿自行確認；青蘿警告確認記憶即等同付出代價。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 5,
+     "老墨": -3
+    },
+    "flags": [
+     "first_meeting_qingluo",
+     "learned_rules",
+     "learned_old_debts",
+     "demanded_memory_preview",
+     "memory_preview_offered"
+    ],
+    "items": [
+     "記憶鏡片"
+    ]
+   },
+   "summary": [
+    "小滿獨自來到鬼市入口，遇見引路人青蘿，表明要贖回妹妹魂魄的決心。",
+    "青蘿說明鬼市規矩：只收記憶作貨幣，須在忘川簿簽約，妹妹魂魄為極品貨需以同等重量核心記憶交換。小滿表明願以命相搏。",
+    "青蘿透露可湊齊「三樁舊債」換取贖魂鑰減少核心記憶代價，老墨親自現身駁回並堅持走忘川簿正規流程。",
+    "小滿當面向老墨詢問妹妹魂魄交易細節，老墨指出需獻上與妹妹唯一共享的核心記憶，小滿要求先確認記憶內容再簽約。",
+    "老墨拒絕預覽記憶，但妥協遞出記憶鏡片讓小滿自行確認；青蘿警告確認記憶即等同付出代價。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0004",
+   "children": [
+    "n_0005"
+   ],
+   "created_at": "2026-09-25T13:58:40+08:00"
+  },
+  "n_0005": {
+   "parent": "n_0004",
+   "scene_id": "ghost_market_entrance",
+   "player_input": {
+    "kind": "free",
+    "text": "我願意用自己最珍貴的一段記憶，換回妹妹的魂。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "小滿沒去接那枚鏡片，反而將雙手重重按在冰涼的青石階上，指尖陷入苔痕裡，低沉的聲音卻穿透霧氣直抵老墨面具下的雙眸。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "我不看了。我用我最珍貴的一段記憶換妹妹的魂——哪怕那是我活著的理由，也在所不惜。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "尾巴尖兒驟然僵住，金色豎瞳縮成細線，紅繩鈴鐺無風自響，她頭一次收起笑意，聲音罕見地帶上顫音。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "小滿……你明白「最珍貴」在老墨算盤上是什麼分量嗎？那不是一段記憶，是你整個「你」啊～"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "算盤珠子「啪」地彈回原位，半張黑麵具後吐出兩個字，冷得像掉進忘川的鐵塊。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "成交。忘川簿開頁，寫下「自我核心記憶」六字，按手印、滴心血，魂魄當場釋放。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "老墨翻開泛黃簿頁，筆尖未沾墨卻已凝出血紅字跡；霧氣中隱現一把細長鐵鑰，鑰齒流轉著淡藍微光，靜靜躺在簿頁中央——贖魂鑰，成形了。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "fog",
+    "options": [
+     "按手印滴心血完成契約",
+     "猶豫片刻詢問青蘿有無後悔藥",
+     "轉身想離開卻發現霧氣封路"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 3,
+      "老墨": 1
+     },
+     "flags_add": [
+      "signed_contract",
+      "soul_key_formed"
+     ],
+     "items_add": [
+      "贖魂鑰"
+     ],
+     "items_remove": [
+      "記憶鏡片"
+     ]
+    },
+    "summary_update": "小滿決定獻上自我核心記憶換取贖魂鑰，老墨當場成交並開啟忘川簿，鑰匙成形靜待按印滴血。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 8,
+     "老墨": -2
+    },
+    "flags": [
+     "first_meeting_qingluo",
+     "learned_rules",
+     "learned_old_debts",
+     "demanded_memory_preview",
+     "memory_preview_offered",
+     "signed_contract",
+     "soul_key_formed"
+    ],
+    "items": [
+     "贖魂鑰"
+    ]
+   },
+   "summary": [
+    "小滿獨自來到鬼市入口，遇見引路人青蘿，表明要贖回妹妹魂魄的決心。",
+    "青蘿說明鬼市規矩：只收記憶作貨幣，須在忘川簿簽約，妹妹魂魄為極品貨需以同等重量核心記憶交換。小滿表明願以命相搏。",
+    "青蘿透露可湊齊「三樁舊債」換取贖魂鑰減少核心記憶代價，老墨親自現身駁回並堅持走忘川簿正規流程。",
+    "小滿當面向老墨詢問妹妹魂魄交易細節，老墨指出需獻上與妹妹唯一共享的核心記憶，小滿要求先確認記憶內容再簽約。",
+    "老墨拒絕預覽記憶，但妥協遞出記憶鏡片讓小滿自行確認；青蘿警告確認記憶即等同付出代價。",
+    "小滿決定獻上自我核心記憶換取贖魂鑰，老墨當場成交並開啟忘川簿，鑰匙成形靜待按印滴血。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0005",
+   "children": [
+    "n_0006"
+   ],
+   "created_at": "2026-09-25T13:58:51+08:00"
+  },
+  "n_0006": {
+   "parent": "n_0005",
+   "scene_id": "ghost_market_inner",
+   "player_input": {
+    "kind": "option",
+    "text": "按手印滴心血完成契約"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "小滿咬破舌尖，一口精血噴在忘川簿上，血珠未落紙面便化作硃砂紅印；指尖按下時，青石階彷彿顫了顫，霧氣倒捲進簿頁深處。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "算盤珠子輕輕一撥，「啪」地落定，半張黑麵具後的聲音罕見地柔了半分。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "契約生效。贖魂鑰歸你，魂魄在鎖魂櫃第三層等候，天亮前自行取走。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "紅繩鈴鐺「鈴」地一響，她輕輕落在小滿肩頭，狐耳貼緊腦後，金色豎瞳倒映著鑰齒流轉的藍光，尾巴尖兒輕輕圈住他的手腕。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "拿著鑰匙去吧，小藥童……記得，別回頭，回頭——那段記憶就真的只剩我替你收著了喲～"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（緊握贖魂鑰，指節泛白）謝了。我會帶妹妹回去的。"
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "ghost_market_inner",
+     "name": "鬼市深處",
+     "image_prompt": "narrow stone alley in a supernatural night market, dim paper lanterns glowing faintly, mist swirling around wooden stalls selling memories in glass bottles, cobblestone pavement, moonlight filtering through fog, eerie but quiet atmosphere"
+    },
+    "bgm_mood": "tense",
+    "weather": "fog",
+    "options": [
+     "沿著霧氣深處的石階走向鎖魂櫃第三層",
+     "轉身問青蘿怎麼走才不會迷路",
+     "先檢查贖魂鑰是否完好無損",
+     "深吸一口氣，按青蘿說的不回頭直接衝進去"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1
+     },
+     "flags_add": [
+      "contract_signed",
+      "soul_key_obtained"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "小滿按手印滴心血完成契約，獲得贖魂鑰，老墨確認契約生效並指引前往鎖魂櫃第三層取回妹妹魂魄。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 9,
+     "老墨": -2
+    },
+    "flags": [
+     "first_meeting_qingluo",
+     "learned_rules",
+     "learned_old_debts",
+     "demanded_memory_preview",
+     "memory_preview_offered",
+     "signed_contract",
+     "soul_key_formed",
+     "contract_signed",
+     "soul_key_obtained"
+    ],
+    "items": [
+     "贖魂鑰"
+    ]
+   },
+   "summary": [
+    "小滿獨自來到鬼市入口，遇見引路人青蘿，表明要贖回妹妹魂魄的決心。",
+    "青蘿說明鬼市規矩：只收記憶作貨幣，須在忘川簿簽約，妹妹魂魄為極品貨需以同等重量核心記憶交換。小滿表明願以命相搏。",
+    "青蘿透露可湊齊「三樁舊債」換取贖魂鑰減少核心記憶代價，老墨親自現身駁回並堅持走忘川簿正規流程。",
+    "小滿當面向老墨詢問妹妹魂魄交易細節，老墨指出需獻上與妹妹唯一共享的核心記憶，小滿要求先確認記憶內容再簽約。",
+    "老墨拒絕預覽記憶，但妥協遞出記憶鏡片讓小滿自行確認；青蘿警告確認記憶即等同付出代價。",
+    "小滿決定獻上自我核心記憶換取贖魂鑰，老墨當場成交並開啟忘川簿，鑰匙成形靜待按印滴血。",
+    "小滿按手印滴心血完成契約，獲得贖魂鑰，老墨確認契約生效並指引前往鎖魂櫃第三層取回妹妹魂魄。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0006",
+   "children": [
+    "n_0007"
+   ],
+   "created_at": "2026-09-25T13:59:04+08:00"
+  },
+  "n_0007": {
+   "parent": "n_0006",
+   "scene_id": "locker_third_floor",
+   "player_input": {
+    "kind": "free",
+    "text": "趁天還沒亮，我拿著贖回的魂魄跑回藥舖，讓妹妹醒過來。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "鬼市深處的霧氣似乎感應到契約完成，緩緩向四周退散，露出一條蜿蜒的石階小徑通向鎖魂櫃區域，幽藍磷火在路旁若隱若現。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "算盤收入袖中，半張黑麵具後的聲音恢復慣常的冷淡疏離。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "第三層盡頭，櫃號「戊寅」。鑰匙只能開一次，開錯無效。天亮前未取走，魂魄歸市，契約作廢，記憶不退。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "她輕輕鬆開圈住小滿手腕的尾巴尖，身形後撤半步，狐耳微微側傾，金色豎瞳裡倒映著贖魂鑰微光，尾音拖得長長的。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "路我帶過了，債也討完了……小藥童，這段路你自己走喲～別辜負了那口心血啊～"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（握緊贖魂鑰，轉身向石階深處疾行，腳步沉穩卻帶著不容置疑的急切）會的。我們會回去的。"
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "locker_third_floor",
+     "name": "鎖魂櫃第三層",
+     "image_prompt": "ancient chinese underground vault, stone corridors lined with iron cabinets, dim blue phosphorescent fireflies, cold mist, pre-dawn darkness, eerie silence"
+    },
+    "bgm_mood": "tense",
+    "weather": "fog",
+    "options": [
+     "沿著石階疾奔向第三層",
+     "停下詢問青蘿有沒有捷徑",
+     "回頭確認老墨沒動手腳",
+     "摸摸懷裡的贖魂鑰確認溫度"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1
+     },
+     "flags_add": [
+      "heading_to_locker"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "小滿完成契約獲得贖魂鑰，老墨指引前往鎖魂櫃第三層戊寅號取回妹妹魂魄，青蘿目送離開並叮囑不得回頭。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 10,
+     "老墨": -2
+    },
+    "flags": [
+     "first_meeting_qingluo",
+     "learned_rules",
+     "learned_old_debts",
+     "demanded_memory_preview",
+     "memory_preview_offered",
+     "signed_contract",
+     "soul_key_formed",
+     "contract_signed",
+     "soul_key_obtained",
+     "heading_to_locker"
+    ],
+    "items": [
+     "贖魂鑰"
+    ]
+   },
+   "summary": [
+    "小滿獨自來到鬼市入口，遇見引路人青蘿，表明要贖回妹妹魂魄的決心。",
+    "青蘿說明鬼市規矩：只收記憶作貨幣，須在忘川簿簽約，妹妹魂魄為極品貨需以同等重量核心記憶交換。小滿表明願以命相搏。",
+    "青蘿透露可湊齊「三樁舊債」換取贖魂鑰減少核心記憶代價，老墨親自現身駁回並堅持走忘川簿正規流程。",
+    "小滿當面向老墨詢問妹妹魂魄交易細節，老墨指出需獻上與妹妹唯一共享的核心記憶，小滿要求先確認記憶內容再簽約。",
+    "老墨拒絕預覽記憶，但妥協遞出記憶鏡片讓小滿自行確認；青蘿警告確認記憶即等同付出代價。",
+    "小滿決定獻上自我核心記憶換取贖魂鑰，老墨當場成交並開啟忘川簿，鑰匙成形靜待按印滴血。",
+    "小滿按手印滴心血完成契約，獲得贖魂鑰，老墨確認契約生效並指引前往鎖魂櫃第三層取回妹妹魂魄。",
+    "小滿完成契約獲得贖魂鑰，老墨指引前往鎖魂櫃第三層戊寅號取回妹妹魂魄，青蘿目送離開並叮囑不得回頭。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0007",
+   "children": [
+    "n_0008"
+   ],
+   "created_at": "2026-09-25T13:59:13+08:00"
+  },
+  "n_0008": {
+   "parent": "n_0007",
+   "scene_id": "locker_third_floor",
+   "player_input": {
+    "kind": "option",
+    "text": "沿著石階疾奔向第三層"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "石階在腳下無盡延伸，兩側灰白牆壁上嵌著一排排鐵櫃，櫃門縫隙洩出幽藍微光，彷彿無數雙眼睛在黑暗中靜默注視，磷火隨著腳步頻率忽明忽滅。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧氣被疾風掀起，在身後捲成龍捲，又瞬間合攏；腳步聲「咚咚」敲在石階上，卻聽不見迴音，彷彿聲音也被鬼市吞噬了。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "身影倏忽出現在轉角欄杆上，白狐耳在夜風中顫動，金色豎瞳倒映著小滿奔跑的背影，紅繩鈴鐺無風自響，尾音飄在霧裡。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "喲～跑這麼快，不怕鑰匙燙手嗎？第三層盡頭轉右，戊寅號櫃門朝北，別敲錯門喲～"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（不回頭，腳步未停，聲音穿過霧氣）記下了。謝了。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "轉角處石壁刻著「戊寅」二字，筆劃蒼勁滲著暗紅，櫃門鑰孔正對著一彎殘月，贖魂鑰鑰齒藍光脈動，與月光遙遙相應。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "fog",
+    "options": [
+     "將贖魂鑰插入戊寅號鑰孔轉動",
+     "先檢查櫃門四周有無機關或異樣",
+     "喚喚妹妹的名字試試有無回應",
+     "回頭找青蘿確認最後細節"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1
+     },
+     "flags_add": [
+      "reached_locker_wuchen"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "小滿沿石階疾奔抵達鎖魂櫃第三層戊寅號，青蘿在轉角處最後叮囑，贖魂鑰與殘月光遙遙呼應。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 11,
+     "老墨": -2
+    },
+    "flags": [
+     "first_meeting_qingluo",
+     "learned_rules",
+     "learned_old_debts",
+     "demanded_memory_preview",
+     "memory_preview_offered",
+     "signed_contract",
+     "soul_key_formed",
+     "contract_signed",
+     "soul_key_obtained",
+     "heading_to_locker",
+     "reached_locker_wuchen"
+    ],
+    "items": [
+     "贖魂鑰"
+    ]
+   },
+   "summary": [
+    "小滿獨自來到鬼市入口，遇見引路人青蘿，表明要贖回妹妹魂魄的決心。",
+    "青蘿說明鬼市規矩：只收記憶作貨幣，須在忘川簿簽約，妹妹魂魄為極品貨需以同等重量核心記憶交換。小滿表明願以命相搏。",
+    "青蘿透露可湊齊「三樁舊債」換取贖魂鑰減少核心記憶代價，老墨親自現身駁回並堅持走忘川簿正規流程。",
+    "小滿當面向老墨詢問妹妹魂魄交易細節，老墨指出需獻上與妹妹唯一共享的核心記憶，小滿要求先確認記憶內容再簽約。",
+    "老墨拒絕預覽記憶，但妥協遞出記憶鏡片讓小滿自行確認；青蘿警告確認記憶即等同付出代價。",
+    "小滿決定獻上自我核心記憶換取贖魂鑰，老墨當場成交並開啟忘川簿，鑰匙成形靜待按印滴血。",
+    "小滿按手印滴心血完成契約，獲得贖魂鑰，老墨確認契約生效並指引前往鎖魂櫃第三層取回妹妹魂魄。",
+    "小滿完成契約獲得贖魂鑰，老墨指引前往鎖魂櫃第三層戊寅號取回妹妹魂魄，青蘿目送離開並叮囑不得回頭。",
+    "小滿沿石階疾奔抵達鎖魂櫃第三層戊寅號，青蘿在轉角處最後叮囑，贖魂鑰與殘月光遙遙呼應。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0008",
+   "children": [
+    "n_0009"
+   ],
+   "created_at": "2026-09-25T13:59:28+08:00"
+  },
+  "n_0009": {
+   "parent": "n_0008",
+   "scene_id": "locker_third_floor",
+   "player_input": {
+    "kind": "free",
+    "text": "我決定不再拖延，現在就賭上一切，把這件事做個了斷。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "小滿握緊贖魂鑰，指節因用力而泛白，鑰齒流轉的淡藍微光映照著他決絕的側臉；殘月懸於頂上，將細長影子拖至櫃門腳下，彷彿在替他見證這最後一步。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（將鑰匙對準鑰孔，動作乾淨利落，不帶一絲猶豫）到此為止了。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "鑰匙插入鑰孔的瞬間，「咔噠」一聲清脆悅耳，彷彿某塊塵封已久的拼圖終於歸位；櫃門無聲向內滑開，裡頭並無屍塊或骨灰，只懸浮著一團溫潤如珠的淡金光團，脈動頻率與小滿胸口心跳竟毫無差異。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "身影無聲立在石階盡頭，半張黑麵具後的雙眸凝視著光團，算盤珠子輕撥一聲，聲音罕見地帶上一絲不易察覺的鬆動。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "魂魄完整。契約履行完畢。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "倚在轉角欄杆上，白狐耳微微側傾，金色豎瞳倒映著淡金光團將小滿臉廓鍍上暈黃，紅繩鈴鐺隨夜風輕搖，尾音輕得像羽毛。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "喲～小藥童真硬氣，連「自我」都敢丟進秤盤……那段記憶，我替你好好收著囉～"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "淡金光團似有感應，化作一道輕煙鑽入小滿懷中贖魂鑰的鑰環缺口，鑰身藍光大盛，又在他掌心沉甸甸地沉澱下來——妹妹的魂，終於回到他手裡。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "none",
+    "options": [
+     "小心翼翼地將贖魂鑰貼近胸口，轉身奔向石階出口",
+     "對青蘿說聲「多謝」，然後不再回頭地往外跑",
+     "詢問老墨：「我失去的那段記憶……到底是什麼？」",
+     "握緊鑰匙閉上眼，試著呼喚妹妹的名字確認魂魄是否…"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 2,
+      "老墨": 1
+     },
+     "flags_add": [
+      "soul_retrieved",
+      "contract_fulfilled"
+     ],
+     "items_add": [
+      "妹妹的魂魄"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "小滿用贖魂鑰開啟戊寅號櫃門，成功取回妹妹完整的魂魄，契約正式履行完畢。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 13,
+     "老墨": -1
+    },
+    "flags": [
+     "first_meeting_qingluo",
+     "learned_rules",
+     "learned_old_debts",
+     "demanded_memory_preview",
+     "memory_preview_offered",
+     "signed_contract",
+     "soul_key_formed",
+     "contract_signed",
+     "soul_key_obtained",
+     "heading_to_locker",
+     "reached_locker_wuchen",
+     "soul_retrieved",
+     "contract_fulfilled"
+    ],
+    "items": [
+     "贖魂鑰",
+     "妹妹的魂魄"
+    ]
+   },
+   "summary": [
+    "小滿獨自來到鬼市入口，遇見引路人青蘿，表明要贖回妹妹魂魄的決心。",
+    "青蘿說明鬼市規矩：只收記憶作貨幣，須在忘川簿簽約，妹妹魂魄為極品貨需以同等重量核心記憶交換。小滿表明願以命相搏。",
+    "青蘿透露可湊齊「三樁舊債」換取贖魂鑰減少核心記憶代價，老墨親自現身駁回並堅持走忘川簿正規流程。",
+    "小滿當面向老墨詢問妹妹魂魄交易細節，老墨指出需獻上與妹妹唯一共享的核心記憶，小滿要求先確認記憶內容再簽約。",
+    "老墨拒絕預覽記憶，但妥協遞出記憶鏡片讓小滿自行確認；青蘿警告確認記憶即等同付出代價。",
+    "小滿決定獻上自我核心記憶換取贖魂鑰，老墨當場成交並開啟忘川簿，鑰匙成形靜待按印滴血。",
+    "小滿按手印滴心血完成契約，獲得贖魂鑰，老墨確認契約生效並指引前往鎖魂櫃第三層取回妹妹魂魄。",
+    "小滿完成契約獲得贖魂鑰，老墨指引前往鎖魂櫃第三層戊寅號取回妹妹魂魄，青蘿目送離開並叮囑不得回頭。",
+    "小滿沿石階疾奔抵達鎖魂櫃第三層戊寅號，青蘿在轉角處最後叮囑，贖魂鑰與殘月光遙遙呼應。",
+    "小滿用贖魂鑰開啟戊寅號櫃門，成功取回妹妹完整的魂魄，契約正式履行完畢。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0009",
+   "children": [
+    "n_0010"
+   ],
+   "created_at": "2026-09-25T13:59:43+08:00"
+  },
+  "n_0010": {
+   "parent": "n_0009",
+   "scene_id": "locker_third_floor",
+   "player_input": {
+    "kind": "option",
+    "text": "詢問老墨：「我失去的那段記憶……到底是什麼？」"
+   },
+   "lines": [
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（掌心攥著發燙的贖魂鑰，指節泛白，聲音卻穩得像沈澱過的藥渣）我失去的那段記憶……到底是什麼？"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "算盤珠子「啪」地彈回原位，半張黑麵具後的雙眸平靜如古井，聲音不帶一絲波瀾。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "契約已履行，記憶歸市。忘川簿上寫的是「自我核心記憶」六字，具體內容——不歸我管。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "她從欄杆上輕輕躍下，白狐耳隨著動作顫了顫，金色豎瞳裡倒映著小滿掌心的淡金光暈，尾巴尖兒懶洋洋地畫著弧線。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "喲～小藥童現在問這個，未免太晚囉～老墨只負責「收」與「稱」，至於秤盤上那塊砝碼叫什麼名字……"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "她湊近半步，紅繩鈴鐺「鈴」地輕響，狐耳幾乎貼上小滿耳畔，氣息攜著淡淡桂花香鑽進鼻端。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "那是你親手丟進忘川、連做夢都不敢想的東西喲～比如……某個雪夜、某碗藥、某句「哥哥別怕」？嘻嘻～"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧氣在三人腳邊緩緩旋轉，殘月西沉，石階盡頭隱約傳來雞鳴——天亮前的最後幾個時辰，正無聲流逝。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "趕緊抱著妹妹的魂魄離開鬼市，趕在天亮前回藥舖",
+     "追問青蘿：「妳怎麼知道那段記憶的細節？」",
+     "轉身對老墨深揖一拜：「多謝掌櫃成全，告辭了」",
+     "低頭看掌心的贖魂鑰，鑰身藍光裡似有字跡閃爍，想…"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1
+     },
+     "flags_add": [
+      "memory_content_hinted"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "小滿詢問失去的記憶內容，老墨拒絕透露，青蘿暗示記憶與雪夜、藥碗、妹妹的呼喚有關，天色將亮。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 14,
+     "老墨": -1
+    },
+    "flags": [
+     "first_meeting_qingluo",
+     "learned_rules",
+     "learned_old_debts",
+     "demanded_memory_preview",
+     "memory_preview_offered",
+     "signed_contract",
+     "soul_key_formed",
+     "contract_signed",
+     "soul_key_obtained",
+     "heading_to_locker",
+     "reached_locker_wuchen",
+     "soul_retrieved",
+     "contract_fulfilled",
+     "memory_content_hinted"
+    ],
+    "items": [
+     "贖魂鑰",
+     "妹妹的魂魄"
+    ]
+   },
+   "summary": [
+    "小滿獨自來到鬼市入口，遇見引路人青蘿，表明要贖回妹妹魂魄的決心。",
+    "青蘿說明鬼市規矩：只收記憶作貨幣，須在忘川簿簽約，妹妹魂魄為極品貨需以同等重量核心記憶交換。小滿表明願以命相搏。",
+    "青蘿透露可湊齊「三樁舊債」換取贖魂鑰減少核心記憶代價，老墨親自現身駁回並堅持走忘川簿正規流程。",
+    "小滿當面向老墨詢問妹妹魂魄交易細節，老墨指出需獻上與妹妹唯一共享的核心記憶，小滿要求先確認記憶內容再簽約。",
+    "老墨拒絕預覽記憶，但妥協遞出記憶鏡片讓小滿自行確認；青蘿警告確認記憶即等同付出代價。",
+    "小滿決定獻上自我核心記憶換取贖魂鑰，老墨當場成交並開啟忘川簿，鑰匙成形靜待按印滴血。",
+    "小滿按手印滴心血完成契約，獲得贖魂鑰，老墨確認契約生效並指引前往鎖魂櫃第三層取回妹妹魂魄。",
+    "小滿完成契約獲得贖魂鑰，老墨指引前往鎖魂櫃第三層戊寅號取回妹妹魂魄，青蘿目送離開並叮囑不得回頭。",
+    "小滿沿石階疾奔抵達鎖魂櫃第三層戊寅號，青蘿在轉角處最後叮囑，贖魂鑰與殘月光遙遙呼應。",
+    "小滿用贖魂鑰開啟戊寅號櫃門，成功取回妹妹完整的魂魄，契約正式履行完畢。",
+    "小滿詢問失去的記憶內容，老墨拒絕透露，青蘿暗示記憶與雪夜、藥碗、妹妹的呼喚有關，天色將亮。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0010",
+   "children": [
+    "n_0011"
+   ],
+   "created_at": "2026-09-25T14:00:02+08:00"
+  },
+  "n_0011": {
+   "parent": "n_0010",
+   "scene_id": "ghost_market_entrance",
+   "player_input": {
+    "kind": "free",
+    "text": "我決定不再拖延，現在就賭上一切，把這件事做個了斷。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "鬼市的霧氣在雞鳴聲中劇烈翻騰，像被無形大手攪動的墨汁，殘月西沉的速度肉眼可見地加快，石階盡頭已泛出魚肚白。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（將妹妹的魂魄小心貼近胸口，另一手緊握贖魂鑰，腳步不再猶豫地踏上歸途石階）走了。謝謝你們……也再見了。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "白狐耳微微抖動，金色豎瞳倒映著小滿決絕的背影，紅繩鈴鐺「鈴」地一響，尾音飄在晨霧裡。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "喲～慢走不送喲～記得活著回去熬那碗藥……還有，別忘了我替你收著的「哥哥別怕」哦～"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "算盤收進袖中，半張黑麵具後的目光追著小滿的身影，直到霧氣將其吞沒，聲音平淡得像在說今日天氣。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "交易結束。下一位。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "石階在腳下飲速縮短，鬼市入口的石獅子在晨光中現出輪廓，小滿懷中贖魂鑰的藍光與胸口的金暈交纏脈動，每一步都踏在實實在在的青石上——他要帶妹妹回家了。"
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "ghost_market_entrance",
+     "name": "鬼市入口",
+     "image_prompt": "Ancient stone archway entrance to ghost market, full moon night, thick mist, dim lanterns glowing faintly, moss-covered stone path, shadowy stalls receding into darkness"
+    },
+    "bgm_mood": "warm",
+    "weather": "none",
+    "options": [],
+    "state_changes": {
+     "affection": {
+      "青蘿": 2,
+      "老墨": 1
+     },
+     "flags_add": [
+      "soul_returned",
+      "leaving_market",
+      "dawn_approaching"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "小滿成功贖回妹妹魂魄，契約履行完畢，在天亮前離開鬼市踏上歸途。",
+    "ending": {
+     "type": "good",
+     "title": "贖魂歸途"
+    }
+   },
+   "state": {
+    "affection": {
+     "青蘿": 16,
+     "老墨": 0
+    },
+    "flags": [
+     "first_meeting_qingluo",
+     "learned_rules",
+     "learned_old_debts",
+     "demanded_memory_preview",
+     "memory_preview_offered",
+     "signed_contract",
+     "soul_key_formed",
+     "contract_signed",
+     "soul_key_obtained",
+     "heading_to_locker",
+     "reached_locker_wuchen",
+     "soul_retrieved",
+     "contract_fulfilled",
+     "memory_content_hinted",
+     "soul_returned",
+     "leaving_market",
+     "dawn_approaching"
+    ],
+    "items": [
+     "贖魂鑰",
+     "妹妹的魂魄"
+    ]
+   },
+   "summary": [
+    "小滿獨自來到鬼市入口，遇見引路人青蘿，表明要贖回妹妹魂魄的決心。",
+    "青蘿說明鬼市規矩：只收記憶作貨幣，須在忘川簿簽約，妹妹魂魄為極品貨需以同等重量核心記憶交換。小滿表明願以命相搏。",
+    "青蘿透露可湊齊「三樁舊債」換取贖魂鑰減少核心記憶代價，老墨親自現身駁回並堅持走忘川簿正規流程。",
+    "小滿當面向老墨詢問妹妹魂魄交易細節，老墨指出需獻上與妹妹唯一共享的核心記憶，小滿要求先確認記憶內容再簽約。",
+    "老墨拒絕預覽記憶，但妥協遞出記憶鏡片讓小滿自行確認；青蘿警告確認記憶即等同付出代價。",
+    "小滿決定獻上自我核心記憶換取贖魂鑰，老墨當場成交並開啟忘川簿，鑰匙成形靜待按印滴血。",
+    "小滿按手印滴心血完成契約，獲得贖魂鑰，老墨確認契約生效並指引前往鎖魂櫃第三層取回妹妹魂魄。",
+    "小滿完成契約獲得贖魂鑰，老墨指引前往鎖魂櫃第三層戊寅號取回妹妹魂魄，青蘿目送離開並叮囑不得回頭。",
+    "小滿沿石階疾奔抵達鎖魂櫃第三層戊寅號，青蘿在轉角處最後叮囑，贖魂鑰與殘月光遙遙呼應。",
+    "小滿用贖魂鑰開啟戊寅號櫃門，成功取回妹妹完整的魂魄，契約正式履行完畢。",
+    "小滿詢問失去的記憶內容，老墨拒絕透露，青蘿暗示記憶與雪夜、藥碗、妹妹的呼喚有關，天色將亮。",
+    "小滿成功贖回妹妹魂魄，契約履行完畢，在天亮前離開鬼市踏上歸途。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0011",
+   "children": [],
+   "created_at": "2026-09-25T14:00:20+08:00"
+  }
+ }
+}

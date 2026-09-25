@@ -1,0 +1,50 @@
+{
+ "id": "g_20260925_150506",
+ "created_at": "2026-09-25T15:05:06+08:00",
+ "seed": 1152558070,
+ "lang": "en",
+ "title": "Neon Rain Heist",
+ "style_en": "2079 Neo-Kowloon vertical megacity, rain-soaked neon noir, cyberpunk heist aesthetic",
+ "world": {
+  "era": "2079",
+  "place": "Neo-Kowloon, a rain-soaked vertical megacity of neon and noodle stalls",
+  "genre": "cyberpunk heist",
+  "tone": "tense and stylish",
+  "extra": "The Kagero corporation stole a memory chip holding a whole district's savings",
+  "goal": "Steal the memory chip back from the Kagero tower before midnight"
+ },
+ "protagonist": {
+  "name": "Vex",
+  "profile": "a burned-out netrunner with one last favor to repay"
+ },
+ "characters": [
+  {
+   "id": "c1",
+   "name": "Rin",
+   "appearance": "26-year-old woman, asymmetric neon-pink bob, dark eyes with glowing cyan implants, black cropped racing jacket, fingerless gloves",
+   "personality": "reckless, loyal, hates corporations",
+   "speech": "slangy and teasing",
+   "relationship": "your getaway driver and oldest friend",
+   "appearance_en": "26-year-old woman, asymmetric neon-pink bob, dark eyes with glowing cyan implants, black cropped racing jacket, fingerless gloves",
+   "seed": 1152558087
+  },
+  {
+   "id": "c2",
+   "name": "Hollow",
+   "appearance": "50-year-old man, slicked-back white hair, mirrored sunglasses, charcoal three-piece suit, chrome prosthetic right hand",
+   "personality": "smooth, calculating, untrustworthy",
+   "speech": "soft-spoken, every sentence a deal",
+   "relationship": "corporate fixer who offers you inside help",
+   "appearance_en": "50-year-old man, slicked-back white hair, mirrored sunglasses, charcoal three-piece suit, chrome prosthetic right hand",
+   "seed": 1152558104
+  }
+ ],
+ "scenes": {
+  "noodle_stall_rooftop": {
+   "name": "Noodle Stall Rooftop",
+   "image_prompt": "Rain-slicked rooftop noodle stall at night, steam rising from broth pots, neon signs reflecting on wet concrete, holographic menus flickering, distant megacity towers glowing, moody blue-purple lighting"
+  }
+ },
+ "first_scene": "noodle_stall_rooftop",
+ "setup_model": "nvidia/nemotron-3-ultra-550b-a55b"
+}

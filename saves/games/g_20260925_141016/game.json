@@ -1,0 +1,54 @@
+{
+ "id": "g_20260925_141016",
+ "created_at": "2026-09-25T14:10:16+08:00",
+ "seed": 763553548,
+ "lang": "zh",
+ "title": "風雪雁門關",
+ "style_en": "Late Northern Song Dynasty, Yanmen Pass in blizzard, desolate wuxia inn, bleak and chivalrous atmosphere",
+ "world": {
+  "era": "北宋末年",
+  "place": "風雪中的雁門關外，一間孤零零的客棧",
+  "genre": "武俠",
+  "tone": "蒼涼、俠義",
+  "extra": "客棧裡的每個人都在等同一封密信",
+  "goal": "護送密信平安出關，並揭穿潛伏在客棧的內奸"
+ },
+ "protagonist": {
+  "name": "沈白",
+  "profile": "年輕的鏢師，第一次獨自押鏢"
+ },
+ "characters": [
+  {
+   "id": "c1",
+   "name": "燕十三娘",
+   "appearance": "27 歲女刀客，黑色高馬尾，丹鳳眼，暗紅色勁裝外披白色毛領斗篷，背著一柄長刀",
+   "personality": "爽朗豪氣，恩怨分明",
+   "speech": "說話直來直往，愛喝酒",
+   "relationship": "客棧裡偶遇的江湖人，身分成謎",
+   "appearance_en": "27-year-old female swordsman, black high ponytail, phoenix eyes, dark red martial attire with white fur-trimmed cloak, long broadsword on back",
+   "seed": 763553565
+  },
+  {
+   "id": "c2",
+   "name": "老駱",
+   "appearance": "60 歲男說書人，花白鬍子，瞇瞇眼，褪色的藍布長衫，手拿一把破摺扇",
+   "personality": "看似糊塗，其實什麼都知道",
+   "speech": "說話像在說書，愛賣關子",
+   "relationship": "客棧常客，似乎認識主角的師父",
+   "appearance_en": "60-year-old male storyteller, gray beard, narrow eyes, faded blue cotton robe, broken folding fan",
+   "seed": 763553582
+  }
+ ],
+ "scenes": {
+  "yanmen_inn_blizzard": {
+   "name": "風雪客棧",
+   "image_prompt": "Interior of a dilapidated roadside inn at Yanmen Pass, heavy blizzard outside visible through paper windows, dusk, dim warm candlelight flickering on wooden tables, dust motes dancing in light beams, cold breath visible in air, worn furniture, solitary atmosphere"
+  },
+  "gully_path": {
+   "name": "枯澗古道",
+   "image_prompt": "narrow frozen ravine between steep cliffs, deep snow covering winding path, pale winter sunlight filtering through swirling snowstorm, desolate ancient trail leading northeast, bleak and cold atmosphere"
+  }
+ },
+ "first_scene": "yanmen_inn_blizzard",
+ "setup_model": "nvidia/nemotron-3-ultra-550b-a55b"
+}

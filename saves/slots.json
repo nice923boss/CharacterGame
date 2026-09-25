@@ -1,0 +1,40 @@
+[
+ {
+  "slot": 0,
+  "game_id": "g_20260925_114135",
+  "node_id": "n_0021",
+  "label": "澪市夜燈謎・地下核心室・第 22 輪",
+  "scene_id": "sewer_core_chamber",
+  "saved_at": "2026-09-25T13:36:59+08:00"
+ },
+ {
+  "slot": 1,
+  "game_id": "g_20260925_150905",
+  "node_id": "n_0030",
+  "label": "Singapore Office Proposa · Corridor Afte",
+  "scene_id": "corridor_after_exit",
+  "saved_at": "2026-09-25T15:19:18+08:00"
+ },
+ {
+  "slot": 2,
+  "game_id": "g_20260925_150905",
+  "node_id": "n_0036",
+  "label": "Singapore Office Proposa · Meeting Room Morning · Turn 31",
+  "scene_id": "meeting_room_morning",
+  "saved_at": "2026-09-25T15:27:40+08:00"
+ },
+ {
+  "slot": 3,
+  "game_id": "g_20260925_150905",
+  "node_id": "n_0047",
+  "label": "Singapore Office Proposa · Meeting Room Morning · Turn 20",
+  "scene_id": "meeting_room_morning",
+  "saved_at": "2026-09-25T15:35:14+08:00"
+ },
+ null,
+ null,
+ null,
+ null,
+ null,
+ null
+]

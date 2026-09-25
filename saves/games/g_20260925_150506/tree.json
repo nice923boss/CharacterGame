@@ -1,0 +1,283 @@
+{
+ "root": "n_0000",
+ "next": 3,
+ "nodes": {
+  "n_0000": {
+   "parent": null,
+   "scene_id": "noodle_stall_rooftop",
+   "player_input": {
+    "kind": "opening",
+    "text": ""
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Rain hammers the corrugated iron roof of the noodle stall, each drop a neon strobe against the night sky. Steam curls from a half-eaten bowl of synth-ramen, the broth gone cold beside a flickering holo-display showing the Kagero tower's shifting patrol routes. Three hours until midnight. The memory chip sits in a vault forty floors up, and the only way in is through a front door that doesn't exist on any blueprint."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "\"Yo, ghost. You've been staring at that map for twenty minutes. Either the tower grew legs and walked away, or you're stalling.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She leans against the rusted railing, rain plastering pink strands across her cheek. Cybernetic eyes pulse slow cyan, scanning the skyline. \"Hollow's intel checks out. Service hatch on the north face, maintenance corridor straight to the vault antechamber. Clean, quiet, boring.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "\"So what's the holdup? Cold feet? Bad noodles? Or you waiting for a signed invitation from Kagero's CEO?\""
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "rain",
+    "options": [
+     "\"Intel's clean. Let's move.\"",
+     "\"Something feels off. Check the hatch again.\"",
+     "\"Where's Hollow? He said he'd be here.\"",
+     "\"Need a minute. My head's loud tonight.\""
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Vex reviews the heist plan on a rainy rooftop with three hours until midnight. Rin presses for action, confirming Hollow's intel checks out for a service hatch entry to Kagero tower's vault.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Rin": 0,
+     "Hollow": 0
+    },
+    "flags": [],
+    "items": []
+   },
+   "summary": [
+    "Vex reviews the heist plan on a rainy rooftop with three hours until midnight. Rin presses for action, confirming Hollow's intel checks out for a service hatch entry to Kagero tower's vault."
+   ],
+   "bgm_mood": "tense",
+   "weather": "rain",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0000",
+   "children": [
+    "n_0001"
+   ],
+   "created_at": "2026-09-25T15:05:26+08:00"
+  },
+  "n_0001": {
+   "parent": "n_0000",
+   "scene_id": "noodle_stall_rooftop",
+   "player_input": {
+    "kind": "option",
+    "text": "\"Something feels off. Check the hatch again.\""
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Vex taps the holo-display, fingers dancing through encrypted schematics. The service hatch schematic pulses red — a biometric lock layered over the mechanical release, absent from Hollow's dossier. A silent alarm thread, hair-thin, snakes from the latch to a buried subnet."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "surprised",
+     "text": "\"Wait. That wasn't in the packet.\" She pushes off the railing, hovering over Vex's shoulder. Cyan implants flicker faster. \"Biometric? Since when does a maintenance hatch need a retina scan?\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "angry",
+     "text": "\"Hollow. That snake. He knew. He sent us to a trap door with teeth.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "\"A precaution, not a trap. Kagero upgraded their sub-level security forty-eight hours ago. My intel was current when I gave it to you.\" His mirrored glasses reflect the scrolling code. \"The biometric database is air-gapped. But... the maintenance drone that services the hatch — its optical sensor syncs with the same registry. Borrow its eyes, and the hatch opens.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "sad",
+     "text": "\"And where do we 'borrow' a Kagero maintenance drone at midnight?\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "smile",
+     "text": "\"Sector 7 depot. Two kilometers east. Patrol rotation leaves a twelve-minute window at 22:40. You have... forty minutes to decide.\""
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "rain",
+    "options": [
+     "Head to Sector 7 depot for the drone",
+     "Confront Hollow about the withheld intel",
+     "Abort the heist and cut losses"
+    ],
+    "state_changes": {
+     "affection": {
+      "Rin": -1,
+      "Hollow": -2
+     },
+     "flags_add": [
+      "biometric_lock_discovered",
+      "drone_option_revealed"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Vex discovers a biometric lock on the service hatch not in Hollow's intel. Hollow reveals a maintenance drone at Sector 7 depot can bypass it, with a 12-minute window at 22:40.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Rin": -1,
+     "Hollow": -2
+    },
+    "flags": [
+     "biometric_lock_discovered",
+     "drone_option_revealed"
+    ],
+    "items": []
+   },
+   "summary": [
+    "Vex reviews the heist plan on a rainy rooftop with three hours until midnight. Rin presses for action, confirming Hollow's intel checks out for a service hatch entry to Kagero tower's vault.",
+    "Vex discovers a biometric lock on the service hatch not in Hollow's intel. Hollow reveals a maintenance drone at Sector 7 depot can bypass it, with a 12-minute window at 22:40."
+   ],
+   "bgm_mood": "tense",
+   "weather": "rain",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0001",
+   "children": [
+    "n_0002"
+   ],
+   "created_at": "2026-09-25T15:05:38+08:00"
+  },
+  "n_0002": {
+   "parent": "n_0001",
+   "scene_id": "noodle_stall_rooftop",
+   "player_input": {
+    "kind": "option",
+    "text": "Abort the heist and cut losses"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The rain intensifies, drumming a frantic rhythm on the roof as Vex's decision settles like lead in the gut. The holo-display still pulses with patrol routes, the biometric lock schematic, the Sector 7 depot coordinates — all of it fading into background noise."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "\"You're kidding.\" The words come out flat, stripped of their usual bite. Cyan implants dim to a dull glow. \"Three months of planning. Three months of watching Kagero bleed that district dry. And you want to walk away because of one locked door?\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Rin",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She straightens, rain streaming down her face, pink hair plastered dark against her skull. \"Fine. Walk away. But the chip stays in that vault. The district stays broke. And Hollow...\" She glances at the fixer, something ugly twisting her mouth. \"He wins either way.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "\"A pragmatic choice.\" The fixer adjusts his cufflinks, mirrored glasses revealing nothing. \"The window was always tight. The drone acquisition carried its own risks. Better to preserve what you have than gamble on a long shot.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Hollow",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "He taps his chrome fingers against his palm, a soft metallic rhythm. \"The offer stands, should circumstances change. Though I imagine Kagero's security will only tighten once they realize they were probed. The biometric lock... was not widely known.\""
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Vex closes the holo-display. The map collapses into a harmless cube of light, then vanishes. Somewhere in the tower forty floors up, a memory chip hums in its vault, holding the savings of thousands. The rain keeps falling. The city keeps turning. Midnight will come regardless."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "sad",
+    "weather": "rain",
+    "options": [],
+    "state_changes": {
+     "affection": {
+      "Rin": -3
+     },
+     "flags_add": [
+      "heist_aborted"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Vex aborts the heist and walks away. Rin is furious and feels betrayed. Hollow remains calm, noting the offer stands but security will tighten. The memory chip remains in Kagero's vault.",
+    "ending": {
+     "type": "bad",
+     "title": "Walk Away"
+    }
+   },
+   "state": {
+    "affection": {
+     "Rin": -4,
+     "Hollow": -2
+    },
+    "flags": [
+     "biometric_lock_discovered",
+     "drone_option_revealed",
+     "heist_aborted"
+    ],
+    "items": []
+   },
+   "summary": [
+    "Vex reviews the heist plan on a rainy rooftop with three hours until midnight. Rin presses for action, confirming Hollow's intel checks out for a service hatch entry to Kagero tower's vault.",
+    "Vex discovers a biometric lock on the service hatch not in Hollow's intel. Hollow reveals a maintenance drone at Sector 7 depot can bypass it, with a 12-minute window at 22:40.",
+    "Vex aborts the heist and walks away. Rin is furious and feels betrayed. Hollow remains calm, noting the offer stands but security will tighten. The memory chip remains in Kagero's vault."
+   ],
+   "bgm_mood": "sad",
+   "weather": "rain",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0002",
+   "children": [],
+   "created_at": "2026-09-25T15:05:53+08:00"
+  }
+ }
+}

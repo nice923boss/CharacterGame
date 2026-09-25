@@ -1,0 +1,50 @@
+{
+ "id": "g_20260925_142845",
+ "created_at": "2026-09-25T14:28:45+08:00",
+ "seed": 712690198,
+ "lang": "zh",
+ "title": "夜市保衛戰",
+ "style_en": "modern Tainan night market, 60-year history, vibrant neon lights, steam and aromas, lively comedic atmosphere",
+ "world": {
+  "era": "現代",
+  "place": "台南一座有六十年歷史的老夜市",
+  "genre": "美食喜劇",
+  "tone": "熱鬧、搞笑、有溫度",
+  "extra": "連鎖集團想買下整條夜市，揚言用料理大賽決定攤位去留",
+  "goal": "在夜市料理大賽贏過連鎖集團的主廚，保住阿嬤的蚵仔煎攤"
+ },
+ "protagonist": {
+  "name": "阿佑",
+  "profile": "剛辭掉工作回老家的上班族，廚藝普通但很會吃"
+ },
+ "characters": [
+  {
+   "id": "c1",
+   "name": "小葵",
+   "appearance": "24 歲女性，栗色丸子頭，大大的黑色眼睛，黃色 T 恤外綁紅色圍裙，手腕套著一串彩色髮圈",
+   "personality": "熱血直率，嘴硬心軟",
+   "speech": "講話很快，愛用台語口頭禪",
+   "relationship": "隔壁剉冰攤的青梅竹馬",
+   "appearance_en": "24-year-old female, chestnut bun hairstyle, large black eyes, yellow T-shirt with red apron, colorful hair ties on wrist",
+   "seed": 712690215
+  },
+  {
+   "id": "c2",
+   "name": "杜蘭",
+   "appearance": "32 歲男性，梳得一絲不苟的金色油頭，冰藍色眼睛，純白雙排扣主廚服，胸前別著金色湯匙徽章",
+   "personality": "驕傲自負，但尊重真正的好料理",
+   "speech": "中英夾雜，愛說「完美」",
+   "relationship": "連鎖集團的明星主廚，大賽對手",
+   "appearance_en": "32-year-old male, slicked-back golden hair, icy blue eyes, pristine white double-breasted chef jacket, gold spoon lapel pin",
+   "seed": 712690232
+  }
+ ],
+ "scenes": {
+  "night_market_entrance_dusk": {
+   "name": "夜市入口黃昏",
+   "image_prompt": "entrance of a 60-year-old Tainan night market at dusk, traditional red lanterns glowing alongside modern neon signs, crowded narrow alleyways with food stalls, steam rising from cooking woks, warm amber lighting mixing with cool twilight blue, vintage Taiwanese architecture with weathered signboards"
+  }
+ },
+ "first_scene": "night_market_entrance_dusk",
+ "setup_model": "nvidia/nemotron-3-ultra-550b-a55b"
+}

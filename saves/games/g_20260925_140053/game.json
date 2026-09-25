@@ -1,0 +1,54 @@
+{
+ "id": "g_20260925_140053",
+ "created_at": "2026-09-25T14:00:53+08:00",
+ "seed": 833978045,
+ "lang": "zh",
+ "title": "深海倒數",
+ "style_en": "2150 deep-sea research station, claustrophobic sci-fi horror, dim red emergency lighting, high pressure atmosphere",
+ "world": {
+  "era": "2150 年",
+  "place": "太平洋海底三千公尺的研究站「潮汐七號」",
+  "genre": "科幻驚悚",
+  "tone": "緊張、壓迫",
+  "extra": "主電源被人為切斷，備用氧氣只剩十二小時",
+  "goal": "在氧氣耗盡前揪出破壞者，讓全員搭逃生艙撤離"
+ },
+ "protagonist": {
+  "name": "林遠",
+  "profile": "研究站的維修工程師，熟悉每一條管線"
+ },
+ "characters": [
+  {
+   "id": "c1",
+   "name": "顧晴",
+   "appearance": "35 歲女性，黑色俐落短髮，深褐色眼睛，白色與橘色相間的研究站制服，左臂戴著平板護腕",
+   "personality": "冷靜果斷，背負壓力",
+   "speech": "命令句多，偶爾流露疲憊",
+   "relationship": "站長，主角的上司",
+   "appearance_en": "35-year-old female, black short bob hair, dark brown eyes, white and orange research station uniform, tablet wristband on left arm",
+   "seed": 833978062
+  },
+  {
+   "id": "c2",
+   "name": "汐",
+   "appearance": "外表 14 歲的全息投影少女，淺藍色半透明短髮，青色發光眼睛，白色連帽外套，身體邊緣有淡淡的藍光",
+   "personality": "天真好奇，對人類情感很著迷",
+   "speech": "用詞精確，喜歡報數字",
+   "relationship": "研究站的管理 AI，最信任主角",
+   "appearance_en": "14-year-old holographic girl, pale blue translucent short hair, cyan glowing eyes, white hooded jacket, faint blue glow at body edges",
+   "seed": 833978079
+  }
+ ],
+ "scenes": {
+  "central_control_room": {
+   "name": "中央控制室",
+   "image_prompt": "Deep-sea research station central control room, 3000 meters underwater, emergency red lighting, cracked monitors, floating debris, high pressure atmosphere, claustrophobic"
+  },
+  "escape_pod_bay": {
+   "name": "逃生艙艙灣",
+   "image_prompt": "Deep sea escape pod bay at 3000m depth, narrow cylindrical chamber with hydraulic pod doors, green status lights on pod console, exposed cable trays with fresh weld marks, emergency red lighting, high pressure water visible through thick viewports"
+  }
+ },
+ "first_scene": "central_control_room",
+ "setup_model": "nvidia/nemotron-3-ultra-550b-a55b"
+}

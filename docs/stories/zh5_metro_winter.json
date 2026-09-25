@@ -1,0 +1,19 @@
+{
+  "key": "zh5_metro_winter",
+  "lang": "zh",
+  "aim": "bad",
+  "game_id": "g_20260925_141733",
+  "title": "核冬十年",
+  "turns": 14,
+  "player_turns": 13,
+  "scenes": 4,
+  "models": [
+    "nvidia/nemotron-3-ultra-550b-a55b",
+    "qwen3.6-35b-a3b"
+  ],
+  "ending": {
+    "type": "good",
+    "title": "核心歸位"
+  },
+  "minutes": 6.7
+}

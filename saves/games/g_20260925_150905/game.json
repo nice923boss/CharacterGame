@@ -1,0 +1,54 @@
+{
+ "id": "g_20260925_150905",
+ "created_at": "2026-09-25T15:09:05+08:00",
+ "seed": 1542425013,
+ "lang": "en",
+ "title": "Singapore Office Proposa",
+ "style_en": "Modern Singapore corporate office, glass walls, tropical daylight, clean minimalist aesthetic",
+ "world": {
+  "era": "Present day",
+  "place": "The Singapore office of a global software company",
+  "genre": "workplace drama for business English practice",
+  "tone": "realistic, supportive, a little tense",
+  "extra": "The protagonist is practising business English. Characters speak clear professional English, and Priya politely suggests a more professional phrasing when the protagonist sounds too casual",
+  "goal": "Get the client to approve the project proposal at Friday's meeting"
+ },
+ "protagonist": {
+  "name": "Alex Chen",
+  "profile": "a junior project coordinator from Taipei in their first month at the Singapore office"
+ },
+ "characters": [
+  {
+   "id": "c1",
+   "name": "Priya Nair",
+   "appearance": "38-year-old woman, shoulder-length straight black hair, warm brown eyes, navy blazer over a cream blouse, silver lanyard badge",
+   "personality": "demanding but fair, a patient mentor",
+   "speech": "concise business English, often rephrases your sentences more professionally",
+   "relationship": "your team manager",
+   "appearance_en": "38-year-old woman, shoulder-length straight black hair, warm brown eyes, navy blazer over cream blouse, silver lanyard badge",
+   "seed": 1542425030
+  },
+  {
+   "id": "c2",
+   "name": "Daniel Hartley",
+   "appearance": "50-year-old man, short grey hair, rimless glasses, charcoal suit, light blue shirt with no tie, smartwatch",
+   "personality": "sceptical, detail-oriented, values honesty",
+   "speech": "formal British English, asks sharp follow-up questions",
+   "relationship": "procurement director at the client company",
+   "appearance_en": "50-year-old man, short grey hair, rimless glasses, charcoal suit, light blue shirt no tie, smartwatch",
+   "seed": 1542425047
+  }
+ ],
+ "scenes": {
+  "meeting_room_morning": {
+   "name": "Meeting Room Morning",
+   "image_prompt": "Modern glass-walled meeting room in Singapore office, large screen displaying project proposal, morning sunlight streaming through floor-to-ceiling windows overlooking city skyline, whiteboard with notes, conference table with laptops and documents, minimalist corporate interior"
+  },
+  "corridor_after_exit": {
+   "name": "Corridor After Exit",
+   "image_prompt": "Office corridor, fluorescent lighting, floor-to-ceiling windows showing Singapore afternoon, elevator lobby in distance, stairwell door propped open, empty, quiet"
+  }
+ },
+ "first_scene": "meeting_room_morning",
+ "setup_model": "nvidia/nemotron-3-ultra-550b-a55b"
+}

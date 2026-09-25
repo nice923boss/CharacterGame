@@ -1,0 +1,1105 @@
+{
+ "root": "n_0000",
+ "next": 10,
+ "nodes": {
+  "n_0000": {
+   "parent": null,
+   "scene_id": "mio_bridge_dusk",
+   "player_input": {
+    "kind": "opening",
+    "text": ""
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "2080 年的澪市，海平面吞沒了舊大陸，只剩浮橋與高塔在霓虹裡相互依偎。黃昏的海風攜著鹹味，吹過凪剛租下的郵差小屋前那段名為「澪橋」的主幹道。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "橋面鋪著會發光的苔蘚，每一步都亮起淡藍光暈，倒映著遠處高塔一盞盞若有若無的燈火——據說每晚都會有一座塔的燈無故熄滅，像是城市在倒數著什麼。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "新鄰居，是來送信的凪先生吧？我是住在橋塔頂端的白瀨雪乃呢～"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "爺爺說妳揹包裡的信件「會自己挑選收信人」，不知真假呢？好想看看呢！"
+    },
+    {
+     "kind": "character",
+     "speaker": "韓拓",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "郵差也能當占卜師了？水路管理局可沒發過這種執照。"
+    },
+    {
+     "kind": "character",
+     "speaker": "韓拓",
+     "char_id": "c2",
+     "expr": "surprised",
+     "text": "揹包卸下來，讓我看看裡面裝著什麼「會挑人」的玩意兒。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "none",
+    "options": [
+     "友善回應雪乃，簡述郵差工作",
+     "向韓拓出示揹包內容",
+     "詢問關於「塔燈熄滅」的傳聞",
+     "禮貌拒絕檢查，加快腳步離開"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1,
+      "韓拓": -1
+     },
+     "flags_add": [
+      "met_yukino",
+      "met_han_tuo"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪在澪橋黃昏初次遇見鄰居白瀨雪乃與調查員韓拓，雪乃對會挑選收信人的信件好奇，韓拓則要求檢查揹包。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 1,
+     "韓拓": -1
+    },
+    "flags": [
+     "met_yukino",
+     "met_han_tuo"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪橋黃昏初次遇見鄰居白瀨雪乃與調查員韓拓，雪乃對會挑選收信人的信件好奇，韓拓則要求檢查揹包。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0000",
+   "children": [
+    "n_0001"
+   ],
+   "created_at": "2026-09-25T11:36:10+08:00"
+  },
+  "n_0001": {
+   "parent": "n_0000",
+   "scene_id": "mio_bridge_dusk",
+   "player_input": {
+    "kind": "option",
+    "text": "向韓拓出示揹包內容"
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "哇！凪先生真的要給韓拓先生看呢？好期待裡面是什麼樣的信件呢！"
+    },
+    {
+     "kind": "character",
+     "speaker": "韓拓",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "別露出那種表情，我只是在執行公務確認有無違禁品。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪解開皮扣，將帆布揹包翻開，幾封泛黃的舊信、一疊藍色郵政表單、還有一支沒蓋緊的鋼筆安靜地躺在底部，並沒有任何發光或浮游的跡象。"
+    },
+    {
+     "kind": "character",
+     "speaker": "韓拓",
+     "char_id": "c2",
+     "expr": "surprised",
+     "text": "就這些？連個晶片追蹤器都沒有……妳確定這就是「會挑人」的傳說揹包？"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "sad",
+     "text": "怎麼看起來跟普通郵差一樣呢……難道爺爺騙我呢？"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "calm",
+    "weather": "none",
+    "options": [
+     "解釋信件挑人的機制其實很單純",
+     "提議今晚一起去塔頂看燈熄滅的瞬間",
+     "詢問韓拓為何這麼在意揹包內容"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": -1,
+      "韓拓": 1
+     },
+     "flags_add": [
+      "backpack_inspected"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪開啟揹包接受檢查，裡面只有普通訊件與文具，韓拓與雪乃都感到意外與失望。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 0,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_yukino",
+     "met_han_tuo",
+     "backpack_inspected"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪橋黃昏初次遇見鄰居白瀨雪乃與調查員韓拓，雪乃對會挑選收信人的信件好奇，韓拓則要求檢查揹包。",
+    "凪開啟揹包接受檢查，裡面只有普通訊件與文具，韓拓與雪乃都感到意外與失望。"
+   ],
+   "bgm_mood": "calm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0001",
+   "children": [
+    "n_0002"
+   ],
+   "created_at": "2026-09-25T11:36:30+08:00"
+  },
+  "n_0002": {
+   "parent": "n_0001",
+   "scene_id": "mio_bridge_dusk",
+   "player_input": {
+    "kind": "option",
+    "text": "詢問韓拓為何這麼在意揹包內容"
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "咦？凪先生要問韓拓先生原因呢？雪乃也很好奇呢～"
+    },
+    {
+     "kind": "character",
+     "speaker": "韓拓",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "好奇心害死貓，郵差先生。水路管理局只管「流動」不管「內容」。"
+    },
+    {
+     "kind": "character",
+     "speaker": "韓拓",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "但若有「不該流動的東西」混進郵路……塔燈熄滅的夜晚就會多一盞。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "他輕彈手套指尖，單片眼鏡折射著橋面苔蘚的藍光，語氣平淡卻帶著不容置疑的重量。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "塔燈……熄滅？爺爺從沒跟雪乃說過這種事呢……"
+    },
+    {
+     "kind": "character",
+     "speaker": "韓拓",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "因為妳爺爺在守著最後一道防線，小姑娘。現在——揹包還給妳，郵差先生。繼續妳的「挑信」吧。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "追問「不該流動的東西」是什麼",
+     "詢問雪乃爺爺守護的是什麼防線",
+     "收起揹包準備繼續送信",
+     "觀察韓拓離開的方向"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [
+      "han_tuo_warning"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "韓拓暗示揹包可能攜帶影響塔燈的危險物品，並點出雪乃爺爺在守護關鍵防線，氣氛轉為神秘緊張。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 1,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_yukino",
+     "met_han_tuo",
+     "backpack_inspected",
+     "han_tuo_warning"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪橋黃昏初次遇見鄰居白瀨雪乃與調查員韓拓，雪乃對會挑選收信人的信件好奇，韓拓則要求檢查揹包。",
+    "凪開啟揹包接受檢查，裡面只有普通訊件與文具，韓拓與雪乃都感到意外與失望。",
+    "韓拓暗示揹包可能攜帶影響塔燈的危險物品，並點出雪乃爺爺在守護關鍵防線，氣氛轉為神秘緊張。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0002",
+   "children": [
+    "n_0003"
+   ],
+   "created_at": "2026-09-25T11:37:13+08:00"
+  },
+  "n_0003": {
+   "parent": "n_0002",
+   "scene_id": "mio_bridge_dusk",
+   "player_input": {
+    "kind": "option",
+    "text": "觀察韓拓離開的方向"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "韓拓轉身時，深綠色大衣的下擺掃過發光苔蘚，每一步都在橋面上留下瞬間閃爍的藍色腳印，像是在水面上寫下又隨即抹去的密語。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "韓拓先生走得好快呢……連再見都不說一聲呢。雪乃還想問他爺爺守著的「防線」到底是什麼呢～"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "男人的身影在橋塔陰影裡若隱若現，單片眼鏡最後一次反射著暮色燈光，隨後被濃霧般的海風吞沒，只剩下一句「繼續妳的挑信吧」在風中回蕩。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "唉，真是的，搞得雪乃心裡癢癢的呢！凪先生，妳覺得他剛剛說的「不該流動的東西」會是什麼呢？"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "雪乃歪著頭，白色長髮在海風中輕颭，胸前的銀色羽毛胸針捕捉著橋燈的微光，彷彿在等待凪給出某個答案。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（望著韓拓消失的方向）他似乎知道些什麼，卻只留下更多謎題。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "詢問雪乃關於爺爺守護的「防線」",
+     "檢查揹包裡的信件是否有異樣",
+     "跟上韓拓繼續追問",
+     "先回郵差小屋整理思緒"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [
+      "han_tuo_left",
+      "yukino_curious_about_barrier"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "韓拓離開澪橋，留下關於「不該流動的東西」與「爺爺守護防線」的謎題；雪乃對此好奇，凪觀察韓拓離去方向，感覺謎團加深。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 2,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_yukino",
+     "met_han_tuo",
+     "backpack_inspected",
+     "han_tuo_warning",
+     "han_tuo_left",
+     "yukino_curious_about_barrier"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪橋黃昏初次遇見鄰居白瀨雪乃與調查員韓拓，雪乃對會挑選收信人的信件好奇，韓拓則要求檢查揹包。",
+    "凪開啟揹包接受檢查，裡面只有普通訊件與文具，韓拓與雪乃都感到意外與失望。",
+    "韓拓暗示揹包可能攜帶影響塔燈的危險物品，並點出雪乃爺爺在守護關鍵防線，氣氛轉為神秘緊張。",
+    "韓拓離開澪橋，留下關於「不該流動的東西」與「爺爺守護防線」的謎題；雪乃對此好奇，凪觀察韓拓離去方向，感覺謎團加深。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0003",
+   "children": [
+    "n_0004"
+   ],
+   "created_at": "2026-09-25T11:37:23+08:00"
+  },
+  "n_0004": {
+   "parent": "n_0003",
+   "scene_id": "mio_bridge_dusk",
+   "player_input": {
+    "kind": "option",
+    "text": "詢問雪乃關於爺爺守護的「防線」"
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "防線？爺爺從來沒跟雪乃詳細說過呢……只說要守住「不該流動的東西」別讓它進入郵路呢"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "雪乃以為只是爺爺愛說故事呢，沒想到韓拓先生也知道這件事呢"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女將食指抵住下唇思考，腳尖不自覺踩亮幾片發光苔蘚，藍色光暈在她白色雨衣下擴散"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "爺爺最近常在塔頂忙到很晚呢，有時候連晚餐都不下來吃，雪乃送飯上去都會被趕下來呢"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "他總說「防線快撐不住了」，但雪乃完全不懂他在守什麼呢……凪先生覺得會是什麼呢？"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "海風捲著遠處塔燈忽明忽暗的光影，將兩人的影子拉長在橋面上，雪乃胸前的銀色羽毛胸針在暮色中微微閃爍"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "分享剛才韓拓說的「不該流動的東西」",
+     "建議一起去塔頂找爺爺問清楚",
+     "安慰雪乃說爺爺一定有理由保密",
+     "詢問雪乃爺爺最近有沒有異常舉動"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [
+      "yukino_shared_grandpa_info"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪詢問雪乃關於爺爺守護的防線，雪乃透露爺爺最近行為反常、常留在塔頂且不讓她靠近，兩人對防線真相皆感困惑。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 3,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_yukino",
+     "met_han_tuo",
+     "backpack_inspected",
+     "han_tuo_warning",
+     "han_tuo_left",
+     "yukino_curious_about_barrier",
+     "yukino_shared_grandpa_info"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪橋黃昏初次遇見鄰居白瀨雪乃與調查員韓拓，雪乃對會挑選收信人的信件好奇，韓拓則要求檢查揹包。",
+    "凪開啟揹包接受檢查，裡面只有普通訊件與文具，韓拓與雪乃都感到意外與失望。",
+    "韓拓暗示揹包可能攜帶影響塔燈的危險物品，並點出雪乃爺爺在守護關鍵防線，氣氛轉為神秘緊張。",
+    "韓拓離開澪橋，留下關於「不該流動的東西」與「爺爺守護防線」的謎題；雪乃對此好奇，凪觀察韓拓離去方向，感覺謎團加深。",
+    "凪詢問雪乃關於爺爺守護的防線，雪乃透露爺爺最近行為反常、常留在塔頂且不讓她靠近，兩人對防線真相皆感困惑。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0004",
+   "children": [
+    "n_0005"
+   ],
+   "created_at": "2026-09-25T11:38:00+08:00"
+  },
+  "n_0005": {
+   "parent": "n_0004",
+   "scene_id": "tower_top_twilight",
+   "player_input": {
+    "kind": "option",
+    "text": "建議一起去塔頂找爺爺問清楚"
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "去塔頂找爺爺？這主意不錯呢！雪乃正愁著沒藉口溜上去呢～"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "不過爺爺說過「防線附近不準靠近」，要是被抓到會被念很久呢……"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少女猶豫地搓著雨衣下擺，目光在橋面發光苔蘚與遠處高塔之間來迴游移，胸前銀色羽毛胸針隨著呼吸微微起伏。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "可是……如果凪先生陪雪乃一起去，爺爺大概就不會太兇了吧？郵差先生可是「有公務在身」的呢！"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（微笑著點頭）那就當順路送封信給令祖父吧——順便聽聽他守著的究竟是什麼防線。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "兩人沿著螺旋坡道向塔頂行去，橋燈在身後一盞盞退去，前方塔頂窗戶透出微弱暈黃燈光，在紫藍色暮靄中若隱若現，彷彿另一個世界的入口。"
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "tower_top_twilight",
+     "name": "塔頂黃昏",
+     "image_prompt": "top floor of a tall lighthouse-like tower in a flooded city at twilight, circular room with panoramic windows showing neon-lit water bridges, vintage lanterns and strange mechanical apparatus on walls, dim amber light from inside, misty purple-blue atmosphere outside"
+    },
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "敲門並禮貌請求見爺爺",
+     "悄悄從窗戶往裡張望",
+     "在門口等待並觀察塔頂環境",
+     "直接推門進入並說有急信"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 2
+     },
+     "flags_add": [
+      "heading_to_tower_top",
+      "yukino_invited_nagi"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪接受雪乃提議，兩人一同前往塔頂尋找爺爺詢問防線真相，雪乃對凪好感度上升。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 5,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_yukino",
+     "met_han_tuo",
+     "backpack_inspected",
+     "han_tuo_warning",
+     "han_tuo_left",
+     "yukino_curious_about_barrier",
+     "yukino_shared_grandpa_info",
+     "heading_to_tower_top",
+     "yukino_invited_nagi"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪橋黃昏初次遇見鄰居白瀨雪乃與調查員韓拓，雪乃對會挑選收信人的信件好奇，韓拓則要求檢查揹包。",
+    "凪開啟揹包接受檢查，裡面只有普通訊件與文具，韓拓與雪乃都感到意外與失望。",
+    "韓拓暗示揹包可能攜帶影響塔燈的危險物品，並點出雪乃爺爺在守護關鍵防線，氣氛轉為神秘緊張。",
+    "韓拓離開澪橋，留下關於「不該流動的東西」與「爺爺守護防線」的謎題；雪乃對此好奇，凪觀察韓拓離去方向，感覺謎團加深。",
+    "凪詢問雪乃關於爺爺守護的防線，雪乃透露爺爺最近行為反常、常留在塔頂且不讓她靠近，兩人對防線真相皆感困惑。",
+    "凪接受雪乃提議，兩人一同前往塔頂尋找爺爺詢問防線真相，雪乃對凪好感度上升。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0005",
+   "children": [
+    "n_0006"
+   ],
+   "created_at": "2026-09-25T11:38:12+08:00"
+  },
+  "n_0006": {
+   "parent": "n_0005",
+   "scene_id": "tower_top_twilight",
+   "player_input": {
+    "kind": "option",
+    "text": "在門口等待並觀察塔頂環境"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "塔頂的鐵門半掩著，門框鑲嵌著幾塊發暗的藍色晶石，在暮色中泛著微弱的幽光，彷彿某種古老的封印標記。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "門縫縫隙間洩出陣陣機械運轉的低沉嗡鳴，混雜著淡淡的臭氧味與舊紙張發黴的氣息，隨著海風時斷時續飄散。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "咦？門沒鎖呢……爺爺平時都會鎖著說「防線不穩定，閒人免進」的呢～"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "雪乃的心跳有點快呢，凪先生……要不我們先敲敲門？萬一爺爺在裡面做危險實驗怎麼辦呢？"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（輕輕敲了兩下門框，指尖觸到冰涼金屬）令祖父，這裡有郵差送信——順路想請教幾個問題。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "門內靜默無聲，唯有齒輪轉動聲忽大忽小，像是某個巨大設備在吃力呼吸，暈黃燈光在門縫映出搖曳的影子，卻不見人影走動。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "推門進入塔內尋找爺爺",
+     "繼續在門口等待回應",
+     "詢問雪乃爺爺平常在塔內做什麼",
+     "檢查門框上的藍色晶石"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [
+      "knocked_on_tower_door"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪與雪乃抵達塔頂，發現鐵門半開且無人回應，門框鑲嵌發光晶石，內部傳出機械嗡鳴聲。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 6,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_yukino",
+     "met_han_tuo",
+     "backpack_inspected",
+     "han_tuo_warning",
+     "han_tuo_left",
+     "yukino_curious_about_barrier",
+     "yukino_shared_grandpa_info",
+     "heading_to_tower_top",
+     "yukino_invited_nagi",
+     "knocked_on_tower_door"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪橋黃昏初次遇見鄰居白瀨雪乃與調查員韓拓，雪乃對會挑選收信人的信件好奇，韓拓則要求檢查揹包。",
+    "凪開啟揹包接受檢查，裡面只有普通訊件與文具，韓拓與雪乃都感到意外與失望。",
+    "韓拓暗示揹包可能攜帶影響塔燈的危險物品，並點出雪乃爺爺在守護關鍵防線，氣氛轉為神秘緊張。",
+    "韓拓離開澪橋，留下關於「不該流動的東西」與「爺爺守護防線」的謎題；雪乃對此好奇，凪觀察韓拓離去方向，感覺謎團加深。",
+    "凪詢問雪乃關於爺爺守護的防線，雪乃透露爺爺最近行為反常、常留在塔頂且不讓她靠近，兩人對防線真相皆感困惑。",
+    "凪接受雪乃提議，兩人一同前往塔頂尋找爺爺詢問防線真相，雪乃對凪好感度上升。",
+    "凪與雪乃抵達塔頂，發現鐵門半開且無人回應，門框鑲嵌發光晶石，內部傳出機械嗡鳴聲。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0006",
+   "children": [
+    "n_0007"
+   ],
+   "created_at": "2026-09-25T11:38:46+08:00"
+  },
+  "n_0007": {
+   "parent": "n_0006",
+   "scene_id": "tower_top_twilight",
+   "player_input": {
+    "kind": "option",
+    "text": "檢查門框上的藍色晶石"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪湊近門框，指尖輕觸那些鑲嵌在鐵縫裡的藍色晶石，掌心瞬間傳來一陣細微的刺痛，彷彿有微弱電流順著指尖竄入手腕。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "晶石表面並不平滑，而是刻著極淺的符文，在暮色與機械燈光交疊下若隱若現；每當塔內齒輪轉動聲加重，符文便亮一下，像是在呼吸、在計數。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "凪先生？妳在摸什麼呢？雪乃從來沒注意過門上有這種石頭呢……"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "咦？妳的手指尖怎麼發光了呢？好像……好像跟塔燈熄滅前那種光一樣呢！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "果然，凪指尖泛起微弱藍光，與晶石符文同步閃爍三下，隨即迅速消退；門內的嗡鳴聲也跟著頓住半拍，隨後以稍快的節奏重新運轉。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（收回手，若有所思）這些晶石……似乎在監測什麼，而且對我有反應。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "再次敲門並表明身份",
+     "嘗試將晶石輕敲三下",
+     "詢問雪乃爺爺是否教過她關於晶石的事",
+     "轉身離開，改天再來"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [
+      "crystal_resonance",
+      "nagi_marked_by_crystal"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪觸碰門框藍色晶石引發共鳴，指尖泛光且晶石符文同步閃爍，塔內機械節奏短暫改變，雪乃驚覺光芒與塔燈熄滅現象相似。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 7,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_yukino",
+     "met_han_tuo",
+     "backpack_inspected",
+     "han_tuo_warning",
+     "han_tuo_left",
+     "yukino_curious_about_barrier",
+     "yukino_shared_grandpa_info",
+     "heading_to_tower_top",
+     "yukino_invited_nagi",
+     "knocked_on_tower_door",
+     "crystal_resonance",
+     "nagi_marked_by_crystal"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪橋黃昏初次遇見鄰居白瀨雪乃與調查員韓拓，雪乃對會挑選收信人的信件好奇，韓拓則要求檢查揹包。",
+    "凪開啟揹包接受檢查，裡面只有普通訊件與文具，韓拓與雪乃都感到意外與失望。",
+    "韓拓暗示揹包可能攜帶影響塔燈的危險物品，並點出雪乃爺爺在守護關鍵防線，氣氛轉為神秘緊張。",
+    "韓拓離開澪橋，留下關於「不該流動的東西」與「爺爺守護防線」的謎題；雪乃對此好奇，凪觀察韓拓離去方向，感覺謎團加深。",
+    "凪詢問雪乃關於爺爺守護的防線，雪乃透露爺爺最近行為反常、常留在塔頂且不讓她靠近，兩人對防線真相皆感困惑。",
+    "凪接受雪乃提議，兩人一同前往塔頂尋找爺爺詢問防線真相，雪乃對凪好感度上升。",
+    "凪與雪乃抵達塔頂，發現鐵門半開且無人回應，門框鑲嵌發光晶石，內部傳出機械嗡鳴聲。",
+    "凪觸碰門框藍色晶石引發共鳴，指尖泛光且晶石符文同步閃爍，塔內機械節奏短暫改變，雪乃驚覺光芒與塔燈熄滅現象相似。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0007",
+   "children": [
+    "n_0008"
+   ],
+   "created_at": "2026-09-25T11:39:07+08:00"
+  },
+  "n_0008": {
+   "parent": "n_0007",
+   "scene_id": "tower_top_twilight",
+   "player_input": {
+    "kind": "option",
+    "text": "再次敲門並表明身份"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "凪再次抬起手，指關節敲擊鐵門，聲音在金屬腔體裡悶悶回盪，隨著海風一同被吞沒。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "白瀨先生，我是郵差凪——有幾封信件需要親手交給您，順便想請教關於「防線」的事。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "凪先生好正式呢……爺爺要是聽見「郵差凪」這稱呼，說不定會以為郵局派來督察的呢～"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "門內齒輪轉動聲驟然停歇，緊接著傳來沉重腳步聲由遠而近，門鎖轉動的咔嚓聲在寂靜中顯得格外清晰。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "呀！門、門開了呢！爺爺會不會拿著扳手衝出來罵人呢？"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "鐵門向內緩緩敞開，暈黃燈光撲面而來，一名白髮佝僂的老人倚在門框，右手仍握著一把沾滿機油的扳手，目光銳利地掃過凪與雪乃。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "說明來意並詢問防線真相",
+     "遞上信件並觀察老人反應",
+     "詢問門框晶石的用途",
+     "提議幫忙維護機械裝置"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [
+      "grandpa_appeared",
+      "tower_door_opened"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪再次敲門並表明郵差身份，白瀨老人開啟門出現，手持扳手目光銳利地注視著兩人。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 8,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_yukino",
+     "met_han_tuo",
+     "backpack_inspected",
+     "han_tuo_warning",
+     "han_tuo_left",
+     "yukino_curious_about_barrier",
+     "yukino_shared_grandpa_info",
+     "heading_to_tower_top",
+     "yukino_invited_nagi",
+     "knocked_on_tower_door",
+     "crystal_resonance",
+     "nagi_marked_by_crystal",
+     "grandpa_appeared",
+     "tower_door_opened"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪橋黃昏初次遇見鄰居白瀨雪乃與調查員韓拓，雪乃對會挑選收信人的信件好奇，韓拓則要求檢查揹包。",
+    "凪開啟揹包接受檢查，裡面只有普通訊件與文具，韓拓與雪乃都感到意外與失望。",
+    "韓拓暗示揹包可能攜帶影響塔燈的危險物品，並點出雪乃爺爺在守護關鍵防線，氣氛轉為神秘緊張。",
+    "韓拓離開澪橋，留下關於「不該流動的東西」與「爺爺守護防線」的謎題；雪乃對此好奇，凪觀察韓拓離去方向，感覺謎團加深。",
+    "凪詢問雪乃關於爺爺守護的防線，雪乃透露爺爺最近行為反常、常留在塔頂且不讓她靠近，兩人對防線真相皆感困惑。",
+    "凪接受雪乃提議，兩人一同前往塔頂尋找爺爺詢問防線真相，雪乃對凪好感度上升。",
+    "凪與雪乃抵達塔頂，發現鐵門半開且無人回應，門框鑲嵌發光晶石，內部傳出機械嗡鳴聲。",
+    "凪觸碰門框藍色晶石引發共鳴，指尖泛光且晶石符文同步閃爍，塔內機械節奏短暫改變，雪乃驚覺光芒與塔燈熄滅現象相似。",
+    "凪再次敲門並表明郵差身份，白瀨老人開啟門出現，手持扳手目光銳利地注視著兩人。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0008",
+   "children": [
+    "n_0009"
+   ],
+   "created_at": "2026-09-25T11:39:46+08:00"
+  },
+  "n_0009": {
+   "parent": "n_0008",
+   "scene_id": "tower_top_twilight",
+   "player_input": {
+    "kind": "option",
+    "text": "遞上信件並觀察老人反應"
+   },
+   "lines": [
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（從郵包中抽出一封封緘完好的信件，雙手遞上）白瀨先生，這是給您的郵件——寄件人寫著「舊識」。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "老人佝僂的身影在暈黃燈光下顯得格外高大，眼神如同打磨過的鋼刃，先掃過信封封蠟，再落在凪指尖殘留的微弱藍光上。"
+    },
+    {
+     "kind": "character",
+     "speaker": "白瀨雪乃",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "爺爺……這信封上的印記，雪乃好像在您書桌上見過呢？"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（聲音沙啞卻穩重，接過信拆也不拆便塞進大衣內袋）郵差送信不問內容，小丫頭卻愛管閒事。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（目光轉向凪，語氣驟然銳利）妳指尖的光，是晶石喚醒的，還是妳自己帶來的？"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "塔內齒輪轉動聲再次改變節奏，彷彿回應著老人的提問，門框晶石符文微微閃爍，將兩人影子在金屬地板上拉得忽長忽短。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "凪",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（直視老人雙眼）兩者皆有，或許這就是我被派來這條郵路的原因。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "追問老人關於「舊識」寄件人的身分",
+     "坦承指尖發光的來歷並詢問防線真相",
+     "轉移話題詢問塔燈熄滅的機制",
+     "請求進入塔內一探究竟"
+    ],
+    "state_changes": {
+     "affection": {
+      "白瀨雪乃": 1
+     },
+     "flags_add": [
+      "letter_delivered",
+      "grandpa_noticed_nagi_light",
+      "grandpa_knows_sender"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "凪遞交來自「舊識」的信件，白瀨老人收下卻不拆閱，反而敏銳察覺凪指尖的殘留光芒並直接詢問來源，雪乃發現信封印記似曾相識。"
+   },
+   "state": {
+    "affection": {
+     "白瀨雪乃": 9,
+     "韓拓": 0
+    },
+    "flags": [
+     "met_yukino",
+     "met_han_tuo",
+     "backpack_inspected",
+     "han_tuo_warning",
+     "han_tuo_left",
+     "yukino_curious_about_barrier",
+     "yukino_shared_grandpa_info",
+     "heading_to_tower_top",
+     "yukino_invited_nagi",
+     "knocked_on_tower_door",
+     "crystal_resonance",
+     "nagi_marked_by_crystal",
+     "grandpa_appeared",
+     "tower_door_opened",
+     "letter_delivered",
+     "grandpa_noticed_nagi_light",
+     "grandpa_knows_sender"
+    ],
+    "items": []
+   },
+   "summary": [
+    "凪在澪橋黃昏初次遇見鄰居白瀨雪乃與調查員韓拓，雪乃對會挑選收信人的信件好奇，韓拓則要求檢查揹包。",
+    "凪開啟揹包接受檢查，裡面只有普通訊件與文具，韓拓與雪乃都感到意外與失望。",
+    "韓拓暗示揹包可能攜帶影響塔燈的危險物品，並點出雪乃爺爺在守護關鍵防線，氣氛轉為神秘緊張。",
+    "韓拓離開澪橋，留下關於「不該流動的東西」與「爺爺守護防線」的謎題；雪乃對此好奇，凪觀察韓拓離去方向，感覺謎團加深。",
+    "凪詢問雪乃關於爺爺守護的防線，雪乃透露爺爺最近行為反常、常留在塔頂且不讓她靠近，兩人對防線真相皆感困惑。",
+    "凪接受雪乃提議，兩人一同前往塔頂尋找爺爺詢問防線真相，雪乃對凪好感度上升。",
+    "凪與雪乃抵達塔頂，發現鐵門半開且無人回應，門框鑲嵌發光晶石，內部傳出機械嗡鳴聲。",
+    "凪觸碰門框藍色晶石引發共鳴，指尖泛光且晶石符文同步閃爍，塔內機械節奏短暫改變，雪乃驚覺光芒與塔燈熄滅現象相似。",
+    "凪再次敲門並表明郵差身份，白瀨老人開啟門出現，手持扳手目光銳利地注視著兩人。",
+    "凪遞交來自「舊識」的信件，白瀨老人收下卻不拆閱，反而敏銳察覺凪指尖的殘留光芒並直接詢問來源，雪乃發現信封印記似曾相識。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0009",
+   "children": [],
+   "created_at": "2026-09-25T11:40:09+08:00"
+  }
+ }
+}

@@ -1,0 +1,18 @@
+{
+  "key": "en1_blackmoor",
+  "lang": "en",
+  "aim": "good",
+  "game_id": "g_20260925_135855",
+  "title": "The Bricked-Up Lullaby",
+  "turns": 8,
+  "player_turns": 7,
+  "scenes": 3,
+  "models": [
+    "nvidia/nemotron-3-ultra-550b-a55b"
+  ],
+  "ending": {
+    "type": "good",
+    "title": "The Last Note"
+  },
+  "minutes": 5.5
+}

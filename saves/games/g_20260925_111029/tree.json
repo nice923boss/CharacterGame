@@ -1,0 +1,422 @@
+{
+ "root": "n_0000",
+ "next": 4,
+ "nodes": {
+  "n_0000": {
+   "parent": null,
+   "scene_id": "foggy_harbor_clocktower_square",
+   "player_input": {
+    "kind": "opening",
+    "text": ""
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "濃霧如乳白色的棉絮，將霧港鐘樓廣場緊緊包裹。煤氣燈在濕冷的空氣中昏黃閃爍，投射出搖曳的光暈。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈拉了拉大衣領口，踏入這座被時間遺忘的城市。四周靜謐得只能聽見遠處海浪拍打碼頭的悶響。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "你遲到了，小偵探。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "一位穿著深藍背心、銀色新月髮夾別在耳畔的女子站在鐘樓陰影下，手中黃銅懷錶發出規律的滴答聲。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "surprised",
+     "text": "這座城的鐘錶全停了，唯有我的還在走。你帶答案來了嗎？"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "我帶來了足夠的好奇心，還有這個月的房租。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "詢問懷錶的時間為何特殊",
+     "指出鐘樓本身有異狀",
+     "先觀察林映月的神情"
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "met_lin_yingyue"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿澈抵達霧港鐘樓廣場，遇見鐘錶行店主林映月，對方指出城中鐘錶停擺的異狀。"
+   },
+   "state": {
+    "affection": {
+     "林映月": 0,
+     "沈硯": 0
+    },
+    "flags": [
+     "met_lin_yingyue"
+    ],
+    "items": []
+   },
+   "summary": [
+    "阿澈抵達霧港鐘樓廣場，遇見鐘錶行店主林映月，對方指出城中鐘錶停擺的異狀。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "qwen3.6-35b-a3b",
+   "repair_notes": [],
+   "id": "n_0000",
+   "children": [
+    "n_0001"
+   ],
+   "created_at": "2026-09-25T11:10:44+08:00"
+  },
+  "n_0001": {
+   "parent": "n_0000",
+   "scene_id": "foggy_harbor_clocktower_square",
+   "player_input": {
+    "kind": "option",
+    "text": "詢問懷錶的時間為何特殊"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "林映月微微揚起眉梢，灰藍色的眼眸中閃過一絲玩味。她將黃銅懷錶湊近煤氣燈的光暈，指腹輕輕摩挲著錶蓋上的紋路。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "特殊？因為它沒停在「十二點」，而是停在了「十點零三分」。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "她將懷錶遞到阿澈面前，錶盤玻璃下，指標僵硬地指向那個詭異的時刻。空氣中似乎多了一絲金屬的冷冽氣息。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "全城鐘錶都在同一秒停止，像是有隻無形的大手同時捏住了時間的喉嚨。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "十點零三分……這是什麼意思？"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "對於外行，這是謎題；對於內行，這是死亡通知單。小偵探，你聽懂了嗎？"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "追問十點零三分的具體意義",
+     "仔細觀察懷錶的機械結構",
+     "提議去鐘錶行深入調查"
+    ],
+    "state_changes": {
+     "affection": {
+      "林映月": 1
+     },
+     "flags_add": [],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "林映月揭示全城鐘錶停在十點零三分，並暗示這與死亡有關，阿澈對謎題產生興趣。"
+   },
+   "state": {
+    "affection": {
+     "林映月": 1,
+     "沈硯": 0
+    },
+    "flags": [
+     "met_lin_yingyue"
+    ],
+    "items": []
+   },
+   "summary": [
+    "阿澈抵達霧港鐘樓廣場，遇見鐘錶行店主林映月，對方指出城中鐘錶停擺的異狀。",
+    "林映月揭示全城鐘錶停在十點零三分，並暗示這與死亡有關，阿澈對謎題產生興趣。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "qwen3.6-35b-a3b",
+   "repair_notes": [],
+   "id": "n_0001",
+   "children": [
+    "n_0002"
+   ],
+   "created_at": "2026-09-25T11:10:57+08:00"
+  },
+  "n_0002": {
+   "parent": "n_0001",
+   "scene_id": "foggy_harbor_clocktower_square",
+   "player_input": {
+    "kind": "option",
+    "text": "追問十點零三分的具體意義"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿澈向前邁了一步，靴底踩在濕漉漉的石板路上發出輕響。他盯著林映月手中那枚靜止的黃銅懷錶，目光銳利。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "十年前的今晚，霧港發生了「沉船慘案」。當時的載具在十點零三分撞上半島礁石，全船無人生還。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "更詭異的是，所有倖存者與遇難者，手錶都在同一秒停擺。那是他們生命倒數的終點。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "所以，這不是意外，而是某種預兆？"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "或許是復仇，或許是詛咒。小偵探，你覺得呢？"
+    },
+    {
+     "kind": "character",
+     "speaker": "沈硯",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "嘿，別把氣氛搞得太沉重嘛。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "一道修長的身影從鐘樓的陰影中走出。沈硯拉著深灰色風衣領口，琥珀色的眼眸帶著笑意，手中把玩著一枚銀幣。"
+    },
+    {
+     "kind": "character",
+     "speaker": "沈硯",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "我剛從碼頭聽來，今晚的霧特別濃，連海鷗都不叫了。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "追問沈硯在碼頭聽到了什麼",
+     "請林映月展示更多證物",
+     "邀請兩人一起去碼頭調查"
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "suspicious_clock_time"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "林映月揭示十點零三分與十年前的沉船慘案有關，沈硯帶著碼頭的情報現身介入對話。"
+   },
+   "state": {
+    "affection": {
+     "林映月": 1,
+     "沈硯": 0
+    },
+    "flags": [
+     "met_lin_yingyue",
+     "suspicious_clock_time"
+    ],
+    "items": []
+   },
+   "summary": [
+    "阿澈抵達霧港鐘樓廣場，遇見鐘錶行店主林映月，對方指出城中鐘錶停擺的異狀。",
+    "林映月揭示全城鐘錶停在十點零三分，並暗示這與死亡有關，阿澈對謎題產生興趣。",
+    "林映月揭示十點零三分與十年前的沉船慘案有關，沈硯帶著碼頭的情報現身介入對話。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "qwen3.6-35b-a3b",
+   "repair_notes": [],
+   "id": "n_0002",
+   "children": [
+    "n_0003"
+   ],
+   "created_at": "2026-09-25T11:11:12+08:00"
+  },
+  "n_0003": {
+   "parent": "n_0002",
+   "scene_id": "foggy_harbor_clocktower_square",
+   "player_input": {
+    "kind": "option",
+    "text": "追問沈硯在碼頭聽到了什麼"
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "沈硯",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "碼頭？喔，就那些老水手愛吹的牛罷了。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "沈硯將銀幣在指間翻飛，琥珀色瞳孔倒映著昏黃燈光，嘴角掛著不羈的笑。"
+    },
+    {
+     "kind": "character",
+     "speaker": "沈硯",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "聽說今晚有艘無名貨船想強行進港，被港務局攔下了。船長瘋瘋癲癲喊著「時間到了」，還說聽見海底傳來敲擊聲。"
+    },
+    {
+     "kind": "character",
+     "speaker": "林映月",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "敲擊聲？"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "林映月手中的懷錶指標依舊凝滯，灰藍眼眸卻微微收縮，聲音放低了半度。"
+    },
+    {
+     "kind": "character",
+     "speaker": "沈硯",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "對，像是有人在鋼鐵船殼裡頭敲門。水手們嚇得連夜棄船跑路，現在碼頭邊還停著那艘空船呢。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿澈",
+     "char_id": null,
+     "expr": "calm",
+     "text": "空船？現在人在哪？"
+    },
+    {
+     "kind": "character",
+     "speaker": "沈硯",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "早跑光了，只留下一船貨沒人敢動。小偵探，要不要去看看？我帶路。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "跟著沈硯去碼頭檢視那艘空船",
+     "留在廣場追問林映月關於十年前沉船案的細節",
+     "先檢查林映月的懷錶機芯尋找線索",
+     "讓沈硯先去碼頭探聽，自己留下觀察鐘樓"
+    ],
+    "state_changes": {
+     "affection": {
+      "沈硯": 1
+     },
+     "flags_add": [
+      "ghost_ship_rumor",
+      "knocking_sound_clue"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "沈硯透露碼頭有艘無名貨船被攔下，船長瘋狂喊著時間到了並聽見海底敲擊聲，水手們棄船逃跑留下空船。"
+   },
+   "state": {
+    "affection": {
+     "林映月": 1,
+     "沈硯": 1
+    },
+    "flags": [
+     "met_lin_yingyue",
+     "suspicious_clock_time",
+     "ghost_ship_rumor",
+     "knocking_sound_clue"
+    ],
+    "items": []
+   },
+   "summary": [
+    "阿澈抵達霧港鐘樓廣場，遇見鐘錶行店主林映月，對方指出城中鐘錶停擺的異狀。",
+    "林映月揭示全城鐘錶停在十點零三分，並暗示這與死亡有關，阿澈對謎題產生興趣。",
+    "林映月揭示十點零三分與十年前的沉船慘案有關，沈硯帶著碼頭的情報現身介入對話。",
+    "沈硯透露碼頭有艘無名貨船被攔下，船長瘋狂喊著時間到了並聽見海底敲擊聲，水手們棄船逃跑留下空船。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0003",
+   "children": [],
+   "created_at": "2026-09-25T11:25:23+08:00"
+  }
+ }
+}

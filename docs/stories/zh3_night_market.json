@@ -1,0 +1,18 @@
+{
+  "key": "zh3_night_market",
+  "lang": "zh",
+  "aim": "good",
+  "game_id": "g_20260925_142845",
+  "title": "夜市保衛戰",
+  "turns": 8,
+  "player_turns": 7,
+  "scenes": 1,
+  "models": [
+    "nvidia/nemotron-3-ultra-550b-a55b"
+  ],
+  "ending": {
+    "type": "good",
+    "title": "夜市守護者"
+  },
+  "minutes": 3.2
+}

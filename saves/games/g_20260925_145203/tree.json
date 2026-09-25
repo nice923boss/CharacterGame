@@ -1,0 +1,1728 @@
+{
+ "root": "n_0000",
+ "next": 14,
+ "nodes": {
+  "n_0000": {
+   "parent": null,
+   "scene_id": "ghost_market_entrance",
+   "player_input": {
+    "kind": "opening",
+    "text": ""
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "月色如水灑在青石板上，城隍廟後那條平日不存在的巷口，此刻正吐著幽藍的霧氣。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "你緊攥著懷裡妹妹的繡花鞋，藥香從指縫滲出，混進鬼市裡陣陣腐朽的甜味。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "喲～活人闖鬼門，還帶著陽間藥香呢～小哥兒，是來買命？還是來賣命？鈴鐺響一下，告訴姐姐呀～"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "規矩。不問來處，不問去向。只收記憶，不找零錢。想贖魂？先報上你要切掉哪一段。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "surprised",
+     "text": "呀，老墨掌櫃親自出馬？這位小藥童，恐怕有點不尋常哦～"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "「我妹妹的魂在你們手裡，我要贖回來。」",
+     "「我有製藥秘方，能不能換她的魂？」",
+     "「我什麼記憶都能給，只要她醒過來。」",
+     "「先告訴我，鬼市規矩是什麼？」"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1
+     },
+     "flags_add": [
+      "first_meeting"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "小滿獨自闖入鬼市入口，青蘿與老墨雙雙現身攔路，老墨直指贖魂需以記憶為價。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 1,
+     "老墨": 0
+    },
+    "flags": [
+     "first_meeting"
+    ],
+    "items": []
+   },
+   "summary": [
+    "小滿獨自闖入鬼市入口，青蘿與老墨雙雙現身攔路，老墨直指贖魂需以記憶為價。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0000",
+   "children": [
+    "n_0001"
+   ],
+   "created_at": "2026-09-25T14:52:13+08:00"
+  },
+  "n_0001": {
+   "parent": "n_0000",
+   "scene_id": "ghost_market_entrance",
+   "player_input": {
+    "kind": "option",
+    "text": "「我有製藥秘方，能不能換她的魂？」"
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "秘方？陽間物，鬼市不收。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "掌櫃說不收就是不收啦～但姐姐覺得，你指尖那股子「回春丹」的殘香，倒比秘方有意思得多呢……"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "記憶。哪一段？快報。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "surprised",
+     "text": "欸？老墨你不問問這秘方是救人還是害人？萬一是毒藥配方呢～"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "鬼市不管因果，只管交易。再不決定，天亮魂散。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧氣裡隱約傳來更鼓聲，三更將盡，青石板下似有無數雙手在輕輕敲擊。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "fog",
+    "options": [
+     "用「母親臨終前教我辨藥」的記憶換妹妹的魂",
+     "用「師父傳授回春丹配方那晚」的記憶換妹妹的魂",
+     "用「妹妹生病時我整夜熬藥守著她」的記憶換妹妹的魂",
+     "拒絕交易，轉身衝進鬼市深處硬搶"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1
+     },
+     "flags_add": [
+      "memory_choice_pending"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "老墨拒絕秘方交易，堅持只收記憶；青蘿對主角指尖藥香感興趣，催促主角在三更盡前選擇要切除的記憶。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 2,
+     "老墨": 0
+    },
+    "flags": [
+     "first_meeting",
+     "memory_choice_pending"
+    ],
+    "items": []
+   },
+   "summary": [
+    "小滿獨自闖入鬼市入口，青蘿與老墨雙雙現身攔路，老墨直指贖魂需以記憶為價。",
+    "老墨拒絕秘方交易，堅持只收記憶；青蘿對主角指尖藥香感興趣，催促主角在三更盡前選擇要切除的記憶。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0001",
+   "children": [
+    "n_0002"
+   ],
+   "created_at": "2026-09-25T14:52:24+08:00"
+  },
+  "n_0002": {
+   "parent": "n_0001",
+   "scene_id": "ghost_market_entrance",
+   "player_input": {
+    "kind": "option",
+    "text": "用「妹妹生病時我整夜熬藥守著她」的記憶換妹妹的魂"
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "妹妹病夜，守藥熬湯。溫情一段，價值不菲。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "呀～捨得切掉最溫柔的那一夜？妹妹醒來，你卻不記得曾為她熬過苦藥喔～"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "成交。記憶剝離，魂魄歸還。伸手。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "瘦骨如柴的手掌按上你額頭，冰涼刺骨。那夜油燈暈黃、藥罐咕嘟、妹妹睡顏安穩的畫面，像煙絲被抽離，化作一抹藍光鑽進老墨算盤珠內。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "同時，一縷微弱靈光自算盤另一端逸出，鑽入你懷中繡花鞋——鞋尖頓時亮起溫潤微光，彷彿有心跳聲微微傳來。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "交易完成啦～小哥兒，摸摸鞋尖，還暖不暖？姐姐倒要看看，失去那段記憶的你，還會不會為她再熬第二碗藥呢？"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "fog",
+    "options": [
+     "摸摸鞋尖確認妹妹魂魄歸位",
+     "詢問青蘿剛剛說的「第二碗藥」是什麼意思",
+     "趁機詢問老墨鬼市深處還有什麼交易",
+     "轉身想離開鬼市返回陽間"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1
+     },
+     "flags_add": [
+      "memory_exchanged",
+      "soul_retrieved"
+     ],
+     "items_add": [
+      "繡花鞋(含妹妹魂魄)"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 3,
+     "老墨": 0
+    },
+    "flags": [
+     "first_meeting",
+     "memory_choice_pending",
+     "memory_exchanged",
+     "soul_retrieved"
+    ],
+    "items": [
+     "繡花鞋(含妹妹魂魄)"
+    ]
+   },
+   "summary": [
+    "小滿獨自闖入鬼市入口，青蘿與老墨雙雙現身攔路，老墨直指贖魂需以記憶為價。",
+    "老墨拒絕秘方交易，堅持只收記憶；青蘿對主角指尖藥香感興趣，催促主角在三更盡前選擇要切除的記憶。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0002",
+   "children": [
+    "n_0003"
+   ],
+   "created_at": "2026-09-25T14:52:42+08:00"
+  },
+  "n_0003": {
+   "parent": "n_0002",
+   "scene_id": "ghost_market_entrance",
+   "player_input": {
+    "kind": "free",
+    "text": "我去找老墨，問他妹妹的魂要用什麼換。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "你下意識地想上前詢問老墨，指尖剛觸到繡花鞋溫潤的鞋緣，心口卟通一跳——腦海中關於「那一夜」的具體畫面竟已模糊成一團無法著力的灰霧。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "記得妹妹生病，記得自己熬藥，卻再也想不起油燈暈黃時她皺眉吞藥的樣子，也想不起自己守在床頭數了幾個更次。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "交易已結。魂魄在鞋，人在陽間，規矩不許反悔。算盤珠子裡的記憶，鬼市概不退換。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "呀～掌櫃話說得真絕情呢。小哥兒，你剛剛不是很利索嗎？怎麼現在臉白得像張紙錢？摸摸鞋尖，還暖著哩～趕緊想法子送魂回竅，天亮可就來不及囉。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "要走便走，要留便留。鬼市不留閒人。三更已過，再遲陰氣上身，連你自己的魂都得搭進去。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（湊近耳邊壓低聲音）聽姐姐一句——想救人，就別在門口發呆。往裡走，有賣「還魂湯」配方的攤子，或許用得上。當然……代價嘛，總得再付點別的什麼～"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "fog",
+    "options": [
+     "跟著青蘿建議往鬼市深處尋找「還魂湯」配方",
+     "堅持留在入口質問老墨有無補救辦法",
+     "立即離開鬼市，趕回藥舖嘗試用自身醫術喚醒妹妹",
+     "掏出隨身藥材嘗試現場調配簡易還魂湯"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1,
+      "老墨": -1
+     },
+     "flags_add": [
+      "memory_lost",
+      "time_pressure"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "小滿發現剛交易掉的記憶已無法回憶細節，老墨拒絕反悔，青蘿提示鬼市深處有還魂湯配方但需付代價，並警告天亮前必須完成送魂。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 4,
+     "老墨": -1
+    },
+    "flags": [
+     "first_meeting",
+     "memory_choice_pending",
+     "memory_exchanged",
+     "soul_retrieved",
+     "memory_lost",
+     "time_pressure"
+    ],
+    "items": [
+     "繡花鞋(含妹妹魂魄)"
+    ]
+   },
+   "summary": [
+    "小滿獨自闖入鬼市入口，青蘿與老墨雙雙現身攔路，老墨直指贖魂需以記憶為價。",
+    "老墨拒絕秘方交易，堅持只收記憶；青蘿對主角指尖藥香感興趣，催促主角在三更盡前選擇要切除的記憶。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價。",
+    "小滿發現剛交易掉的記憶已無法回憶細節，老墨拒絕反悔，青蘿提示鬼市深處有還魂湯配方但需付代價，並警告天亮前必須完成送魂。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0003",
+   "children": [
+    "n_0004"
+   ],
+   "created_at": "2026-09-25T14:53:00+08:00"
+  },
+  "n_0004": {
+   "parent": "n_0003",
+   "scene_id": "ghost_market_interior",
+   "player_input": {
+    "kind": "option",
+    "text": "跟著青蘿建議往鬼市深處尋找「還魂湯」配方"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "你握緊懷中發著微光的繡花鞋，腳步沈重地踏入那吞吐幽藍霧氣的巷口深處。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "跟緊啦～別走丟了，這裡的路愛吃人影子哦～"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "往前走，第三個路口左轉，「忘川茶鋪」賣配方。記住——鬼市不賒欠。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧氣越發濃稠，腳下青石板泛著幽綠磷光，兩側攤位兜售著發光的眼球、裝著嘆息聲的瓶罐、還有用人髮編織的布匹。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（回頭金瞳微彎）喲，小哥兒膽子不小嘛。剛剛那段「最溫柔的夜」切得乾淨利落，現在卻走得這麼沉重？是捨不得妹妹，還是捨不得那段記憶啊～"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "都捨不得。但妹妹還等著我回去。"
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "ghost_market_interior",
+     "name": "鬼市深處",
+     "image_prompt": "narrow foggy alley in a supernatural night market, green phosphorescent glow on ancient stone slabs, stalls selling bizarre glowing items, blue lanterns hanging low, mist swirling, eerie but atmospheric, no people"
+    },
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "直接詢問忘川茶鋪掌櫃還魂湯配方",
+     "先觀察四周攤位情況再決定",
+     "詢問青蘿這條路還有什麼陷阱",
+     "用身上剩餘藥材嘗試換取情報"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1
+     },
+     "flags_add": [
+      "entered_deeper_market"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "小滿跟隨青蘿指引進入鬼市深處尋找還魂湯配方，老墨指明忘川茶鋪位置並警告不賒欠。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 5,
+     "老墨": -1
+    },
+    "flags": [
+     "first_meeting",
+     "memory_choice_pending",
+     "memory_exchanged",
+     "soul_retrieved",
+     "memory_lost",
+     "time_pressure",
+     "entered_deeper_market"
+    ],
+    "items": [
+     "繡花鞋(含妹妹魂魄)"
+    ]
+   },
+   "summary": [
+    "小滿獨自闖入鬼市入口，青蘿與老墨雙雙現身攔路，老墨直指贖魂需以記憶為價。",
+    "老墨拒絕秘方交易，堅持只收記憶；青蘿對主角指尖藥香感興趣，催促主角在三更盡前選擇要切除的記憶。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價。",
+    "小滿發現剛交易掉的記憶已無法回憶細節，老墨拒絕反悔，青蘿提示鬼市深處有還魂湯配方但需付代價，並警告天亮前必須完成送魂。",
+    "小滿跟隨青蘿指引進入鬼市深處尋找還魂湯配方，老墨指明忘川茶鋪位置並警告不賒欠。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0004",
+   "children": [
+    "n_0005"
+   ],
+   "created_at": "2026-09-25T14:53:09+08:00"
+  },
+  "n_0005": {
+   "parent": "n_0004",
+   "scene_id": "ghost_market_interior",
+   "player_input": {
+    "kind": "free",
+    "text": "我願意用自己最珍貴的一段記憶，換回妹妹的魂。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "青蘿的金色豎瞳微微一縮，尾音拖長的調笑聲戛然而止，耳畔的紅繩鈴鐺隨著她微傾的頭顱發出一聲清脆輕響。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "呀～這麼快就想好要賣什麼了？姐姐還以為你會猶豫很久呢……「最珍貴」可是個大價碼哦，小哥兒確定不想再考慮考慮？比如說……童年撿到的那塊漂亮石頭，或者是師父教你第一次辨藥時偷笑的樣子？"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "算盤珠子撥動三下。時辰不等人。報上記憶名目，驗貨成交。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "幽藍霧氣中，老墨手中的算盤發出細碎脆響，每一顆珠子的滑動都像敲在心尖上。四周攤位兜售的詭異之物——發光眼球、裝著嘆息的瓶罐、人髮織布——在霧裡若隱若現，彷彿無數雙眼睛盯著這筆交易。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（湊近些許，聲音罕見地放輕）記得姐姐說過，鬼市的記憶一旦切下，連「捨不得」的感覺都會跟著一起被拿走喔。你當真想好要切哪一段了？還是說……你想讓姐姐幫你挑一挑？"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "我用「妹妹生病時我整夜熬藥守著她」這段記憶，換她的魂魄回來。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "妹妹病夜，守藥熬湯。溫情一段，價值不菲。成交。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "枯瘦掌心按上額頭的瞬間，冰涼如鐵。油燈暈黃、藥罐咕嘟、妹妹睡顏安穩的畫面化作藍煙被抽離，鑽入算盤珠內；同時一縷微弱靈光自另一端逸出，鑽入懷中繡花鞋——鞋尖亮起溫潤微光，彷彿有心跳聲微微傳來。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "交易完成啦～小哥兒，摸摸鞋尖，還暖不暖？姐姐倒要看看，失去那段記憶的你，還會不會為她再熬第二碗藥呢？"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "fog",
+    "options": [
+     "摸摸鞋尖確認妹妹魂魄狀況",
+     "立刻詢問老墨還魂湯配方在哪裡",
+     "追問青蘿剛才說的「捨不得感覺也會被拿走」是什麼…",
+     "趕緊往忘川茶鋪方向跑去"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1
+     },
+     "flags_add": [
+      "soul_retrieved",
+      "memory_lost",
+      "time_pressure"
+     ],
+     "items_add": [
+      "繡花鞋(含妹妹魂魄)"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價：失去記憶後連「捨不得」的感覺都會消失。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 6,
+     "老墨": -1
+    },
+    "flags": [
+     "first_meeting",
+     "memory_choice_pending",
+     "memory_exchanged",
+     "soul_retrieved",
+     "memory_lost",
+     "time_pressure",
+     "entered_deeper_market"
+    ],
+    "items": [
+     "繡花鞋(含妹妹魂魄)"
+    ]
+   },
+   "summary": [
+    "小滿獨自闖入鬼市入口，青蘿與老墨雙雙現身攔路，老墨直指贖魂需以記憶為價。",
+    "老墨拒絕秘方交易，堅持只收記憶；青蘿對主角指尖藥香感興趣，催促主角在三更盡前選擇要切除的記憶。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價。",
+    "小滿發現剛交易掉的記憶已無法回憶細節，老墨拒絕反悔，青蘿提示鬼市深處有還魂湯配方但需付代價，並警告天亮前必須完成送魂。",
+    "小滿跟隨青蘿指引進入鬼市深處尋找還魂湯配方，老墨指明忘川茶鋪位置並警告不賒欠。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價：失去記憶後連「捨不得」的感覺都會消失。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0005",
+   "children": [
+    "n_0006"
+   ],
+   "created_at": "2026-09-25T14:53:48+08:00"
+  },
+  "n_0006": {
+   "parent": "n_0005",
+   "scene_id": "ghost_market_interior",
+   "player_input": {
+    "kind": "option",
+    "text": "追問青蘿剛才說的「捨不得感覺也會被拿走」是什麼…"
+   },
+   "lines": [
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "妳剛才說……失去記憶後，連「捨不得」的感覺都會被拿走，是什麼意思？"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（金瞳微閃，尾音拖得更長）喲～小哥兒現在才問？姐姐以為你交易時聽得清清楚楚呢……意思很簡單呀，記憶切下去，那段日子裡的「溫度」也跟著切乾淨了。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "比方說方才那一夜——你還記得妹妹生病，記得自己熬藥，卻再也想不起油燈暈黃時她皺眉吞藥的樣子，更想不起自己守在床頭時心裡那股「捨不得她受苦、寧願換我來疼」的軟痴勁兒。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（湊近半步，鈴鐺輕響）那種「捨不得」，才是記憶裡最值錢的部份哦。沒了它，日後妹妹再生病，你還會熬藥、還會守夜，可心裡就空落落的，像在替別人家孩子盡義務般……乾淨、利落、毫無波瀾。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（算盤珠子撥動兩下，不抬頭）鬼市交易，切的是「連帶情感」。規矩寫在門規第三條，交易前須自行確認。已成交，不予解釋。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（對著老墨吐吐舌頭，轉頭又笑吟吟看你）掌櫃話雖難聽，卻沒騙你。小哥兒，現在後悔也晚了——除非……你願意再深處走一遭，看看有沒有「補情丸」這類玩意兒賣。當然，代價嘛……"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧氣中隱約傳來細碎敲擊聲，彷彿有人在遠處捶打著什麼易碎之物。你懷中繡花鞋微光脈動，溫度依舊，指尖觸及鞋緣卻再喚不起半分那夜守候的心痛。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "繼續追問：補情丸真的存在嗎？要什麼代價？",
+     "不再多問，趕緊按老墨指示往「忘川茶鋪」尋找還魂…",
+     "試圖強行喚回剛失去的記憶碎片",
+     "轉身想找老墨理論，要求取回「捨不得」的感覺"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1
+     },
+     "flags_add": [
+      "learned_memory_emotion_cost"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "小滿追問青蘿關於「捨不得感覺也被拿走」的含義，青蘿解釋鬼市交易會連帶切除記憶中的情感溫度，老墨確認規矩不可逆。青蘿暗示深處或有「補情丸」但需付新代價。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 7,
+     "老墨": -1
+    },
+    "flags": [
+     "first_meeting",
+     "memory_choice_pending",
+     "memory_exchanged",
+     "soul_retrieved",
+     "memory_lost",
+     "time_pressure",
+     "entered_deeper_market",
+     "learned_memory_emotion_cost"
+    ],
+    "items": [
+     "繡花鞋(含妹妹魂魄)"
+    ]
+   },
+   "summary": [
+    "小滿獨自闖入鬼市入口，青蘿與老墨雙雙現身攔路，老墨直指贖魂需以記憶為價。",
+    "老墨拒絕秘方交易，堅持只收記憶；青蘿對主角指尖藥香感興趣，催促主角在三更盡前選擇要切除的記憶。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價。",
+    "小滿發現剛交易掉的記憶已無法回憶細節，老墨拒絕反悔，青蘿提示鬼市深處有還魂湯配方但需付代價，並警告天亮前必須完成送魂。",
+    "小滿跟隨青蘿指引進入鬼市深處尋找還魂湯配方，老墨指明忘川茶鋪位置並警告不賒欠。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價：失去記憶後連「捨不得」的感覺都會消失。",
+    "小滿追問青蘿關於「捨不得感覺也被拿走」的含義，青蘿解釋鬼市交易會連帶切除記憶中的情感溫度，老墨確認規矩不可逆。青蘿暗示深處或有「補情丸」但需付新代價。"
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0006",
+   "children": [
+    "n_0007"
+   ],
+   "created_at": "2026-09-25T14:54:03+08:00"
+  },
+  "n_0007": {
+   "parent": "n_0006",
+   "scene_id": "ghost_market_interior",
+   "player_input": {
+    "kind": "free",
+    "text": "趁天還沒亮，我拿著贖回的魂魄跑回藥舖，讓妹妹醒過來。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "你握緊懷中發著微光的繡花鞋，轉身便往來路狂奔，腳下青石板泛著幽綠磷光，每一步都踏得極重，彷彿要把這鬼市的霧氣一腳踩碎。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（身形一閃擋在巷口，金瞳微挑，尾音拖長）呀～小哥兒這麼急幹嘛？忘川茶鋪在左轉第三個路口哦，配方還沒買，魂魄塞回去也醒不來喔～"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（聲音從霧氣深處飄來，算盤珠子撥動聲清脆）鬼市不留人，陽間路在腳下。但記住——魂魄無溫度，須得「還魂湯」暖過，天亮前送回竅穴，否則……"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧氣突然濃稠起來，四周攤位的詭異之物——發光眼球、裝著嘆息的瓶罐——在幽藍光裡扭曲拉長，像無數雙手伸向你的後背。你腳下一頓，繡花鞋微光脈動，指尖觸及鞋緣依舊喚不起半分那夜守候的心痛。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（湊近耳邊，鈴鐺輕響，聲音罕見地放輕）姐姐不攔你走，但魂魄在手、配方沒有、情感已失，三樣缺一，妹妹醒來恐怕只是具會呼吸的空殼。小哥兒，真要這樣賭嗎？"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "妹妹等不及了。我還有別的記憶可以換配方。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "fog",
+    "options": [
+     "硬闖過去衝出鬼市，賭魂魄直接塞回妹妹體內就能醒",
+     "聽青蘿的，先去忘川茶鋪買還魂湯配方，再想辦法湊…",
+     "求青蘿幫忙找捷徑，哪怕再切一段記憶也在所不惜",
+     "轉身找老墨，用師父傳下的《本草秘錄》換配方"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": -1
+     },
+     "flags_add": [
+      "rushed_to_leave",
+      "refused_tea_house"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "小滿拒絕前往忘川茶鋪，執意帶著魂魄衝出鬼市想直接送魂，青蘿攔路警告魂魄無溫度需還魂湯暖過，否則妹妹醒來只是空殼。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 6,
+     "老墨": -1
+    },
+    "flags": [
+     "first_meeting",
+     "memory_choice_pending",
+     "memory_exchanged",
+     "soul_retrieved",
+     "memory_lost",
+     "time_pressure",
+     "entered_deeper_market",
+     "learned_memory_emotion_cost",
+     "rushed_to_leave",
+     "refused_tea_house"
+    ],
+    "items": [
+     "繡花鞋(含妹妹魂魄)"
+    ]
+   },
+   "summary": [
+    "小滿獨自闖入鬼市入口，青蘿與老墨雙雙現身攔路，老墨直指贖魂需以記憶為價。",
+    "老墨拒絕秘方交易，堅持只收記憶；青蘿對主角指尖藥香感興趣，催促主角在三更盡前選擇要切除的記憶。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價。",
+    "小滿發現剛交易掉的記憶已無法回憶細節，老墨拒絕反悔，青蘿提示鬼市深處有還魂湯配方但需付代價，並警告天亮前必須完成送魂。",
+    "小滿跟隨青蘿指引進入鬼市深處尋找還魂湯配方，老墨指明忘川茶鋪位置並警告不賒欠。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價：失去記憶後連「捨不得」的感覺都會消失。",
+    "小滿追問青蘿關於「捨不得感覺也被拿走」的含義，青蘿解釋鬼市交易會連帶切除記憶中的情感溫度，老墨確認規矩不可逆。青蘿暗示深處或有「補情丸」但需付新代價。",
+    "小滿拒絕前往忘川茶鋪，執意帶著魂魄衝出鬼市想直接送魂，青蘿攔路警告魂魄無溫度需還魂湯暖過，否則妹妹醒來只是空殼。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0007",
+   "children": [
+    "n_0008"
+   ],
+   "created_at": "2026-09-25T14:55:38+08:00"
+  },
+  "n_0008": {
+   "parent": "n_0007",
+   "scene_id": "mountain_drugstore",
+   "player_input": {
+    "kind": "option",
+    "text": "硬闖過去衝出鬼市，賭魂魄直接塞回妹妹體內就能醒"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "你不再猶豫，肩頭一沉硬生生撞開青蘿虛晃的身影，腳下青石板「嗒嗒」亂響，帶著一身濕冷霧氣衝向巷口。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（被撞得側身一晃，金瞳微睜，尾音裡罕見地沒了調笑）哎——小哥兒！"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（算盤聲驟停，聲音穿透霧氣直貼後背）陽間路在腳下，魂魄無溫度……別說沒警告過。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "霧氣像活物般纏繞小腿，發光眼球與裝嘆息的瓶罐在視野邊緣扭曲尖叫，指尖死死扣住繡花鞋，鞋尖微光顫動卻不增一分溫度。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（喘息咬牙）妹妹等不及……我還有記憶可換……回去再想辦法！"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "巷口月光刺破霧氣的那一刻，你已踏出鬼市界碑，身後幽藍世界轟然合攏，只剩耳畔殘留一聲極輕的鈴響——「捨不得，最貴……」"
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "mountain_drugstore",
+     "name": "山城藥舖",
+     "image_prompt": "A traditional Chinese medicine shop in a misty mountain town at pre-dawn, wooden shelves filled with herb jars, mortar and pestle on counter, dim oil lamp light, cold blue-gray atmosphere"
+    },
+    "bgm_mood": "tense",
+    "weather": "fog",
+    "options": [
+     "將繡花鞋貼上妹妹胸口，強行送魂",
+     "先找師父拿還魂湯舊方子，再送魂",
+     "跪在地上嘗試喚回剛失去的記憶",
+     "衝進內室檢視妹妹狀況再決定"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": -2,
+      "老墨": -1
+     },
+     "flags_add": [
+      "forced_exit",
+      "soul_cold",
+      "no_recipe",
+      "memory_emotion_lost"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "小滿無視青蘿與老墨警告，硬闖鬼市帶走冰冷魂魄回藥舖，妹妹魂魄無溫度且無還魂湯配方，送魂極大風險。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 4,
+     "老墨": -2
+    },
+    "flags": [
+     "first_meeting",
+     "memory_choice_pending",
+     "memory_exchanged",
+     "soul_retrieved",
+     "memory_lost",
+     "time_pressure",
+     "entered_deeper_market",
+     "learned_memory_emotion_cost",
+     "rushed_to_leave",
+     "refused_tea_house",
+     "forced_exit",
+     "soul_cold",
+     "no_recipe",
+     "memory_emotion_lost"
+    ],
+    "items": [
+     "繡花鞋(含妹妹魂魄)"
+    ]
+   },
+   "summary": [
+    "小滿獨自闖入鬼市入口，青蘿與老墨雙雙現身攔路，老墨直指贖魂需以記憶為價。",
+    "老墨拒絕秘方交易，堅持只收記憶；青蘿對主角指尖藥香感興趣，催促主角在三更盡前選擇要切除的記憶。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價。",
+    "小滿發現剛交易掉的記憶已無法回憶細節，老墨拒絕反悔，青蘿提示鬼市深處有還魂湯配方但需付代價，並警告天亮前必須完成送魂。",
+    "小滿跟隨青蘿指引進入鬼市深處尋找還魂湯配方，老墨指明忘川茶鋪位置並警告不賒欠。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價：失去記憶後連「捨不得」的感覺都會消失。",
+    "小滿追問青蘿關於「捨不得感覺也被拿走」的含義，青蘿解釋鬼市交易會連帶切除記憶中的情感溫度，老墨確認規矩不可逆。青蘿暗示深處或有「補情丸」但需付新代價。",
+    "小滿拒絕前往忘川茶鋪，執意帶著魂魄衝出鬼市想直接送魂，青蘿攔路警告魂魄無溫度需還魂湯暖過，否則妹妹醒來只是空殼。",
+    "小滿無視青蘿與老墨警告，硬闖鬼市帶走冰冷魂魄回藥舖，妹妹魂魄無溫度且無還魂湯配方，送魂極大風險。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0008",
+   "children": [
+    "n_0009"
+   ],
+   "created_at": "2026-09-25T14:55:53+08:00"
+  },
+  "n_0009": {
+   "parent": "n_0008",
+   "scene_id": "mountain_drugstore",
+   "player_input": {
+    "kind": "free",
+    "text": "我決定不再拖延，現在就賭上一切，把這件事做個了斷。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "你踏出鬼市界碑的瞬間，月光如水銀般灑在山徑上，身後的幽藍霧氣無聲合攏，彷彿從未存在。懷中繡花鞋微光脈動，指尖觸及鞋緣依舊冰涼——沒有溫度，也喚不起半分那夜守候的心痛。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（喘息急促，腳步不敢停）妹妹……等著我……"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "山風捲著草木腥氣撲面而來，藥舖歪斜的招牌在夜色中搖晃。你推開虛掩的木門，煤油燈將將亮著，師父縮在櫃檯後打盹，聽見動靜驚醒抬頭，眼神從惺忪轉為銳利。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（聲音沙啞）小滿？這大半夜跑哪去了？懷裡捏著……什麼東西？"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（將繡花鞋輕放在妹妹枕邊，雙手顫抖）師父……妹妹的魂……贖回來了。快、快幫我送魂……"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "師父湊近檢視，眉頭越皺越緊。繡花鞋裡那縷靈光灰暗浮沉，毫無生氣。他轉身從櫃底摸出半罐陳年參湯、幾味藥材，動作熟練卻透著焦灼——卻沒有「還魂湯」的關鍵配方。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（低聲）魂魄無溫，無湯暖魂，強行送入恐成植物人……小滿，你當真想清楚了？"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（咬牙）沒別的法子了。我還有記憶……還能換……"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "師父嘆一口氣，不再勸阻，開始熬煮手頭能湊出的替代藥液。火舌舔舐藥罐，濃烈藥香瀰漫，你跪在床前死死盯著妹妹蒼白的臉，心裡空落落的，連「捨不得」都找不著著力點。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（聲音彷彿從耳畔鈴鐺傳來，極輕極遠）賭輸了……可沒地方哭哦～"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "強行用替代藥液送魂，賭妹妹能醒來",
+     "跪求師父想別的法子，哪怕再換記憶也要去鬼市",
+     "守在床邊死等天亮，不敢動手",
+     "撫摸妹妹冰涼的手，靜靜道歉"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": -1
+     },
+     "flags_add": [
+      "forced_soul_return_attempt",
+      "no_recipe_risk"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "小滿硬闖鬼市帶回冰冷魂魄，無還魂湯配方，師父只能用替代藥液嘗試強行送魂，妹妹能否醒來生死未卜。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 3,
+     "老墨": -2
+    },
+    "flags": [
+     "first_meeting",
+     "memory_choice_pending",
+     "memory_exchanged",
+     "soul_retrieved",
+     "memory_lost",
+     "time_pressure",
+     "entered_deeper_market",
+     "learned_memory_emotion_cost",
+     "rushed_to_leave",
+     "refused_tea_house",
+     "forced_exit",
+     "soul_cold",
+     "no_recipe",
+     "memory_emotion_lost",
+     "forced_soul_return_attempt",
+     "no_recipe_risk"
+    ],
+    "items": [
+     "繡花鞋(含妹妹魂魄)"
+    ]
+   },
+   "summary": [
+    "小滿獨自闖入鬼市入口，青蘿與老墨雙雙現身攔路，老墨直指贖魂需以記憶為價。",
+    "老墨拒絕秘方交易，堅持只收記憶；青蘿對主角指尖藥香感興趣，催促主角在三更盡前選擇要切除的記憶。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價。",
+    "小滿發現剛交易掉的記憶已無法回憶細節，老墨拒絕反悔，青蘿提示鬼市深處有還魂湯配方但需付代價，並警告天亮前必須完成送魂。",
+    "小滿跟隨青蘿指引進入鬼市深處尋找還魂湯配方，老墨指明忘川茶鋪位置並警告不賒欠。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價：失去記憶後連「捨不得」的感覺都會消失。",
+    "小滿追問青蘿關於「捨不得感覺也被拿走」的含義，青蘿解釋鬼市交易會連帶切除記憶中的情感溫度，老墨確認規矩不可逆。青蘿暗示深處或有「補情丸」但需付新代價。",
+    "小滿拒絕前往忘川茶鋪，執意帶著魂魄衝出鬼市想直接送魂，青蘿攔路警告魂魄無溫度需還魂湯暖過，否則妹妹醒來只是空殼。",
+    "小滿無視青蘿與老墨警告，硬闖鬼市帶走冰冷魂魄回藥舖，妹妹魂魄無溫度且無還魂湯配方，送魂極大風險。",
+    "小滿硬闖鬼市帶回冰冷魂魄，無還魂湯配方，師父只能用替代藥液嘗試強行送魂，妹妹能否醒來生死未卜。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0009",
+   "children": [
+    "n_0010"
+   ],
+   "created_at": "2026-09-25T14:56:12+08:00"
+  },
+  "n_0010": {
+   "parent": "n_0009",
+   "scene_id": "mountain_drugstore",
+   "player_input": {
+    "kind": "option",
+    "text": "守在床邊死等天亮，不敢動手"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "火舌舔舐砂罐，濃稠藥液發出「咕嘟、咕嘟」悶響，師父手腕翻飛，將最後一把不知名草根塞入罐中，蒸氣瞬間騰起，將他蒼老的側臉籠罩。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（聲音沙啞，不回頭）喝下去。趁熱灌進她嘴裡，再以內力引魂入竅。成與不成，聽天命。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "你雙膝跪地，雙手顫抖著接過燙燙的碗，湯面映出妹妹蒼白如紙的臉，也映出你空洞的倒影——心口空落落的，連「捨不得」兩字都抓不著著力點。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（喉結滾動，聲音乾澀）妹……妹妹，喝藥了……"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "滾燙藥液順著嘴角流入喉嚨，妹妹喉頭機械性滾動，眉心卻緊鎖不展。懷中繡花鞋微光脈動，那縷灰暗靈光忽明忽滅，彷彿風中殘燭。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（聲音極輕，彷彿貼著耳廓）小哥兒，現在後悔還來得及嗎？把鞋拿回鬼市，哪怕剁下雙腿換配方……喔，腿沒了也跑不回來呢～"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "窗外東方泛起魚肚白，雞鳴聲撕破夜靜。妹妹指尖突然動了一下——極微極微，像風吹草尖。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "繼續灌藥引魂，拼盡全力喚醒妹妹",
+     "停下手中動作，抱著妹妹痛哭",
+     "衝出藥舖，想趕在日全出前衝回鬼市找青蘿",
+     "對師父下跪磕頭，求師父再想別的法子"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": -1
+     },
+     "flags_add": [
+      "dawn_arriving",
+      "sister_finger_twitch"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "師父用替代藥液強行送魂，妹妹指尖在天亮前微微動了一下，生死未卜。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 2,
+     "老墨": -2
+    },
+    "flags": [
+     "first_meeting",
+     "memory_choice_pending",
+     "memory_exchanged",
+     "soul_retrieved",
+     "memory_lost",
+     "time_pressure",
+     "entered_deeper_market",
+     "learned_memory_emotion_cost",
+     "rushed_to_leave",
+     "refused_tea_house",
+     "forced_exit",
+     "soul_cold",
+     "no_recipe",
+     "memory_emotion_lost",
+     "forced_soul_return_attempt",
+     "no_recipe_risk",
+     "dawn_arriving",
+     "sister_finger_twitch"
+    ],
+    "items": [
+     "繡花鞋(含妹妹魂魄)"
+    ]
+   },
+   "summary": [
+    "小滿獨自闖入鬼市入口，青蘿與老墨雙雙現身攔路，老墨直指贖魂需以記憶為價。",
+    "老墨拒絕秘方交易，堅持只收記憶；青蘿對主角指尖藥香感興趣，催促主角在三更盡前選擇要切除的記憶。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價。",
+    "小滿發現剛交易掉的記憶已無法回憶細節，老墨拒絕反悔，青蘿提示鬼市深處有還魂湯配方但需付代價，並警告天亮前必須完成送魂。",
+    "小滿跟隨青蘿指引進入鬼市深處尋找還魂湯配方，老墨指明忘川茶鋪位置並警告不賒欠。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價：失去記憶後連「捨不得」的感覺都會消失。",
+    "小滿追問青蘿關於「捨不得感覺也被拿走」的含義，青蘿解釋鬼市交易會連帶切除記憶中的情感溫度，老墨確認規矩不可逆。青蘿暗示深處或有「補情丸」但需付新代價。",
+    "小滿拒絕前往忘川茶鋪，執意帶著魂魄衝出鬼市想直接送魂，青蘿攔路警告魂魄無溫度需還魂湯暖過，否則妹妹醒來只是空殼。",
+    "小滿無視青蘿與老墨警告，硬闖鬼市帶走冰冷魂魄回藥舖，妹妹魂魄無溫度且無還魂湯配方，送魂極大風險。",
+    "小滿硬闖鬼市帶回冰冷魂魄，無還魂湯配方，師父只能用替代藥液嘗試強行送魂，妹妹能否醒來生死未卜。",
+    "師父用替代藥液強行送魂，妹妹指尖在天亮前微微動了一下，生死未卜。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0010",
+   "children": [
+    "n_0011"
+   ],
+   "created_at": "2026-09-25T14:56:41+08:00"
+  },
+  "n_0011": {
+   "parent": "n_0010",
+   "scene_id": "mountain_drugstore",
+   "player_input": {
+    "kind": "free",
+    "text": "我決定不再拖延，現在就賭上一切，把這件事做個了斷。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "雞鳴聲歇，天光乍破。藥罐裡的替代藥液已涼透，妹妹的呼吸微弱得幾近察覺，指尖卻再次輕顫，似在等待最後一擊。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（聲音彷彿穿透時空，自藥舖樑上落下）時辰到。魂魄無溫，藥液無魂。強灌者，必成空殼。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "surprised",
+     "text": "哎呀～小哥兒，你這雙眼睛……怎麼一點波瀾都沒有？連「捨不得」都切乾淨了，現在看妹妹像在看什麼？一具漂亮的瓷娃娃？"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（端起冷透的藥碗，手穩得不像話）沒關係。只要她在，怎麼活都是活。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "呵……真是個無趣又執著的人兒。好吧，姐姐陪你賭這最後一把。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "成。空殼也好，活人也罷，鬼市不欠人情，只認交易。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "將冷藥液灌入妹妹口中，強行送魂",
+     "割破指尖，以精血混合藥液，溫養魂魄",
+     "撕下衣角裹住繡花鞋，將魂魄直接塞入妹妹心口",
+     "放下藥碗，抱著妹妹在晨光中靜坐等待"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1
+     },
+     "flags_add": [
+      "soul_cold_attempted"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "小滿在晨光中決定強行送魂，青蘿驚訝於他失去情感後的冷漠與執著，老墨確認規矩生效，勝負一瞬間定奪。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 3,
+     "老墨": -2
+    },
+    "flags": [
+     "first_meeting",
+     "memory_choice_pending",
+     "memory_exchanged",
+     "soul_retrieved",
+     "memory_lost",
+     "time_pressure",
+     "entered_deeper_market",
+     "learned_memory_emotion_cost",
+     "rushed_to_leave",
+     "refused_tea_house",
+     "forced_exit",
+     "soul_cold",
+     "no_recipe",
+     "memory_emotion_lost",
+     "forced_soul_return_attempt",
+     "no_recipe_risk",
+     "dawn_arriving",
+     "sister_finger_twitch",
+     "soul_cold_attempted"
+    ],
+    "items": [
+     "繡花鞋(含妹妹魂魄)"
+    ]
+   },
+   "summary": [
+    "小滿獨自闖入鬼市入口，青蘿與老墨雙雙現身攔路，老墨直指贖魂需以記憶為價。",
+    "老墨拒絕秘方交易，堅持只收記憶；青蘿對主角指尖藥香感興趣，催促主角在三更盡前選擇要切除的記憶。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價。",
+    "小滿發現剛交易掉的記憶已無法回憶細節，老墨拒絕反悔，青蘿提示鬼市深處有還魂湯配方但需付代價，並警告天亮前必須完成送魂。",
+    "小滿跟隨青蘿指引進入鬼市深處尋找還魂湯配方，老墨指明忘川茶鋪位置並警告不賒欠。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價：失去記憶後連「捨不得」的感覺都會消失。",
+    "小滿追問青蘿關於「捨不得感覺也被拿走」的含義，青蘿解釋鬼市交易會連帶切除記憶中的情感溫度，老墨確認規矩不可逆。青蘿暗示深處或有「補情丸」但需付新代價。",
+    "小滿拒絕前往忘川茶鋪，執意帶著魂魄衝出鬼市想直接送魂，青蘿攔路警告魂魄無溫度需還魂湯暖過，否則妹妹醒來只是空殼。",
+    "小滿無視青蘿與老墨警告，硬闖鬼市帶走冰冷魂魄回藥舖，妹妹魂魄無溫度且無還魂湯配方，送魂極大風險。",
+    "小滿硬闖鬼市帶回冰冷魂魄，無還魂湯配方，師父只能用替代藥液嘗試強行送魂，妹妹能否醒來生死未卜。",
+    "師父用替代藥液強行送魂，妹妹指尖在天亮前微微動了一下，生死未卜。",
+    "小滿在晨光中決定強行送魂，青蘿驚訝於他失去情感後的冷漠與執著，老墨確認規矩生效，勝負一瞬間定奪。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "qwen3.6-35b-a3b",
+   "repair_notes": [],
+   "id": "n_0011",
+   "children": [
+    "n_0012"
+   ],
+   "created_at": "2026-09-25T14:57:28+08:00"
+  },
+  "n_0012": {
+   "parent": "n_0011",
+   "scene_id": "mountain_drugstore",
+   "player_input": {
+    "kind": "option",
+    "text": "將冷藥液灌入妹妹口中，強行送魂"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "藥液順著喉嚨滑入，妹妹的胸膛起伏了一瞬，隨後便徹底靜止。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "surprised",
+     "text": "咦？怎麼沒變空殼？這副軀殼……竟自己把冷湯給嚥下去了？"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "魂魄入竅，雖無溫，卻有根。算是僥倖。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "小哥兒，你以為切掉的是「捨不得」，其實你切掉的是「恐懼」呀。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "因為不再害怕失去，所以敢把冷透的魂硬塞進去。這算哪門子的代價？"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "醒了就好。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "晨光灑在床頭，妹妹的眼睫毛顫動兩下，緩緩睜開。眸中雖無神采，卻有呼吸。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "none",
+    "options": [
+     "坐在床邊靜靜看著妹妹",
+     "去櫃檯倒一杯熱水給妹妹",
+     "出門去買還魂湯配方",
+     "轉身離開藥舖去爬山"
+    ],
+    "state_changes": {
+     "affection": {
+      "青蘿": 1,
+      "老墨": 1
+     },
+     "flags_add": [
+      "sister_awakened"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "小滿因失去「恐懼」，強行將冰冷魂魄灌入妹妹體內，妹妹奇蹟般醒來成為無情感的活人。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "青蘿": 4,
+     "老墨": -1
+    },
+    "flags": [
+     "first_meeting",
+     "memory_choice_pending",
+     "memory_exchanged",
+     "soul_retrieved",
+     "memory_lost",
+     "time_pressure",
+     "entered_deeper_market",
+     "learned_memory_emotion_cost",
+     "rushed_to_leave",
+     "refused_tea_house",
+     "forced_exit",
+     "soul_cold",
+     "no_recipe",
+     "memory_emotion_lost",
+     "forced_soul_return_attempt",
+     "no_recipe_risk",
+     "dawn_arriving",
+     "sister_finger_twitch",
+     "soul_cold_attempted",
+     "sister_awakened"
+    ],
+    "items": [
+     "繡花鞋(含妹妹魂魄)"
+    ]
+   },
+   "summary": [
+    "小滿獨自闖入鬼市入口，青蘿與老墨雙雙現身攔路，老墨直指贖魂需以記憶為價。",
+    "老墨拒絕秘方交易，堅持只收記憶；青蘿對主角指尖藥香感興趣，催促主角在三更盡前選擇要切除的記憶。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價。",
+    "小滿發現剛交易掉的記憶已無法回憶細節，老墨拒絕反悔，青蘿提示鬼市深處有還魂湯配方但需付代價，並警告天亮前必須完成送魂。",
+    "小滿跟隨青蘿指引進入鬼市深處尋找還魂湯配方，老墨指明忘川茶鋪位置並警告不賒欠。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價：失去記憶後連「捨不得」的感覺都會消失。",
+    "小滿追問青蘿關於「捨不得感覺也被拿走」的含義，青蘿解釋鬼市交易會連帶切除記憶中的情感溫度，老墨確認規矩不可逆。青蘿暗示深處或有「補情丸」但需付新代價。",
+    "小滿拒絕前往忘川茶鋪，執意帶著魂魄衝出鬼市想直接送魂，青蘿攔路警告魂魄無溫度需還魂湯暖過，否則妹妹醒來只是空殼。",
+    "小滿無視青蘿與老墨警告，硬闖鬼市帶走冰冷魂魄回藥舖，妹妹魂魄無溫度且無還魂湯配方，送魂極大風險。",
+    "小滿硬闖鬼市帶回冰冷魂魄，無還魂湯配方，師父只能用替代藥液嘗試強行送魂，妹妹能否醒來生死未卜。",
+    "師父用替代藥液強行送魂，妹妹指尖在天亮前微微動了一下，生死未卜。",
+    "小滿在晨光中決定強行送魂，青蘿驚訝於他失去情感後的冷漠與執著，老墨確認規矩生效，勝負一瞬間定奪。",
+    "小滿因失去「恐懼」，強行將冰冷魂魄灌入妹妹體內，妹妹奇蹟般醒來成為無情感的活人。"
+   ],
+   "bgm_mood": "warm",
+   "weather": "none",
+   "model": "qwen3.6-35b-a3b",
+   "repair_notes": [],
+   "id": "n_0012",
+   "children": [
+    "n_0013"
+   ],
+   "created_at": "2026-09-25T14:58:12+08:00"
+  },
+  "n_0013": {
+   "parent": "n_0012",
+   "scene_id": "mountain_drugstore",
+   "player_input": {
+    "kind": "free",
+    "text": "我決定不再拖延，現在就賭上一切，把這件事做個了斷。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "晨光穿透紙窗，灑在妹妹蒼白的臉上。她胸膛緩緩起伏，呼吸平穩，雙目睜開——眼底清澈如古井無波，沒有喜悅，沒有困惑，更沒有認出哥哥的光亮。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（站在床尾，雙手環胸，金瞳倒映著妹妹的臉）醒了是醒了。喔對，她大概不記得你熬藥守夜的味道了，也不記得被蚊子咬會撒嬌喊哥哥。那些「捨不得」啊、「怕失去」啊，全在你那刀切記憶的時候順道切乾淨了。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（倚在門框，算盤珠子輕撥，聲音平淡）交易完成。魂魄歸位，記憶歸市。鬼市不欠債，陽間不留客。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "小滿",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（聲音平靜，聽不出悲喜）她活著。呼吸在，脈搏在。這就夠了。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（輕笑，尾音裡頭卻沒了調笑的輕佻）好個「這就夠了」。小哥兒，你連「心疼」都沒了，還能叫哥哥嗎？妹妹醒來看你，眼裡只有「認得這張臉」，沒有「愛這張臉」。這樣的活著，贏了沒？"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "妹妹轉頭，目光掠過你臉龐，落在窗外飛過的鳥影上。她伸手想摸，指尖觸到窗櫺冰涼木紋，沒有縮回，也沒有笑。你想伸手握住她手，指尖卻在半空停住——心口空落落的，找不著一絲酸澀，連「想哭」這個念頭都生不出來。"
+    },
+    {
+     "kind": "character",
+     "speaker": "老墨",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（收起算盤，轉身邁步）天亮了。鬼市門關。下次若有記憶想賣，隨時歡迎。"
+    },
+    {
+     "kind": "character",
+     "speaker": "青蘿",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（鈴鐺輕響，身形化作一縷青煙鑽入晨光）拜拜囉，無情的小哥兒。妹妹會長大、會變老、會忘記你——而你連「怕她忘記」都不會怕了。這才是……最公平的交易哦～"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "sad",
+    "weather": "none",
+    "options": [],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "ending_achieved"
+     ],
+     "items_add": [],
+     "items_remove": [
+      "繡花鞋(含妹妹魂魄)"
+     ]
+    },
+    "summary_update": "小滿強行以冰冷藥液送魂，妹妹奇蹟甦醒，卻因小滿先前失去「恐懼」與「捨不得」的情感，成為無情感的活人；小滿亦無法為此悲傷，兄妹倆在晨光中陷入永恆的平靜空洞。",
+    "ending": {
+     "type": "bad",
+     "title": "無情甦醒"
+    }
+   },
+   "state": {
+    "affection": {
+     "青蘿": 4,
+     "老墨": -1
+    },
+    "flags": [
+     "first_meeting",
+     "memory_choice_pending",
+     "memory_exchanged",
+     "soul_retrieved",
+     "memory_lost",
+     "time_pressure",
+     "entered_deeper_market",
+     "learned_memory_emotion_cost",
+     "rushed_to_leave",
+     "refused_tea_house",
+     "forced_exit",
+     "soul_cold",
+     "no_recipe",
+     "memory_emotion_lost",
+     "forced_soul_return_attempt",
+     "no_recipe_risk",
+     "dawn_arriving",
+     "sister_finger_twitch",
+     "soul_cold_attempted",
+     "sister_awakened",
+     "ending_achieved"
+    ],
+    "items": []
+   },
+   "summary": [
+    "小滿獨自闖入鬼市入口，青蘿與老墨雙雙現身攔路，老墨直指贖魂需以記憶為價。",
+    "老墨拒絕秘方交易，堅持只收記憶；青蘿對主角指尖藥香感興趣，催促主角在三更盡前選擇要切除的記憶。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價。",
+    "小滿發現剛交易掉的記憶已無法回憶細節，老墨拒絕反悔，青蘿提示鬼市深處有還魂湯配方但需付代價，並警告天亮前必須完成送魂。",
+    "小滿跟隨青蘿指引進入鬼市深處尋找還魂湯配方，老墨指明忘川茶鋪位置並警告不賒欠。",
+    "小滿以「整夜為妹妹熬藥守護」的珍貴記憶，成功從老墨手中贖回妹妹的魂魄，封存在繡花鞋中。青蘿在旁調侃暗示代價：失去記憶後連「捨不得」的感覺都會消失。",
+    "小滿追問青蘿關於「捨不得感覺也被拿走」的含義，青蘿解釋鬼市交易會連帶切除記憶中的情感溫度，老墨確認規矩不可逆。青蘿暗示深處或有「補情丸」但需付新代價。",
+    "小滿拒絕前往忘川茶鋪，執意帶著魂魄衝出鬼市想直接送魂，青蘿攔路警告魂魄無溫度需還魂湯暖過，否則妹妹醒來只是空殼。",
+    "小滿無視青蘿與老墨警告，硬闖鬼市帶走冰冷魂魄回藥舖，妹妹魂魄無溫度且無還魂湯配方，送魂極大風險。",
+    "小滿硬闖鬼市帶回冰冷魂魄，無還魂湯配方，師父只能用替代藥液嘗試強行送魂，妹妹能否醒來生死未卜。",
+    "師父用替代藥液強行送魂，妹妹指尖在天亮前微微動了一下，生死未卜。",
+    "小滿在晨光中決定強行送魂，青蘿驚訝於他失去情感後的冷漠與執著，老墨確認規矩生效，勝負一瞬間定奪。",
+    "小滿因失去「恐懼」，強行將冰冷魂魄灌入妹妹體內，妹妹奇蹟般醒來成為無情感的活人。",
+    "小滿強行以冰冷藥液送魂，妹妹奇蹟甦醒，卻因小滿先前失去「恐懼」與「捨不得」的情感，成為無情感的活人；小滿亦無法為此悲傷，兄妹倆在晨光中陷入永恆的平靜空洞。"
+   ],
+   "bgm_mood": "sad",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0013",
+   "children": [],
+   "created_at": "2026-09-25T14:58:35+08:00"
+  }
+ }
+}

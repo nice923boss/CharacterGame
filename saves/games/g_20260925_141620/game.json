@@ -1,0 +1,54 @@
+{
+ "id": "g_20260925_141620",
+ "created_at": "2026-09-25T14:16:20+08:00",
+ "seed": 114293407,
+ "lang": "en",
+ "title": "The Ghost Fleet's Gold",
+ "style_en": "1715 Caribbean pirate island, lush jungle ruins, golden sunset, swashbuckling adventure aesthetic",
+ "world": {
+  "era": "1715, the golden age of sail",
+  "place": "Isla Serpiente, a jungle island in the Caribbean",
+  "genre": "swashbuckling adventure",
+  "tone": "bold and humorous",
+  "extra": "A ghost fleet rises from the sea every hundred years to reclaim the island's cursed gold",
+  "goal": "Find the cursed treasure and lift the curse before the ghost fleet arrives at dawn"
+ },
+ "protagonist": {
+  "name": "Kit",
+  "profile": "a cabin girl who just inherited a leaky ship and a treasure map"
+ },
+ "characters": [
+  {
+   "id": "c1",
+   "name": "Red Vane",
+   "appearance": "45-year-old pirate captain, wild red beard and hair under a black tricorn hat, one gold earring, crimson coat with brass buttons",
+   "personality": "boastful, greedy, secretly brave",
+   "speech": "loud and theatrical, full of sea slang",
+   "relationship": "a rival captain who wants the same treasure",
+   "appearance_en": "45-year-old male, wild red hair and beard, black tricorn hat, crimson coat with brass buttons, gold earring",
+   "seed": 114293424
+  },
+  {
+   "id": "c2",
+   "name": "Solenne",
+   "appearance": "22-year-old woman, long wavy black hair, deep brown eyes, white shirt with rolled sleeves, navy sash, brass spyglass",
+   "personality": "clever, calm, loves the stars",
+   "speech": "precise, speaks in compass bearings",
+   "relationship": "your navigator and only crew member",
+   "appearance_en": "22-year-old female, long wavy black hair, deep brown eyes, white shirt with rolled sleeves, navy sash, brass spyglass",
+   "seed": 114293441
+  }
+ ],
+ "scenes": {
+  "jungle_beach_sunset": {
+   "name": "Jungle Beach at Sunset",
+   "image_prompt": "Caribbean beach at golden hour, turquoise water, white sand, dense jungle backdrop, ancient stone ruins half-buried in vines, dramatic golden sunlight filtering through palm fronds, scattered treasure chests half-buried in sand, mysterious atmosphere"
+  },
+  "jungle_ridge_twilight": {
+   "name": "Jungle Ridge at Twilight",
+   "image_prompt": "steep jungle ridge path at twilight, volcanic rock outcrops, dense vines and ferns, twin palm silhouettes on the skyline, fading orange light filtering through canopy, bioluminescent fungi on forest floor"
+  }
+ },
+ "first_scene": "jungle_beach_sunset",
+ "setup_model": "nvidia/nemotron-3-ultra-550b-a55b"
+}

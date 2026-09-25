@@ -1,0 +1,18 @@
+{
+  "key": "zh2_deep_station",
+  "lang": "zh",
+  "aim": "good",
+  "game_id": "g_20260925_140053",
+  "title": "深海倒數",
+  "turns": 9,
+  "player_turns": 8,
+  "scenes": 2,
+  "models": [
+    "nvidia/nemotron-3-ultra-550b-a55b"
+  ],
+  "ending": {
+    "type": "good",
+    "title": "深海歸途"
+  },
+  "minutes": 5.8
+}

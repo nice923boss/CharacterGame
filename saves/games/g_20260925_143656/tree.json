@@ -1,0 +1,1034 @@
+{
+ "root": "n_0000",
+ "next": 8,
+ "nodes": {
+  "n_0000": {
+   "parent": null,
+   "scene_id": "sleeping_village_square",
+   "player_input": {
+    "kind": "opening",
+    "text": ""
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Honeyvale lies hushed beneath a silvered sky, every cottage window dark, every chimney cold. The cobblestones of the village square still hold the ghost of last night's moon festival — scattered ribbons, half-eaten star cookies, a lute left leaning against the well."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "No breath stirs the laundry lines. No dog barks at the night. The entire village sleeps under the festival's lingering enchantment, caught in dreams woven from honey-cake and moon-wine."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Only one figure moves. Pip, flour on their apron and determination in their step, stands before the great communal oven, the recipe for the Moon Loaf clutched in trembling hands."
+    },
+    {
+     "kind": "character",
+     "speaker": "Granny Wren",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "Up already, dumpling? The yeast won't rise if you stare at it — though I suppose the dough's been waiting long enough."
+    },
+    {
+     "kind": "character",
+     "speaker": "Granny Wren",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Her form shimmers at the oven's edge, half-there, half-lost to the same spell that claims the others. Her spectacles catch starlight that shouldn't exist. \"Three risings before moonrise, remember. Salt the water, not the flour. And for mercy's sake — don't forget the dream-honey.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Rowan",
+     "char_id": "c2",
+     "expr": "surprised",
+     "text": "Special delivery for the baker with the impossible deadline! Rowan skids into the square, satchel bouncing, breath clouding. \"Thought you might need these — fresh from the Whispering Woods, courtesy of a very confused owl.\""
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "none",
+    "options": [
+     "Ask Granny Wren about the dream-honey",
+     "Take the ingredients from Rowan and thank him",
+     "Check the recipe and start the first rising immediately"
+    ],
+    "state_changes": {
+     "affection": {
+      "Rowan": 1
+     },
+     "flags_add": [
+      "met_rowan",
+      "moon_loaf_quest_started"
+     ],
+     "items_add": [
+      "whispering_woods_ingredients"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "Pip stands alone in the sleeping village square, tasked with baking the Moon Loaf before moonrise. Granny Wren appears half-dreaming to give crucial recipe advice, while Rowan arrives with mysterious ingredients from the Whispering Woods.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Granny Wren": 0,
+     "Rowan": 1
+    },
+    "flags": [
+     "met_rowan",
+     "moon_loaf_quest_started"
+    ],
+    "items": [
+     "whispering_woods_ingredients"
+    ]
+   },
+   "summary": [
+    "Pip stands alone in the sleeping village square, tasked with baking the Moon Loaf before moonrise. Granny Wren appears half-dreaming to give crucial recipe advice, while Rowan arrives with mysterious ingredients from the Whispering Woods."
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0000",
+   "children": [
+    "n_0001"
+   ],
+   "created_at": "2026-09-25T14:37:27+08:00"
+  },
+  "n_0001": {
+   "parent": "n_0000",
+   "scene_id": "sleeping_village_square",
+   "player_input": {
+    "kind": "option",
+    "text": "Take the ingredients from Rowan and thank him"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Pip steps forward, hands outstretched, and Rowan's satchel yields its secrets — a vial of silvered sap that hums against glass, mushrooms glowing with borrowed starlight, and a pouch of flour that whispers when the wind isn't blowing."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rowan",
+     "char_id": "c2",
+     "expr": "smile",
+     "text": "Careful with the whisper-flour, dumpling — it gets chatty if you leave the pouch untied. Learned that the hard way. Owl's still sulking about the detour."
+    },
+    {
+     "kind": "character",
+     "speaker": "Granny Wren",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "Good boy, good boy. The woods remember those who ask politely. Now then — Pip, dumpling, the oven won't light itself."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The ingredients settle into Pip's arms, cool and faintly vibrating, each one carrying the woods' hush. Somewhere above, the moon climbs a little higher."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Pip",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Thank you, Rowan. All of this... it means more than I can say."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "none",
+    "options": [
+     "Begin mixing the Moon Loaf dough",
+     "Ask Granny Wren about the dream-honey",
+     "Check the whispering ingredients more closely"
+    ],
+    "state_changes": {
+     "affection": {
+      "Rowan": 1
+     },
+     "flags_add": [
+      "ingredients_received"
+     ],
+     "items_add": [
+      "silvered_sap",
+      "starlight_mushrooms",
+      "whisper_flour"
+     ],
+     "items_remove": [
+      "whispering_woods_ingredients"
+     ]
+    },
+    "summary_update": "Pip receives the Whispering Woods ingredients from Rowan — silvered sap, starlight mushrooms, and whisper-flour — and thanks him. Granny Wren urges Pip to start baking as the moon rises higher.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Granny Wren": 0,
+     "Rowan": 2
+    },
+    "flags": [
+     "met_rowan",
+     "moon_loaf_quest_started",
+     "ingredients_received"
+    ],
+    "items": [
+     "silvered_sap",
+     "starlight_mushrooms",
+     "whisper_flour"
+    ]
+   },
+   "summary": [
+    "Pip stands alone in the sleeping village square, tasked with baking the Moon Loaf before moonrise. Granny Wren appears half-dreaming to give crucial recipe advice, while Rowan arrives with mysterious ingredients from the Whispering Woods.",
+    "Pip receives the Whispering Woods ingredients from Rowan — silvered sap, starlight mushrooms, and whisper-flour — and thanks him. Granny Wren urges Pip to start baking as the moon rises higher."
+   ],
+   "bgm_mood": "warm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0001",
+   "children": [
+    "n_0002"
+   ],
+   "created_at": "2026-09-25T14:37:34+08:00"
+  },
+  "n_0002": {
+   "parent": "n_0001",
+   "scene_id": "sleeping_village_square",
+   "player_input": {
+    "kind": "option",
+    "text": "Check the whispering ingredients more closely"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Pip cradles the three treasures from the Whispering Woods, each one alive with a different kind of quiet magic. The silvered sap pulses slow and steady in its vial, a heartbeat of liquid moonlight."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The starlight mushrooms rest like fallen constellations in Pip's palm, their caps glowing faint blue-green, releasing tiny spores that drift upward and vanish before they can touch the ground."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The whisper-flour pouch murmurs against Pip's wrist — not words exactly, more like the memory of wind through pine needles, or a lullaby half-remembered from childhood. A few grains escape through the drawstring and float upward, defying gravity."
+    },
+    {
+     "kind": "character",
+     "speaker": "Granny Wren",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Ah, listening close, are you? Good instinct, dumpling. The sap binds the loaf's crumb — gives it structure that won't crumble when the spell breaks. Mushrooms lend the rise, light as a dream's first breath. And the flour..."
+    },
+    {
+     "kind": "character",
+     "speaker": "Granny Wren",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She taps her spectacles, peering over them with twinkling eyes. \"The flour carries the village's sleeping voices. Knead it gentle. Each fold is a name you're tucking back into wakefulness.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Rowan",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Reckon that's the most poetic thing I've ever heard about flour. And I've heard Granny wax lyrical about sourdough starters for three hours straight. \"It's alive, Rowan! It has feelings, Rowan!\" He mimics in a wobbly falsetto, grinning."
+    },
+    {
+     "kind": "character",
+     "speaker": "Granny Wren",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "It does have feelings, you great oaf. And right now it's feeling ignored. Oven. Now. Moon waits for no baker."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "none",
+    "options": [
+     "Begin kneading the dough",
+     "Ask Granny Wren about the dream-honey",
+     "Ask Rowan about the Whispering Woods"
+    ],
+    "state_changes": {
+     "affection": {
+      "Rowan": 1
+     },
+     "flags_add": [
+      "ingredients_inspected"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Pip examines the three magical ingredients closely while Granny Wren explains their purpose in the Moon Loaf — silvered sap for structure, starlight mushrooms for rise, and whisper-flour carrying the sleeping villagers' voices. Rowan jokes about Granny's sourdough lectures.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Granny Wren": 0,
+     "Rowan": 3
+    },
+    "flags": [
+     "met_rowan",
+     "moon_loaf_quest_started",
+     "ingredients_received",
+     "ingredients_inspected"
+    ],
+    "items": [
+     "silvered_sap",
+     "starlight_mushrooms",
+     "whisper_flour"
+    ]
+   },
+   "summary": [
+    "Pip stands alone in the sleeping village square, tasked with baking the Moon Loaf before moonrise. Granny Wren appears half-dreaming to give crucial recipe advice, while Rowan arrives with mysterious ingredients from the Whispering Woods.",
+    "Pip receives the Whispering Woods ingredients from Rowan — silvered sap, starlight mushrooms, and whisper-flour — and thanks him. Granny Wren urges Pip to start baking as the moon rises higher.",
+    "Pip examines the three magical ingredients closely while Granny Wren explains their purpose in the Moon Loaf — silvered sap for structure, starlight mushrooms for rise, and whisper-flour carrying the sleeping villagers' voices. Rowan jokes about Granny's sourdough lectures."
+   ],
+   "bgm_mood": "warm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0002",
+   "children": [
+    "n_0003"
+   ],
+   "created_at": "2026-09-25T14:38:08+08:00"
+  },
+  "n_0003": {
+   "parent": "n_0002",
+   "scene_id": "sleeping_village_square",
+   "player_input": {
+    "kind": "free",
+    "text": "I ask Granny Wren in her dream for the Moon Loaf recipe."
+   },
+   "lines": [
+    {
+     "kind": "protagonist",
+     "speaker": "Pip",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Granny Wren, I need the full recipe. Every step, every measurement — the moon's climbing and I can't afford to guess."
+    },
+    {
+     "kind": "character",
+     "speaker": "Granny Wren",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Recipe, is it? Her form flickers, spectacles catching moonlight that doesn't exist. \"Oh, dumpling. The recipe's not written down anywhere useful. It's here.\" She taps her temple, then her chest. \"And here. And there — in the way your grandmother taught you to test water temperature with your wrist, in the patience your hands already know.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Granny Wren",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "But since you're asking... Her voice steadies, taking on the rhythm of something recited a thousand times. \"One cup silvered sap, warmed to blood-heat. Three handfuls starlight mushrooms, chopped fine as fairy dust. Four cups whisper-flour, sifted through silk. A pinch of dream-honey from the hives beyond the old stone bridge —\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Granny Wren",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She pauses, brow furrowing, translucent fingers counting on air. \"Salt from the tears of someone who loves this village. Knead thirteen folds — no more, no less. First rise until the dough sings. Second rise until it remembers its name. Third rise... third rise...\" Her eyes go distant, fixed on something only she can see. \"The third rise waits for the moon's first touch on the oven door.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Rowan",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "That's... oddly specific and completely vague at the same time. He scratches his head. \"Dream-honey from which hives? Tears of who? Thirteen folds exactly? What happens if I — er, if we — do twelve? Fourteen?\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Granny Wren",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Her gaze snaps back, sharp despite the dream-haze. \"Then the loaf fails, courier. And the village sleeps until the world forgets its name. Now. Dream-honey. You know the hives. Go.\""
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The oven's cold mouth yawns, bricks dark and patient. Somewhere beyond the square, a rooster crows in its sleep — a dream-sound, wrong and hollow. The moon climbs higher, indifferent."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "Run to the old stone bridge for dream-honey",
+     "Ask Rowan to fetch dream-honey while I start dough",
+     "Knead the dough first, worry about dream-honey after",
+     "Ask Granny Wren who loves the village enough for the salt"
+    ],
+    "state_changes": {
+     "affection": {
+      "Granny Wren": 1
+     },
+     "flags_add": [
+      "recipe_received"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Granny Wren recited the Moon Loaf recipe from memory: silvered sap, starlight mushrooms, whisper-flour, dream-honey from hives beyond the old stone bridge, salt from a villager's tears, thirteen folds, three risings with the third waiting for moonlight on the oven door. She urged Pip to fetch dream-honey immediately.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Granny Wren": 1,
+     "Rowan": 3
+    },
+    "flags": [
+     "met_rowan",
+     "moon_loaf_quest_started",
+     "ingredients_received",
+     "ingredients_inspected",
+     "recipe_received"
+    ],
+    "items": [
+     "silvered_sap",
+     "starlight_mushrooms",
+     "whisper_flour"
+    ]
+   },
+   "summary": [
+    "Pip stands alone in the sleeping village square, tasked with baking the Moon Loaf before moonrise. Granny Wren appears half-dreaming to give crucial recipe advice, while Rowan arrives with mysterious ingredients from the Whispering Woods.",
+    "Pip receives the Whispering Woods ingredients from Rowan — silvered sap, starlight mushrooms, and whisper-flour — and thanks him. Granny Wren urges Pip to start baking as the moon rises higher.",
+    "Pip examines the three magical ingredients closely while Granny Wren explains their purpose in the Moon Loaf — silvered sap for structure, starlight mushrooms for rise, and whisper-flour carrying the sleeping villagers' voices. Rowan jokes about Granny's sourdough lectures.",
+    "Granny Wren recited the Moon Loaf recipe from memory: silvered sap, starlight mushrooms, whisper-flour, dream-honey from hives beyond the old stone bridge, salt from a villager's tears, thirteen folds, three risings with the third waiting for moonlight on the oven door. She urged Pip to fetch dream-honey immediately."
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0003",
+   "children": [
+    "n_0004"
+   ],
+   "created_at": "2026-09-25T14:38:26+08:00"
+  },
+  "n_0004": {
+   "parent": "n_0003",
+   "scene_id": "dream_hives",
+   "player_input": {
+    "kind": "option",
+    "text": "Run to the old stone bridge for dream-honey"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Pip doesn't hesitate. Boots pound cobblestones, then packed earth, the village square falling away behind them as they sprint toward the old stone bridge — its arches humpbacked and moss-slick, spanning the whisper-quiet river that cuts Honeyvale from the wild meadows beyond."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The hives sit in a sun-dappled hollow just past the bridge's far end, wooden boxes painted with faded suns and moons. But there's no sun now, only moonlight silvering the grass, and the bees... the bees don't buzz. They crawl. Slow, deliberate, golden bodies moving across comb like living honey, wings folded, utterly silent."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rowan",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "He's right on Pip's heels, breath ragged, satchel thumping his hip. \"Right. Dream-honey. Bees that don't sleep. Easy. Simple. Why do I feel like 'easy' is a lie I tell myself?\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Granny Wren",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Her voice drifts on the night air, untethered from distance. \"The hives beyond the bridge, dumpling. Smoke them gentle — lavender if you've got it, pine needles if you don't. And whatever you do... don't let them sting you. A dream-bee's sting puts the baker to sleep, and we've only got the one.\""
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Pip reaches the first hive. The bees cluster at the entrance, a living curtain. No sound. No frantic flight. Just the slow, heavy crawl of insects drunk on something sweeter than nectar. A smoker sits on a nearby post, cold and unused."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Pip",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Lavender... I need lavender for the smoker. There's some growing by the herb spiral near Granny's cottage — but that's back toward the village."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rowan",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "I saw lavender back by the square! I can fetch it — I'm faster than I look. He's already turning, courier's legs coiled. \"Just... don't open a hive without smoke, alright? Promise me, Pip.\""
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The moon hangs huge and pale above the meadow, casting long shadows from the hives. The bees crawl on, patient and terrible in their silence. Time stretches thin."
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "dream_hives",
+     "name": "Dream Hives",
+     "image_prompt": "Moonlit meadow beyond an old stone bridge, wooden beehives painted with faded suns and moons, silent golden bees crawling on comb, a cold smoker on a wooden post, lavender growing in a distant herb spiral, silver light on grass, no people"
+    },
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "Run back to the village for lavender yourself",
+     "Wait for Rowan to return with lavender",
+     "Try using pine needles from the meadow for smoke",
+     "Attempt to harvest honey without smoke"
+    ],
+    "state_changes": {
+     "affection": {
+      "Rowan": 1
+     },
+     "flags_add": [
+      "at_dream_hives"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Pip and Rowan reach the dream-hives beyond the old stone bridge. The bees are silent and crawling, not flying. Granny Wren warns that dream-bee stings cause magical sleep. Rowan offers to fetch lavender for the smoker from the village while Pip waits at the hives.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Granny Wren": 1,
+     "Rowan": 4
+    },
+    "flags": [
+     "met_rowan",
+     "moon_loaf_quest_started",
+     "ingredients_received",
+     "ingredients_inspected",
+     "recipe_received",
+     "at_dream_hives"
+    ],
+    "items": [
+     "silvered_sap",
+     "starlight_mushrooms",
+     "whisper_flour"
+    ]
+   },
+   "summary": [
+    "Pip stands alone in the sleeping village square, tasked with baking the Moon Loaf before moonrise. Granny Wren appears half-dreaming to give crucial recipe advice, while Rowan arrives with mysterious ingredients from the Whispering Woods.",
+    "Pip receives the Whispering Woods ingredients from Rowan — silvered sap, starlight mushrooms, and whisper-flour — and thanks him. Granny Wren urges Pip to start baking as the moon rises higher.",
+    "Pip examines the three magical ingredients closely while Granny Wren explains their purpose in the Moon Loaf — silvered sap for structure, starlight mushrooms for rise, and whisper-flour carrying the sleeping villagers' voices. Rowan jokes about Granny's sourdough lectures.",
+    "Granny Wren recited the Moon Loaf recipe from memory: silvered sap, starlight mushrooms, whisper-flour, dream-honey from hives beyond the old stone bridge, salt from a villager's tears, thirteen folds, three risings with the third waiting for moonlight on the oven door. She urged Pip to fetch dream-honey immediately.",
+    "Pip and Rowan reach the dream-hives beyond the old stone bridge. The bees are silent and crawling, not flying. Granny Wren warns that dream-bee stings cause magical sleep. Rowan offers to fetch lavender for the smoker from the village while Pip waits at the hives."
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0004",
+   "children": [
+    "n_0005"
+   ],
+   "created_at": "2026-09-25T14:38:37+08:00"
+  },
+  "n_0005": {
+   "parent": "n_0004",
+   "scene_id": "moonflower_hill",
+   "player_input": {
+    "kind": "free",
+    "text": "Rowan and I gather the last ingredient, moonflower honey, from the hill above the village."
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Rowan hesitates, one foot already turned toward the village. The lavender grows by Granny's herb spiral — back the way they came, through the sleeping square, past the cold oven. But Pip's gaze has drifted upward, past the silent hives, to the hill that rises behind the meadow."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Pip",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Moonflower honey. The recipe said dream-honey from the hives beyond the bridge... but moonflowers only bloom on the hill above the village, where the moonlight hits first."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rowan",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "He pauses, head tilting. \"Moonflowers? On the hill? I've run these paths a hundred times — never seen a single moonflower up there. Just thistles and sheep that bite.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Granny Wren",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Her voice drifts closer, spectral and smelling of cinnamon. \"The hill, dumpling. Where the moon kisses the earth first. The dream-bees don't crawl — they fly there, drunk on moonflower nectar. That's the honey you need. This lot...\" She gestures at the silent crawlers. \"They're dreaming too deep. The real honey's waiting where the light touches.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Rowan",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Courier's instincts war with courier's orders. \"Right. Hill. Moonflowers. Flying bees. Lavender... lavender can wait if the honey's up there. But Pip —\" He meets Pip's eyes, hazel bright in moonlight. \"The hill path's steep, and the moon's not waiting. One of us goes up, one goes back for lavender. Or we both go up and hope smoke isn't needed.\""
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The hives behind them crawl on, patient and terrible. The hill rises dark and steep, crowned with something that might be silver blooms. The village sleeps on, unaware. The oven waits cold. The moon climbs."
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "moonflower_hill",
+     "name": "Moonflower Hill",
+     "image_prompt": "steep grassy hill under full moonlight, silver moonflowers glowing on the slope, dark silhouette of village below, ancient gnarled tree at hilltop, cool blue-white lighting"
+    },
+    "bgm_mood": "mysterious",
+    "weather": "none",
+    "options": [
+     "Pip climbs the hill alone while Rowan fetches lavender",
+     "Both climb the hill together for moonflower honey",
+     "Pip fetches lavender while Rowan climbs the hill",
+     "Pip tries smoking the silent hives first with pine needles"
+    ],
+    "state_changes": {
+     "affection": {
+      "Rowan": 1
+     },
+     "flags_add": [
+      "moonflower_honey_clue"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Granny Wren reveals the true dream-honey comes from moonflowers on the hill above the village, not the silent hives. Rowan and Pip must decide who climbs the hill and who fetches lavender for the smoker.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Granny Wren": 1,
+     "Rowan": 5
+    },
+    "flags": [
+     "met_rowan",
+     "moon_loaf_quest_started",
+     "ingredients_received",
+     "ingredients_inspected",
+     "recipe_received",
+     "at_dream_hives",
+     "moonflower_honey_clue"
+    ],
+    "items": [
+     "silvered_sap",
+     "starlight_mushrooms",
+     "whisper_flour"
+    ]
+   },
+   "summary": [
+    "Pip stands alone in the sleeping village square, tasked with baking the Moon Loaf before moonrise. Granny Wren appears half-dreaming to give crucial recipe advice, while Rowan arrives with mysterious ingredients from the Whispering Woods.",
+    "Pip receives the Whispering Woods ingredients from Rowan — silvered sap, starlight mushrooms, and whisper-flour — and thanks him. Granny Wren urges Pip to start baking as the moon rises higher.",
+    "Pip examines the three magical ingredients closely while Granny Wren explains their purpose in the Moon Loaf — silvered sap for structure, starlight mushrooms for rise, and whisper-flour carrying the sleeping villagers' voices. Rowan jokes about Granny's sourdough lectures.",
+    "Granny Wren recited the Moon Loaf recipe from memory: silvered sap, starlight mushrooms, whisper-flour, dream-honey from hives beyond the old stone bridge, salt from a villager's tears, thirteen folds, three risings with the third waiting for moonlight on the oven door. She urged Pip to fetch dream-honey immediately.",
+    "Pip and Rowan reach the dream-hives beyond the old stone bridge. The bees are silent and crawling, not flying. Granny Wren warns that dream-bee stings cause magical sleep. Rowan offers to fetch lavender for the smoker from the village while Pip waits at the hives.",
+    "Granny Wren reveals the true dream-honey comes from moonflowers on the hill above the village, not the silent hives. Rowan and Pip must decide who climbs the hill and who fetches lavender for the smoker."
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0005",
+   "children": [
+    "n_0006"
+   ],
+   "created_at": "2026-09-25T14:38:54+08:00"
+  },
+  "n_0006": {
+   "parent": "n_0005",
+   "scene_id": "sleeping_village_square",
+   "player_input": {
+    "kind": "option",
+    "text": "Pip fetches lavender while Rowan climbs the hill"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Pip's boots are already turning toward the village before the words fully form. The lavender grows thick and fragrant by Granny's herb spiral — a known quantity, a sure thing. The hill is unknown, steep, and the moon doesn't pause for hesitation."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Pip",
+     "char_id": null,
+     "expr": "calm",
+     "text": "I'll get the lavender. You know the paths better than anyone — if the moonflowers are up there, you'll find them faster than me."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rowan",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "He grins, that lopsided expression that crinkles the corners of his hazel eyes. \"Right. Hill. Moonflowers. Flying dream-bees. No pressure.\" He slaps his satchel, checking something inside. \"If I'm not back by the time the moon hits the oven door... start without me. I'll catch up.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Granny Wren",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Her spectral form flickers between them, silver hair catching moonlight. \"Good instincts, both of you. Dumpling — the herb spiral, third ring from the center. Lavender with the grey-green leaves, not the purple-stemmed kind. That one's for headaches. Courier — the hill path splits at the old oak. Take the left fork. The right leads to the sheep that bite, and they bite hard.\""
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Rowan is already moving, long strides eating the distance toward the dark hill silhouette. His courier's cloak flares behind him, brass buckles catching the moonlight. \"Left fork! Got it! Don't let the bedbugs bite — or the dream-bees sting!\""
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Pip spins toward the village, the old stone bridge a dark arch behind them. The river whispers below, indifferent to urgency. The herb spiral waits near Granny's cottage, past the sleeping square, past the cold oven. Every step echoes on cobblestones that haven't felt a footfall in hours."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The moon climbs. Higher. Brighter. Casting long shadows from chimneys and weathervanes. Somewhere on the hill, Rowan's figure shrinks against the slope. Somewhere in the hives, bees crawl in dream-silence. The oven waits."
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "sleeping_village_square",
+     "name": "Sleeping Village Square",
+     "image_prompt": "cobblestone village square at twilight, honey-gold thatched cottages with glowing windows, silent bakery with chimney smoke frozen mid-air, moonlit cobblestones, soft magical starlight, no people"
+    },
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "Sprint through the square to Granny's herb spiral",
+     "Pause to check the oven on the way past",
+     "Call out to any waking villagers (there are none)",
+     "Grab lavender quickly and sprint back to the hives"
+    ],
+    "state_changes": {
+     "affection": {
+      "Granny Wren": 1,
+      "Rowan": 2
+     },
+     "flags_add": [
+      "split_up",
+      "pip_fetching_lavender",
+      "rowan_on_hill"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Pip and Rowan split up — Rowan races to Moonflower Hill for dream-honey while Pip sprints back through the sleeping village to fetch lavender for the smoker from Granny's herb spiral. Granny Wren gave final guidance to both before they separated.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Granny Wren": 2,
+     "Rowan": 7
+    },
+    "flags": [
+     "met_rowan",
+     "moon_loaf_quest_started",
+     "ingredients_received",
+     "ingredients_inspected",
+     "recipe_received",
+     "at_dream_hives",
+     "moonflower_honey_clue",
+     "split_up",
+     "pip_fetching_lavender",
+     "rowan_on_hill"
+    ],
+    "items": [
+     "silvered_sap",
+     "starlight_mushrooms",
+     "whisper_flour"
+    ]
+   },
+   "summary": [
+    "Pip stands alone in the sleeping village square, tasked with baking the Moon Loaf before moonrise. Granny Wren appears half-dreaming to give crucial recipe advice, while Rowan arrives with mysterious ingredients from the Whispering Woods.",
+    "Pip receives the Whispering Woods ingredients from Rowan — silvered sap, starlight mushrooms, and whisper-flour — and thanks him. Granny Wren urges Pip to start baking as the moon rises higher.",
+    "Pip examines the three magical ingredients closely while Granny Wren explains their purpose in the Moon Loaf — silvered sap for structure, starlight mushrooms for rise, and whisper-flour carrying the sleeping villagers' voices. Rowan jokes about Granny's sourdough lectures.",
+    "Granny Wren recited the Moon Loaf recipe from memory: silvered sap, starlight mushrooms, whisper-flour, dream-honey from hives beyond the old stone bridge, salt from a villager's tears, thirteen folds, three risings with the third waiting for moonlight on the oven door. She urged Pip to fetch dream-honey immediately.",
+    "Pip and Rowan reach the dream-hives beyond the old stone bridge. The bees are silent and crawling, not flying. Granny Wren warns that dream-bee stings cause magical sleep. Rowan offers to fetch lavender for the smoker from the village while Pip waits at the hives.",
+    "Granny Wren reveals the true dream-honey comes from moonflowers on the hill above the village, not the silent hives. Rowan and Pip must decide who climbs the hill and who fetches lavender for the smoker.",
+    "Pip and Rowan split up — Rowan races to Moonflower Hill for dream-honey while Pip sprints back through the sleeping village to fetch lavender for the smoker from Granny's herb spiral. Granny Wren gave final guidance to both before they separated."
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0006",
+   "children": [
+    "n_0007"
+   ],
+   "created_at": "2026-09-25T14:39:21+08:00"
+  },
+  "n_0007": {
+   "parent": "n_0006",
+   "scene_id": "sleeping_village_square",
+   "player_input": {
+    "kind": "free",
+    "text": "I bake the Moon Loaf just as the moon rises and share it with the whole village."
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Pip bursts through the cottage door, lavender clutched tight against their chest, grey-green stems brushing their chin. The kitchen greets them with cold hearth and silent bowls — but the ingredients wait on the wooden table exactly where they left them: silvered sap humming in its vial, starlight mushrooms glowing faint as drowned stars, whisper-flour murmuring against its silk sack."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Hands move on instinct, on memory, on the recipe etched into muscle and marrow. Sap warmed to blood-heat in a copper pan. Mushrooms chopped fine as fairy dust, releasing spores that drift like breath held too long. Flour sifted through silk until it falls like snow. The lavender tucked into the smoker, lit with a spark struck flint-to-steel, smoke curling sweet and purple-grey."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Thirteen folds. No more, no less. Each one a name whispered into dough: Mrs. Higgins who always saved the heel of the loaf. Young Tomas who stole cinnamon buns. The baker's widow who wept salt into her apron. The village. The village. The village."
+    },
+    {
+     "kind": "character",
+     "speaker": "Granny Wren",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Her spectral form hovers by the hearth, spectacles catching firelight that doesn't exist yet. \"First rise until the dough sings, dumpling. Listen.\""
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The dough swells in its bowl, and from its depths rises a sound — not words, but harmony. A chord hummed by a hundred sleeping throats. The first rise complete."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Second rise. The dough remembers its name: Moon Loaf. Moon Loaf. Moon Loaf. The whisper-flour stills, satisfied."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Third rise. The bowl sits before the oven's dark mouth. Pip watches the door, watches the moon climb the sky's arched window. A sliver of silver touches cold brick. Then another. The dough shivers, rises one final time — golden, glowing, alive."
+    },
+    {
+     "kind": "character",
+     "speaker": "Rowan",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "The door bangs open, admitting night air and a breathless courier, satchel thumping, face flushed with triumph. \"Moonflower honey. Got it. Left fork, right fork, bees that sing instead of sting —\" He freezes, hazel eyes widening at the loaf crowned in the oven's mouth, steam rising sweet and silver. \"Did... did I miss it?\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Granny Wren",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "\"Just in time, courier. The honey. The loaf needs its crown.\""
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Pip drizzles the dream-honey — gold shot through with moonlight — across the loaf's domed crust. It drinks it in, glowing brighter. The oven door swings shut. The bake begins."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Minutes stretch. The moon climbs higher, full and heavy above Honeyvale. Inside the oven, magic kneads itself into bread. The village holds its breath in sleep."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The timer bell chimes — a sound like a heartbeat made audible. Pip opens the oven door."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The Moon Loaf emerges, perfect and steaming, its crust etched with silver veins that pulse faintly. The scent hits the air: cinnamon and starlight, lavender and tears, honey and home. It smells like waking up."
+    },
+    {
+     "kind": "character",
+     "speaker": "Granny Wren",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Her form solidifies, flickering less, smile widening. \"Well baked, dumpling. Well baked indeed.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Rowan",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "He laughs, wet and bright, wiping his sleeve across his face. \"We did it. You did it. The village is gonna wake up smelling fresh bread and wondering why their courier's crying into his cloak.\""
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Pip carries the loaf to the square, Rowan beside them, Granny Wren drifting behind. The sleeping villagers lie where they fell — on benches, in doorways, curled in the grass. Pip breaks the loaf. Thirteen pieces. No more, no less."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The first piece touches the baker's widow's lips. Her eyes flutter open, brown and wet with tears that taste of salt. She gasps — a sound like a lung remembering air."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Piece by piece, the village wakes. Mrs. Higgins sits up, demanding to know who let the fire go out. Young Tomas materializes from behind a fountain, cinnamon bun crumbs already on his chin. The rooster crows — real this time, ragged and proud."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Dawn bleeds pink across the sky. The moon sets, its work done. Honeyvale breathes awake, one steaming, silver-veined loaf at a time."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "petals",
+    "options": [],
+    "state_changes": {
+     "affection": {
+      "Granny Wren": 3,
+      "Rowan": 3
+     },
+     "flags_add": [
+      "moon_loaf_baked",
+      "village_awakened",
+      "ending_reached"
+     ],
+     "items_add": [
+      "moon_loaf"
+     ],
+     "items_remove": [
+      "silvered_sap",
+      "starlight_mushrooms",
+      "whisper_flour",
+      "lavender"
+     ]
+    },
+    "summary_update": "Pip bakes the Moon Loaf with all gathered ingredients, completing the thirteen folds and three risings just as moonlight touches the oven door. The loaf is shared among the sleeping villagers, waking them all. Honeyvale awakens at dawn.",
+    "ending": {
+     "type": "good",
+     "title": "The Village Wakes"
+    }
+   },
+   "state": {
+    "affection": {
+     "Granny Wren": 5,
+     "Rowan": 10
+    },
+    "flags": [
+     "met_rowan",
+     "moon_loaf_quest_started",
+     "ingredients_received",
+     "ingredients_inspected",
+     "recipe_received",
+     "at_dream_hives",
+     "moonflower_honey_clue",
+     "split_up",
+     "pip_fetching_lavender",
+     "rowan_on_hill",
+     "moon_loaf_baked",
+     "village_awakened",
+     "ending_reached"
+    ],
+    "items": [
+     "moon_loaf"
+    ]
+   },
+   "summary": [
+    "Pip stands alone in the sleeping village square, tasked with baking the Moon Loaf before moonrise. Granny Wren appears half-dreaming to give crucial recipe advice, while Rowan arrives with mysterious ingredients from the Whispering Woods.",
+    "Pip receives the Whispering Woods ingredients from Rowan — silvered sap, starlight mushrooms, and whisper-flour — and thanks him. Granny Wren urges Pip to start baking as the moon rises higher.",
+    "Pip examines the three magical ingredients closely while Granny Wren explains their purpose in the Moon Loaf — silvered sap for structure, starlight mushrooms for rise, and whisper-flour carrying the sleeping villagers' voices. Rowan jokes about Granny's sourdough lectures.",
+    "Granny Wren recited the Moon Loaf recipe from memory: silvered sap, starlight mushrooms, whisper-flour, dream-honey from hives beyond the old stone bridge, salt from a villager's tears, thirteen folds, three risings with the third waiting for moonlight on the oven door. She urged Pip to fetch dream-honey immediately.",
+    "Pip and Rowan reach the dream-hives beyond the old stone bridge. The bees are silent and crawling, not flying. Granny Wren warns that dream-bee stings cause magical sleep. Rowan offers to fetch lavender for the smoker from the village while Pip waits at the hives.",
+    "Granny Wren reveals the true dream-honey comes from moonflowers on the hill above the village, not the silent hives. Rowan and Pip must decide who climbs the hill and who fetches lavender for the smoker.",
+    "Pip and Rowan split up — Rowan races to Moonflower Hill for dream-honey while Pip sprints back through the sleeping village to fetch lavender for the smoker from Granny's herb spiral. Granny Wren gave final guidance to both before they separated.",
+    "Pip bakes the Moon Loaf with all gathered ingredients, completing the thirteen folds and three risings just as moonlight touches the oven door. The loaf is shared among the sleeping villagers, waking them all. Honeyvale awakens at dawn."
+   ],
+   "bgm_mood": "warm",
+   "weather": "petals",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0007",
+   "children": [],
+   "created_at": "2026-09-25T14:39:37+08:00"
+  }
+ }
+}

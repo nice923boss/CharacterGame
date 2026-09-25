@@ -1,0 +1,19 @@
+{
+  "key": "en6_workplace_english",
+  "lang": "en",
+  "aim": "good",
+  "game_id": "g_20260925_150905",
+  "title": "Singapore Office Proposa",
+  "turns": 31,
+  "player_turns": 30,
+  "scenes": 2,
+  "models": [
+    "nvidia/nemotron-3-ultra-550b-a55b"
+  ],
+  "ending": {
+    "type": "bad",
+    "title": "Walked Out Before Approval"
+  },
+  "minutes": 10.4,
+  "note": "runner stopped at the tree screenshot; transcript written afterwards from save slot 2"
+}

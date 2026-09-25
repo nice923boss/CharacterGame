@@ -1,0 +1,82 @@
+[
+ {
+  "kind": "sprite_B7",
+  "name": "yingyue_B7_smile",
+  "seconds": 38.9
+ },
+ {
+  "kind": "sprite_C8",
+  "name": "yingyue_C8_face_smile",
+  "seconds": 46.7
+ },
+ {
+  "kind": "sprite_B7",
+  "name": "yingyue_B7_angry",
+  "seconds": 41.1
+ },
+ {
+  "kind": "sprite_C8",
+  "name": "yingyue_C8_face_angry",
+  "seconds": 37.3
+ },
+ {
+  "kind": "sprite_B7",
+  "name": "yingyue_B7_sad",
+  "seconds": 38.6
+ },
+ {
+  "kind": "sprite_C8",
+  "name": "yingyue_C8_face_sad",
+  "seconds": 50.8
+ },
+ {
+  "kind": "sprite_B7",
+  "name": "yingyue_B7_surprised",
+  "seconds": 52.0
+ },
+ {
+  "kind": "sprite_C8",
+  "name": "yingyue_C8_face_surprised",
+  "seconds": 41.1
+ },
+ {
+  "kind": "sprite_B7",
+  "name": "shenyan_B7_smile",
+  "seconds": 39.6
+ },
+ {
+  "kind": "sprite_C8",
+  "name": "shenyan_C8_face_smile",
+  "seconds": 41.1
+ },
+ {
+  "kind": "sprite_B7",
+  "name": "shenyan_B7_angry",
+  "seconds": 40.8
+ },
+ {
+  "kind": "sprite_C8",
+  "name": "shenyan_C8_face_angry",
+  "seconds": 42.5
+ },
+ {
+  "kind": "sprite_B7",
+  "name": "shenyan_B7_sad",
+  "seconds": 38.0
+ },
+ {
+  "kind": "sprite_C8",
+  "name": "shenyan_C8_face_sad",
+  "seconds": 39.7
+ },
+ {
+  "kind": "sprite_B7",
+  "name": "shenyan_B7_surprised",
+  "seconds": 34.2
+ },
+ {
+  "kind": "sprite_C8",
+  "name": "shenyan_C8_face_surprised",
+  "seconds": 42.5
+ }
+]

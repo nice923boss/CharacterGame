@@ -1,0 +1,19 @@
+{
+  "key": "en4_neo_kowloon",
+  "lang": "en",
+  "aim": "bad",
+  "game_id": "g_20260925_141009",
+  "title": "Neon Rain Heist",
+  "turns": 10,
+  "player_turns": 9,
+  "scenes": 2,
+  "models": [
+    "nvidia/nemotron-3-ultra-550b-a55b",
+    "qwen3.6-35b-a3b"
+  ],
+  "ending": {
+    "type": "good",
+    "title": "Debt Repaid"
+  },
+  "minutes": 6.2
+}

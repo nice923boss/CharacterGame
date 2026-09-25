@@ -1,0 +1,18 @@
+{
+  "key": "en2_dustreach",
+  "lang": "en",
+  "aim": "good",
+  "game_id": "g_20260925_143214",
+  "title": "Last Well on Dustreach",
+  "turns": 10,
+  "player_turns": 9,
+  "scenes": 3,
+  "models": [
+    "nvidia/nemotron-3-ultra-550b-a55b"
+  ],
+  "ending": {
+    "type": "good",
+    "title": "The Well Holds"
+  },
+  "minutes": 4.8
+}

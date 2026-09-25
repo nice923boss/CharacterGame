@@ -1,0 +1,62 @@
+{
+ "id": "g_20260925_141733",
+ "created_at": "2026-09-25T14:17:33+08:00",
+ "seed": 120570771,
+ "lang": "zh",
+ "title": "核冬十年",
+ "style_en": "10 years post-nuclear winter, ruined Taipei, underground metro settlement, cold desolate atmosphere, faint hope, muted palette",
+ "world": {
+  "era": "核冬天後第十年",
+  "place": "廢墟化的台北，地下捷運站裡的倖存者聚落",
+  "genre": "末日生存",
+  "tone": "冷冽、帶一絲希望",
+  "extra": "淨水機壞了，聚落的存水只夠撐七天",
+  "goal": "找到淨水機的零件並平安帶回，讓聚落撐過這個冬天"
+ },
+ "protagonist": {
+  "name": "阿岳",
+  "profile": "聚落裡最年輕的探勘隊員，衝動但勇敢"
+ },
+ "characters": [
+  {
+   "id": "c1",
+   "name": "陳姐",
+   "appearance": "45 歲女性，灰黑色短髮，眼角有細紋，深褐色眼睛，軍綠色舊外套上縫滿補丁，腰間掛著手電筒",
+   "personality": "堅毅務實，照顧每個人",
+   "speech": "語氣平穩，說一不二",
+   "relationship": "聚落首領，把主角當孩子看",
+   "appearance_en": "45-year-old female, short gray-black hair, fine wrinkles at eyes, dark brown eyes, worn military green jacket with patches, flashlight on belt",
+   "seed": 120570788
+  },
+  {
+   "id": "c2",
+   "name": "小灰",
+   "appearance": "13 歲少年，亂翹的灰色短髮，機靈的黑色眼睛，過大的灰色連帽衣，臉上戴著破舊防毒面具",
+   "personality": "膽小但反應快",
+   "speech": "講話結結巴巴，緊張時更嚴重",
+   "relationship": "拾荒少年，跟著主角出任務",
+   "appearance_en": "13-year-old male, messy short gray hair, sharp black eyes, oversized gray hoodie, worn gas mask on face",
+   "seed": 120570805
+  }
+ ],
+ "scenes": {
+  "metro_platform_dim": {
+   "name": "捷運月臺",
+   "image_prompt": "abandoned Taipei metro platform, dim emergency lighting, stale air, condensation on tiled walls, scattered debris and sleeping bags, cold blue-gray tones"
+  },
+  "maintenance_tunnel": {
+   "name": "維修通道",
+   "image_prompt": "narrow concrete maintenance tunnel with water-stained walls, exposed rusted rebar, flickering emergency lights, damp floor with shallow puddles, cold blue-white lighting"
+  },
+  "cksmh_ruins": {
+   "name": "中正紀念堂廢墟",
+   "image_prompt": "collapsed memorial hall ruins under nuclear winter, cracked marble columns, radioactive dust swirling in pale sunlight, twisted rebar protruding from concrete, eerie silent atmosphere"
+  },
+  "metro_tunnel_return": {
+   "name": "返程隧道",
+   "image_prompt": "collapsed metro tunnel inclined upward, emergency lights flickering, heavy snow blowing in from entrance, radiation dust mixed with ice crystals, concrete walls cracked and wet, distant platform faintly visible"
+  }
+ },
+ "first_scene": "metro_platform_dim",
+ "setup_model": "nvidia/nemotron-3-ultra-550b-a55b"
+}

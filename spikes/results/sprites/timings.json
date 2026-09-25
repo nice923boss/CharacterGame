@@ -1,0 +1,147 @@
+[
+ {
+  "kind": "sprite_A",
+  "name": "yingyue_A_calm",
+  "seconds": 41.7
+ },
+ {
+  "kind": "sprite_A",
+  "name": "yingyue_A_smile",
+  "seconds": 39.5
+ },
+ {
+  "kind": "sprite_A",
+  "name": "yingyue_A_angry",
+  "seconds": 35.7
+ },
+ {
+  "kind": "sprite_A",
+  "name": "yingyue_A_sad",
+  "seconds": 30.8
+ },
+ {
+  "kind": "sprite_A",
+  "name": "yingyue_A_surprised",
+  "seconds": 33.1
+ },
+ {
+  "kind": "sprite_B",
+  "name": "yingyue_B_smile",
+  "seconds": 40.9
+ },
+ {
+  "kind": "sprite_B",
+  "name": "yingyue_B_angry",
+  "seconds": 32.8
+ },
+ {
+  "kind": "sprite_B",
+  "name": "yingyue_B_sad",
+  "seconds": 34.9
+ },
+ {
+  "kind": "sprite_B",
+  "name": "yingyue_B_surprised",
+  "seconds": 35.5
+ },
+ {
+  "kind": "sprite_C",
+  "name": "yingyue_C_face_smile",
+  "seconds": 36.8
+ },
+ {
+  "kind": "sprite_C",
+  "name": "yingyue_C_face_angry",
+  "seconds": 36.5
+ },
+ {
+  "kind": "sprite_C",
+  "name": "yingyue_C_face_sad",
+  "seconds": 36.2
+ },
+ {
+  "kind": "sprite_C",
+  "name": "yingyue_C_face_surprised",
+  "seconds": 37.6
+ },
+ {
+  "kind": "sprite_A",
+  "name": "shenyan_A_calm",
+  "seconds": 32.3
+ },
+ {
+  "kind": "sprite_A",
+  "name": "shenyan_A_smile",
+  "seconds": 31.6
+ },
+ {
+  "kind": "sprite_A",
+  "name": "shenyan_A_angry",
+  "seconds": 35.4
+ },
+ {
+  "kind": "sprite_A",
+  "name": "shenyan_A_sad",
+  "seconds": 33.2
+ },
+ {
+  "kind": "sprite_A",
+  "name": "shenyan_A_surprised",
+  "seconds": 41.4
+ },
+ {
+  "kind": "sprite_B",
+  "name": "shenyan_B_smile",
+  "seconds": 36.4
+ },
+ {
+  "kind": "sprite_B",
+  "name": "shenyan_B_angry",
+  "seconds": 37.6
+ },
+ {
+  "kind": "sprite_B",
+  "name": "shenyan_B_sad",
+  "seconds": 38.4
+ },
+ {
+  "kind": "sprite_B",
+  "name": "shenyan_B_surprised",
+  "seconds": 33.3
+ },
+ {
+  "kind": "sprite_C",
+  "name": "shenyan_C_face_smile",
+  "seconds": 39.2
+ },
+ {
+  "kind": "sprite_C",
+  "name": "shenyan_C_face_angry",
+  "seconds": 42.1
+ },
+ {
+  "kind": "sprite_C",
+  "name": "shenyan_C_face_sad",
+  "seconds": 41.6
+ },
+ {
+  "kind": "sprite_C",
+  "name": "shenyan_C_face_surprised",
+  "seconds": 33.7
+ },
+ {
+  "kind": "background",
+  "name": "bg_archive",
+  "seconds": 55.2
+ },
+ {
+  "kind": "background",
+  "name": "bg_harbor",
+  "seconds": 45.9
+ },
+ {
+  "kind": "background",
+  "name": "bg_clockshop",
+  "seconds": 40.7
+ }
+]

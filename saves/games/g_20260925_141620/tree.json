@@ -1,0 +1,966 @@
+{
+ "root": "n_0000",
+ "next": 8,
+ "nodes": {
+  "n_0000": {
+   "parent": null,
+   "scene_id": "jungle_beach_sunset",
+   "player_input": {
+    "kind": "opening",
+    "text": ""
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The sun bleeds orange across the western sky, painting the jungle beach in molten gold and long shadows. Waves hiss against black volcanic sand, dragging back handfuls of shattered coral and the occasional bleached bone."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Kit stands barefoot at the tide line, the leather cord of her father's compass warm against her chest. The leaky brigantine Sea Sprite rides at anchor a cable's length out, her patched sails furled and her hull weeping a slow, steady rhythm against the pumps."
+    },
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Bearing two-eight-zero magnetic. The jungle treeline. Three degrees left of the notch in the ridge where the twin palms stand sentinel."
+    },
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "That is where the map's riddle points. \"Where the sun kisses the serpent's tongue.\" The notch frames the sunset. Tonight, the light strikes dead center."
+    },
+    {
+     "kind": "character",
+     "speaker": "Red Vane",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "HAH! A bonny spot for a grave, little cabin girl! Or a fortune, if the devil keeps his bargain!"
+    },
+    {
+     "kind": "character",
+     "speaker": "Red Vane",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "Red Vane doesn't scare at ghosts or riddles. The Crimson Lady waits beyond the reef, and I've a crew of cutthroats who'd sell their grandmothers for a glimpse of that cursed gold!"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "none",
+    "options": [
+     "Examine the map and the notch in the ridge",
+     "Ask Solenne for her star-reading on the timing",
+     "Challenge Red Vane to a wager or duel",
+     "Order Solenne to row you to the *Sea Sprite* to prepare"
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "met_red_vane",
+      "map_clue_notch"
+     ],
+     "items_add": [
+      "treasure_map",
+      "fathers_compass"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "Kit arrives at Isla Serpiente's jungle beach at sunset with navigator Solenne. Rival captain Red Vane appears, also seeking the cursed treasure. The map's riddle points to a notch in the jungle ridge where the sunset aligns tonight.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Red Vane": 0,
+     "Solenne": 0
+    },
+    "flags": [
+     "met_red_vane",
+     "map_clue_notch"
+    ],
+    "items": [
+     "treasure_map",
+     "fathers_compass"
+    ]
+   },
+   "summary": [
+    "Kit arrives at Isla Serpiente's jungle beach at sunset with navigator Solenne. Rival captain Red Vane appears, also seeking the cursed treasure. The map's riddle points to a notch in the jungle ridge where the sunset aligns tonight."
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0000",
+   "children": [
+    "n_0001"
+   ],
+   "created_at": "2026-09-25T14:16:31+08:00"
+  },
+  "n_0001": {
+   "parent": "n_0000",
+   "scene_id": "jungle_beach_sunset",
+   "player_input": {
+    "kind": "option",
+    "text": "Ask Solenne for her star-reading on the timing"
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "The sun's lower limb kisses the horizon in four minutes, eighteen seconds by my reckoning."
+    },
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Full darkness follows in twenty-three minutes. The ghost fleet rises at the first star's true appearing — not the bright pretend ones, but the faint guide stars that mark the serpent's eye."
+    },
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "We have perhaps twenty-seven minutes to reach the notch, locate the entrance, and descend before the dead walk the water."
+    },
+    {
+     "kind": "character",
+     "speaker": "Red Vane",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "Twenty-seven minutes! HAH! Red Vane once rowed three miles in twenty-six with a cannonball chained to his ankle!"
+    },
+    {
+     "kind": "character",
+     "speaker": "Red Vane",
+     "char_id": "c1",
+     "expr": "angry",
+     "text": "...Metaphorically speaking. The point stands — no landlubber navigator tells ME the hour of my doom!"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Solenne's brass spyglass catches the last flare of sunlight as she lowers it, her face calm as a windless sea. The jungle behind her breathes hot and wet, vines creaking like old rigging in the breeze."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "Race Red Vane to the notch",
+     "Ask Solenne the fastest route inland",
+     "Check the map for hidden clues now"
+    ],
+    "state_changes": {
+     "affection": {
+      "Solenne": 1
+     },
+     "flags_add": [
+      "timing_known"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Solenne calculates the ghost fleet rises in 27 minutes at first true star. Red Vane boasts but the clock is ticking.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Red Vane": 0,
+     "Solenne": 1
+    },
+    "flags": [
+     "met_red_vane",
+     "map_clue_notch",
+     "timing_known"
+    ],
+    "items": [
+     "treasure_map",
+     "fathers_compass"
+    ]
+   },
+   "summary": [
+    "Kit arrives at Isla Serpiente's jungle beach at sunset with navigator Solenne. Rival captain Red Vane appears, also seeking the cursed treasure. The map's riddle points to a notch in the jungle ridge where the sunset aligns tonight.",
+    "Solenne calculates the ghost fleet rises in 27 minutes at first true star. Red Vane boasts but the clock is ticking."
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0001",
+   "children": [
+    "n_0002"
+   ],
+   "created_at": "2026-09-25T14:17:53+08:00"
+  },
+  "n_0002": {
+   "parent": "n_0001",
+   "scene_id": "jungle_beach_sunset",
+   "player_input": {
+    "kind": "option",
+    "text": "Check the map for hidden clues now"
+   },
+   "lines": [
+    {
+     "kind": "protagonist",
+     "speaker": "Kit",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Let me check the map again — there might be something we missed in the fading light."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Kit fumbles the oilskin packet from her coat, fingers trembling not from cold but urgency. The treasure map unfurls with a crisp whisper, its edges frayed and stained by salt, rum, and whatever misfortune befell her father."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The ink has faded to sepia, but the riddle remains clear: \"Where the sun kisses the serpent's tongue, the gold sleeps deep. The serpent's eye watches the thief. At the hundredth tide, the dead reclaim their due.\""
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Kit traces the charcoal notch marking the twin palms on the ridge. Beneath it, almost erased by time and thumb, a smaller script appears in the dying light — coordinates? No, a warning: \"The tongue bites back. Bring fire. Bring salt. Bring blood.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "\"The tongue bites back.\" A cave mouth shaped like a serpent's head, perhaps. The notch frames it."
+    },
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "\"Bring fire. Bring salt. Bring blood.\" Three keys. Or three trials."
+    },
+    {
+     "kind": "character",
+     "speaker": "Red Vane",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Blood? FIRE? Salt's for cooking, not curses! Though Red Vane's cutlass has tasted plenty of the red stuff — HAH!"
+    },
+    {
+     "kind": "character",
+     "speaker": "Red Vane",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "A warning from a dead man to a dead man walking. Your father wrote that, didn't he, girl? The night he vanished?"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "Press Solenne on the three keys",
+     "Demand Red Vane explain what he knows",
+     "Race for the notch immediately"
+    ],
+    "state_changes": {
+     "affection": {
+      "Red Vane": -1,
+      "Solenne": 1
+     },
+     "flags_add": [
+      "map_warning_found"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Kit discovers a hidden warning on the map mentioning three keys: fire, salt, and blood. Red Vane hints he knew Kit's father.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Red Vane": -1,
+     "Solenne": 2
+    },
+    "flags": [
+     "met_red_vane",
+     "map_clue_notch",
+     "timing_known",
+     "map_warning_found"
+    ],
+    "items": [
+     "treasure_map",
+     "fathers_compass"
+    ]
+   },
+   "summary": [
+    "Kit arrives at Isla Serpiente's jungle beach at sunset with navigator Solenne. Rival captain Red Vane appears, also seeking the cursed treasure. The map's riddle points to a notch in the jungle ridge where the sunset aligns tonight.",
+    "Solenne calculates the ghost fleet rises in 27 minutes at first true star. Red Vane boasts but the clock is ticking.",
+    "Kit discovers a hidden warning on the map mentioning three keys: fire, salt, and blood. Red Vane hints he knew Kit's father."
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0002",
+   "children": [
+    "n_0003"
+   ],
+   "created_at": "2026-09-25T14:18:07+08:00"
+  },
+  "n_0003": {
+   "parent": "n_0002",
+   "scene_id": "jungle_ridge_twilight",
+   "player_input": {
+    "kind": "free",
+    "text": "Solenne and I follow the map's star bearings to the temple in the heart of the jungle."
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Kit tucks the map close, heart hammering a frantic rhythm against her ribs. The compass at her chest pulses warm, as if remembering the hand that once held it."
+    },
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Bearing three-four-zero magnetic. We follow the ridge line inland, then descend into the bowl where the serpent's tongue rests. The stars will guide us when the sun dies."
+    },
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Keep the treeline to port. The ground rises steep — watch for loose shale and vine-snares. I have the pace count."
+    },
+    {
+     "kind": "character",
+     "speaker": "Red Vane",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "HAH! Off to dance with the devil, are we? Red Vane knows these jungles — I'll cut my OWN path, thank you!"
+    },
+    {
+     "kind": "character",
+     "speaker": "Red Vane",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "But mark this, cabin girl — when the fleet rises, there's no sharing the spoils. The gold is MINE by right of blood and battle!"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Red Vane spins on his heel, crimson coat flaring, and crashes into the jungle with a machete already singing through vines. His curses fade behind him like thunder retreating."
+    },
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "He moves loud. The jungle hears him. We move quiet — the stars favor silence."
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "jungle_ridge_twilight",
+     "name": "Jungle Ridge at Twilight",
+     "image_prompt": "steep jungle ridge path at twilight, volcanic rock outcrops, dense vines and ferns, twin palm silhouettes on the skyline, fading orange light filtering through canopy, bioluminescent fungi on forest floor"
+    },
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "Push hard and fast to beat Red Vane",
+     "Move cautiously, conserving energy",
+     "Ask Solenne about the three keys"
+    ],
+    "state_changes": {
+     "affection": {
+      "Red Vane": -1,
+      "Solenne": 1
+     },
+     "flags_add": [
+      "ridge_path_chosen"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Kit and Solenne head inland toward the serpent's tongue following star bearings, while Red Vane takes a separate loud path through the jungle. The race for the cursed treasure intensifies with 27 minutes until the ghost fleet rises.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Red Vane": -2,
+     "Solenne": 3
+    },
+    "flags": [
+     "met_red_vane",
+     "map_clue_notch",
+     "timing_known",
+     "map_warning_found",
+     "ridge_path_chosen"
+    ],
+    "items": [
+     "treasure_map",
+     "fathers_compass"
+    ]
+   },
+   "summary": [
+    "Kit arrives at Isla Serpiente's jungle beach at sunset with navigator Solenne. Rival captain Red Vane appears, also seeking the cursed treasure. The map's riddle points to a notch in the jungle ridge where the sunset aligns tonight.",
+    "Solenne calculates the ghost fleet rises in 27 minutes at first true star. Red Vane boasts but the clock is ticking.",
+    "Kit discovers a hidden warning on the map mentioning three keys: fire, salt, and blood. Red Vane hints he knew Kit's father.",
+    "Kit and Solenne head inland toward the serpent's tongue following star bearings, while Red Vane takes a separate loud path through the jungle. The race for the cursed treasure intensifies with 27 minutes until the ghost fleet rises."
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0003",
+   "children": [
+    "n_0004"
+   ],
+   "created_at": "2026-09-25T14:18:24+08:00"
+  },
+  "n_0004": {
+   "parent": "n_0003",
+   "scene_id": "jungle_ridge_twilight",
+   "player_input": {
+    "kind": "option",
+    "text": "Move cautiously, conserving energy"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The jungle ridge is a steep spine of basalt and tangled green, rising sharply from the beach. Kit chooses a winding path that avoids the loose shale, trading speed for stability. Her breath comes steady, lungs burning only slightly in the humid air."
+    },
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Bearing three-two-zero. We are gaining altitude, but the gradient is gentle here. Good choice. If we sprint now, we’ll be gasping by the time we reach the temple."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Kit",
+     "char_id": null,
+     "expr": "calm",
+     "text": "I’m saving my legs for the climb down. If the map says the tongue bites back, I’d rather not trip and break my neck on the way up."
+    },
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Wise. The stars are brightening. Vega is our next marker. Keep the spyglass ready for when the sun dips below the ridge line."
+    },
+    {
+     "kind": "character",
+     "speaker": "Red Vane",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "(Distant shout) HAH! You move like a snail on molasses, girl! Red Vane is already halfway to the gold!"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The shout echoes from a different trail, deeper in the canopy. Kit glances up; the sky is turning a deep, bruised purple, the first true star beginning to pierce the twilight."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "Urge Solenne to speed up the pace",
+     "Wait for Red Vane's distant shout to fade",
+     "Check the map against the first star"
+    ],
+    "state_changes": {
+     "affection": {
+      "Solenne": 1
+     },
+     "flags_add": [
+      "pace_conserved"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Kit and Solenne move cautiously up the ridge, conserving energy while Red Vane rushes ahead. Solenne appreciates Kit's prudence, strengthening their bond.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Red Vane": -2,
+     "Solenne": 4
+    },
+    "flags": [
+     "met_red_vane",
+     "map_clue_notch",
+     "timing_known",
+     "map_warning_found",
+     "ridge_path_chosen",
+     "pace_conserved"
+    ],
+    "items": [
+     "treasure_map",
+     "fathers_compass"
+    ]
+   },
+   "summary": [
+    "Kit arrives at Isla Serpiente's jungle beach at sunset with navigator Solenne. Rival captain Red Vane appears, also seeking the cursed treasure. The map's riddle points to a notch in the jungle ridge where the sunset aligns tonight.",
+    "Solenne calculates the ghost fleet rises in 27 minutes at first true star. Red Vane boasts but the clock is ticking.",
+    "Kit discovers a hidden warning on the map mentioning three keys: fire, salt, and blood. Red Vane hints he knew Kit's father.",
+    "Kit and Solenne head inland toward the serpent's tongue following star bearings, while Red Vane takes a separate loud path through the jungle. The race for the cursed treasure intensifies with 27 minutes until the ghost fleet rises.",
+    "Kit and Solenne move cautiously up the ridge, conserving energy while Red Vane rushes ahead. Solenne appreciates Kit's prudence, strengthening their bond."
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "qwen3.6-35b-a3b",
+   "repair_notes": [],
+   "id": "n_0004",
+   "children": [
+    "n_0005"
+   ],
+   "created_at": "2026-09-25T14:19:30+08:00"
+  },
+  "n_0005": {
+   "parent": "n_0004",
+   "scene_id": "jungle_ridge_twilight",
+   "player_input": {
+    "kind": "free",
+    "text": "I propose a truce to Red Vane: we split the treasure only if we lift the curse together."
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The jungle air grows thick and still, the humidity clinging to skin like a second shirt. Kit steps out from behind a buttress root, her voice cutting through the humid haze."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Kit",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Captain Vane! Wait a moment! I propose a truce. We split the treasure, but only if we lift the curse together."
+    },
+    {
+     "kind": "character",
+     "speaker": "Red Vane",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "A TRUCE? With the cabin girl? HAH! You offer me a slice of the pie when I hold the whole oven?"
+    },
+    {
+     "kind": "character",
+     "speaker": "Red Vane",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "(He stops, his machete hovering mid-swing over a thick vine. He turns, his gold earring catching the last sliver of sun.)"
+    },
+    {
+     "kind": "character",
+     "speaker": "Red Vane",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "The ghost fleet doesn't care for partnerships. But... your father was a shrewd devil. Perhaps you inherited some sense."
+    },
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "The first star, Sirius, is rising. The window is narrowing. A shared curse lifted is better than a solo grave, Captain."
+    },
+    {
+     "kind": "character",
+     "speaker": "Red Vane",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "(He grins, revealing a chipped tooth.) Fine, little matey. But if you try to sneak the gold while I'm sleeping, I'll feed you to the sharks. Literally."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Red Vane sheathes his blade and strides back toward the path, his crimson coat billowing like a warning flag. Solenne falls into step beside Kit, her expression unreadable but her eyes sharp."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "Follow Vane's lead up the ridge",
+     "Ask Solenne to check the map's warning again",
+     "Jog to catch up with Vane immediately"
+    ],
+    "state_changes": {
+     "affection": {
+      "Red Vane": 1
+     },
+     "flags_add": [
+      "truce_offered"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Kit proposes a truce to Red Vane, convincing him to team up for lifting the curse. Vane accepts, albeit with a threat.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Red Vane": -1,
+     "Solenne": 4
+    },
+    "flags": [
+     "met_red_vane",
+     "map_clue_notch",
+     "timing_known",
+     "map_warning_found",
+     "ridge_path_chosen",
+     "pace_conserved",
+     "truce_offered"
+    ],
+    "items": [
+     "treasure_map",
+     "fathers_compass"
+    ]
+   },
+   "summary": [
+    "Kit arrives at Isla Serpiente's jungle beach at sunset with navigator Solenne. Rival captain Red Vane appears, also seeking the cursed treasure. The map's riddle points to a notch in the jungle ridge where the sunset aligns tonight.",
+    "Solenne calculates the ghost fleet rises in 27 minutes at first true star. Red Vane boasts but the clock is ticking.",
+    "Kit discovers a hidden warning on the map mentioning three keys: fire, salt, and blood. Red Vane hints he knew Kit's father.",
+    "Kit and Solenne head inland toward the serpent's tongue following star bearings, while Red Vane takes a separate loud path through the jungle. The race for the cursed treasure intensifies with 27 minutes until the ghost fleet rises.",
+    "Kit and Solenne move cautiously up the ridge, conserving energy while Red Vane rushes ahead. Solenne appreciates Kit's prudence, strengthening their bond.",
+    "Kit proposes a truce to Red Vane, convincing him to team up for lifting the curse. Vane accepts, albeit with a threat."
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "qwen3.6-35b-a3b",
+   "repair_notes": [],
+   "id": "n_0005",
+   "children": [
+    "n_0006"
+   ],
+   "created_at": "2026-09-25T14:20:11+08:00"
+  },
+  "n_0006": {
+   "parent": "n_0005",
+   "scene_id": "jungle_ridge_twilight",
+   "player_input": {
+    "kind": "option",
+    "text": "Follow Vane's lead up the ridge"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Kit turns her back on the quiet, winding trail and jogs to catch up with the red coat billowing ahead. The air grows thinner, hotter, and thick with the scent of crushed orchids and damp earth."
+    },
+    {
+     "kind": "character",
+     "speaker": "Red Vane",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "HAH! You finally wake up! Red Vane doesn’t wait for snails forever. The ridge gets steep here — hold your breath or lose it!"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Vane scrambles up a jagged outcrop of basalt, his boots finding purchase where Kit’s sneakers slip on moss. He gestures wildly for her to follow his erratic, high-energy path."
+    },
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "(Panting slightly) Bearing one-eight-zero. We are gaining altitude rapidly. The jungle canopy closes overhead, blocking the direct sun. Twilight deepens to indigo."
+    },
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Vane’s path is bold but exhausting. We are ten minutes behind the sun’s disappearance. If he leads us to a dead end, we lose precious minutes in the dark."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Kit",
+     "char_id": null,
+     "expr": "calm",
+     "text": "I keep my eyes on Vane’s coat, trusting his brute force to clear the vines, while Solenne calls out the subtle shifts in the wind and starlight above."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The ground drops away into a shadowed bowl. Through the trees, the silhouette of the \"Serpent’s Tongue\" notch emerges, framing the last ember of the setting sun like a fiery eye."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "Race Vane to the notch",
+     "Wait for Solenne's star alignment",
+     "Check the map for the 'blood' key"
+    ],
+    "state_changes": {
+     "affection": {
+      "Red Vane": 1,
+      "Solenne": -1
+     },
+     "flags_add": [
+      "vane_lead_choosen"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Kit follows Vane's aggressive path up the ridge, gaining altitude quickly but tiring Solenne. They approach the Serpent's Tongue notch as twilight deepens.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Red Vane": 0,
+     "Solenne": 3
+    },
+    "flags": [
+     "met_red_vane",
+     "map_clue_notch",
+     "timing_known",
+     "map_warning_found",
+     "ridge_path_chosen",
+     "pace_conserved",
+     "truce_offered",
+     "vane_lead_choosen"
+    ],
+    "items": [
+     "treasure_map",
+     "fathers_compass"
+    ]
+   },
+   "summary": [
+    "Kit arrives at Isla Serpiente's jungle beach at sunset with navigator Solenne. Rival captain Red Vane appears, also seeking the cursed treasure. The map's riddle points to a notch in the jungle ridge where the sunset aligns tonight.",
+    "Solenne calculates the ghost fleet rises in 27 minutes at first true star. Red Vane boasts but the clock is ticking.",
+    "Kit discovers a hidden warning on the map mentioning three keys: fire, salt, and blood. Red Vane hints he knew Kit's father.",
+    "Kit and Solenne head inland toward the serpent's tongue following star bearings, while Red Vane takes a separate loud path through the jungle. The race for the cursed treasure intensifies with 27 minutes until the ghost fleet rises.",
+    "Kit and Solenne move cautiously up the ridge, conserving energy while Red Vane rushes ahead. Solenne appreciates Kit's prudence, strengthening their bond.",
+    "Kit proposes a truce to Red Vane, convincing him to team up for lifting the curse. Vane accepts, albeit with a threat.",
+    "Kit follows Vane's aggressive path up the ridge, gaining altitude quickly but tiring Solenne. They approach the Serpent's Tongue notch as twilight deepens."
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "qwen3.6-35b-a3b",
+   "repair_notes": [],
+   "id": "n_0006",
+   "children": [
+    "n_0007"
+   ],
+   "created_at": "2026-09-25T14:20:52+08:00"
+  },
+  "n_0007": {
+   "parent": "n_0006",
+   "scene_id": "jungle_ridge_twilight",
+   "player_input": {
+    "kind": "free",
+    "text": "At dawn I throw the cursed gold back into the sea to lift the curse as the ghost fleet appears."
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Kit plants her boots on the basalt lip of the Serpent's Tongue, chest heaving, the cursed gold heavy in her pack. The first true star — Sirius — ignites above the horizon, cold and sharp as a needle."
+    },
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Bearing zero-zero-zero. The sun is gone. The guide star marks the serpent's eye. The fleet rises... now."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "A low groan rolls across the water, not from thunder but from the deep. Pale shapes tear through the surface — hulls rotted to lace, sails woven from mist and moonlight. The ghost fleet surges toward the shore, silent as drowning."
+    },
+    {
+     "kind": "character",
+     "speaker": "Red Vane",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "By all the devils in Davy Jones' locker! They're EARLY! Or my internal clock's gone to the dogs!"
+    },
+    {
+     "kind": "character",
+     "speaker": "Red Vane",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "(He draws his cutlass, the steel singing against the scabbard, but his hand trembles — barely, almost imperceptibly.)"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Kit",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The curse doesn't want the gold. It wants the gold RETURNED. Here — where the serpent's tongue kisses the sea!"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Kit tears the pack open, the cursed coins spilling like liquid fire across the basalt. She grabs handfuls and hurls them into the churning water below the notch, each splash a defiance."
+    },
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "The water boils where the gold hits. The lead ship — its figurehead a screaming siren — SHUDDERS. The mist-sails go slack."
+    },
+    {
+     "kind": "character",
+     "speaker": "Red Vane",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "HAH! Feed the fishes, then! Red Vane keeps HIS share — a captain's pension for a pirate's retirement!"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Vane tosses a single glittering coin over the cliff, a theatrical gesture. The fleet's advance FALTERS. The rotted hulls groan, turning ponderously back toward the deep."
+    },
+    {
+     "kind": "character",
+     "speaker": "Solenne",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "The curse breaks. The dead return to their rest. Dawn's first light touches the water — ordinary, golden, mercifully alive."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Kit",
+     "char_id": null,
+     "expr": "calm",
+     "text": "We did it. We actually did it."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "none",
+    "options": [],
+    "state_changes": {
+     "affection": {
+      "Red Vane": 1,
+      "Solenne": 2
+     },
+     "flags_add": [
+      "curse_lifted",
+      "ghost_fleet_banished",
+      "treasure_returned"
+     ],
+     "items_add": [],
+     "items_remove": [
+      "treasure_map",
+      "fathers_compass"
+     ]
+    },
+    "summary_update": "Kit throws the cursed gold into the sea at the Serpent's Tongue notch as the ghost fleet rises. The curse breaks and the fleet returns to the depths. Red Vane reluctantly contributes one coin. Dawn breaks over a peaceful sea.",
+    "ending": {
+     "type": "good",
+     "title": "Curse Lifted at Dawn"
+    }
+   },
+   "state": {
+    "affection": {
+     "Red Vane": 1,
+     "Solenne": 5
+    },
+    "flags": [
+     "met_red_vane",
+     "map_clue_notch",
+     "timing_known",
+     "map_warning_found",
+     "ridge_path_chosen",
+     "pace_conserved",
+     "truce_offered",
+     "vane_lead_choosen",
+     "curse_lifted",
+     "ghost_fleet_banished",
+     "treasure_returned"
+    ],
+    "items": []
+   },
+   "summary": [
+    "Kit arrives at Isla Serpiente's jungle beach at sunset with navigator Solenne. Rival captain Red Vane appears, also seeking the cursed treasure. The map's riddle points to a notch in the jungle ridge where the sunset aligns tonight.",
+    "Solenne calculates the ghost fleet rises in 27 minutes at first true star. Red Vane boasts but the clock is ticking.",
+    "Kit discovers a hidden warning on the map mentioning three keys: fire, salt, and blood. Red Vane hints he knew Kit's father.",
+    "Kit and Solenne head inland toward the serpent's tongue following star bearings, while Red Vane takes a separate loud path through the jungle. The race for the cursed treasure intensifies with 27 minutes until the ghost fleet rises.",
+    "Kit and Solenne move cautiously up the ridge, conserving energy while Red Vane rushes ahead. Solenne appreciates Kit's prudence, strengthening their bond.",
+    "Kit proposes a truce to Red Vane, convincing him to team up for lifting the curse. Vane accepts, albeit with a threat.",
+    "Kit follows Vane's aggressive path up the ridge, gaining altitude quickly but tiring Solenne. They approach the Serpent's Tongue notch as twilight deepens.",
+    "Kit throws the cursed gold into the sea at the Serpent's Tongue notch as the ghost fleet rises. The curse breaks and the fleet returns to the depths. Red Vane reluctantly contributes one coin. Dawn breaks over a peaceful sea."
+   ],
+   "bgm_mood": "warm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0007",
+   "children": [],
+   "created_at": "2026-09-25T14:22:09+08:00"
+  }
+ }
+}

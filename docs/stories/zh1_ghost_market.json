@@ -1,0 +1,18 @@
+{
+  "key": "zh1_ghost_market",
+  "lang": "zh",
+  "aim": "good",
+  "game_id": "g_20260925_135747",
+  "title": "月圓鬼市贖魂",
+  "turns": 12,
+  "player_turns": 11,
+  "scenes": 3,
+  "models": [
+    "nvidia/nemotron-3-ultra-550b-a55b"
+  ],
+  "ending": {
+    "type": "good",
+    "title": "贖魂歸途"
+  },
+  "minutes": 2.8
+}

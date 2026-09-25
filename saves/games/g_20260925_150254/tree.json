@@ -1,0 +1,873 @@
+{
+ "root": "n_0000",
+ "next": 8,
+ "nodes": {
+  "n_0000": {
+   "parent": null,
+   "scene_id": "metro_concourse",
+   "player_input": {
+    "kind": "opening",
+    "text": ""
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "核冬天第十年的寒風從地面的通風井灌入捷運大廳，帶著乾裂的塵土與淡淡的鏽味。大廳的應急燈閃爍著病態的黃光，將眾人的影子拉得忽長忽短。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "牆角堆疊的塑膠桶只剩下三分之一，裡頭濁水搖晃，那是全聚落四十七條命還能撐七天的命脈。阿岳緊了緊揹包帶，指節因用力而發白。"
+    },
+    {
+     "kind": "character",
+     "speaker": "陳姐",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "阿岳，別光盯著水桶發呆。淨水機的壓力閥壞了，沒備品換不回來，七天後這大廳就得變成冰庫。"
+    },
+    {
+     "kind": "character",
+     "speaker": "陳姐",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "你今早出發，往北走舊市政府地下街，那邊有批舊世代的工業閥體沒被撿走。小灰會跟著你，別讓他出事。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小灰",
+     "char_id": "c2",
+     "expr": "surprised",
+     "text": "姐、姐姐……我、我揹包裡還有兩罐壓縮餅乾，夠、夠我們撐、撐一天……"
+    },
+    {
+     "kind": "character",
+     "speaker": "陳姐",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "夠就好。天黑前回來，聽見沒？"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "「放心，我會帶著小灰平安回來。」",
+     "「要不我自己去，小灰留下比較安全。」",
+     "「先讓我檢查裝備，順道問問有沒有地圖。」",
+     "「七天太趕了，能不能先想別辦法撐久一點？」"
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "mission_start"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "陳姐下達任務：阿岳需帶小灰前往舊市政府地下街尋找淨水機壓力閥，限天黑前返回。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "陳姐": 0,
+     "小灰": 0
+    },
+    "flags": [
+     "mission_start"
+    ],
+    "items": []
+   },
+   "summary": [
+    "陳姐下達任務：阿岳需帶小灰前往舊市政府地下街尋找淨水機壓力閥，限天黑前返回。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0000",
+   "children": [
+    "n_0001"
+   ],
+   "created_at": "2026-09-25T15:03:27+08:00"
+  },
+  "n_0001": {
+   "parent": "n_0000",
+   "scene_id": "metro_concourse",
+   "player_input": {
+    "kind": "option",
+    "text": "「要不我自己去，小灰留下比較安全。」"
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "陳姐",
+     "char_id": "c1",
+     "expr": "angry",
+     "text": "留下？這聚落連照顧他的口糧都沒有，你以為他在這邊能喝上乾淨水？"
+    },
+    {
+     "kind": "character",
+     "speaker": "小灰",
+     "char_id": "c2",
+     "expr": "surprised",
+     "text": "哥、哥……我、我跟得上……別、別丟下我……"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "陳姐粗糙的大手拍上阿岳的肩膀，指甲嵌入布料裡，力道沉重得像是在傳遞某種不容抗拒的命令。"
+    },
+    {
+     "kind": "character",
+     "speaker": "陳姐",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "帶上他。他在廢墟裡活下來的本事比你想像中大，而你——需要多一雙眼睛看著後頭。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿岳",
+     "char_id": null,
+     "expr": "calm",
+     "text": "知道了。出發。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "檢查裝備並帶小灰往北出發",
+     "再向陳姐詢問地下街的具體路線",
+     "讓小灰留下，獨自前往（違抗命令）",
+     "先去醫療區拿繃帶和藥品再走"
+    ],
+    "state_changes": {
+     "affection": {
+      "陳姐": -1,
+      "小灰": 1
+     },
+     "flags_add": [],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿岳提議獨自前往，被陳姐嚴詞拒絕並命令帶上小灰。阿岳接受任務，準備出發。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "陳姐": -1,
+     "小灰": 1
+    },
+    "flags": [
+     "mission_start"
+    ],
+    "items": []
+   },
+   "summary": [
+    "陳姐下達任務：阿岳需帶小灰前往舊市政府地下街尋找淨水機壓力閥，限天黑前返回。",
+    "阿岳提議獨自前往，被陳姐嚴詞拒絕並命令帶上小灰。阿岳接受任務，準備出發。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0001",
+   "children": [
+    "n_0002"
+   ],
+   "created_at": "2026-09-25T15:03:35+08:00"
+  },
+  "n_0002": {
+   "parent": "n_0001",
+   "scene_id": "surface_ruins",
+   "player_input": {
+    "kind": "option",
+    "text": "讓小灰留下，獨自前往（違抗命令）"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿岳轉身大步朝通風井走去，腳步聲在空蕩蕩的大廳裡顯得格外刺耳，完全沒有回頭的意思。"
+    },
+    {
+     "kind": "character",
+     "speaker": "陳姐",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "阿岳！站住！"
+    },
+    {
+     "kind": "character",
+     "speaker": "小灰",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "哥、哥……別、別走……"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "陳姐沒有追上來，只有手電筒光柱在阿岳背後掃過幾下，隨即熄滅。大廳的黃光再次成為唯一光源，照著少年的背影被黑暗吞沒。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿岳",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（獨自上路，省下一口水、一份餅乾，速度會更快……只要天黑前拿到閥體趕回來，一切都會好起來。）"
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "surface_ruins",
+     "name": "地面廢墟",
+     "image_prompt": "ruined Taipei street at noon under nuclear winter, collapsed buildings covered in gray dust, cracked asphalt road with abandoned vehicles, pale cold sunlight through thick clouds, no vegetation, desolate atmosphere"
+    },
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "沿著崩塌的忠孝東路直線衝刺，賭速度能在日落前到達",
+     "繞進地下通道系統，雖然黑暗曲折但能避開地面輻射…",
+     "撿拾路邊廢棄車輛的殘骸，嘗試拼湊出一輛能騎的腳…",
+     "停下來架設簡易天線，試圖聯絡聚落確認小灰狀況再…"
+    ],
+    "state_changes": {
+     "affection": {
+      "陳姐": -3,
+      "小灰": -2
+     },
+     "flags_add": [
+      "disobeyed_order",
+      "alone_mission"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿岳違抗陳姐命令，獨自離開聚落前往舊市政府地下街，將小灰留在原地。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "陳姐": -4,
+     "小灰": -1
+    },
+    "flags": [
+     "mission_start",
+     "disobeyed_order",
+     "alone_mission"
+    ],
+    "items": []
+   },
+   "summary": [
+    "陳姐下達任務：阿岳需帶小灰前往舊市政府地下街尋找淨水機壓力閥，限天黑前返回。",
+    "阿岳提議獨自前往，被陳姐嚴詞拒絕並命令帶上小灰。阿岳接受任務，準備出發。",
+    "阿岳違抗陳姐命令，獨自離開聚落前往舊市政府地下街，將小灰留在原地。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0002",
+   "children": [
+    "n_0003"
+   ],
+   "created_at": "2026-09-25T15:03:51+08:00"
+  },
+  "n_0003": {
+   "parent": "n_0002",
+   "scene_id": "surface_ruins",
+   "player_input": {
+    "kind": "free",
+    "text": "我不聽陳姐勸阻，決定獨自穿過輻射最強的中正紀念堂廢墟去找零件。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "晨光稀薄得像張舊紙，穿過中正紀念堂崩塌的拱頂灑在階梯上，將輻射塵染成慘白的金。阿岳踏上第一級階梯時，腳下的碎石發出脆響，像是在敲碎什麼無聲的警告。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "手腕上的舊世代計量器針尖顫抖著向紅區爬升，每一步都在飲鴆止渴。遠處廢墟深處傳來金屬扭曲的嘶鳴，或許是風，或許是某種仍在徘徊的變種體在撕咬殘骸。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小灰",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（通訊器裡傳來斷斷續續的電流聲）哥……哥……計、計量器……在、在叫……你、你聽見沒……"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿岳",
+     "char_id": null,
+     "expr": "calm",
+     "text": "關掉它。省電。我沒事。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿岳沒回頭，通訊器另一端的喘息聲被風聲吞沒。他在大理石欄杆旁停下，從揹包摸出一罐壓縮餅乾塞進嘴裡，乾硬的碎屑卡在喉嚨，連吞嚥都帶著血鏽味。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "繼續硬闖廢墟核心區，直奔舊市政府地下街",
+     "繞道輻射較低的舊忠孝東路地下道，雖繞遠但較安全",
+     "嘗試用通訊器聯絡小灰確認狀況，順便詢問捷徑",
+     "停下休息服用防輻射藥劑，觀察計量器讀數再決定"
+    ],
+    "state_changes": {
+     "affection": {
+      "陳姐": -2,
+      "小灰": -2
+     },
+     "flags_add": [
+      "entered_high_radiation_zone",
+      "radio_contact_lost"
+     ],
+     "items_add": [],
+     "items_remove": [
+      "壓縮餅乾 x1"
+     ]
+    },
+    "summary_update": "阿岳違抗命令獨自闖入中正紀念堂高輻射區，與小灰通訊中斷，計量器示警，身體開始承受輻射傷害。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "陳姐": -6,
+     "小灰": -3
+    },
+    "flags": [
+     "mission_start",
+     "disobeyed_order",
+     "alone_mission",
+     "entered_high_radiation_zone",
+     "radio_contact_lost"
+    ],
+    "items": []
+   },
+   "summary": [
+    "陳姐下達任務：阿岳需帶小灰前往舊市政府地下街尋找淨水機壓力閥，限天黑前返回。",
+    "阿岳提議獨自前往，被陳姐嚴詞拒絕並命令帶上小灰。阿岳接受任務，準備出發。",
+    "阿岳違抗陳姐命令，獨自離開聚落前往舊市政府地下街，將小灰留在原地。",
+    "阿岳違抗命令獨自闖入中正紀念堂高輻射區，與小灰通訊中斷，計量器示警，身體開始承受輻射傷害。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0003",
+   "children": [
+    "n_0004"
+   ],
+   "created_at": "2026-09-25T15:04:17+08:00"
+  },
+  "n_0004": {
+   "parent": "n_0003",
+   "scene_id": "surface_ruins",
+   "player_input": {
+    "kind": "option",
+    "text": "繼續硬闖廢墟核心區，直奔舊市政府地下街"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "計量器的尖銳蜂鳴聲撕裂了廢墟的死寂，紅色指標死死抵住刻度終端，塑膠外殼因過熱而微微變形。阿岳的指尖發麻，嘴唇內側泛著銹鐵般的甜腥味，每一次呼吸都像吸入了碎玻璃。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "崩塌的紀念堂拱頂下，鋼筋像斷裂的脊椎刺向灰白天空。通往舊市政府地下街的入口被數十噸碎石封死，唯一的路是繞向側翼那棟傾頹的百貨大樓，穿過其地下室連通管道——那意味著更深層、更濃烈的輻射沉澱區。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小灰",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（通訊器炸裂出刺耳靜電音）哥……別、別去百貨大樓……我、我查過舊圖……地下管道、管道頂板有、有裂縫……水、水會滲進去……"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿岳",
+     "char_id": null,
+     "expr": "calm",
+     "text": "吵死了……再廢話我就把通訊器扔了。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿岳踉蹌著扶上百貨大樓歪斜的旋轉門，玻璃渣在靴底碎裂。大廳中央的電扶梯早已癱瘓成鐵骨架，他不得不攀爬扭曲的鋼樑，繞過仍在滴落黑色黏液的不明殘骸，強行撬開通往地下二樓的防火門。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "門軸發出撕心裂肺的金屬哀鳴，黑暗如實體般撲面而來，夾雜著濕腐黴味與一絲若有若無的——氯氣味？計量器聲音驟變，從間歇性蜂鳴轉為連續單調長音，紅燈閃爍頻率加快，電池電量狂瀉。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "強行衝入地下管道，賭氯氣味是淨水設施殘留",
+     "退回地面尋找繞路，哪怕耗費雙倍時間",
+     "服用僅有的兩片碘片硬抗輻射繼續前進",
+     "啟動求救信標，賭陳姐能收到訊號派人接應"
+    ],
+    "state_changes": {
+     "affection": {
+      "陳姐": -2,
+      "小灰": -1
+     },
+     "flags_add": [
+      "entered_department_store",
+      "radiation_critical",
+      "comms_degraded"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿岳無視輻射警告與小灰勸阻，強行闖入傾頹百貨大樓地下管道，計量器顯示輻射已達臨界值，通訊器幾乎失聯。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "陳姐": -8,
+     "小灰": -4
+    },
+    "flags": [
+     "mission_start",
+     "disobeyed_order",
+     "alone_mission",
+     "entered_high_radiation_zone",
+     "radio_contact_lost",
+     "entered_department_store",
+     "radiation_critical",
+     "comms_degraded"
+    ],
+    "items": []
+   },
+   "summary": [
+    "陳姐下達任務：阿岳需帶小灰前往舊市政府地下街尋找淨水機壓力閥，限天黑前返回。",
+    "阿岳提議獨自前往，被陳姐嚴詞拒絕並命令帶上小灰。阿岳接受任務，準備出發。",
+    "阿岳違抗陳姐命令，獨自離開聚落前往舊市政府地下街，將小灰留在原地。",
+    "阿岳違抗命令獨自闖入中正紀念堂高輻射區，與小灰通訊中斷，計量器示警，身體開始承受輻射傷害。",
+    "阿岳無視輻射警告與小灰勸阻，強行闖入傾頹百貨大樓地下管道，計量器顯示輻射已達臨界值，通訊器幾乎失聯。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0004",
+   "children": [
+    "n_0005"
+   ],
+   "created_at": "2026-09-25T15:04:45+08:00"
+  },
+  "n_0005": {
+   "parent": "n_0004",
+   "scene_id": "surface_ruins",
+   "player_input": {
+    "kind": "free",
+    "text": "我把防毒面具的濾芯讓給小灰，自己冒著輻射繼續往深處走。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿岳顫抖著雙手從臉上扯下防毒面具，冰冷的塑膠邊緣扯動著乾裂的嘴唇。他熟練地旋開那個已發灰的濾芯盒，金屬螺紋發出細微的刺耳聲，在死寂的地下管道裡顯得格外清晰。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "他將濾芯塞進揹包側袋，動作粗暴卻帶著一絲笨拙的溫柔。通訊器另一端，電流聲裡夾雜著壓抑的吸鼻聲，彷彿隔著幾十噸混凝土與輻射塵，也能聞到那股濕腐的黴味。"
+    },
+    {
+     "kind": "character",
+     "speaker": "小灰",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（通訊器聲音極微，近乎耳語）哥……濾、濾芯……你、你自己……"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿岳",
+     "char_id": null,
+     "expr": "calm",
+     "text": "少廢話。帶上。回頭路上還得用得著。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿岳沒戴回面具，直接將裝著濾芯的揹包扔向身後的黑暗深處——那是通往地面出口的方向。濾芯盒撞擊水泥地的聲音悶響，隨即被管道裡滴水的回聲吞沒。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "計量器的長音驟然拔高，紅燈瘋狂閃爍，電池指標以肉眼可見的速度下墜。阿岳的視野邊緣開始泛白，喉嚨裡湧起一股無法吞嚥的鐵鏽甜味，雙膝一軟，重重跪在積水裡，汙水瞬間浸濕褲腳，冰徹骨髓。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿岳",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（咳嗽聲嘶啞，帶著血沫）走……快走……別回頭……"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "通訊器傳來揹包拉鍊聲、防毒面具佩戴的摩擦聲，隨後是輕快卻沉重的腳步聲遠去。小灰沒有回頭，也沒有再說話。阿岳獨自趴在管道積水中，手電筒光柱搖晃著照向前方——管道盡頭，一扇生鏽的鋼門半掩著，門縫透出微弱的藍綠光暈，彷彿某種舊世代裝置仍在運轉。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "sad",
+    "weather": "none",
+    "options": [
+     "強撐著爬向那扇鋼門，賭命拿零件",
+     "啟動求救信標，等待聚落救援",
+     "就地服用防輻射藥劑（若有），硬撐繼續前進",
+     "躺在積水裡接受命運，節省氧氣給小灰爭取時間"
+    ],
+    "state_changes": {
+     "affection": {
+      "陳姐": -2,
+      "小灰": 3
+     },
+     "flags_add": [
+      "filter_given_to_xiaohui",
+      "radiation_poisoning_severe",
+      "alone_in_deep_tunnel"
+     ],
+     "items_add": [],
+     "items_remove": [
+      "filter_cartridge"
+     ]
+    },
+    "summary_update": "阿岳將唯一濾芯給小灰並丟回揹包逼迫他撤退，自己無防護暴露在臨界輻射中倒地，發現管道盡頭有發光鋼門疑似目標區域。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "陳姐": -10,
+     "小灰": -1
+    },
+    "flags": [
+     "mission_start",
+     "disobeyed_order",
+     "alone_mission",
+     "entered_high_radiation_zone",
+     "radio_contact_lost",
+     "entered_department_store",
+     "radiation_critical",
+     "comms_degraded",
+     "filter_given_to_xiaohui",
+     "radiation_poisoning_severe",
+     "alone_in_deep_tunnel"
+    ],
+    "items": []
+   },
+   "summary": [
+    "陳姐下達任務：阿岳需帶小灰前往舊市政府地下街尋找淨水機壓力閥，限天黑前返回。",
+    "阿岳提議獨自前往，被陳姐嚴詞拒絕並命令帶上小灰。阿岳接受任務，準備出發。",
+    "阿岳違抗陳姐命令，獨自離開聚落前往舊市政府地下街，將小灰留在原地。",
+    "阿岳違抗命令獨自闖入中正紀念堂高輻射區，與小灰通訊中斷，計量器示警，身體開始承受輻射傷害。",
+    "阿岳無視輻射警告與小灰勸阻，強行闖入傾頹百貨大樓地下管道，計量器顯示輻射已達臨界值，通訊器幾乎失聯。",
+    "阿岳將唯一濾芯給小灰並丟回揹包逼迫他撤退，自己無防護暴露在臨界輻射中倒地，發現管道盡頭有發光鋼門疑似目標區域。"
+   ],
+   "bgm_mood": "sad",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0005",
+   "children": [
+    "n_0006"
+   ],
+   "created_at": "2026-09-25T15:05:00+08:00"
+  },
+  "n_0006": {
+   "parent": "n_0005",
+   "scene_id": "surface_ruins",
+   "player_input": {
+    "kind": "option",
+    "text": "就地服用防輻射藥劑（若有），硬撐繼續前進"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "阿岳顫抖著從揹包內側口袋摸索，指尖劃過空蕩蕩的布料，只碰到幾張濕透的紙巾與一罐早已喝空的壓縮餅乾鐵盒——防輻射藥劑早在那次為了省負重而拋棄的補給箱裡，隨著聚落最後一次物資分配發完了。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "冷汗瞬間從脊背竄上後腦，在髮際凝成冰珠。計量器的連續長音變得尖銳刺耳，像是在替倒數計時的生命敲喪鐘。阿岳乾裂的雙唇嚐到更濃的鐵鏽甜味，視野邊緣的白霧擴大，連帶著手電筒光柱也變成模糊的暈圈。"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "阿岳",
+     "char_id": null,
+     "expr": "calm",
+     "text": "（喘息聲沉重，聲帶像砂紙摩擦）沒藥……也得走……"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "他撐著濕滑的管壁站起身，雙腿像灌了鉛般沉重，每一步都牽動著肺葉深處的灼痛。管道盡頭那扇生鏽鋼門在白霧中若隱若現，門縫漏出的藍綠光暈不再閃爍，彷彿靜靜等待著某個註定到來的訪客。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "就在此時，身後傳來細微的「滋滋」電流聲，通訊器在靜電中擠出幾個斷裂的位元組——不是小灰的聲音，而是陳姐特有的低沉語調，穿透幾十公尺混凝土與輻射層，硬生生鑽進阿岳耳膜。"
+    },
+    {
+     "kind": "character",
+     "speaker": "陳姐",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（通訊器，聲音失真卻可辨）阿岳……聽見……回話……小灰……平安到……大廳……你……在哪……"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "回應陳姐，報告位置並請求支援",
+     "不回應，省下最後電力衝向鋼門",
+     "原地休息片刻，嘗試緩解輻射病症狀",
+     "爬回管道嘗試追上小灰"
+    ],
+    "state_changes": {
+     "affection": {
+      "陳姐": -1
+     },
+     "flags_add": [
+      "radiation_poisoning_critical",
+      "contact_restored_briefly"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿岳發現防輻射藥劑已用盡，在重度輻射中毒狀態下勉強站起，陳姐透過通訊器短暫建立聯絡，確認小灰平安回到大廳。",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "陳姐": -11,
+     "小灰": -1
+    },
+    "flags": [
+     "mission_start",
+     "disobeyed_order",
+     "alone_mission",
+     "entered_high_radiation_zone",
+     "radio_contact_lost",
+     "entered_department_store",
+     "radiation_critical",
+     "comms_degraded",
+     "filter_given_to_xiaohui",
+     "radiation_poisoning_severe",
+     "alone_in_deep_tunnel",
+     "radiation_poisoning_critical",
+     "contact_restored_briefly"
+    ],
+    "items": []
+   },
+   "summary": [
+    "陳姐下達任務：阿岳需帶小灰前往舊市政府地下街尋找淨水機壓力閥，限天黑前返回。",
+    "阿岳提議獨自前往，被陳姐嚴詞拒絕並命令帶上小灰。阿岳接受任務，準備出發。",
+    "阿岳違抗陳姐命令，獨自離開聚落前往舊市政府地下街，將小灰留在原地。",
+    "阿岳違抗命令獨自闖入中正紀念堂高輻射區，與小灰通訊中斷，計量器示警，身體開始承受輻射傷害。",
+    "阿岳無視輻射警告與小灰勸阻，強行闖入傾頹百貨大樓地下管道，計量器顯示輻射已達臨界值，通訊器幾乎失聯。",
+    "阿岳將唯一濾芯給小灰並丟回揹包逼迫他撤退，自己無防護暴露在臨界輻射中倒地，發現管道盡頭有發光鋼門疑似目標區域。",
+    "阿岳發現防輻射藥劑已用盡，在重度輻射中毒狀態下勉強站起，陳姐透過通訊器短暫建立聯絡，確認小灰平安回到大廳。"
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0006",
+   "children": [
+    "n_0007"
+   ],
+   "created_at": "2026-09-25T15:05:43+08:00"
+  },
+  "n_0007": {
+   "parent": "n_0006",
+   "scene_id": "surface_ruins",
+   "player_input": {
+    "kind": "free",
+    "text": "暴風雪來了，我還是硬闖崩塌的隧道想搶先拿到零件。"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "風聲在廢墟縫隙中尖嘯，捲著銳利的冰晶與灰白輻射塵，像無數隱形的刀刃刮過暴露的皮膚。阿岳聽見陳姐的聲音，卻連回應的力氣都沒有，喉嚨裡只擠出破碎的氣音。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "他一腳踏入鋼門門縫，門軸發出慘烈的金屬呻吟。門內是個不大的裝置間，牆壁掛著剝落的標識：「舊市政府地下街・增壓泵站・維護通道」。中央矗立著一臺笨重的舊世代淨水核心模組，指示燈以極緩的頻率閃爍著微弱的綠光——它還活著。"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "目標壓力閥就安裝在模組側面的銅質管路上，手掌大小，表面覆著一層薄霜。阿岳顫抖著伸出手，指尖剛觸到冰冷金屬，視野便徹底白了。計量器發出最後一聲尖銳長鳴，隨後徹底熄滅。他感覺自己像塊石頭一樣砸在地上，聽見自己肋骨碎裂的聲音，或許只是幻覺。"
+    },
+    {
+     "kind": "character",
+     "speaker": "陳姐",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "（通訊器，聲音撕裂般鋒利）阿岳！回話！定位顯示你在泵站內部……小灰哭著要衝回來找你，我鎖了大廳門……你給我撐住……"
+    },
+    {
+     "kind": "character",
+     "speaker": "小灰",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "（通訊器背景，哭喊聲模糊）哥……哥哥……別死……別丟下我……"
+    },
+    {
+     "kind": "narration",
+     "speaker": "旁白",
+     "char_id": null,
+     "expr": "calm",
+     "text": "意識像潮水般退去，最後留下的畫面是那支壓力閥在綠光中靜靜轉動，彷彿在等待某雙有力的手將它擰下，帶回地底等待的幾十張渴臉。暴風雪仍在門外嘶吼，沒人知道這條隧道能否撐到天亮。"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "sad",
+    "weather": "snow",
+    "options": [],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "ayue_collapsed",
+      "valve_found",
+      "blizzard_trapped"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "阿岳在重度輻射中毒與暴風雪中硬撐抵達泵站，找到目標壓力閥，但身體極限倒地昏迷，生死未卜。陳姐與小灰在大廳失聯焦急等待。",
+    "ending": {
+     "type": "bad",
+     "title": "冰封閥體"
+    }
+   },
+   "state": {
+    "affection": {
+     "陳姐": -11,
+     "小灰": -1
+    },
+    "flags": [
+     "mission_start",
+     "disobeyed_order",
+     "alone_mission",
+     "entered_high_radiation_zone",
+     "radio_contact_lost",
+     "entered_department_store",
+     "radiation_critical",
+     "comms_degraded",
+     "filter_given_to_xiaohui",
+     "radiation_poisoning_severe",
+     "alone_in_deep_tunnel",
+     "radiation_poisoning_critical",
+     "contact_restored_briefly",
+     "ayue_collapsed",
+     "valve_found",
+     "blizzard_trapped"
+    ],
+    "items": []
+   },
+   "summary": [
+    "陳姐下達任務：阿岳需帶小灰前往舊市政府地下街尋找淨水機壓力閥，限天黑前返回。",
+    "阿岳提議獨自前往，被陳姐嚴詞拒絕並命令帶上小灰。阿岳接受任務，準備出發。",
+    "阿岳違抗陳姐命令，獨自離開聚落前往舊市政府地下街，將小灰留在原地。",
+    "阿岳違抗命令獨自闖入中正紀念堂高輻射區，與小灰通訊中斷，計量器示警，身體開始承受輻射傷害。",
+    "阿岳無視輻射警告與小灰勸阻，強行闖入傾頹百貨大樓地下管道，計量器顯示輻射已達臨界值，通訊器幾乎失聯。",
+    "阿岳將唯一濾芯給小灰並丟回揹包逼迫他撤退，自己無防護暴露在臨界輻射中倒地，發現管道盡頭有發光鋼門疑似目標區域。",
+    "阿岳發現防輻射藥劑已用盡，在重度輻射中毒狀態下勉強站起，陳姐透過通訊器短暫建立聯絡，確認小灰平安回到大廳。",
+    "阿岳在重度輻射中毒與暴風雪中硬撐抵達泵站，找到目標壓力閥，但身體極限倒地昏迷，生死未卜。陳姐與小灰在大廳失聯焦急等待。"
+   ],
+   "bgm_mood": "sad",
+   "weather": "snow",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0007",
+   "children": [],
+   "created_at": "2026-09-25T15:05:57+08:00"
+  }
+ }
+}

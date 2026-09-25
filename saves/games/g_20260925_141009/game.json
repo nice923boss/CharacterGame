@@ -1,0 +1,54 @@
+{
+ "id": "g_20260925_141009",
+ "created_at": "2026-09-25T14:10:09+08:00",
+ "seed": 1249838018,
+ "lang": "en",
+ "title": "Neon Rain Heist",
+ "style_en": "2079 cyberpunk vertical megacity, neon-drenched rain, towering hive architecture",
+ "world": {
+  "era": "2079",
+  "place": "Neo-Kowloon, a rain-soaked vertical megacity of neon and noodle stalls",
+  "genre": "cyberpunk heist",
+  "tone": "tense and stylish",
+  "extra": "The Kagero corporation stole a memory chip holding a whole district's savings",
+  "goal": "Steal the memory chip back from the Kagero tower before midnight"
+ },
+ "protagonist": {
+  "name": "Vex",
+  "profile": "a burned-out netrunner with one last favor to repay"
+ },
+ "characters": [
+  {
+   "id": "c1",
+   "name": "Rin",
+   "appearance": "26-year-old woman, asymmetric neon-pink bob, dark eyes with glowing cyan implants, black cropped racing jacket, fingerless gloves",
+   "personality": "reckless, loyal, hates corporations",
+   "speech": "slangy and teasing",
+   "relationship": "your getaway driver and oldest friend",
+   "appearance_en": "26-year-old woman, asymmetric neon-pink bob, glowing cyan cybernetic eyes, black cropped racing jacket, fingerless gloves",
+   "seed": 1249838035
+  },
+  {
+   "id": "c2",
+   "name": "Hollow",
+   "appearance": "50-year-old man, slicked-back white hair, mirrored sunglasses, charcoal three-piece suit, chrome prosthetic right hand",
+   "personality": "smooth, calculating, untrustworthy",
+   "speech": "soft-spoken, every sentence a deal",
+   "relationship": "corporate fixer who offers you inside help",
+   "appearance_en": "50-year-old man, slicked-back white hair, mirrored sunglasses, charcoal three-piece suit, chrome prosthetic right hand",
+   "seed": 1249838052
+  }
+ ],
+ "scenes": {
+  "noodle_stall_rooftop": {
+   "name": "Rooftop Noodle Stall",
+   "image_prompt": "Rain-slicked rooftop noodle stall at night, steam rising from broth pots, holographic menus flickering in cyan and magenta, neon signs reflecting on wet concrete, distant megacity towers looming through mist, moody volumetric lighting"
+  },
+  "av_extraction": {
+   "name": "AV Extraction",
+   "image_prompt": "Neo-Kowloon rooftop at midnight, AV transport rotors spinning, rain-slicked landing pad, Kagero tower spire in distance, neon cityscape below, steam rising from vents, moody cyberpunk lighting"
+  }
+ },
+ "first_scene": "noodle_stall_rooftop",
+ "setup_model": "nvidia/nemotron-3-ultra-550b-a55b"
+}

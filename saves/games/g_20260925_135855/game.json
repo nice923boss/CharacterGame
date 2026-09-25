@@ -1,0 +1,58 @@
+{
+ "id": "g_20260925_135855",
+ "created_at": "2026-09-25T13:58:55+08:00",
+ "seed": 2045311391,
+ "lang": "en",
+ "title": "The Bricked-Up Lullaby",
+ "style_en": "1888 Victorian Yorkshire manor, gothic architecture, windswept moors, perpetual twilight, melancholic decay",
+ "world": {
+  "era": "1888, late Victorian England",
+  "place": "Blackmoor Manor on the windswept Yorkshire moors",
+  "genre": "gothic mystery",
+  "tone": "eerie and melancholic",
+  "extra": "Every night a child's music box plays in a room that was bricked up forty years ago",
+  "goal": "Lay the manor's ghost to rest before the last candle of the vigil burns out"
+ },
+ "protagonist": {
+  "name": "Eliza Grey",
+  "profile": "a young spirit medium invited to the manor, sharp-eyed and sceptical of her own gift"
+ },
+ "characters": [
+  {
+   "id": "c1",
+   "name": "Edmund",
+   "appearance": "40-year-old man, neatly combed dark brown hair with grey at the temples, pale grey eyes, black Victorian frock coat, white cravat, silver signet ring",
+   "personality": "proud and guarded, haunted by guilt",
+   "speech": "formal and clipped, avoids the past",
+   "relationship": "Lord of Blackmoor Manor who hired you",
+   "appearance_en": "40-year-old man, dark brown hair combed back with grey temples, pale grey eyes, black Victorian frock coat, white cravat, silver signet ring",
+   "seed": 2045311408
+  },
+  {
+   "id": "c2",
+   "name": "Clara",
+   "appearance": "ghost of a 10-year-old girl, long pale blonde hair with a blue ribbon, pale blue eyes, old-fashioned white lace dress, faintly translucent",
+   "personality": "lonely and playful, afraid of the dark cellar",
+   "speech": "speaks in riddles and nursery rhymes",
+   "relationship": "the manor's ghost, curious about you",
+   "appearance_en": "10-year-old ghost girl, long pale blonde hair with blue ribbon, pale blue eyes, old-fashioned white lace dress, faintly translucent",
+   "seed": 2045311425
+  }
+ ],
+ "scenes": {
+  "manor_exterior_dusk": {
+   "name": "Manor Exterior at Dusk",
+   "image_prompt": "Blackmoor Manor silhouette against stormy Yorkshire moors at dusk, gothic stone architecture with ivy-covered walls, broken windows, overgrown gardens, heavy grey clouds, dim amber light from few windows, mist swirling around foundation, dead trees, oppressive atmosphere"
+  },
+  "manor_foyer": {
+   "name": "Manor Foyer",
+   "image_prompt": "Victorian manor foyer with stone flagstones, sweeping staircase, gas lamps on walls, shadows in corners, dusk light through tall windows"
+  },
+  "manor_drawing_room": {
+   "name": "Manor Drawing Room",
+   "image_prompt": "Victorian drawing room with faded damask wallpaper, heavy velvet curtains drawn against the moorland dark, a carved marble fireplace with a low-burning fire, gas lamps on brackets, dust motes in the light, an ornate clock on the mantle showing 11:15 PM"
+  }
+ },
+ "first_scene": "manor_exterior_dusk",
+ "setup_model": "nvidia/nemotron-3-ultra-550b-a55b"
+}

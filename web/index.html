@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>千枝物語</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js"></script>
+</head>
+<body>
+<div id="stage">
+  <div id="canvas-host"></div>
+
+  <!-- 1. title -->
+  <section id="scr-title" class="screen">
+    <div class="title-cover"></div>
+    <div class="title-box">
+      <h1 class="game-title" data-i18n="app.title">千枝物語</h1>
+      <p class="subtitle" data-i18n="app.subtitle">每一次選擇，都長出新的枝枒</p>
+      <div class="lang-switch">
+        <button class="btn tiny" data-lang="zh">繁中</button>
+        <button class="btn tiny" data-lang="en">English</button>
+      </div>
+      <div class="menu">
+        <button class="btn" data-act="continue" data-i18n="menu.continue" disabled>繼續遊戲</button>
+        <button class="btn" data-act="new" data-i18n="menu.new">新的故事</button>
+        <button class="btn" data-act="load" data-i18n="menu.load">讀取存檔</button>
+        <button class="btn" data-act="stories" data-i18n="menu.stories">管理故事</button>
+        <button class="btn" data-act="settings" data-i18n="menu.settings">設定</button>
+      </div>
+      <p class="health" id="health" data-i18n="health.checking">檢查連線中…</p>
+      <div class="batch-panel" id="batch-panel" hidden></div>
+    </div>
+  </section>
+
+  <!-- 2. setup -->
+  <section id="scr-setup" class="screen" hidden>
+    <div class="panel setup-panel">
+      <header class="panel-head"><h2 data-i18n="setup.title">新的故事</h2><button class="btn small ghost" data-act="back" data-i18n="common.back">返回</button></header>
+      <div class="setup-body">
+        <div class="col">
+          <h3 data-i18n="setup.world">世界</h3>
+          <label><span data-i18n="setup.preset">預設世界</span><select id="world-preset"></select></label>
+          <label><span data-i18n="setup.era">年代</span><input id="w-era" maxlength="200" data-i18n-ph="setup.ph.era"></label>
+          <label><span data-i18n="setup.place">地點</span><input id="w-place" maxlength="200" data-i18n-ph="setup.ph.place"></label>
+          <div class="row2">
+            <label><span data-i18n="setup.genre">類型</span><input id="w-genre" maxlength="200" data-i18n-ph="setup.ph.genre"></label>
+            <label><span data-i18n="setup.tone">基調</span><input id="w-tone" maxlength="200" data-i18n-ph="setup.ph.tone"></label>
+          </div>
+          <label><span data-i18n="setup.extra">補充設定</span><textarea id="w-extra" maxlength="200" rows="2"></textarea></label>
+          <label><span data-i18n="setup.goal">結局目標</span><input id="w-goal" maxlength="200" data-i18n-ph="setup.ph.goal"></label>
+          <h3 data-i18n="setup.hero">主角（你）</h3>
+          <div class="row2">
+            <label><span data-i18n="setup.name">名字</span><input id="p-name" maxlength="12"></label>
+            <label><span data-i18n="setup.profile">簡介</span><input id="p-profile" maxlength="200"></label>
+          </div>
+        </div>
+        <div class="col">
+          <h3><span data-i18n="setup.chars">角色</span> <small id="char-count"></small></h3>
+          <div id="char-list"></div>
+          <button class="btn small" id="char-add" data-i18n="setup.add">＋ 新增角色</button>
+        </div>
+      </div>
+      <div class="mode-bar" id="mode-bar">
+        <span class="mode-label" data-i18n="setup.mode">生成方式</span>
+        <label><input type="radio" name="gen-mode" value="live" checked><span data-i18n="setup.mode.live">邊玩邊寫</span></label>
+        <label><input type="radio" name="gen-mode" value="batch"><span data-i18n="setup.mode.batch">批次預先寫完整棵樹</span></label>
+        <label class="batch-only"><span data-i18n="setup.b.options">每輪選項</span><select id="b-options"><option>2</option><option selected>3</option><option>4</option></select></label>
+        <label class="batch-only"><span data-i18n="setup.b.turns">輪數</span><select id="b-turns"><option>3</option><option>4</option><option selected>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select></label>
+        <p class="hint batch-only" id="batch-est"></p>
+      </div>
+      <footer class="panel-foot">
+        <div>
+          <p class="hint" id="setup-lang" data-i18n="setup.lang"></p>
+          <p class="hint" id="setup-msg"></p>
+        </div>
+        <button class="btn primary" id="setup-start" data-i18n="setup.start">開始故事</button>
+      </footer>
+    </div>
+  </section>
+
+  <!-- 3. main game (dialog box, 4. options live here) -->
+  <section id="scr-game" class="screen" hidden>
+    <div id="scene-card" hidden></div>
+    <div id="asset-chip" hidden></div>
+    <div id="toolbar">
+      <button class="btn tiny" data-act="save" data-i18n="game.save">存檔</button>
+      <button class="btn tiny" data-act="load" data-i18n="game.load">讀檔</button>
+      <button class="btn tiny" data-act="tree" data-i18n="game.tree">節點樹</button>
+      <button class="btn tiny" data-act="settings" data-i18n="game.settings">設定</button>
+      <button class="btn tiny" data-act="title" data-i18n="game.title">標題</button>
+    </div>
+    <div id="retry" hidden>
+      <span id="retry-text"></span>
+      <button class="btn tiny" id="retry-cancel" data-i18n="common.cancel">取消</button>
+    </div>
+    <div id="choices" hidden>
+      <div id="options"></div>
+      <form id="free-form" autocomplete="off">
+        <input id="free-input" maxlength="120">
+        <button class="btn small" type="submit" data-i18n="common.send">送出</button>
+      </form>
+    </div>
+    <div id="ending" class="panel" hidden>
+      <p id="ending-kind"></p>
+      <h2 id="ending-title"></h2>
+      <p class="hint" data-i18n="ending.hint">可以從節點樹回到任一輪，改走別的結局。</p>
+      <div class="menu row">
+        <button class="btn small" data-act="tree" data-i18n="game.tree">節點樹</button>
+        <button class="btn small ghost" data-act="title" data-i18n="ending.toTitle">回到標題</button>
+      </div>
+    </div>
+    <div id="dialog" class="box">
+      <div id="nameplate" hidden></div>
+      <p id="dialog-text"></p>
+      <span id="dialog-next" hidden>▼</span>
+      <span id="dialog-wait" hidden><i></i><i></i><i></i></span>
+    </div>
+  </section>
+
+  <!-- 5. save / load -->
+  <section id="mdl-slots" class="modal" hidden>
+    <div class="panel slots-panel">
+      <header class="panel-head"><h2 id="slots-title"></h2><button class="btn small ghost" data-close data-i18n="common.close">關閉</button></header>
+      <div id="autosave-row"></div>
+      <div id="slot-grid"></div>
+    </div>
+  </section>
+
+  <!-- 6. node tree -->
+  <section id="mdl-tree" class="modal" hidden>
+    <div class="panel tree-panel">
+      <header class="panel-head"><h2 data-i18n="tree.title">節點樹</h2>
+        <p class="hint" data-i18n="tree.hint">點任一節點可回到那一輪，從那裡改選；原本的分支會保留。</p>
+        <button class="btn small ghost" data-close data-i18n="common.close">關閉</button></header>
+      <div id="tree-view"></div>
+      <div id="tree-tip" hidden></div>
+    </div>
+  </section>
+
+  <!-- 7. settings -->
+  <section id="mdl-settings" class="modal" hidden>
+    <div class="panel settings-panel">
+      <header class="panel-head"><h2 data-i18n="settings.title">設定</h2><button class="btn small ghost" data-close data-i18n="common.close">關閉</button></header>
+      <label><span data-i18n="settings.speed">文字速度</span><input type="range" id="set-speed" min="10" max="120" step="5"><output id="out-speed"></output></label>
+      <label><span data-i18n="settings.bgm">音樂音量</span><input type="range" id="set-bgm" min="0" max="100" step="5"><output id="out-bgm"></output></label>
+      <label><span data-i18n="settings.sfx">音效音量</span><input type="range" id="set-sfx" min="0" max="100" step="5"><output id="out-sfx"></output></label>
+      <label class="check"><input type="checkbox" id="set-weather"><span data-i18n="settings.weather">顯示天氣粒子</span></label>
+      <p class="hint" id="set-models"></p>
+    </div>
+  </section>
+
+  <!-- story list: open or delete whole stories -->
+  <section id="mdl-stories" class="modal" hidden>
+    <div class="panel slots-panel">
+      <header class="panel-head"><h2 data-i18n="stories.title">管理故事</h2>
+        <p class="hint" data-i18n="stories.hint">刪除故事會連同節點樹、所有分支、圖片，以及指向它的存檔一起刪除。</p>
+        <button class="btn small ghost" data-close data-i18n="common.close">關閉</button></header>
+      <div id="story-list"></div>
+    </div>
+  </section>
+
+  <!-- 8. confirm -->
+  <section id="mdl-confirm" class="modal" hidden>
+    <div class="panel confirm-panel">
+      <p id="confirm-text"></p>
+      <div class="menu row">
+        <button class="btn primary" id="confirm-ok" data-i18n="common.ok">確定</button>
+        <button class="btn ghost" id="confirm-cancel" data-i18n="common.cancel">取消</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- loading / progress overlay (setup and loading a game) -->
+  <section id="mdl-progress" class="modal" hidden>
+    <div class="panel confirm-panel">
+      <p id="progress-text"></p>
+      <p class="hint" id="progress-sub"></p>
+      <div class="menu row"><button class="btn ghost" id="progress-cancel" data-i18n="common.cancel">取消</button></div>
+    </div>
+  </section>
+
+  <div id="toast" hidden></div>
+  <footer class="credit" data-i18n="app.credit">製作者：黃政文</footer>
+</div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

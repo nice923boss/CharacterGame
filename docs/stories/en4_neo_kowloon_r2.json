@@ -1,0 +1,18 @@
+{
+  "key": "en4_neo_kowloon_r2",
+  "lang": "en",
+  "aim": "bad",
+  "game_id": "g_20260925_150506",
+  "title": "Neon Rain Heist",
+  "turns": 3,
+  "player_turns": 2,
+  "scenes": 1,
+  "models": [
+    "nvidia/nemotron-3-ultra-550b-a55b"
+  ],
+  "ending": {
+    "type": "bad",
+    "title": "Walk Away"
+  },
+  "minutes": 3.2
+}

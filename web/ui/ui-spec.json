@@ -1,0 +1,71 @@
+{
+  "style": "ornate antique gold filigree, art nouveau curls, fine engraved lines, warm gold on deep navy, japanese visual novel interface",
+  "no_text_rule": "no text, no letters, no numbers, no symbols, no watermark, no signature",
+  "palette": {
+    "bg": "#0c1020",
+    "panel": "rgba(18,24,44,0.96)",
+    "gold": "#d2ae68",
+    "gold_dim": "#8f7443",
+    "ink": "#f4ecdc",
+    "muted": "#b3ab9c",
+    "accent": "#7f9ed8",
+    "danger": "#d8847f"
+  },
+  "fonts": {
+    "title_and_buttons": "Noto Serif TC 700/900",
+    "body": "Noto Sans TC 400/500"
+  },
+  "components": {
+    "frame_panel": {
+      "file": "ui/frame_panel.png",
+      "size": [
+        208,
+        208
+      ],
+      "slice": 96,
+      "css": "border-image: url(../ui/frame_panel.png) 96 / <border width> stretch"
+    },
+    "frame_box": {
+      "file": "ui/frame_box.png",
+      "size": [
+        176,
+        176
+      ],
+      "slice": 80,
+      "css": "border-image: url(../ui/frame_box.png) 80 / <border width> stretch"
+    },
+    "btn": {
+      "file": "ui/btn.png",
+      "size": [
+        112,
+        112
+      ],
+      "slice": 48,
+      "css": "border-image: url(../ui/btn.png) 48 / <border width> stretch"
+    }
+  },
+  "cover": {
+    "file": "ui/cover.png",
+    "size": [
+      1280,
+      720
+    ],
+    "note": "right half kept dark for the title menu"
+  },
+  "screens": [
+    "title",
+    "setup",
+    "game",
+    "dialog box",
+    "options",
+    "save/load",
+    "node tree",
+    "settings",
+    "confirm"
+  ],
+  "usage": {
+    "panel": ".panel (setup, save/load, tree, settings, confirm, progress)",
+    "box": ".box (dialog box)",
+    "btn": ".btn (all buttons, options)"
+  }
+}

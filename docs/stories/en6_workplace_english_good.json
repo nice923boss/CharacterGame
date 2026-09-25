@@ -1,0 +1,20 @@
+{
+  "key": "en6_workplace_english_good",
+  "lang": "en",
+  "aim": "good",
+  "game_id": "g_20260925_150905",
+  "title": "Singapore Office Proposa",
+  "turns": 20,
+  "player_turns": 19,
+  "forked_from": "n_0008",
+  "how": "11 replies from turn 9, each written after reading the previous reply, sent to the same /turn endpoint the UI uses",
+  "scenes": 1,
+  "models": [
+    "nvidia/nemotron-3-ultra-550b-a55b"
+  ],
+  "ending": {
+    "type": "good",
+    "title": "First Month Win"
+  },
+  "save_slot": 4
+}

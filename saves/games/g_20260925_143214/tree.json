@@ -1,0 +1,1562 @@
+{
+ "root": "n_0000",
+ "next": 10,
+ "nodes": {
+  "n_0000": {
+   "parent": null,
+   "scene_id": "dustreach_main_street_dawn",
+   "player_input": {
+    "kind": "opening",
+    "text": ""
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The shuttle ramp hisses shut behind Jack Rook, sealing him into the copper dawn of Dustreach. Fine grit coats the single main street, drifting over boardwalks and the rusted rails that bisect the settlement."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Ahead, the colony's last free well sits crowned with a hand-painted sign: \"Everyone's Water — No Syndicate Claims.\" Beyond it, the railway syndicate's prefab headquarters gleams like a fresh wound."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Stranger. You're the only passenger who didn't scurry back aboard."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "smile",
+     "text": "Sheriff Maya Voss. I'd offer coffee, but the syndicate bought the beans. Brass at the saloon might have something stronger — if his still hasn't blown up again."
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Good morning, citizen. Deputy Brass, at your service. The saloon opens in three minutes. I recommend the rotgut; it strips paint and sorrow with equal efficiency."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Jack Rook",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Looks like I picked a fine day to arrive."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "none",
+    "options": [
+     "Ask Maya about the well situation",
+     "Head to Brass's saloon for information",
+     "Walk toward the syndicate headquarters",
+     "Check your gear and assess the street"
+    ],
+    "state_changes": {
+     "affection": {
+      "Maya": 1
+     },
+     "flags_add": [
+      "met_maya",
+      "met_brass"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Jack Rook arrives on Dustreach at dawn. Sheriff Maya Voss and android bartender Brass greet him, establishing the conflict: the railway syndicate controls all water wells except one.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Maya": 1,
+     "Brass": 0
+    },
+    "flags": [
+     "met_maya",
+     "met_brass"
+    ],
+    "items": []
+   },
+   "summary": [
+    "Jack Rook arrives on Dustreach at dawn. Sheriff Maya Voss and android bartender Brass greet him, establishing the conflict: the railway syndicate controls all water wells except one."
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0000",
+   "children": [
+    "n_0001"
+   ],
+   "created_at": "2026-09-25T14:32:28+08:00"
+  },
+  "n_0001": {
+   "parent": "n_0000",
+   "scene_id": "dustreach_main_street_dawn",
+   "player_input": {
+    "kind": "option",
+    "text": "Head to Brass's saloon for information"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Jack Rook's boots kick up puffs of rust-colored dust as he walks the length of the main street. The syndicate headquarters looms larger with each step — prefab walls, sensor arrays, a landing pad scorched black by shuttle exhaust."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The saloon sits at the street's far end, a squat structure of riveted steel and salvaged hull plating. A flickering neon sign sputters: \"BRASS'S — COLD DRINKS, HOT GOSSIP.\" The door slides open with a pneumatic sigh."
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Ah, the stranger graces us with his presence. Brass polishes a glass with mechanical precision, amber eyes tracking the entrance. The rotgut is... adequately fermented. I also have a vintage synth-whiskey, circa 2280. Tastes like regret and oak chips."
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Information, however, is complimentary — provided you survive the evening. The syndicate's water reclamation team arrives on the noon shuttle. They intend to \"negotiate\" the well's deed. Their negotiator is one Viktor Krane. He does not negotiate."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She leans against the doorframe, hat tipped low, one hand resting on her holster. Brass isn't wrong. Krane's a company man through and through. Bought three moons for the syndicate last year alone. Didn't fire a shot on any of them."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She meets Jack's eyes, expression unreadable. We need that well. The colony dies without it. You've got a fast hand, stranger. Question is — whose side is it on?"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "I'm here for the well. Count me in.",
+     "What's in it for me?",
+     "Tell me more about Krane first.",
+     "I work alone. Give me the details."
+    ],
+    "state_changes": {
+     "affection": {
+      "Maya": 1,
+      "Brass": 1
+     },
+     "flags_add": [
+      "met_krane_info",
+      "saloon_visit"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Jack Rook enters Brass's saloon and learns the syndicate's negotiator Viktor Krane arrives at noon to seize the last water well. Sheriff Maya Voss asks Jack to help defend the colony's water supply.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Maya": 2,
+     "Brass": 1
+    },
+    "flags": [
+     "met_maya",
+     "met_brass",
+     "met_krane_info",
+     "saloon_visit"
+    ],
+    "items": []
+   },
+   "summary": [
+    "Jack Rook arrives on Dustreach at dawn. Sheriff Maya Voss and android bartender Brass greet him, establishing the conflict: the railway syndicate controls all water wells except one.",
+    "Jack Rook enters Brass's saloon and learns the syndicate's negotiator Viktor Krane arrives at noon to seize the last water well. Sheriff Maya Voss asks Jack to help defend the colony's water supply."
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0001",
+   "children": [
+    "n_0002"
+   ],
+   "created_at": "2026-09-25T14:32:43+08:00"
+  },
+  "n_0002": {
+   "parent": "n_0001",
+   "scene_id": "dustreach_main_street_dawn",
+   "player_input": {
+    "kind": "option",
+    "text": "Tell me more about Krane first."
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She pushes off the doorframe, boot heels clicking on the steel deck. Krane's a ghost story with a expense account. No one's seen his face in five years — just the results."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Colonies sign. Water rights, mineral claims, entire towns — gone before the ink dries. He doesn't threaten. He calculates. Makes you an offer your ledger can't refuse."
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "A most apt description, Sheriff. Brass sets down the glass, fingers steepled. My databases indicate Krane was once a colonial administrator. Resigned under... ambiguous circumstances. The syndicate recruited him within the week."
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "His signature technique: the \"generosity clause.\" He offers infrastructure, medical supplies, transport credits — everything a struggling colony needs. The deed transfer is buried in appendix twelve, subsection C."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She snorts, a dry sound. And if you read the fine print? You've already signed. The well's output gets metered. Prices rise. Locals can't pay. Within a year, the syndicate owns the aquifer fair and legal."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She fixes Jack with a level gaze. Noon shuttle. Two hours. That's what we've got to find a lever — legal, physical, or otherwise. Brass, you said your archives go back to the founding charter?"
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Indeed, Sheriff. The original settlement charter contains a water rights provision. Article Seven, if memory serves. \"No external entity shall claim dominion over the colony's primary water source without unanimous consent of the founding families.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Brass's amber eyes dim slightly, processing. However... the charter requires the signatures of three founding family representatives. Only two remain on Dustreach. The third — Elias Vane — left for the belt mines twelve years ago. Presumed dead."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She straightens, something sharp entering her voice. Not presumed. I've been tracking him. Vane's alive. Working a claim on Asteroid 447-Nemesis. Three days' burn from here."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She looks at Jack, then Brass, then back. If we get Vane's signature before noon... Krane's generosity clause hits a legal wall. The syndicate would need a court order to override — months, minimum."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She lets that hang. But three days there and back? We'd need a fast ship and a pilot crazy enough to run the belt at combat speed. She taps her badge. I know a pilot. Don't know if she's crazy enough."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The saloon's ventilation hum fills the silence. Through the grimy window, the noon shuttle's contrail already streaks the pale sky — a silver needle threading the atmosphere."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "So. Stranger. You want to hear about the pilot, or you got another angle?"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "Ask about the pilot",
+     "Suggest a different legal angle",
+     "Propose confronting Krane directly",
+     "Check if Brass has a ship"
+    ],
+    "state_changes": {
+     "affection": {
+      "Maya": 1,
+      "Brass": 1
+     },
+     "flags_add": [
+      "krane_details",
+      "vane_lead",
+      "charter_article_seven"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Maya and Brass reveal Krane's tactics and a legal loophole: Article Seven of the founding charter requires three founding family signatures to transfer water rights. The third signatory, Elias Vane, is alive on an asteroid claim three days away. Maya knows a pilot but needs a fast ship and crazy pilot to retrieve him before noon.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Maya": 3,
+     "Brass": 2
+    },
+    "flags": [
+     "met_maya",
+     "met_brass",
+     "met_krane_info",
+     "saloon_visit",
+     "krane_details",
+     "vane_lead",
+     "charter_article_seven"
+    ],
+    "items": []
+   },
+   "summary": [
+    "Jack Rook arrives on Dustreach at dawn. Sheriff Maya Voss and android bartender Brass greet him, establishing the conflict: the railway syndicate controls all water wells except one.",
+    "Jack Rook enters Brass's saloon and learns the syndicate's negotiator Viktor Krane arrives at noon to seize the last water well. Sheriff Maya Voss asks Jack to help defend the colony's water supply.",
+    "Maya and Brass reveal Krane's tactics and a legal loophole: Article Seven of the founding charter requires three founding family signatures to transfer water rights. The third signatory, Elias Vane, is alive on an asteroid claim three days away. Maya knows a pilot but needs a fast ship and crazy pilot to retrieve him before noon."
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0002",
+   "children": [
+    "n_0003"
+   ],
+   "created_at": "2026-09-25T14:33:02+08:00"
+  },
+  "n_0003": {
+   "parent": "n_0002",
+   "scene_id": "dustreach_main_street_dawn",
+   "player_input": {
+    "kind": "free",
+    "text": "I ask Brass which syndicate men have been asking about the last well."
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Jack Rook turns to the copper-plated bartender, leaning one hip against the bar's pitted steel surface. The morning light catches dust motes drifting through the ventilation shafts."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Jack Rook",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Brass. Which syndicate men have been asking about the last well?"
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Brass's amber eyes flicker, pupils contracting as he accesses internal archives. An excellent query, citizen. The syndicate maintains a rotating presence — plausible deniability baked into their operational doctrine."
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "However, three individuals have made repeated inquiries at this establishment over the past six weeks. Brass extends a polished finger. First: Mara Vex, logistics coordinator. She has catalogued the well's output, recharge rate, and mineral content on seventeen separate visits. Always orders water. Never alcohol."
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Second: Kellen Rook — no relation presumed — a \"compliance specialist\" whose badge number traces to the syndicate's enforcement division. He has mapped every access point to the aquifer. He asks after the colony's defense capabilities. Casually. Over synth-ale."
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "Third... Brass pauses, head tilting with mechanical grace. A woman. No name given. Pale hair, grey coat, cybernetic left eye. She does not drink. She watches. She has attended every town meeting since the syndicate's arrival. The locals call her \"The Auditor.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She crosses her arms, jaw tight. Vex and Rook I knew. The Auditor is new. Or newly visible."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She glances at Jack, one eyebrow raised. That third one worries me. Syndicate doesn't send auditors unless the deal's already structured. They're here to verify the numbers before the ink dries."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She looks back to Brass. Any chatter on when Krane's shuttle touches down? My chrono says forty minutes to noon."
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "The noon shuttle's approach vector is locked, Sheriff. Brass returns to polishing his glass, the motion hypnotic. ETA: twelve minutes. Krane typically disembarks first. His retinue follows."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Through the saloon's grimy window, the contrail in the pale sky thickens — a silver thread becoming a rope. Somewhere up there, the noon shuttle burns toward Dustreach."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Twelve minutes. She pushes off the wall, hand settling on her holster. Stranger — pilot's name is Jax Chen. She runs a modified courier ship out of Hangar Three. Fast, reckless, owes me a favor from the Titan incident."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She meets Jack's eyes directly. But she'll need a co-pilot who can handle high-G belt running. And someone to watch her six when Krane's people realize what we're doing. You in? Or you got a different play?"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "Accept Maya's plan and head to Hangar Three",
+     "Ask about the Auditor's cybernetic eye",
+     "Propose a different strategy to stall Krane",
+     "Check your gear before committing"
+    ],
+    "state_changes": {
+     "affection": {
+      "Brass": 1
+     },
+     "flags_add": [
+      "syndicate_agents_identified",
+      "auditor_noted",
+      "krane_eta_twelve_minutes",
+      "jax_chen_pilot"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Brass identifies three syndicate agents probing the well: Mara Vex (logistics), Kellen Rook (enforcement), and a mysterious 'Auditor' with a cybernetic eye. Krane's shuttle arrives in 12 minutes. Maya proposes a plan: retrieve Elias Vane from the asteroid belt using pilot Jax Chen, needing a co-pilot and backup.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Maya": 3,
+     "Brass": 3
+    },
+    "flags": [
+     "met_maya",
+     "met_brass",
+     "met_krane_info",
+     "saloon_visit",
+     "krane_details",
+     "vane_lead",
+     "charter_article_seven",
+     "syndicate_agents_identified",
+     "auditor_noted",
+     "krane_eta_twelve_minutes",
+     "jax_chen_pilot"
+    ],
+    "items": []
+   },
+   "summary": [
+    "Jack Rook arrives on Dustreach at dawn. Sheriff Maya Voss and android bartender Brass greet him, establishing the conflict: the railway syndicate controls all water wells except one.",
+    "Jack Rook enters Brass's saloon and learns the syndicate's negotiator Viktor Krane arrives at noon to seize the last water well. Sheriff Maya Voss asks Jack to help defend the colony's water supply.",
+    "Maya and Brass reveal Krane's tactics and a legal loophole: Article Seven of the founding charter requires three founding family signatures to transfer water rights. The third signatory, Elias Vane, is alive on an asteroid claim three days away. Maya knows a pilot but needs a fast ship and crazy pilot to retrieve him before noon.",
+    "Brass identifies three syndicate agents probing the well: Mara Vex (logistics), Kellen Rook (enforcement), and a mysterious 'Auditor' with a cybernetic eye. Krane's shuttle arrives in 12 minutes. Maya proposes a plan: retrieve Elias Vane from the asteroid belt using pilot Jax Chen, needing a co-pilot and backup."
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0003",
+   "children": [
+    "n_0004"
+   ],
+   "created_at": "2026-09-25T14:33:17+08:00"
+  },
+  "n_0004": {
+   "parent": "n_0003",
+   "scene_id": "hangar_three_approach",
+   "player_input": {
+    "kind": "option",
+    "text": "Accept Maya's plan and head to Hangar Three"
+   },
+   "lines": [
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She nods once, sharp and satisfied. Good. Hangar Three's on the east perimeter — past the ore processors, before the waste reclamation piles. Jax's ship is the Voidskipper, matte black with a scorched starboard nacelle. You can't miss it."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She pulls a folded plastisheet from her duster pocket, unfolds it with a flick of her wrist. Coordinates for 447-Nemesis. Vane's claim beacon frequency. Emergency medevac codes if things go sideways. She holds it out, fingers brushing the worn leather of her holster."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Brass — you're staying. Someone needs to hold the street while we're gone. Keep ears on the syndicate frequency. If Krane moves on the well before we're back..."
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "A polite inclination of his copper head. Naturally, Sheriff. I shall maintain the saloon as an intelligence nexus and a sanctuary for any displaced citizens. The rotgut shall flow freely for the righteous. He pauses, amber eyes softening almost imperceptibly. Do return in one piece, both of you. The evening's gossip would be dreadfully dull without you."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Maya tucks the plastisheet into Jack's palm, her calloused fingers lingering a moment longer than necessary. Her green eyes hold his — measuring, weighing."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Twelve minutes to Krane. Three days to the belt and back. She exhales, a sound like wind through dry grass. Let's make time."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The two of them move — Maya striding for the door with purpose, Jack falling into step beside her. Through the saloon's grimy window, the contrail in the pale sky resolves into a descending shape: the noon shuttle, silver and lethal, dropping toward the scorched landing pad beside the syndicate headquarters."
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "hangar_three_approach",
+     "name": "Hangar Three Approach",
+     "image_prompt": "Dusty frontier spaceport hangar entrance at mid-morning, riveted steel blast doors scorched by thruster wash, cargo containers stacked haphazardly, ore processor towers looming in background, harsh copper sunlight, long shadows"
+    },
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "Sprint to the *Voidskipper* and prep for immediate launch",
+     "Pause to check Maya's plastisheet for Vane's beacon frequency",
+     "Ask Maya about the Titan incident and Jax Chen's debt",
+     "Scan the perimeter for syndicate observers before entering"
+    ],
+    "state_changes": {
+     "affection": {
+      "Maya": 1
+     },
+     "flags_add": [
+      "accepted_mission",
+      "heading_to_hangar_three",
+      "plastisheet_received"
+     ],
+     "items_add": [
+      "plastisheet_with_coordinates"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "Jack accepts Maya's plan to retrieve Elias Vane from Asteroid 447-Nemesis before Krane's noon arrival. Maya provides coordinates and beacon frequency on a plastisheet. Brass stays behind to monitor syndicate channels. Jack and Maya head toward Hangar Three to meet pilot Jax Chen as Krane's shuttle descends.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Maya": 4,
+     "Brass": 3
+    },
+    "flags": [
+     "met_maya",
+     "met_brass",
+     "met_krane_info",
+     "saloon_visit",
+     "krane_details",
+     "vane_lead",
+     "charter_article_seven",
+     "syndicate_agents_identified",
+     "auditor_noted",
+     "krane_eta_twelve_minutes",
+     "jax_chen_pilot",
+     "accepted_mission",
+     "heading_to_hangar_three",
+     "plastisheet_received"
+    ],
+    "items": [
+     "plastisheet_with_coordinates"
+    ]
+   },
+   "summary": [
+    "Jack Rook arrives on Dustreach at dawn. Sheriff Maya Voss and android bartender Brass greet him, establishing the conflict: the railway syndicate controls all water wells except one.",
+    "Jack Rook enters Brass's saloon and learns the syndicate's negotiator Viktor Krane arrives at noon to seize the last water well. Sheriff Maya Voss asks Jack to help defend the colony's water supply.",
+    "Maya and Brass reveal Krane's tactics and a legal loophole: Article Seven of the founding charter requires three founding family signatures to transfer water rights. The third signatory, Elias Vane, is alive on an asteroid claim three days away. Maya knows a pilot but needs a fast ship and crazy pilot to retrieve him before noon.",
+    "Brass identifies three syndicate agents probing the well: Mara Vex (logistics), Kellen Rook (enforcement), and a mysterious 'Auditor' with a cybernetic eye. Krane's shuttle arrives in 12 minutes. Maya proposes a plan: retrieve Elias Vane from the asteroid belt using pilot Jax Chen, needing a co-pilot and backup.",
+    "Jack accepts Maya's plan to retrieve Elias Vane from Asteroid 447-Nemesis before Krane's noon arrival. Maya provides coordinates and beacon frequency on a plastisheet. Brass stays behind to monitor syndicate channels. Jack and Maya head toward Hangar Three to meet pilot Jax Chen as Krane's shuttle descends."
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0004",
+   "children": [
+    "n_0005"
+   ],
+   "created_at": "2026-09-25T14:33:28+08:00"
+  },
+  "n_0005": {
+   "parent": "n_0004",
+   "scene_id": "hangar_three_approach",
+   "player_input": {
+    "kind": "free",
+    "text": "Maya and I catch the syndicate foreman forging the well's deed and take the papers as proof."
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The hangar's massive blast doors groan open, swallowing the copper dawn light. Inside, the air smells of ozone, hydraulic fluid, and cold metal. A modified courier ship — matte black, starboard nacelle scorched from some past misadventure — sits anchored to mag-locks, its ramp lowered like a waiting tongue."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She stops at the ramp's edge, one hand raised. Jax! We've got a job. Belt run. Combat speed. Three days there, three back. You in?"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "A woman drops from the ship's cockpit hatch, landing in a crouch on the deck plates. Late thirties, close-cropped dark hair, flight suit patched at the elbows. She rises, wiping grease from her cheek and only smearing it worse."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Jax Chen. This is Jack Rook. He's riding shotgun. We leave in five minutes — Krane's shuttle touches down in seven."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "She sizes Jack up with a pilot's calculating gaze, then grins, sharp and tired. Voidskipper's tanks are full, nav-comp's hot, and I've got stims for the burn. But I need a nav-officer who can plot micro-jumps through the debris field at 447-Nemesis without smearing us across an asteroid."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "She jerks her thumb toward the cockpit. You know belt navigation, stranger? Or am I flying blind with a sheriff and a tourist?"
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She steps closer, voice dropping. Jax — Krane's people are already on the ground. Mara Vex, Kellen Rook, and an Auditor. If they realize we're retrieving Vane..."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Her grin falters, just a fraction. Then we don't let them realize. She climbs back up the ramp, calling over her shoulder. Strap in. We burn in three minutes. Nav station's forward port — if you can keep up."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Maya tosses Jack a comm unit from her belt, then follows the pilot up the ramp. The hangar doors begin their slow grind shut behind them, sealing out the dawn — and the descending silver shape of the noon shuttle, now close enough to read the syndicate logo on its flank."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "Take the nav station and plot the micro-jump course",
+     "Ask Maya for the plastisheet coordinates before strapping in",
+     "Check the ship's weapons and defensive systems first",
+     "Brief Jax Chen on the syndicate agents and Vane's location"
+    ],
+    "state_changes": {
+     "affection": {
+      "Maya": 1
+     },
+     "flags_add": [
+      "met_jax_chen",
+      "voidskipper_boarded",
+      "departure_imminent"
+     ],
+     "items_add": [
+      "comm_unit"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "Jack and Maya reach Hangar Three and meet pilot Jax Chen. The Voidskipper is prepped for a combat-speed run to Asteroid 447-Nemesis to retrieve Elias Vane. Krane's shuttle lands in 7 minutes. Jax needs a nav officer for the belt run.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Maya": 5,
+     "Brass": 3
+    },
+    "flags": [
+     "met_maya",
+     "met_brass",
+     "met_krane_info",
+     "saloon_visit",
+     "krane_details",
+     "vane_lead",
+     "charter_article_seven",
+     "syndicate_agents_identified",
+     "auditor_noted",
+     "krane_eta_twelve_minutes",
+     "jax_chen_pilot",
+     "accepted_mission",
+     "heading_to_hangar_three",
+     "plastisheet_received",
+     "met_jax_chen",
+     "voidskipper_boarded",
+     "departure_imminent"
+    ],
+    "items": [
+     "plastisheet_with_coordinates",
+     "comm_unit"
+    ]
+   },
+   "summary": [
+    "Jack Rook arrives on Dustreach at dawn. Sheriff Maya Voss and android bartender Brass greet him, establishing the conflict: the railway syndicate controls all water wells except one.",
+    "Jack Rook enters Brass's saloon and learns the syndicate's negotiator Viktor Krane arrives at noon to seize the last water well. Sheriff Maya Voss asks Jack to help defend the colony's water supply.",
+    "Maya and Brass reveal Krane's tactics and a legal loophole: Article Seven of the founding charter requires three founding family signatures to transfer water rights. The third signatory, Elias Vane, is alive on an asteroid claim three days away. Maya knows a pilot but needs a fast ship and crazy pilot to retrieve him before noon.",
+    "Brass identifies three syndicate agents probing the well: Mara Vex (logistics), Kellen Rook (enforcement), and a mysterious 'Auditor' with a cybernetic eye. Krane's shuttle arrives in 12 minutes. Maya proposes a plan: retrieve Elias Vane from the asteroid belt using pilot Jax Chen, needing a co-pilot and backup.",
+    "Jack accepts Maya's plan to retrieve Elias Vane from Asteroid 447-Nemesis before Krane's noon arrival. Maya provides coordinates and beacon frequency on a plastisheet. Brass stays behind to monitor syndicate channels. Jack and Maya head toward Hangar Three to meet pilot Jax Chen as Krane's shuttle descends.",
+    "Jack and Maya reach Hangar Three and meet pilot Jax Chen. The Voidskipper is prepped for a combat-speed run to Asteroid 447-Nemesis to retrieve Elias Vane. Krane's shuttle lands in 7 minutes. Jax needs a nav officer for the belt run."
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0005",
+   "children": [
+    "n_0006"
+   ],
+   "created_at": "2026-09-25T14:33:51+08:00"
+  },
+  "n_0006": {
+   "parent": "n_0005",
+   "scene_id": "hangar_three_approach",
+   "player_input": {
+    "kind": "option",
+    "text": "Check the ship's weapons and defensive systems first"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The Voidskipper's interior is a tight squeeze of cable runs, exposed conduit, and the sharp tang of ozone and old coolant. Red standby lighting paints the narrow corridor in emergency hues as the ship's reactor spins up, a low vibration humming through the deck plates."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Jack Rook moves forward past the cramped quarters — two bunks folded against the bulkhead, a hygiene unit that's seen better decades — and drops into the nav station's crash couch. The forward port screens bloom to life: tactical overlay, sensor suite, weapons status."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Twin pulse cannons, dorsal and ventral — charged to ninety percent. A single missile rack, four-shot, loaded with fragmentation warheads. Point-defense laser grid: operational but showing a coolant leak on the starboard emitter. Shield generator: Class Two, rated for micrometeoroid impacts and small-arms fire, not sustained ship-to-ship combat."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Her voice crackles over the ship's intercom, tight with acceleration prep. Nav officer — talk to me. What've we got for teeth?"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Maya straps into the aft jump seat, harness clicking home. Her eyes track the external camera feed on the bulkhead screen: the hangar doors still grinding shut, the noon shuttle a silver bullet descending through copper sky."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "We're not looking for a fight, Jax. We're looking for speed. But if Krane's people have a ship watching the belt..."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Then we dance. Her grin returns, audible in her voice. Pulse cannons'll shred a patrol boat at close range. Missiles are for discouraging pursuit. The PD laser — keep the starboard side to the enemy if that leak holds."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The deck shudders as mag-locks disengage. Through the forward port, the hangar's blast doors part just enough to spill the ship into the dawning sky. Dustreach falls away below — the main street, the contested well, the syndicate headquarters with its fresh landing pad."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "And there, touching down on that pad as the Voidskipper clears the hangar lip: the noon shuttle. Syndicate logo blazing. Ramp already lowering."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Twelve minutes early. She doesn't sound surprised. Krane doesn't waste time."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Strap in tight, kids. We're lighting the candle."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "Plot the fastest micro-jump course through the 447-Nemesis debr…",
+     "Ask Maya about the Titan incident she owes Jax for",
+     "Check the comm unit for syndicate frequency activity",
+     "Request a sitrep on Krane's known ship capabilities"
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "voidskipper_weapons_checked",
+      "krane_shuttle_landed"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Jack checks the Voidskipper's weapons: twin pulse cannons, four-shot missile rack, leaking starboard PD laser, Class Two shields. The ship launches as Krane's shuttle lands at syndicate HQ. Jax Chen burns for the asteroid belt with three minutes to spare.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Maya": 5,
+     "Brass": 3
+    },
+    "flags": [
+     "met_maya",
+     "met_brass",
+     "met_krane_info",
+     "saloon_visit",
+     "krane_details",
+     "vane_lead",
+     "charter_article_seven",
+     "syndicate_agents_identified",
+     "auditor_noted",
+     "krane_eta_twelve_minutes",
+     "jax_chen_pilot",
+     "accepted_mission",
+     "heading_to_hangar_three",
+     "plastisheet_received",
+     "met_jax_chen",
+     "voidskipper_boarded",
+     "departure_imminent",
+     "voidskipper_weapons_checked",
+     "krane_shuttle_landed"
+    ],
+    "items": [
+     "plastisheet_with_coordinates",
+     "comm_unit"
+    ]
+   },
+   "summary": [
+    "Jack Rook arrives on Dustreach at dawn. Sheriff Maya Voss and android bartender Brass greet him, establishing the conflict: the railway syndicate controls all water wells except one.",
+    "Jack Rook enters Brass's saloon and learns the syndicate's negotiator Viktor Krane arrives at noon to seize the last water well. Sheriff Maya Voss asks Jack to help defend the colony's water supply.",
+    "Maya and Brass reveal Krane's tactics and a legal loophole: Article Seven of the founding charter requires three founding family signatures to transfer water rights. The third signatory, Elias Vane, is alive on an asteroid claim three days away. Maya knows a pilot but needs a fast ship and crazy pilot to retrieve him before noon.",
+    "Brass identifies three syndicate agents probing the well: Mara Vex (logistics), Kellen Rook (enforcement), and a mysterious 'Auditor' with a cybernetic eye. Krane's shuttle arrives in 12 minutes. Maya proposes a plan: retrieve Elias Vane from the asteroid belt using pilot Jax Chen, needing a co-pilot and backup.",
+    "Jack accepts Maya's plan to retrieve Elias Vane from Asteroid 447-Nemesis before Krane's noon arrival. Maya provides coordinates and beacon frequency on a plastisheet. Brass stays behind to monitor syndicate channels. Jack and Maya head toward Hangar Three to meet pilot Jax Chen as Krane's shuttle descends.",
+    "Jack and Maya reach Hangar Three and meet pilot Jax Chen. The Voidskipper is prepped for a combat-speed run to Asteroid 447-Nemesis to retrieve Elias Vane. Krane's shuttle lands in 7 minutes. Jax needs a nav officer for the belt run.",
+    "Jack checks the Voidskipper's weapons: twin pulse cannons, four-shot missile rack, leaking starboard PD laser, Class Two shields. The ship launches as Krane's shuttle lands at syndicate HQ. Jax Chen burns for the asteroid belt with three minutes to spare."
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0006",
+   "children": [
+    "n_0007"
+   ],
+   "created_at": "2026-09-25T14:34:08+08:00"
+  },
+  "n_0007": {
+   "parent": "n_0006",
+   "scene_id": "dustreach_main_street_noon",
+   "player_input": {
+    "kind": "free",
+    "text": "At high noon I face the syndicate boss in the street with Maya beside me and show the whole town the forged deed."
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The Voidskipper's engines roar as Jax Chen punches through Dustreach's thin atmosphere, the ship's hull shuddering under maximum burn. Copper dust and rock walls blur into streaks as they climb toward the asteroid belt, leaving the moon's gravity well behind."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Three days of hard burn through the debris fields of 447-Nemesis. Three days back. The chrono on the nav console ticks relentlessly — seven minutes since Krane's shuttle touched down. Noon approaches on Dustreach whether they're there or not."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Her fingers dance across the nav-comp, plotting micro-jumps through the thickest debris concentration the belt has to offer. Strap in tight, Sheriff. Nav officer. This ain't a milk run. First jump in thirty seconds."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She checks her comm unit, the plastisheet's coordinates memorized, Vane's beacon frequency locked. Her jaw is set, eyes fixed on the forward screens where asteroids tumble in silent, deadly orbits. Brass — you copy?"
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "(over comms, calm and formal) Loud and clear, Sheriff. The noon shuttle has disembarked. Krane is... distinctive. Tall. Grey suit. Left hand prosthetic — military grade. He walks toward the well with Vex and Rook flanking. The Auditor trails behind, recording."
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "(over comms) The colony's founding families — the Chen and Okafor representatives — have been located. They are... reluctant. Krane's generosity clause has been presented. Infrastructure promises. Medical supply drops. Transport credits for the young ones."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Her grip tightens on the harness straps. And the deed?"
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "(over comms) Forged, Sheriff. Article Seven's signature block has been... altered. A third signature line added, pre-signed with a facsimile of Elias Vane's mark. Krane intends to file it with the planetary registrar before the hour strikes twelve."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She exhales, a sharp sound. Then we bring the real thing. Jax — can you shave time on the return?"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Without smearing us? She doesn't look back. Maybe half a day. If the belt doesn't eat us first. Next jump — now."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The Voidskipper lurches as the first micro-jump engages, stars stretching into lines, the belt's chaos swallowing them whole. On Dustreach, the clock ticks toward high noon."
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "dustreach_main_street_noon",
+     "name": "Dustreach Main Street at High Noon",
+     "image_prompt": "Dusty frontier main street on a mining moon at high noon, harsh overhead sun casting sharp shadows, wooden and prefab buildings lining the street, a central water well with pump mechanism, syndicate headquarters visible in background with scorched landing pad, rust-colored dust everywhere, no people"
+    },
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "Draw and confront Krane publicly with the forged deed evidence",
+     "Have Maya arrest Krane's agents while exposing the forgery to t…",
+     "Challenge Krane to a duel for the well's deed, winner takes all",
+     "Slip away to find the founding family reps before Krane pressur…"
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "voidskipper_en_route_to_vane",
+      "krane_at_well_with_forged_deed",
+      "founding_families_pressured"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "The Voidskipper launches with Jack, Maya, and Jax Chen aboard, burning for Asteroid 447-Nemesis to retrieve Elias Vane. Brass reports Krane has landed with a forged deed bearing a fake Vane signature and is pressuring the founding families at the well. Three days out, three days back — they must return before the deed is filed.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Maya": 5,
+     "Brass": 3
+    },
+    "flags": [
+     "met_maya",
+     "met_brass",
+     "met_krane_info",
+     "saloon_visit",
+     "krane_details",
+     "vane_lead",
+     "charter_article_seven",
+     "syndicate_agents_identified",
+     "auditor_noted",
+     "krane_eta_twelve_minutes",
+     "jax_chen_pilot",
+     "accepted_mission",
+     "heading_to_hangar_three",
+     "plastisheet_received",
+     "met_jax_chen",
+     "voidskipper_boarded",
+     "departure_imminent",
+     "voidskipper_weapons_checked",
+     "krane_shuttle_landed",
+     "voidskipper_en_route_to_vane",
+     "krane_at_well_with_forged_deed",
+     "founding_families_pressured"
+    ],
+    "items": [
+     "plastisheet_with_coordinates",
+     "comm_unit"
+    ]
+   },
+   "summary": [
+    "Jack Rook arrives on Dustreach at dawn. Sheriff Maya Voss and android bartender Brass greet him, establishing the conflict: the railway syndicate controls all water wells except one.",
+    "Jack Rook enters Brass's saloon and learns the syndicate's negotiator Viktor Krane arrives at noon to seize the last water well. Sheriff Maya Voss asks Jack to help defend the colony's water supply.",
+    "Maya and Brass reveal Krane's tactics and a legal loophole: Article Seven of the founding charter requires three founding family signatures to transfer water rights. The third signatory, Elias Vane, is alive on an asteroid claim three days away. Maya knows a pilot but needs a fast ship and crazy pilot to retrieve him before noon.",
+    "Brass identifies three syndicate agents probing the well: Mara Vex (logistics), Kellen Rook (enforcement), and a mysterious 'Auditor' with a cybernetic eye. Krane's shuttle arrives in 12 minutes. Maya proposes a plan: retrieve Elias Vane from the asteroid belt using pilot Jax Chen, needing a co-pilot and backup.",
+    "Jack accepts Maya's plan to retrieve Elias Vane from Asteroid 447-Nemesis before Krane's noon arrival. Maya provides coordinates and beacon frequency on a plastisheet. Brass stays behind to monitor syndicate channels. Jack and Maya head toward Hangar Three to meet pilot Jax Chen as Krane's shuttle descends.",
+    "Jack and Maya reach Hangar Three and meet pilot Jax Chen. The Voidskipper is prepped for a combat-speed run to Asteroid 447-Nemesis to retrieve Elias Vane. Krane's shuttle lands in 7 minutes. Jax needs a nav officer for the belt run.",
+    "Jack checks the Voidskipper's weapons: twin pulse cannons, four-shot missile rack, leaking starboard PD laser, Class Two shields. The ship launches as Krane's shuttle lands at syndicate HQ. Jax Chen burns for the asteroid belt with three minutes to spare.",
+    "The Voidskipper launches with Jack, Maya, and Jax Chen aboard, burning for Asteroid 447-Nemesis to retrieve Elias Vane. Brass reports Krane has landed with a forged deed bearing a fake Vane signature and is pressuring the founding families at the well. Three days out, three days back — they must return before the deed is filed."
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0007",
+   "children": [
+    "n_0008"
+   ],
+   "created_at": "2026-09-25T14:34:31+08:00"
+  },
+  "n_0008": {
+   "parent": "n_0007",
+   "scene_id": "dustreach_main_street_noon",
+   "player_input": {
+    "kind": "option",
+    "text": "Draw and confront Krane publicly with the forged deed evidence"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The Voidskipper screams through the debris field of 447-Nemesis, hull plating pinging with micrometeoroid impacts. Jax Chen's knuckles are white on the flight stick, sweat carving tracks through the grime on her face. Three days compressed into a desperate burn — they've cut corners through the belt that would make a sane pilot weep."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She stares at the chrono, then at the comm unit clutched in her hand. Brass. Talk to me. What's happening at the well?"
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "(over comms, formal but strained) Sheriff. The situation has... escalated. Krane has presented the forged deed to the planetary registrar via tightbeam. The Chen and Okafor representatives — under duress, I must add — have affixed their signatures. The third line bears Elias Vane's facsimile."
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "(over comms) However. A complication. The Auditor — the cybernetic woman — has just transmitted a priority burst to syndicate headquarters. Encryption broken. She's flagged an anomaly: the Vane signature's biometric hash doesn't match the colonial records."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Her eyes snap to Jack, sharp and sudden. They know it's forged. Or they suspect."
+    },
+    {
+     "kind": "character",
+     "speaker": "Brass",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "(over comms) Krane is... negotiating. He's offered the colony a \"generosity clause\" extension — water at subsidized rates for five years — if the families withdraw their objection to the filing. The registrar's decision is pending. High noon. Twelve minutes."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The Voidskipper lurches violently as Jax throws it into a hard lateral burn, skimming the gravity well of a tumbling nickel-iron monster. The starboard PD laser coolant alarm screams, a red strobe painting the cockpit in emergency light."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Jax Chen's voice cuts through the chaos, tight and fierce. Nav officer — I need a landing vector for Dustreach that doesn't require a standard approach corridor. We're coming in hot, heavy, and sideways. Can you plot it?"
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She unstraps, moving aft toward the cargo hatch where a pressure-suited figure waits in cryo-stasis — Elias Vane, revived from his claim's emergency beacon, hollow-eyed and bewildered. He's alive. He's real. And he has a pen."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Jack. Twelve minutes to noon. We hit atmo in eight. She checks her sidearm, then the plastisheet in her other hand — the real Article Seven, the real coordinates, the real beacon frequency. When we land, Krane will have the registrar's ruling. The forged deed. The families' coerced signatures."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She meets Jack's gaze, something fierce and tired burning in her green eyes. What's the play, stranger? We walk in with Vane and the truth? We hit them sideways? You wanted to confront Krane publicly — now's the moment to tell me how."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "none",
+    "options": [
+     "Land hard and march Vane straight to the registrar",
+     "Broadcast the forged deed evidence to the whole colony",
+     "Have Jax strafe the syndicate HQ as a distraction",
+     "Split up: Maya takes Vane legal, Jack confronts Krane direct"
+    ],
+    "state_changes": {
+     "affection": {
+      "Maya": 1
+     },
+     "flags_add": [
+      "vane_revived",
+      "forged_deed_flagged",
+      "registrar_pending",
+      "voidskipper_returning"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "The Voidskipper returns to Dustreach with Elias Vane revived from cryo-stasis. Brass reports Krane has filed the forged deed and the Auditor has flagged the signature anomaly. The registrar's ruling is pending at high noon — twelve minutes away. Maya asks Jack for the final play.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Maya": 6,
+     "Brass": 3
+    },
+    "flags": [
+     "met_maya",
+     "met_brass",
+     "met_krane_info",
+     "saloon_visit",
+     "krane_details",
+     "vane_lead",
+     "charter_article_seven",
+     "syndicate_agents_identified",
+     "auditor_noted",
+     "krane_eta_twelve_minutes",
+     "jax_chen_pilot",
+     "accepted_mission",
+     "heading_to_hangar_three",
+     "plastisheet_received",
+     "met_jax_chen",
+     "voidskipper_boarded",
+     "departure_imminent",
+     "voidskipper_weapons_checked",
+     "krane_shuttle_landed",
+     "voidskipper_en_route_to_vane",
+     "krane_at_well_with_forged_deed",
+     "founding_families_pressured",
+     "vane_revived",
+     "forged_deed_flagged",
+     "registrar_pending",
+     "voidskipper_returning"
+    ],
+    "items": [
+     "plastisheet_with_coordinates",
+     "comm_unit"
+    ]
+   },
+   "summary": [
+    "Jack Rook arrives on Dustreach at dawn. Sheriff Maya Voss and android bartender Brass greet him, establishing the conflict: the railway syndicate controls all water wells except one.",
+    "Jack Rook enters Brass's saloon and learns the syndicate's negotiator Viktor Krane arrives at noon to seize the last water well. Sheriff Maya Voss asks Jack to help defend the colony's water supply.",
+    "Maya and Brass reveal Krane's tactics and a legal loophole: Article Seven of the founding charter requires three founding family signatures to transfer water rights. The third signatory, Elias Vane, is alive on an asteroid claim three days away. Maya knows a pilot but needs a fast ship and crazy pilot to retrieve him before noon.",
+    "Brass identifies three syndicate agents probing the well: Mara Vex (logistics), Kellen Rook (enforcement), and a mysterious 'Auditor' with a cybernetic eye. Krane's shuttle arrives in 12 minutes. Maya proposes a plan: retrieve Elias Vane from the asteroid belt using pilot Jax Chen, needing a co-pilot and backup.",
+    "Jack accepts Maya's plan to retrieve Elias Vane from Asteroid 447-Nemesis before Krane's noon arrival. Maya provides coordinates and beacon frequency on a plastisheet. Brass stays behind to monitor syndicate channels. Jack and Maya head toward Hangar Three to meet pilot Jax Chen as Krane's shuttle descends.",
+    "Jack and Maya reach Hangar Three and meet pilot Jax Chen. The Voidskipper is prepped for a combat-speed run to Asteroid 447-Nemesis to retrieve Elias Vane. Krane's shuttle lands in 7 minutes. Jax needs a nav officer for the belt run.",
+    "Jack checks the Voidskipper's weapons: twin pulse cannons, four-shot missile rack, leaking starboard PD laser, Class Two shields. The ship launches as Krane's shuttle lands at syndicate HQ. Jax Chen burns for the asteroid belt with three minutes to spare.",
+    "The Voidskipper launches with Jack, Maya, and Jax Chen aboard, burning for Asteroid 447-Nemesis to retrieve Elias Vane. Brass reports Krane has landed with a forged deed bearing a fake Vane signature and is pressuring the founding families at the well. Three days out, three days back — they must return before the deed is filed.",
+    "The Voidskipper returns to Dustreach with Elias Vane revived from cryo-stasis. Brass reports Krane has filed the forged deed and the Auditor has flagged the signature anomaly. The registrar's ruling is pending at high noon — twelve minutes away. Maya asks Jack for the final play."
+   ],
+   "bgm_mood": "tense",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0008",
+   "children": [
+    "n_0009"
+   ],
+   "created_at": "2026-09-25T14:34:51+08:00"
+  },
+  "n_0009": {
+   "parent": "n_0008",
+   "scene_id": "dustreach_main_street_noon",
+   "player_input": {
+    "kind": "free",
+    "text": "I stop hesitating and risk everything right now to settle this once and for all."
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The Voidskipper's hull groans as Jax Chen hauls the ship into a screaming atmospheric entry, plasma sheathing the forward screens in violent violet. Eight minutes to Dustreach. Eight minutes to noon."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She stands at the cargo hatch, one hand on the manual release, the other clamped on Elias Vane's pressure suit shoulder. The old prospector blinks awake, cryo-fog still clinging to his weather-lined face, eyes darting between the sheriff's badge and Jack's weathered features."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Vane. You know what you're signing. Article Seven. Your mark. Right now. She shoves the plastisheet into his trembling gloved hands, a stylus already activated."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Vane's breath hitches — a ragged sound in the thin ship's air. His gaze finds the starfield through the hatch's small viewport, then the distant curve of Dustreach swelling below. Home. The well. The promise he made thirty years ago."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "His hand steadies. The stylus touches 'plas. A signature blooms — shaky, real, biometrically verified. The third line of Article Seven fills with living ink."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She snatches the sheet back, throat working. Got it. Jax — put us down on the main street. In front of the well. Right now."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The pilot's laugh is raw, half-hysterical. Hang onto something, Sheriff. We're not landing. We're arriving."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The Voidskipper drops the final thousand meters in a controlled crash, thrusters gouging furrows in the main street's packed dust. The ramp slams down before the ship even stops sliding. Maya is already moving, Vane stumbling behind her, Jack at her flank."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The street goes quiet. Syndicate agents — Vex, Rook, the Auditor — turn as one. Krane stands at the well's control console, prosthetic left hand resting on the forged deed displayed on a holo-projector. The planetary registrar's avatar flickers beside him, awaiting final confirmation."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "High noon. The chrono strikes twelve."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Her voice carries across the sudden silence, amplified by her badge's field. Krane. Registrar. That deed is a lie. She holds up the plastisheet, Vane's fresh signature glowing on the third line. This is the truth. Elias Vane — alive, present, and signing."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The Auditor's cybernetic eye whirs, aperture dilating. Data streams across her retinal display. The biometric hash matches colonial records. Probability of forgery: less than zero-point-zero-zero-one percent."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Krane's face doesn't change. His prosthetic fingers flex once. A shame. He speaks to the registrar's avatar. The filing stands. The generosity clause —"
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Is void. She steps forward, star badge catching the brutal sun. Article Seven requires three living signatures. Not coerced. Not forged. The Chen and Okafor marks were extracted under duress — witnesses?"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The crowd that gathered at the edges — miners, families, Brass polishing a glass in the saloon doorway — murmurs. A miner steps forward. Then another. We saw them. Guns at their backs."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The registrar's avatar flickers, processing. New testimony accepted. Duress invalidates signatures. Filing... rejected. The forged deed dissolves. The well's control console flashes green — colony control confirmed."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Krane's jaw tightens. The only tell. He looks at Maya. At Jack. At Vane leaning heavy on his cane. This changes nothing. The syndicate owns the railway. The water trains. The supply lines. You have a well. We have the galaxy."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She holsters her sidearm, slow and deliberate. Today we have the well. And the law. She nods to Jack. That's enough for now."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The syndicate agents don't draw. Vex calculates. Rook assesses. The Auditor records. Krane turns, coat sweeping dust, and walks back toward the silver shuttle waiting on the pad. The ramp rises. Engines ignite. They leave."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Brass approaches, bow tie perfectly straight, amber eyes warm. A most satisfactory climax, citizens. Though I suspect the sequel has already been greenlit."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She exhales, a long slow breath that seems to come from somewhere deep. Her green eyes find Jack's. We did it, stranger. The well's ours. The charter holds."
+    },
+    {
+     "kind": "character",
+     "speaker": "Maya",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She extends a calloused hand — not her badge hand. The other one. Partners?"
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "none",
+    "options": [],
+    "state_changes": {
+     "affection": {
+      "Maya": 3,
+      "Brass": 1
+     },
+     "flags_add": [
+      "well_secured",
+      "krane_departed",
+      "vane_signed_article_seven",
+      "registrar_rejected_forged_deed",
+      "syndicate_retreated"
+     ],
+     "items_add": [],
+     "items_remove": [
+      "plastisheet_with_coordinates",
+      "comm_unit"
+     ]
+    },
+    "summary_update": "Jack, Maya, and Jax Chen return to Dustreach with a revived Elias Vane moments before high noon. Vane signs the genuine Article Seven, invalidating Krane's forged deed. The registrar rejects the syndicate's filing after witnesses confirm the founding families signed under duress. Krane departs, vowing the syndicate still controls the supply lines. The colony's last water well is secured.",
+    "ending": {
+     "type": "good",
+     "title": "The Well Holds"
+    }
+   },
+   "state": {
+    "affection": {
+     "Maya": 9,
+     "Brass": 4
+    },
+    "flags": [
+     "met_maya",
+     "met_brass",
+     "met_krane_info",
+     "saloon_visit",
+     "krane_details",
+     "vane_lead",
+     "charter_article_seven",
+     "syndicate_agents_identified",
+     "auditor_noted",
+     "krane_eta_twelve_minutes",
+     "jax_chen_pilot",
+     "accepted_mission",
+     "heading_to_hangar_three",
+     "plastisheet_received",
+     "met_jax_chen",
+     "voidskipper_boarded",
+     "departure_imminent",
+     "voidskipper_weapons_checked",
+     "krane_shuttle_landed",
+     "voidskipper_en_route_to_vane",
+     "krane_at_well_with_forged_deed",
+     "founding_families_pressured",
+     "vane_revived",
+     "forged_deed_flagged",
+     "registrar_pending",
+     "voidskipper_returning",
+     "well_secured",
+     "krane_departed",
+     "vane_signed_article_seven",
+     "registrar_rejected_forged_deed",
+     "syndicate_retreated"
+    ],
+    "items": []
+   },
+   "summary": [
+    "Jack Rook arrives on Dustreach at dawn. Sheriff Maya Voss and android bartender Brass greet him, establishing the conflict: the railway syndicate controls all water wells except one.",
+    "Jack Rook enters Brass's saloon and learns the syndicate's negotiator Viktor Krane arrives at noon to seize the last water well. Sheriff Maya Voss asks Jack to help defend the colony's water supply.",
+    "Maya and Brass reveal Krane's tactics and a legal loophole: Article Seven of the founding charter requires three founding family signatures to transfer water rights. The third signatory, Elias Vane, is alive on an asteroid claim three days away. Maya knows a pilot but needs a fast ship and crazy pilot to retrieve him before noon.",
+    "Brass identifies three syndicate agents probing the well: Mara Vex (logistics), Kellen Rook (enforcement), and a mysterious 'Auditor' with a cybernetic eye. Krane's shuttle arrives in 12 minutes. Maya proposes a plan: retrieve Elias Vane from the asteroid belt using pilot Jax Chen, needing a co-pilot and backup.",
+    "Jack accepts Maya's plan to retrieve Elias Vane from Asteroid 447-Nemesis before Krane's noon arrival. Maya provides coordinates and beacon frequency on a plastisheet. Brass stays behind to monitor syndicate channels. Jack and Maya head toward Hangar Three to meet pilot Jax Chen as Krane's shuttle descends.",
+    "Jack and Maya reach Hangar Three and meet pilot Jax Chen. The Voidskipper is prepped for a combat-speed run to Asteroid 447-Nemesis to retrieve Elias Vane. Krane's shuttle lands in 7 minutes. Jax needs a nav officer for the belt run.",
+    "Jack checks the Voidskipper's weapons: twin pulse cannons, four-shot missile rack, leaking starboard PD laser, Class Two shields. The ship launches as Krane's shuttle lands at syndicate HQ. Jax Chen burns for the asteroid belt with three minutes to spare.",
+    "The Voidskipper launches with Jack, Maya, and Jax Chen aboard, burning for Asteroid 447-Nemesis to retrieve Elias Vane. Brass reports Krane has landed with a forged deed bearing a fake Vane signature and is pressuring the founding families at the well. Three days out, three days back — they must return before the deed is filed.",
+    "The Voidskipper returns to Dustreach with Elias Vane revived from cryo-stasis. Brass reports Krane has filed the forged deed and the Auditor has flagged the signature anomaly. The registrar's ruling is pending at high noon — twelve minutes away. Maya asks Jack for the final play.",
+    "Jack, Maya, and Jax Chen return to Dustreach with a revived Elias Vane moments before high noon. Vane signs the genuine Article Seven, invalidating Krane's forged deed. The registrar rejects the syndicate's filing after witnesses confirm the founding families signed under duress. Krane departs, vowing the syndicate still controls the supply lines. The colony's last water well is secured."
+   ],
+   "bgm_mood": "warm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0009",
+   "children": [],
+   "created_at": "2026-09-25T14:35:13+08:00"
+  }
+ }
+}

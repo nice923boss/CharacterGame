@@ -1,0 +1,18 @@
+{
+  "key": "zh5_metro_winter_r2",
+  "lang": "zh",
+  "aim": "bad",
+  "game_id": "g_20260925_150254",
+  "title": "地下十年",
+  "turns": 8,
+  "player_turns": 7,
+  "scenes": 2,
+  "models": [
+    "nvidia/nemotron-3-ultra-550b-a55b"
+  ],
+  "ending": {
+    "type": "bad",
+    "title": "冰封閥體"
+  },
+  "minutes": 4.1
+}

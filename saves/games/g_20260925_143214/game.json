@@ -1,0 +1,58 @@
+{
+ "id": "g_20260925_143214",
+ "created_at": "2026-09-25T14:32:14+08:00",
+ "seed": 845118991,
+ "lang": "en",
+ "title": "Last Well on Dustreach",
+ "style_en": "2300s frontier mining moon, dusty lawless town, space western, gritty neon and rust",
+ "world": {
+  "era": "the 2300s, frontier space colonies",
+  "place": "Dustreach, a lawless mining moon with one dusty main street",
+  "genre": "space western",
+  "tone": "gritty and witty",
+  "extra": "The railway syndicate has bought every water well on the moon except one",
+  "goal": "Stop the railway syndicate from seizing the colony's last water well"
+ },
+ "protagonist": {
+  "name": "Jack Rook",
+  "profile": "a drifter with a fast hand and a slow temper, just off the supply shuttle"
+ },
+ "characters": [
+  {
+   "id": "c1",
+   "name": "Maya",
+   "appearance": "30-year-old woman, sun-bleached auburn braid, green eyes, freckles, brown leather duster over a white shirt, silver star badge",
+   "personality": "stubborn, fair, tired of losing",
+   "speech": "dry, short sentences, calls you 'stranger'",
+   "relationship": "the colony's sheriff, short on deputies",
+   "appearance_en": "30-year-old woman, sun-bleached auburn braid, green eyes, freckles, brown leather duster over white shirt, silver star badge",
+   "seed": 845119008
+  },
+  {
+   "id": "c2",
+   "name": "Brass",
+   "appearance": "android bartender shaped like a tall man, polished copper plating, round glowing amber eyes, black vest and bow tie over the metal body",
+   "personality": "polite, secretly sentimental",
+   "speech": "overly formal, quotes old westerns",
+   "relationship": "runs the saloon, hears every rumor",
+   "appearance_en": "android bartender, tall masculine frame, polished copper plating, round glowing amber eyes, black vest and bow tie",
+   "seed": 845119025
+  }
+ ],
+ "scenes": {
+  "dustreach_main_street_dawn": {
+   "name": "Dustreach Main Street at Dawn",
+   "image_prompt": "Single dusty main street of a frontier mining moon, prefab metal shacks and a saloon with swinging doors, railway tracks cutting through town, harsh low morning sun casting long shadows, swirling dust motes, gritty realistic style"
+  },
+  "hangar_three_approach": {
+   "name": "Hangar Three Approach",
+   "image_prompt": "Dusty frontier spaceport hangar entrance at mid-morning, riveted steel blast doors scorched by thruster wash, cargo containers stacked haphazardly, ore processor towers looming in background, harsh copper sunlight, long shadows"
+  },
+  "dustreach_main_street_noon": {
+   "name": "Dustreach Main Street at High Noon",
+   "image_prompt": "Dusty frontier main street on a mining moon at high noon, harsh overhead sun casting sharp shadows, wooden and prefab buildings lining the street, a central water well with pump mechanism, syndicate headquarters visible in background with scorched landing pad, rust-colored dust everywhere, no people"
+  }
+ },
+ "first_scene": "dustreach_main_street_dawn",
+ "setup_model": "nvidia/nemotron-3-ultra-550b-a55b"
+}

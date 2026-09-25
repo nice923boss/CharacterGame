@@ -1,0 +1,26 @@
+{
+  "zh": {
+    "worlds": [
+      {"label": "霧港奇譚（1930 蒸汽龐克）", "era": "1930 年代，蒸汽機與煤氣燈並存", "place": "終年起霧的港口城市「霧港」", "genre": "懸疑冒險", "tone": "神祕、帶點溫情", "extra": "城裡的鐘錶最近接連停在同一時刻", "goal": "查出鐘錶停擺的真相，讓霧港恢復運轉"},
+      {"label": "櫻丘學園（現代校園）", "era": "現代", "place": "海邊小鎮的私立櫻丘學園", "genre": "青春日常", "tone": "輕快、偶爾酸甜", "extra": "學園祭前一週，社團面臨廢社危機", "goal": "在學園祭成功演出，保住社團"},
+      {"label": "星燼王國（奇幻）", "era": "劍與魔法的中世紀", "place": "被流星雨照亮的邊境王國", "genre": "奇幻冒險", "tone": "壯闊、有希望", "extra": "每年流星雨夜，古塔會打開一次", "goal": "在古塔關閉前找到流星的秘密，守護王國"}
+    ],
+    "protagonist": {"name": "阿澈", "profile": "剛到城裡的見習偵探，好奇心重"},
+    "characters": [
+      {"name": "林映月", "appearance": "22 歲女性，黑色長直髮，左耳上方別著銀色新月髮夾，灰藍色眼睛，白色立領襯衫配深藍背心與長裙，手上拿著黃銅懷錶", "personality": "冷靜聰明，外冷內熱，對謎題著迷", "speech": "用詞簡潔，偶爾冷幽默，不喜歡廢話", "relationship": "港口鐘錶行的店主，主角的委託人"},
+      {"name": "沈硯", "appearance": "28 歲男性，銀白色短髮，琥珀色眼睛，左眉有一道細疤，深灰色長風衣，黑色皮手套，脖子掛著皮革護目鏡", "personality": "玩世不恭但重義氣，藏著過去的秘密", "speech": "吊兒郎當，愛叫主角「小偵探」", "relationship": "港口的情報販子，主角的舊識"}
+    ]
+  },
+  "en": {
+    "worlds": [
+      {"label": "Tales of Fogport (1930s steampunk)", "era": "the 1930s, steam engines and gas lamps side by side", "place": "Fogport, a harbor city wrapped in fog all year", "genre": "mystery adventure", "tone": "mysterious, with a warm heart", "extra": "Clocks all over the city have been stopping at the very same minute", "goal": "Find out why the clocks stopped and get Fogport running again"},
+      {"label": "Sakuraoka Academy (modern school)", "era": "present day", "place": "Sakuraoka Academy, a private school in a seaside town", "genre": "slice of life", "tone": "light, sometimes bittersweet", "extra": "One week before the school festival, the club is about to be shut down", "goal": "Pull off the festival performance and save the club"},
+      {"label": "Kingdom of Starfall (fantasy)", "era": "a medieval age of swords and magic", "place": "a frontier kingdom lit by meteor showers", "genre": "fantasy adventure", "tone": "grand and hopeful", "extra": "On the night of the yearly meteor shower, the old tower opens once", "goal": "Uncover the secret of the falling stars before the tower closes and protect the kingdom"}
+    ],
+    "protagonist": {"name": "Ash", "profile": "an apprentice detective new to the city, endlessly curious"},
+    "characters": [
+      {"name": "Luna", "appearance": "22-year-old woman, long straight black hair, silver crescent-moon hairpin above her left ear, grey-blue eyes, white stand-collar shirt with a navy vest and long skirt, holding a brass pocket watch", "personality": "calm and clever, cool outside but warm inside, fascinated by puzzles", "speech": "brief and precise, dry humor now and then, dislikes small talk", "relationship": "owner of the harbor clock shop, your client"},
+      {"name": "Silas", "appearance": "28-year-old man, short silver-white hair, amber eyes, thin scar over his left eyebrow, long dark grey trench coat, black leather gloves, leather goggles around his neck", "personality": "flippant but loyal, hiding secrets from his past", "speech": "laid-back and teasing, calls you \"little detective\"", "relationship": "information broker at the harbor, an old acquaintance of yours"}
+    ]
+  }
+}

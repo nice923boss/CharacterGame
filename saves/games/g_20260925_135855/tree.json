@@ -1,0 +1,1056 @@
+{
+ "root": "n_0000",
+ "next": 8,
+ "nodes": {
+  "n_0000": {
+   "parent": null,
+   "scene_id": "manor_exterior_dusk",
+   "player_input": {
+    "kind": "opening",
+    "text": ""
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The carriage wheels crunch to a halt on the gravel drive. Blackmoor Manor looms against the bruised purple sky, its stone façade pitted by decades of moorland wind. A single window on the upper floor glows with candlelight; the rest of the house swallows the dusk whole."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The driver deposits your trunk without a word and vanishes back into the gathering fog. You stand alone on the threshold, the weight of the invitation letter heavy in your coat pocket—Lord Blackmoor's precise script requesting your \"particular talents\" for a vigil that ends when the last candle burns out."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "You are late. The moors wait for no one, Miss Grey."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "I am Edmund Blackmoor. The door is open. The vigil has already begun."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "Enter the manor silently",
+     "Ask about the bricked-up room",
+     "Request to see the vigil candle"
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Eliza Grey arrives at Blackmoor Manor at dusk and is greeted by Lord Edmund Blackmoor, who informs her the vigil has already begun.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Edmund": 0,
+     "Clara": 0
+    },
+    "flags": [],
+    "items": []
+   },
+   "summary": [
+    "Eliza Grey arrives at Blackmoor Manor at dusk and is greeted by Lord Edmund Blackmoor, who informs her the vigil has already begun."
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0000",
+   "children": [
+    "n_0001"
+   ],
+   "created_at": "2026-09-25T13:58:59+08:00"
+  },
+  "n_0001": {
+   "parent": "n_0000",
+   "scene_id": "manor_foyer",
+   "player_input": {
+    "kind": "option",
+    "text": "Ask about the bricked-up room"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Edmund's pale grey eyes flicker toward the upper window, then back to you. His gloved hand rests on the heavy oak door, knuckles pale."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "The bricked room. You have read the letters, then."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "It is in the east wing. Sealed forty years ago by my father's order. No one enters. No one speaks of it."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Except the music box. It plays every night at midnight. A child's tune. \"Greensleeves,\" I believe."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "You will hear it soon enough. The vigil requires you to be in the house when the last candle gutters."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Come. The cold does no one any good."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "He sweeps the door wide. The hallway yawns beyond, gas lamps sputtering to life one by one as if breathed upon by unseen lungs. Dust motes dance in the sudden light."
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "manor_foyer",
+     "name": "Manor Foyer",
+     "image_prompt": "Victorian manor foyer with stone flagstones, sweeping staircase, gas lamps on walls, shadows in corners, dusk light through tall windows"
+    },
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "Follow Edmund inside",
+     "Pause at the threshold",
+     "Ask about the music box tune",
+     "Request to see the east wing now"
+    ],
+    "state_changes": {
+     "affection": {},
+     "flags_add": [
+      "bricked_room_mentioned"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Edmund confirms the bricked-up room exists in the east wing, sealed forty years ago, and mentions the music box plays 'Greensleeves' nightly at midnight. He ushers Eliza into the foyer.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Edmund": 0,
+     "Clara": 0
+    },
+    "flags": [
+     "bricked_room_mentioned"
+    ],
+    "items": []
+   },
+   "summary": [
+    "Eliza Grey arrives at Blackmoor Manor at dusk and is greeted by Lord Edmund Blackmoor, who informs her the vigil has already begun.",
+    "Edmund confirms the bricked-up room exists in the east wing, sealed forty years ago, and mentions the music box plays 'Greensleeves' nightly at midnight. He ushers Eliza into the foyer."
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0001",
+   "children": [
+    "n_0002"
+   ],
+   "created_at": "2026-09-25T13:59:07+08:00"
+  },
+  "n_0002": {
+   "parent": "n_0001",
+   "scene_id": "manor_foyer",
+   "player_input": {
+    "kind": "option",
+    "text": "Ask about the music box tune"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Edmund pauses on the threshold, one hand braced against the doorframe. The gas lamps behind him hiss and settle, casting long shadows across the chequered marble floor."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "\"Greensleeves.\" His voice flattens, stripped of its usual clipped precision. \"A common enough tune. My sister... Clara favoured it.\""
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "She would wind the box herself, night after night, until the spring gave out. Then she would beg our father for a new one."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "He indulged her. Always."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "His jaw tightens. The signet ring on his right hand catches the lamplight—crest worn smooth by generations of thumbs."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "The music box in the bricked room is not the same one. That was lost. Burned, perhaps. Or buried."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Yet the melody is identical. Every night. Midnight. Without fail."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "Make of that what you will, Miss Grey. Your \"particular talents\" are why you are here."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "He turns sharply and strides down the corridor, the tails of his frock coat sweeping the dust. The gas lamps gutter in his wake, as though the house itself holds its breath."
+    },
+    {
+     "kind": "character",
+     "speaker": "Clara",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "*singing softly* ♫ Alas, my love, you do me wrong... to cast me off discourteously... ♫"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The voice drifts from nowhere and everywhere—above, below, inside the walls. A child's voice, thin as candle smoke, carrying the next verse of the very tune Edmund named."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "Follow Edmund deeper into the house",
+     "Call out to the singing voice",
+     "Ask Edmund about his sister Clara",
+     "Examine the gas lamps' strange behaviour"
+    ],
+    "state_changes": {
+     "affection": {
+      "Clara": 1
+     },
+     "flags_add": [
+      "music_box_tune_discussed",
+      "clara_name_revealed"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Edmund reveals the music box plays 'Greensleeves,' his sister Clara's favourite tune, and admits the original box was lost. A ghostly child's voice sings the next verse from within the walls.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Edmund": 0,
+     "Clara": 1
+    },
+    "flags": [
+     "bricked_room_mentioned",
+     "music_box_tune_discussed",
+     "clara_name_revealed"
+    ],
+    "items": []
+   },
+   "summary": [
+    "Eliza Grey arrives at Blackmoor Manor at dusk and is greeted by Lord Edmund Blackmoor, who informs her the vigil has already begun.",
+    "Edmund confirms the bricked-up room exists in the east wing, sealed forty years ago, and mentions the music box plays 'Greensleeves' nightly at midnight. He ushers Eliza into the foyer.",
+    "Edmund reveals the music box plays 'Greensleeves,' his sister Clara's favourite tune, and admits the original box was lost. A ghostly child's voice sings the next verse from within the walls."
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0002",
+   "children": [
+    "n_0003"
+   ],
+   "created_at": "2026-09-25T13:59:21+08:00"
+  },
+  "n_0003": {
+   "parent": "n_0002",
+   "scene_id": "manor_foyer",
+   "player_input": {
+    "kind": "free",
+    "text": "I ask Clara what happened in the bricked-up room forty years ago."
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The singing stops abruptly, cut clean as a snapped thread. The gas lamps steady their flames. In the sudden silence, the air grows colder, smelling faintly of dried lavender and old paper."
+    },
+    {
+     "kind": "character",
+     "speaker": "Clara",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "*voice drifting from the shadows near the staircase* ♫ Forty years... forty stones... ♫"
+    },
+    {
+     "kind": "character",
+     "speaker": "Clara",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "*giggle, light as frost on glass* Daddy hammered. Mummy wept. Clara slept."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "A faint shimmer coalesces on the bottom stair—a child in a white lace dress, blue ribbon catching light that isn't there. Her pale blue eyes hold centuries of loneliness."
+    },
+    {
+     "kind": "character",
+     "speaker": "Clara",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "*tilting head, translucent fingers brushing the banister* The room drank the light. The music box drank the tears. Now Clara drinks the dark."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "*striding back from the corridor, face pale, signet ring digging into his palm* Enough."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "*voice low, dangerous* Miss Grey. Do not encourage... that. The vigil demands focus, not nursery rhymes."
+    },
+    {
+     "kind": "character",
+     "speaker": "Clara",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "*fading, voice carrying a pout* Edmund always ruins the game. But the dark remembers what Edmund forgets."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The child's form dissolves into motes of pale light, drifting toward the east wing corridor. Edmund stands rigid in the foyer, jaw muscle jumping, the ghost of his sister's words hanging heavier than any spectre."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "mysterious",
+    "weather": "fog",
+    "options": [
+     "Follow Clara's light toward the east wing",
+     "Press Edmund about what he forgot",
+     "Examine the foyer for clues about the vigil"
+    ],
+    "state_changes": {
+     "affection": {
+      "Edmund": -1,
+      "Clara": 2
+     },
+     "flags_add": [
+      "clara_hinted_bricked_room",
+      "edmund_reacted_defensively"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Clara's ghost appeared briefly, hinting in riddles about the bricked room's past—father hammered, mother wept, Clara slept. Edmund returned angrily, forbidding further interaction with the spirit and insisting on focus for the vigil.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Edmund": -1,
+     "Clara": 3
+    },
+    "flags": [
+     "bricked_room_mentioned",
+     "music_box_tune_discussed",
+     "clara_name_revealed",
+     "clara_hinted_bricked_room",
+     "edmund_reacted_defensively"
+    ],
+    "items": []
+   },
+   "summary": [
+    "Eliza Grey arrives at Blackmoor Manor at dusk and is greeted by Lord Edmund Blackmoor, who informs her the vigil has already begun.",
+    "Edmund confirms the bricked-up room exists in the east wing, sealed forty years ago, and mentions the music box plays 'Greensleeves' nightly at midnight. He ushers Eliza into the foyer.",
+    "Edmund reveals the music box plays 'Greensleeves,' his sister Clara's favourite tune, and admits the original box was lost. A ghostly child's voice sings the next verse from within the walls.",
+    "Clara's ghost appeared briefly, hinting in riddles about the bricked room's past—father hammered, mother wept, Clara slept. Edmund returned angrily, forbidding further interaction with the spirit and insisting on focus for the vigil."
+   ],
+   "bgm_mood": "mysterious",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0003",
+   "children": [
+    "n_0004"
+   ],
+   "created_at": "2026-09-25T13:59:35+08:00"
+  },
+  "n_0004": {
+   "parent": "n_0003",
+   "scene_id": "manor_foyer",
+   "player_input": {
+    "kind": "option",
+    "text": "Press Edmund about what he forgot"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The motes of pale light drift away like breath on a mirror, leaving the foyer steeped in a silence heavier than before. Edmund's shoulders remain squared, his back to the east wing corridor, but the muscle in his jaw works steadily."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Eliza Grey",
+     "char_id": null,
+     "expr": "calm",
+     "text": "You said the dark remembers what you forget, my lord. What exactly have you forgotten?"
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "angry",
+     "text": "*turning sharply, pale grey eyes flashing* I have forgotten nothing that matters. The vigil. The candle. The hour. That is all that concerns you."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "angry",
+     "text": "*stepping closer, signet ring catching the gaslight* My sister's... imaginings... are the product of a child's mind trapped in a child's understanding. She knew nothing. She knows nothing."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "His gloved hand clenches at his side. The frock coat hangs stiff, as though starched with repression. A log shifts in the foyer hearth, sending a cascade of sparks up the chimney."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "angry",
+     "text": "*voice dropping, brittle* Father sealed the room. That is the truth. He sealed it and we moved on. There is no mystery here—only duty. *Your* duty is the vigil."
+    },
+    {
+     "kind": "character",
+     "speaker": "Clara",
+     "char_id": "c2",
+     "expr": "sad",
+     "text": "*voice a whisper from the ceiling roses, unseen* Edmund lies to himself first. Then the lie becomes the wall. Then the wall becomes the world."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The child's voice seems to vibrate in the plasterwork itself, coming from everywhere and nowhere. Edmund flinches—barely perceptible, a tightening around the eyes—but his stance does not waver."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "angry",
+     "text": "*cold, final* The east wing is forbidden. The vigil continues. You will retire to the drawing room until midnight. That is an order, Miss Grey."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "fog",
+    "options": [
+     "Defy Edmund and follow Clara's voice toward the east wing",
+     "Retire to the drawing room as ordered, but watch Edmund",
+     "Press Edmund once more about his father and the sealing"
+    ],
+    "state_changes": {
+     "affection": {
+      "Edmund": -2,
+      "Clara": 1
+     },
+     "flags_add": [
+      "edmund_forbade_east_wing",
+      "clara_called_edmund_liar"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Eliza pressed Edmund about what he forgot; he reacted angrily, insisting the sealed room holds no mystery and ordering her to the drawing room until midnight. Clara's disembodied voice accused Edmund of lying to himself.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Edmund": -3,
+     "Clara": 4
+    },
+    "flags": [
+     "bricked_room_mentioned",
+     "music_box_tune_discussed",
+     "clara_name_revealed",
+     "clara_hinted_bricked_room",
+     "edmund_reacted_defensively",
+     "edmund_forbade_east_wing",
+     "clara_called_edmund_liar"
+    ],
+    "items": []
+   },
+   "summary": [
+    "Eliza Grey arrives at Blackmoor Manor at dusk and is greeted by Lord Edmund Blackmoor, who informs her the vigil has already begun.",
+    "Edmund confirms the bricked-up room exists in the east wing, sealed forty years ago, and mentions the music box plays 'Greensleeves' nightly at midnight. He ushers Eliza into the foyer.",
+    "Edmund reveals the music box plays 'Greensleeves,' his sister Clara's favourite tune, and admits the original box was lost. A ghostly child's voice sings the next verse from within the walls.",
+    "Clara's ghost appeared briefly, hinting in riddles about the bricked room's past—father hammered, mother wept, Clara slept. Edmund returned angrily, forbidding further interaction with the spirit and insisting on focus for the vigil.",
+    "Eliza pressed Edmund about what he forgot; he reacted angrily, insisting the sealed room holds no mystery and ordering her to the drawing room until midnight. Clara's disembodied voice accused Edmund of lying to himself."
+   ],
+   "bgm_mood": "tense",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0004",
+   "children": [
+    "n_0005"
+   ],
+   "created_at": "2026-09-25T13:59:54+08:00"
+  },
+  "n_0005": {
+   "parent": "n_0004",
+   "scene_id": "manor_foyer",
+   "player_input": {
+    "kind": "free",
+    "text": "I confront Edmund with what Clara told me and ask him to open the bricked-up room."
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The gas lamps sputter, casting long, trembling shadows across the chequered marble. Edmund's order hangs in the cold air like a physical weight, demanding obedience, yet the ghost's accusation—*Edmund lies to himself first*—echoes in the plasterwork, unyielding."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Eliza Grey",
+     "char_id": null,
+     "expr": "calm",
+     "text": "She said you lie to yourself, my lord. That the wall became the world. If there is nothing in that room but dust and silence, then opening it proves her wrong. Let me see it. Let the vigil witness the truth."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "*pale grey eyes narrowing, the temperature in the foyer seeming to drop another degree* You presume to dictate the terms of your employment? I gave you an order. The drawing room. Midnight. The vigil."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "*his voice drops to a harsh whisper, the signet ring flashing as he grips the banister* The east wing door has not been touched in forty years. The mortar is older than you are. It stays sealed."
+    },
+    {
+     "kind": "character",
+     "speaker": "Clara",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "*voice drifting from the ceiling roses, sad and sing-song* ♫ The key lies where the tears fell... where the hammer slept... ♫"
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "*flinching visibly this time, a sharp intake of breath* Silence."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "A heavy log collapses in the hearth, sending a shower of golden sparks spiralling up the chimney. In the sudden flare, Edmund's face is thrown into stark relief—proud, terrified, and utterly cornered."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "tense",
+    "weather": "fog",
+    "options": [
+     "Demand the key's location from Clara's riddle",
+     "Defy Edmund and head for the east wing alone",
+     "Retreat to the drawing room to wait for midnight",
+     "Press Edmund on what his father truly sealed away"
+    ],
+    "state_changes": {
+     "affection": {
+      "Edmund": -2,
+      "Clara": 1
+     },
+     "flags_add": [
+      "eliza_confronted_edmund_bricked_room",
+      "clara_hinted_key_location"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Eliza confronts Edmund with Clara's accusation, demanding the bricked room be opened. Edmund refuses violently, but Clara's ghost offers a cryptic riddle about a key's location, visibly shaking him.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Edmund": -5,
+     "Clara": 5
+    },
+    "flags": [
+     "bricked_room_mentioned",
+     "music_box_tune_discussed",
+     "clara_name_revealed",
+     "clara_hinted_bricked_room",
+     "edmund_reacted_defensively",
+     "edmund_forbade_east_wing",
+     "clara_called_edmund_liar",
+     "eliza_confronted_edmund_bricked_room",
+     "clara_hinted_key_location"
+    ],
+    "items": []
+   },
+   "summary": [
+    "Eliza Grey arrives at Blackmoor Manor at dusk and is greeted by Lord Edmund Blackmoor, who informs her the vigil has already begun.",
+    "Edmund confirms the bricked-up room exists in the east wing, sealed forty years ago, and mentions the music box plays 'Greensleeves' nightly at midnight. He ushers Eliza into the foyer.",
+    "Edmund reveals the music box plays 'Greensleeves,' his sister Clara's favourite tune, and admits the original box was lost. A ghostly child's voice sings the next verse from within the walls.",
+    "Clara's ghost appeared briefly, hinting in riddles about the bricked room's past—father hammered, mother wept, Clara slept. Edmund returned angrily, forbidding further interaction with the spirit and insisting on focus for the vigil.",
+    "Eliza pressed Edmund about what he forgot; he reacted angrily, insisting the sealed room holds no mystery and ordering her to the drawing room until midnight. Clara's disembodied voice accused Edmund of lying to himself.",
+    "Eliza confronts Edmund with Clara's accusation, demanding the bricked room be opened. Edmund refuses violently, but Clara's ghost offers a cryptic riddle about a key's location, visibly shaking him."
+   ],
+   "bgm_mood": "tense",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0005",
+   "children": [
+    "n_0006"
+   ],
+   "created_at": "2026-09-25T14:00:03+08:00"
+  },
+  "n_0006": {
+   "parent": "n_0005",
+   "scene_id": "manor_drawing_room",
+   "player_input": {
+    "kind": "option",
+    "text": "Retreat to the drawing room to wait for midnight"
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The firelight dies down, shadows swallowing the foyer once more. Edmund's chest heaves once, a barely contained shudder, before the mask of the lord of the manor slides back into place—cold, imperious, unyielding."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "*voice clipped, controlled once more* The drawing room is down the west corridor. Third door on the left. A fire has been laid. You will wait there until midnight."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "*turning sharply, frock coat sweeping the marble* I have preparations to make for the vigil. Do not wander. Do not listen to... voices in the walls."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "He strides toward the west corridor without a backward glance, his boots striking the floor with measured precision. The gas lamps gutter in his wake, each flame bowing low before righting itself."
+    },
+    {
+     "kind": "character",
+     "speaker": "Clara",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "*whispered from the darkness above, faint as a sigh* ♫ Where the hammer slept... the key keeps... ♫"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The child's voice fades into the settling dust. The east wing corridor yawns to your right, swallowed in deeper shadow; the west corridor stretches left, promising warmth and enforced idleness until the witching hour."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Eliza Grey",
+     "char_id": null,
+     "expr": "calm",
+     "text": "*quietly, to the empty air* I'll be back for you. Both of you."
+    }
+   ],
+   "result": {
+    "scene_change": true,
+    "scene": {
+     "id": "manor_drawing_room",
+     "name": "Manor Drawing Room",
+     "image_prompt": "Victorian drawing room with faded damask wallpaper, heavy velvet curtains drawn against the moorland dark, a carved marble fireplace with a low-burning fire, gas lamps on brackets, dust motes in the light, an ornate clock on the mantle showing 11:15 PM"
+    },
+    "bgm_mood": "tense",
+    "weather": "fog",
+    "options": [
+     "Examine the room for clues about the house's history",
+     "Attempt to contact Clara's spirit from here",
+     "Study the invitation letter and vigil instructions again",
+     "Rest and conserve energy for midnight"
+    ],
+    "state_changes": {
+     "affection": {
+      "Edmund": -1,
+      "Clara": 1
+     },
+     "flags_add": [
+      "eliza_in_drawing_room",
+      "eliza_promised_return"
+     ],
+     "items_add": [],
+     "items_remove": []
+    },
+    "summary_update": "Eliza obeys Edmund's order and retreats to the drawing room to wait for midnight, but promises silently to return for both Edmund and Clara. Clara's voice echoes a final hint about the key's location.",
+    "ending": null
+   },
+   "state": {
+    "affection": {
+     "Edmund": -6,
+     "Clara": 6
+    },
+    "flags": [
+     "bricked_room_mentioned",
+     "music_box_tune_discussed",
+     "clara_name_revealed",
+     "clara_hinted_bricked_room",
+     "edmund_reacted_defensively",
+     "edmund_forbade_east_wing",
+     "clara_called_edmund_liar",
+     "eliza_confronted_edmund_bricked_room",
+     "clara_hinted_key_location",
+     "eliza_in_drawing_room",
+     "eliza_promised_return"
+    ],
+    "items": []
+   },
+   "summary": [
+    "Eliza Grey arrives at Blackmoor Manor at dusk and is greeted by Lord Edmund Blackmoor, who informs her the vigil has already begun.",
+    "Edmund confirms the bricked-up room exists in the east wing, sealed forty years ago, and mentions the music box plays 'Greensleeves' nightly at midnight. He ushers Eliza into the foyer.",
+    "Edmund reveals the music box plays 'Greensleeves,' his sister Clara's favourite tune, and admits the original box was lost. A ghostly child's voice sings the next verse from within the walls.",
+    "Clara's ghost appeared briefly, hinting in riddles about the bricked room's past—father hammered, mother wept, Clara slept. Edmund returned angrily, forbidding further interaction with the spirit and insisting on focus for the vigil.",
+    "Eliza pressed Edmund about what he forgot; he reacted angrily, insisting the sealed room holds no mystery and ordering her to the drawing room until midnight. Clara's disembodied voice accused Edmund of lying to himself.",
+    "Eliza confronts Edmund with Clara's accusation, demanding the bricked room be opened. Edmund refuses violently, but Clara's ghost offers a cryptic riddle about a key's location, visibly shaking him.",
+    "Eliza obeys Edmund's order and retreats to the drawing room to wait for midnight, but promises silently to return for both Edmund and Clara. Clara's voice echoes a final hint about the key's location."
+   ],
+   "bgm_mood": "tense",
+   "weather": "fog",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0006",
+   "children": [
+    "n_0007"
+   ],
+   "created_at": "2026-09-25T14:00:14+08:00"
+  },
+  "n_0007": {
+   "parent": "n_0006",
+   "scene_id": "manor_drawing_room",
+   "player_input": {
+    "kind": "free",
+    "text": "We open the room together, and I return Clara's music box to her so she can finally rest."
+   },
+   "lines": [
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The drawing room fire has burned low, casting long fingers of shadow across velvet chairs and gilt mirrors. A single candle gutters on the mantelpiece—its flame the only measure of the vigil's remaining time. Midnight chimes from the hall clock, each stroke heavy and deliberate."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Eliza Grey",
+     "char_id": null,
+     "expr": "calm",
+     "text": "*rising from the chair, voice steady in the dimness* The hour has come, my lord. The east wing. Now."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "*appearing in the doorway, frock coat dusted with ash, signet ring dull in the candlelight* You defy me still. The vigil does not require—"
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Eliza Grey",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The vigil requires truth. Clara's rhyme: where the hammer slept, the key keeps. Father's study. The desk drawer."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "Edmund goes pale beneath the soot. His hand finds the doorframe, knuckles white."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "*quiet, broken* You have no right to disturb his things. To disturb *him*."
+    },
+    {
+     "kind": "character",
+     "speaker": "Clara",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "*materialising beside the cold hearth, blue ribbon bright against the gloom* ♫ Daddy's hammer... Clara's key... Edmund remembers... ♫"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The ghost child extends a translucent hand toward the west corridor. The air shimmers, the house holding its breath."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "*a long exhale, shoulders slumping* The study. Top left drawer. Brass key, green ribbon. Take it. End this."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "He turns without another word, boots heavy on the stairs. You follow, Clara's light dancing ahead like a will-o'-wisp. The east wing corridor is colder, the mortar grey and crumbling where forty years of damp have done their work."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Eliza Grey",
+     "char_id": null,
+     "expr": "calm",
+     "text": "*inserting the key into a rusted iron padlock set into the brickwork* One turn."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The lock screams. Bricks shudder. Dust cascades as the hidden door swings inward on hinges that remember oil. Inside: a child's room frozen in time. A small bed. A doll with button eyes. And on the pillow—a music box, wood dark with age, its lid closed."
+    },
+    {
+     "kind": "character",
+     "speaker": "Clara",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "*drifting forward, fingers brushing the box* Mine."
+    },
+    {
+     "kind": "protagonist",
+     "speaker": "Eliza Grey",
+     "char_id": null,
+     "expr": "calm",
+     "text": "*lifting it gently, winding the key* For you."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The lid opens. *Greensleeves* spills out, clear and sweet, no longer tinny or strained. The melody fills the room, the corridor, the house entire. Clara's form brightens, edges softening, the blue ribbon glowing."
+    },
+    {
+     "kind": "character",
+     "speaker": "Clara",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "*smiling, voice no longer riddles* Thank you, Eliza. Thank you, Edmund. The dark is not cold anymore."
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "She presses her palm to the music box, and light unfurls from her chest—golden, warm, rising like dawn through storm clouds. The bricks of the sealed room breathe out decades of sorrow. The candle in the drawing room flares once, bright as a star, then settles into a steady, enduring flame."
+    },
+    {
+     "kind": "character",
+     "speaker": "Edmund",
+     "char_id": "c1",
+     "expr": "calm",
+     "text": "*standing in the doorway, one hand pressed to the jamb, tears cutting clean tracks through the soot on his cheeks* Clara. My sister. I am sorry. I am so sorry."
+    },
+    {
+     "kind": "character",
+     "speaker": "Clara",
+     "char_id": "c2",
+     "expr": "calm",
+     "text": "*fading, luminous, at peace* ♫ Alas, my love... you did not wrong me... you loved me... ♫"
+    },
+    {
+     "kind": "narration",
+     "speaker": "Narrator",
+     "char_id": null,
+     "expr": "calm",
+     "text": "The last note drifts away. The ghost is gone. The music box falls silent in your hands, its spring spent. Edmund sinks to his knees on the cold flags, shoulders shaking, finally weeping for the sister he sealed away with his silence. The vigil's candle burns on, unhurried, in a house that has exhaled its first true breath in forty years."
+    }
+   ],
+   "result": {
+    "scene_change": false,
+    "scene": null,
+    "bgm_mood": "warm",
+    "weather": "none",
+    "options": [],
+    "state_changes": {
+     "affection": {
+      "Edmund": 3,
+      "Clara": 3
+     },
+     "flags_add": [
+      "bricked_room_opened",
+      "music_box_returned",
+      "clara_laid_to_rest",
+      "edmund_grieving",
+      "vigil_completed"
+     ],
+     "items_add": [
+      "music_box_spent"
+     ],
+     "items_remove": []
+    },
+    "summary_update": "Eliza and Edmund open the bricked-up room together using the key from his father's study. Eliza returns Clara's music box, winding it one last time. Clara's ghost finds peace and passes on, the vigil's candle burning steady. Edmund breaks down in grief and relief, the manor's forty-year burden finally lifted.",
+    "ending": {
+     "type": "good",
+     "title": "The Last Note"
+    }
+   },
+   "state": {
+    "affection": {
+     "Edmund": -3,
+     "Clara": 9
+    },
+    "flags": [
+     "bricked_room_mentioned",
+     "music_box_tune_discussed",
+     "clara_name_revealed",
+     "clara_hinted_bricked_room",
+     "edmund_reacted_defensively",
+     "edmund_forbade_east_wing",
+     "clara_called_edmund_liar",
+     "eliza_confronted_edmund_bricked_room",
+     "clara_hinted_key_location",
+     "eliza_in_drawing_room",
+     "eliza_promised_return",
+     "bricked_room_opened",
+     "music_box_returned",
+     "clara_laid_to_rest",
+     "edmund_grieving",
+     "vigil_completed"
+    ],
+    "items": [
+     "music_box_spent"
+    ]
+   },
+   "summary": [
+    "Eliza Grey arrives at Blackmoor Manor at dusk and is greeted by Lord Edmund Blackmoor, who informs her the vigil has already begun.",
+    "Edmund confirms the bricked-up room exists in the east wing, sealed forty years ago, and mentions the music box plays 'Greensleeves' nightly at midnight. He ushers Eliza into the foyer.",
+    "Edmund reveals the music box plays 'Greensleeves,' his sister Clara's favourite tune, and admits the original box was lost. A ghostly child's voice sings the next verse from within the walls.",
+    "Clara's ghost appeared briefly, hinting in riddles about the bricked room's past—father hammered, mother wept, Clara slept. Edmund returned angrily, forbidding further interaction with the spirit and insisting on focus for the vigil.",
+    "Eliza pressed Edmund about what he forgot; he reacted angrily, insisting the sealed room holds no mystery and ordering her to the drawing room until midnight. Clara's disembodied voice accused Edmund of lying to himself.",
+    "Eliza confronts Edmund with Clara's accusation, demanding the bricked room be opened. Edmund refuses violently, but Clara's ghost offers a cryptic riddle about a key's location, visibly shaking him.",
+    "Eliza obeys Edmund's order and retreats to the drawing room to wait for midnight, but promises silently to return for both Edmund and Clara. Clara's voice echoes a final hint about the key's location.",
+    "Eliza and Edmund open the bricked-up room together using the key from his father's study. Eliza returns Clara's music box, winding it one last time. Clara's ghost finds peace and passes on, the vigil's candle burning steady. Edmund breaks down in grief and relief, the manor's forty-year burden finally lifted."
+   ],
+   "bgm_mood": "warm",
+   "weather": "none",
+   "model": "nvidia/nemotron-3-ultra-550b-a55b",
+   "repair_notes": [],
+   "id": "n_0007",
+   "children": [],
+   "created_at": "2026-09-25T14:00:37+08:00"
+  }
+ }
+}

@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+httpx
+pillow
+numpy
+scipy
+rembg
+opencc-python-reimplemented
+pytest
+pytest-asyncio
