@@ -192,6 +192,10 @@ html[lang="en"] .subtitle { letter-spacing: 0.06em; }
 .story-row { display: flex; align-items: center; gap: 2cqh; flex: 0 0 12cqh; padding-right: 2cqh;
   border: 0.2cqh solid var(--gold-dim); border-radius: 1cqh; overflow: hidden; background: rgba(6, 9, 20, 0.6); }
 .story-row .thumb { flex: 0 0 20cqh; align-self: stretch; background: #10152a center / cover; }
+.thumb[data-thumb] { display: grid; place-items: center; }
+.thumb[data-thumb]::after { content: attr(data-loading); font-size: 1.6cqh; color: var(--muted);
+  animation: pulse 1.2s ease-in-out infinite alternate; }
+@keyframes pulse { from { opacity: 0.35; } to { opacity: 1; } }
 .story-row .meta { flex: 1; font-size: 1.7cqh; line-height: 1.5; color: var(--muted); }
 .story-row .meta b { display: block; font-family: var(--serif); font-size: 2.2cqh; color: var(--ink); }
 

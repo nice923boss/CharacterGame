@@ -3,7 +3,7 @@
 import { del, get, job, post } from './api.js';
 import { sound } from './sound.js';
 import { LIMIT_SCALE, t } from './i18n.js';
-import { $, closeModal, confirmBox, esc, openModal, progress, settings, statusText, toast } from './ui.js';
+import { $, closeModal, confirmBox, esc, loadThumbs, openModal, progress, settings, statusText, thumbAttr, toast } from './ui.js';
 import { renderTree } from './tree.js';
 
 const G = {
@@ -399,9 +399,8 @@ function depthOf(id) { let d = 0; for (let n = G.tree.nodes[id]; n; n = G.tree.n
 function slotHtml(s, i, mode) {
   if (!s) return `<button class="slot empty" data-i="${i}"><span class="num">${i + 1}</span><div class="thumb">${esc(t('slots.empty'))}</div>` +
     `<div class="meta"><b>&nbsp;</b>&nbsp;</div></button>`;
-  const thumb = s.thumb ? ` style="background-image:url('${s.thumb}')"` : '';
   return `<button class="slot" data-i="${i}"><span class="num">${i + 1}</span>` +
-    `<div class="thumb"${thumb}></div>` +
+    `<div class="thumb"${thumbAttr(s.thumb)}></div>` +
     `<div class="meta"><b>${esc(s.label)}</b>${esc(String(s.saved_at || '').slice(0, 16).replace('T', ' '))}</div>` +
     (mode === 'load' ? `<span class="del btn tiny ghost" data-del="${i}">${esc(t('slots.del'))}</span>` : '') + '</button>';
 }
@@ -412,6 +411,7 @@ export async function openSlots(mode, onLoad) {
   try { slots = await get('/api/slots'); } catch (e) { toast(e.message, true); return; }
   const paint = () => {
     $('#slot-grid').innerHTML = slots.map((s, i) => slotHtml(s, i, mode)).join('');
+    loadThumbs($('#slot-grid'));
     $('#slot-grid').querySelectorAll('.slot').forEach((b) => { b.onclick = (e) => pick(e, Number(b.dataset.i)); });
   };
   const pick = async (e, i) => {
@@ -439,9 +439,9 @@ export async function openSlots(mode, onLoad) {
     if (auto) {
       const games = await get('/api/games').catch(() => []);
       const title = games.find((g) => g.id === auto.game_id)?.title || auto.game_id;
-      const thumb = auto.thumb ? ` style="background-image:url('${auto.thumb}')"` : '';
-      $('#autosave-row').innerHTML = `<button class="slot"><div class="thumb"${thumb}></div><div class="meta"><b>${esc(t('slots.auto', { title }))}</b>` +
+      $('#autosave-row').innerHTML = `<button class="slot"><div class="thumb"${thumbAttr(auto.thumb)}></div><div class="meta"><b>${esc(t('slots.auto', { title }))}</b>` +
         `${esc(String(auto.saved_at || '').slice(0, 16).replace('T', ' ') + t('slots.autoNote'))}</div></button>`;
+      loadThumbs($('#autosave-row'));
       $('#autosave-row .slot').onclick = () => { closeModal('#mdl-slots'); onLoad(auto.game_id, auto.node_id); };
     }
   }

@@ -1,7 +1,7 @@
 // Story list on the title screen: open a story at its latest turn, or delete it with its tree, images, slots and autosave.
 import { del, get, post } from './api.js';
 import { t } from './i18n.js';
-import { $, confirmBox, esc, openModal, toast } from './ui.js';
+import { $, confirmBox, esc, loadThumbs, openModal, thumbAttr, toast } from './ui.js';
 import { batchRow, rearm, refreshBatches } from './batch.js';
 
 const ACTIVE = ['running', 'images'];
@@ -23,9 +23,8 @@ export async function openStories(onChange, onOpen) {
   };
 
   const row = (g) => {
-    const thumb = g.thumb ? ` style="background-image:url('${g.thumb}')"` : '';
     const used = refs(g.id);
-    return `<div class="story-row"><div class="thumb"${thumb}></div>` +
+    return `<div class="story-row"><div class="thumb"${thumbAttr(g.thumb)}></div>` +
       `<div class="meta"><b>${esc(g.title || g.id)} <small>${esc(t(`stories.lang.${g.lang}`))}</small></b>` +
       `${esc(t('stories.meta', { chars: g.characters.join(t('common.sep')) || t('stories.noChars'), nodes: g.nodes }))}<br>` +
       `${esc(t('stories.created', { date: String(g.created_at || '').slice(0, 16).replace('T', ' ') }))}` +
@@ -62,6 +61,7 @@ export async function openStories(onChange, onOpen) {
 
   const paint = () => {
     $('#story-list').innerHTML = games.length ? games.map(row).join('') : `<p class="hint">${esc(t('stories.none'))}</p>`;
+    loadThumbs($('#story-list'));
     $('#story-list').querySelectorAll('[data-del-story]').forEach((b) => { b.onclick = () => remove(b.dataset.delStory); });
     $('#story-list').querySelectorAll('[data-open-story]').forEach((b) => {
       b.onclick = () => {
