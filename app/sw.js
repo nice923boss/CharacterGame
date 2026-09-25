@@ -9,7 +9,8 @@ const RUNTIME_HOSTS = ['cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstati
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE);
-    await cache.addAll(SHELL);
+    // Skip the HTTP cache (GitHub Pages sends max-age=600), or a new version could keep files of the old one
+    await cache.addAll(SHELL.map((url) => new Request(url, { cache: 'reload' })));
     // A CDN hiccup must not block the install; those files are cached on first use instead
     await Promise.all(CDN.map((url) => cache.add(url).catch((e) => console.warn('precache failed', url, e))));
     await self.skipWaiting();
