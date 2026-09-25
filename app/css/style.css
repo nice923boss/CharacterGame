@@ -159,6 +159,13 @@ html[lang="en"] .subtitle { letter-spacing: 0.06em; }
   border: 0.3cqh solid var(--gold); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;
   vertical-align: -0.1cqh; }
 @keyframes spin { to { transform: rotate(360deg); } }
+#stage-loading { position: absolute; top: 22cqh; left: 50%; transform: translateX(-50%); width: 40cqw; z-index: 5;
+  padding: 1.4cqh 2.4cqh 0.8cqh; text-align: center; background: rgba(8, 12, 26, 0.8); border: 0.15cqh solid var(--gold-dim);
+  border-radius: 1cqh; pointer-events: none; }
+#stage-loading p { margin: 0; font-size: 2.2cqh; color: var(--ink); }
+#stage-loading .batch-bar i { transition: width 0.25s linear; }
+#stage-loading .batch-bar.indet i { width: 30%; transition: none; animation: indet 1.4s ease-in-out infinite; }
+@keyframes indet { from { transform: translateX(-100%); } to { transform: translateX(340%); } }
 #scene-card { position: absolute; top: 13cqh; z-index: 5; left: 50%; transform: translateX(-50%); font-family: var(--serif);
   font-size: 4cqh; letter-spacing: 0.4em; padding: 1cqh 5cqh; color: var(--ink);
   background: linear-gradient(90deg, transparent, rgba(8, 12, 26, 0.8) 20%, rgba(8, 12, 26, 0.8) 80%, transparent);

@@ -9,7 +9,7 @@ import { renderTree } from './tree.js';
 const G = {
   stage: null, game: null, tree: null, assets: null, currentId: null,
   queue: [], typing: null, waitingClick: false, final: null, running: null, turnStart: 0,
-  sceneId: null, pendingScene: null, castExpr: {}, onExit: null, pollTimer: null, lastInput: null,
+  sceneId: null, pendingScene: null, castExpr: {}, onExit: null, pollTimer: null, loadTimer: null, lastInput: null,
 };
 
 // ---------- asset urls ----------
@@ -47,9 +47,8 @@ async function pollAssets() {
 function paintAssetChip() {
   const chip = $('#asset-chip');
   const sc = G.assets?.scenes?.[G.sceneId];
-  if (sc && sc.state !== 'done') {
-    chip.textContent = sc.state === 'error' ? t('chip.sceneError') : sc.state === 'running'
-      ? t('chip.sceneRunning') : t('chip.sceneQueued', { n: sc.ahead ?? 0 });
+  if (sc?.state === 'error') {   // a scene still being drawn shows in the loading panel instead
+    chip.textContent = t('chip.sceneError');
     chip.hidden = false;
     return;
   }
@@ -57,6 +56,37 @@ function paintAssetChip() {
   const ready = all.filter((x) => x.state === 'done').length;
   chip.hidden = !all.length || ready === all.length;
   chip.textContent = t('chip.sprites', { ready, all: all.length });
+}
+
+// Loading panel: shown while the scene or an on-stage sprite is still being drawn or downloaded, so a blank
+// stage never looks like a failure. Downloads show real byte progress; drawing has no known length.
+const LOADING_SHOW_AFTER = 2;   // ticks of 250 ms, so images already in the cache never flash the panel
+let loadingTicks = 0;
+
+function paintLoading() {
+  if (!G.game) return;
+  G.stage.refreshScene();   // also swaps in a scene that finished loading while no line was typing
+  const sc = G.assets?.scenes?.[G.sceneId];
+  const sprites = G.assets?.sprites || {};
+  const waits = G.stage.waiting().filter((w) => (w.url ? true
+    : w.kind === 'scene' ? sc?.state !== 'error' : sprites[w.cid]?.calm?.state !== 'error'));
+  const box = $('#stage-loading');
+  loadingTicks = waits.length ? loadingTicks + 1 : 0;
+  if (loadingTicks < LOADING_SHOW_AFTER) { box.hidden = true; return; }
+  const parts = new Set(waits.map((w) => {
+    if (w.kind === 'sprite') return t(w.url ? 'load.sprite' : 'load.spriteDrawing');
+    if (sc?.state === 'running') return t('chip.sceneRunning');
+    if (sc?.state === 'queued') return t('chip.sceneQueued', { n: sc.ahead ?? 0 });
+    return t('load.scene');   // downloading, or done but the stage is still fading to it
+  }));
+  const known = waits.every((w) => w.url && w.total);
+  const pct = known ? Math.min(99, Math.floor(100 * waits.reduce((a, w) => a + w.loaded, 0)
+    / waits.reduce((a, w) => a + w.total, 0))) : null;
+  $('#stage-loading p').textContent = [...parts].join(t('load.sep')) + (pct === null ? '' : ` ${pct}%`);
+  const bar = $('#stage-loading .batch-bar');
+  bar.classList.toggle('indet', pct === null);
+  bar.firstElementChild.style.width = pct === null ? '' : `${pct}%`;
+  box.hidden = false;
 }
 
 // ---------- line playback ----------
@@ -306,6 +336,9 @@ export async function enterGame(stage, gid, nodeId, onExit) {
   $('#scr-game').hidden = false;
   clearInterval(G.pollTimer);
   G.pollTimer = setInterval(pollAssets, 3000);
+  clearInterval(G.loadTimer);
+  loadingTicks = 0;
+  G.loadTimer = setInterval(paintLoading, 250);
   if (!nodeId || !G.tree.nodes[nodeId]) {
     G.currentId = null;
     G.sceneId = G.game.first_scene;
@@ -345,12 +378,14 @@ export async function enterGame(stage, gid, nodeId, onExit) {
 export function leaveGame() {
   if (G.running) G.running.cancel();
   clearInterval(G.pollTimer);
+  clearInterval(G.loadTimer);
   G.game = null;
   G.queue = [];
   G.typing = null;
   G.final = null;
   $('#scr-game').hidden = true;
   $('#asset-chip').hidden = true;
+  $('#stage-loading').hidden = true;
   $('#ending').hidden = true;
   sound.setWeather('none');
 }

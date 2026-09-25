@@ -15,15 +15,43 @@ export function createStage(host) {
     speaker: null,
     weather: 'none', weatherOn: true, parts: [],
     cache: new Map(),      // url -> p5.Image | 'loading' | 'error'
+    bytes: new Map(),      // url -> { loaded, total } while downloading (total 0 when the size is unknown)
   };
   let P = null;
+
+  // Download with byte progress for the loading panel, then decode through p5
+  async function download(url) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const total = Number(res.headers.get('content-length')) || 0;
+      const reader = res.body.getReader();
+      const chunks = [];
+      let loaded = 0;
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        loaded += value.length;
+        S.bytes.set(url, { loaded, total });
+      }
+      const obj = URL.createObjectURL(new Blob(chunks, { type: res.headers.get('content-type') || 'image/png' }));
+      const settle = (value) => { S.cache.set(url, value); URL.revokeObjectURL(obj); S.bytes.delete(url); };
+      P.loadImage(obj, settle, () => { console.warn('image decode failed', url); settle('error'); });
+    } catch (e) {
+      console.warn('image load failed', url, e);
+      S.cache.set(url, 'error');
+      S.bytes.delete(url);
+    }
+  }
 
   function image(url) {
     if (!url || !P) return null;
     const hit = S.cache.get(url);
     if (hit === undefined) {
       S.cache.set(url, 'loading');
-      P.loadImage(url, (img) => S.cache.set(url, img), () => S.cache.set(url, 'error'));
+      S.bytes.set(url, { loaded: 0, total: 0 });
+      download(url);
       return null;
     }
     return typeof hit === 'object' ? hit : null;
@@ -232,5 +260,17 @@ export function createStage(host) {
     setWeather(kind) { if (kind !== S.weather) { S.weather = kind; S.parts = makeParts(kind); } },
     setWeatherOn(on) { S.weatherOn = on; },
     preload(url) { image(url); },
+    // What the picture is still missing: the scene and on-stage sprites not drawable yet (url null = not drawn
+    // yet), with download progress; failed downloads are left out
+    waiting() {
+      const items = [];
+      if (!S.bg) items.push({ kind: 'scene', url: S.bgUrl });
+      // Check the cache too: c.img is only set by draw(), which pauses while the page is not being painted
+      for (const c of S.cast) {
+        if (!c.leaving && !c.img && typeof S.cache.get(c.url) !== 'object') items.push({ kind: 'sprite', cid: c.cid, url: c.url });
+      }
+      return items.filter((w) => S.cache.get(w.url) !== 'error')
+        .map((w) => ({ ...w, ...(S.bytes.get(w.url) || { loaded: 0, total: 0 }) }));
+    },
   };
 }
