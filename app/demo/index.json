@@ -1,0 +1,26 @@
+{
+ "version": "510ae3321420",
+ "games": [
+  "g_20260925_145203"
+ ],
+ "files": [
+  "g_20260925_145203/assets/scenes/ghost_market_entrance.png",
+  "g_20260925_145203/assets/scenes/ghost_market_interior.png",
+  "g_20260925_145203/assets/scenes/mountain_drugstore.png",
+  "g_20260925_145203/assets/scenes/mountain_path.png",
+  "g_20260925_145203/assets/sprites/c1/angry.png",
+  "g_20260925_145203/assets/sprites/c1/calm.png",
+  "g_20260925_145203/assets/sprites/c1/meta.json",
+  "g_20260925_145203/assets/sprites/c1/sad.png",
+  "g_20260925_145203/assets/sprites/c1/smile.png",
+  "g_20260925_145203/assets/sprites/c1/surprised.png",
+  "g_20260925_145203/assets/sprites/c2/angry.png",
+  "g_20260925_145203/assets/sprites/c2/calm.png",
+  "g_20260925_145203/assets/sprites/c2/meta.json",
+  "g_20260925_145203/assets/sprites/c2/sad.png",
+  "g_20260925_145203/assets/sprites/c2/smile.png",
+  "g_20260925_145203/assets/sprites/c2/surprised.png",
+  "g_20260925_145203/game.json",
+  "g_20260925_145203/tree.json"
+ ]
+}

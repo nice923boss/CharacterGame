@@ -1,0 +1,67 @@
+{
+ "id": "g_20260925_145203",
+ "created_at": "2026-09-25T14:52:03+08:00",
+ "seed": 1087541355,
+ "lang": "zh",
+ "title": "月圓鬼市贖魂",
+ "style_en": "Late Qing Jiangnan mountain ghost market, full moon night, misty lanterns, memory currency, eerie melancholic atmosphere",
+ "world": {
+  "era": "清末光緒年間",
+  "place": "江南山城外，只在月圓夜出現的鬼市",
+  "genre": "志怪懸疑",
+  "tone": "幽微、帶點人情味",
+  "extra": "鬼市用記憶當錢，賣掉的記憶再也回不來",
+  "goal": "在天亮前從鬼市贖回妹妹失去的魂魄"
+ },
+ "protagonist": {
+  "name": "小滿",
+  "profile": "山城藥舖的學徒，妹妹昨夜突然失了魂"
+ },
+ "characters": [
+  {
+   "id": "c1",
+   "name": "青蘿",
+   "appearance": "外表 18 歲的狐仙少女，及腰墨綠色長髮，金色豎瞳，頭上一對白色狐耳，淺綠色交領襦裙，腰間繫紅繩鈴鐺",
+   "personality": "狡黠愛捉弄人，其實心軟",
+   "speech": "說話拖長尾音，常反問",
+   "relationship": "鬼市的引路人，對主角的藥香很好奇",
+   "appearance_en": "18-year-old fox spirit girl, waist-length dark green hair, golden vertical pupils, white fox ears, light green cross-collar ruqun, red string bell at waist",
+   "seed": 1087541372
+  },
+  {
+   "id": "c2",
+   "name": "老墨",
+   "appearance": "看不出年紀的瘦高男子，灰白長髮用木簪束起，戴半張黑色面具，深紫色長袍，手持算盤",
+   "personality": "精明冷淡，守規矩",
+   "speech": "惜字如金，開口就是價錢",
+   "relationship": "鬼市掌櫃，收著妹妹的魂",
+   "appearance_en": "ageless tall thin man, gray-white long hair tied with wooden hairpin, half black mask, deep purple robe, abacus",
+   "seed": 1087541389
+  }
+ ],
+ "scenes": {
+  "ghost_market_entrance": {
+   "name": "鬼市入口",
+   "image_prompt": "Ancient stone archway entrance to Jiangnan ghost market, full moonlight piercing thin mist, rows of dim paper lanterns glowing blue-green, wet bluestone pavement reflecting light, shadowy stalls fading into fog, midnight"
+  },
+  "ghost_market_interior": {
+   "name": "鬼市深處",
+   "image_prompt": "narrow foggy alley in a supernatural night market, green phosphorescent glow on ancient stone slabs, stalls selling bizarre glowing items, blue lanterns hanging low, mist swirling, eerie but atmospheric, no people"
+  },
+  "mountain_drugstore": {
+   "name": "山城藥舖",
+   "image_prompt": "A traditional Chinese medicine shop in a misty mountain town at pre-dawn, bundles of dried herbs hanging from wooden beams, plain unmarked ceramic pots, mortar and pestle on counter, dim oil lamp light, cold blue-gray atmosphere"
+  },
+  "mountain_path": {
+   "name": "山林小徑",
+   "image_prompt": "A misty mountain trail at dawn in ancient Jiangnan, golden osmanthus flowers falling on the path, soft sunlight filtering through pine trees, quiet and serene atmosphere"
+  }
+ },
+ "first_scene": "ghost_market_entrance",
+ "setup_model": "nvidia/nemotron-3-ultra-550b-a55b",
+ "batch": {
+  "options": 4,
+  "turns": 14,
+  "merge": 2
+ }
+}
