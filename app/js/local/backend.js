@@ -4,6 +4,7 @@ import { DATA } from './data.js';
 import * as store from './store.js';
 import * as images from './images.js';
 import * as turns from './turns.js';
+import * as batch from './batch.js';
 import { loadOpenCC } from './story.js';
 
 const KEY = 'cg-nvidia-key';
@@ -50,6 +51,8 @@ export const ready = (async () => {
   await loadOpenCC();
   await importDemo(false);
   images.init(conn);
+  batch.init(conn);
+  batch.resumeAll().catch((e) => console.error('batch resume failed', e));
 })();
 
 export async function restoreDemo() {
@@ -89,12 +92,21 @@ export async function request(method, url, body) {
   const u = new URL(url, location.href);
   const parts = u.pathname.slice(u.pathname.indexOf('/api/') + 5).split('/');
   const scene = u.searchParams.get('scene');
-  const [a, gid, sub] = parts;
+  const [a, gid, sub, act] = parts;
   if (method === 'GET' && a === 'health') return health();
   if (a === 'settings' && !gid) return { image_nvidia: true, image_comfy: false, relay: lsGet(RELAY), relay_default: DATA.relay || '' };
   if (a === 'settings' && gid === 'nvidia_key') { lsSet(KEY, validKey(body?.key)); return { nvidia_key: true }; }
   if (a === 'settings' && gid === 'relay') { const r = validRelay(body?.relay); lsSet(RELAY, r); return { relay: r }; }
-  if (a === 'batches') return [];
+  if (a === 'batches') return batch.list();
+  if (a === 'games' && sub === 'batch' && method === 'POST' && act === 'cancel') {
+    await store.loadGame(gid);
+    return { ok: await batch.stop(gid) };
+  }
+  if (a === 'games' && sub === 'batch' && method === 'POST' && act === 'resume') {
+    if (!(await store.loadGame(gid)).batch) throw { code: 'not_batch' };
+    await batch.start(gid);
+    return batch.status(gid);
+  }
   if (a === 'autosave') return withThumb(await store.loadAutosave());
   if (a === 'slots' && !gid) return slotsOut(await store.loadSlots());
   if (a === 'slots' && method === 'POST') {
@@ -103,6 +115,7 @@ export async function request(method, url, body) {
   if (a === 'slots' && method === 'DELETE') return slotsOut(await store.deleteSlot(Number(gid)));
   if (a === 'games' && !gid) return store.listGames();
   if (a === 'games' && method === 'DELETE') {
+    await batch.stop(gid);
     images.forget(gid);
     try { await store.deleteGame(gid); } catch (e) {
       if (e?.code) throw e;
@@ -134,7 +147,10 @@ export function job(url, body, onEvent) {
     };
     const parts = new URL(url, location.href).pathname.split('/api/')[1].split('/');
     try {
-      if (parts[0] === 'games' && parts.length === 1) await turns.createGame(body, emit, conn(), ctrl.signal);
+      if (parts[0] === 'games' && parts.length === 1) {
+        const game = await turns.createGame(body, emit, conn(), ctrl.signal);
+        if (game.batch) await batch.start(game.id);
+      }
       else if (parts[0] === 'games' && parts[2] === 'turn') {
         await store.loadGame(parts[1]);
         await turns.runTurn(parts[1], body.parent_id ?? null, body.input || {}, emit, conn(), ctrl.signal);

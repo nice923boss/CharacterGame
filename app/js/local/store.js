@@ -55,6 +55,7 @@ export async function openStore() {
 
 export const kvGet = (key) => idbGet('kv', key);
 export const kvPut = (key, value) => idbPut('kv', key, value);
+export const kvKeys = () => tx('kv', 'readonly', (s) => s.getAllKeys());
 
 export function nowIso() {
   const d = new Date();
@@ -112,6 +113,7 @@ export async function deleteGame(gid) {
   const auto = await loadAutosave();
   if (auto && auto.game_id === gid) await idbDel('kv', 'autosave');
   for (const path of [...files.keys()]) if (path.startsWith(`${gid}/`)) await deleteFile(path);
+  await idbDel('kv', `batch:${gid}`);
   await idbDel('trees', gid);
   await idbDel('games', gid);
 }

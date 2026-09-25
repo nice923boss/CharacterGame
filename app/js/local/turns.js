@@ -9,8 +9,11 @@ import {
   turnMessages,
 } from './story.js';
 
-const { MAX_CHARACTERS, MAX_FREE_INPUT, LIMIT_SCALE, BATCH_MAX_SCENES } = DATA.limits;
+const { MAX_CHARACTERS, MAX_FREE_INPUT, LIMIT_SCALE, BATCH_MAX_SCENES, BATCH_MAX_NODES } = DATA.limits;
 const { LANGS, NARRATOR, MAX_GAME_TITLE } = DATA.parser;
+
+// Nodes in a full batch tree: the opening is turn 1 and every non-ending node has `options` children
+export const treeSize = (options, turns) => Array.from({ length: turns }, (_, k) => options ** k).reduce((a, b) => a + b, 0);
 
 function checkText(value, field, limit, required = true, params = {}) {
   const text = String(value ?? '').trim();
@@ -37,6 +40,15 @@ export async function createGame(payload, emit, conn, signal) {
   if (new Set(names).size !== names.length || names.some((n) => Object.values(NARRATOR).includes(n))) {
     throw { code: 'dup_names', params: { narrator: NARRATOR[lang] } };
   }
+  let batch = null;
+  if (payload.batch) {
+    batch = { options: Number(payload.batch.options), turns: Number(payload.batch.turns) };
+    if (!(Number.isInteger(batch.options) && Number.isInteger(batch.turns) && batch.options >= 2 && batch.options <= 4 &&
+          batch.turns >= 3 && batch.turns <= 10) || treeSize(batch.options, batch.turns) > BATCH_MAX_NODES) {
+      throw { code: 'batch_size', params: { max: BATCH_MAX_NODES } };
+    }
+    if (!world.goal) throw { code: 'batch_goal' };
+  }
 
   emit({ type: 'phase', code: 'setup_art' });
   const res = await llm.stream(setupMessages(world, chars, lang), (ev) => { if (ev.type === 'status') emit(ev); }, 0.5, conn, signal);
@@ -62,6 +74,7 @@ export async function createGame(payload, emit, conn, signal) {
     scenes: { [sid]: { name: cast.conv(String(fs.name || (lang === 'zh' ? '序章' : 'Prologue'))), image_prompt: String(fs.image_prompt).trim() } },
     first_scene: sid,
     setup_model: res.candidate.model,
+    ...(batch ? { batch } : {}),
   };
   await store.saveGame(game);
   images.ensureGame(game, sid);
@@ -69,7 +82,7 @@ export async function createGame(payload, emit, conn, signal) {
   return game;
 }
 
-function existingChild(tree, parent, text) {
+export function existingChild(tree, parent, text) {
   const key = text.replace(/\s+/g, '');
   for (const cid of parent.children || []) {
     const child = tree.nodes[cid];
@@ -80,7 +93,9 @@ function existingChild(tree, parent, text) {
 
 const locks = new Map();   // gid -> promise chain, so two turns never write the same tree at once
 
-export async function runTurn(gid, parentId, playerInput, emit, conn, signal) {
+// batch=true: written ahead by the batch walker, so no autosave, no sprite requests, and a known child is
+// returned as is instead of being replayed
+export async function runTurn(gid, parentId, playerInput, emit, conn, signal, batch = false) {
   const game = await store.loadGame(gid);
   const tree = await store.loadTree(gid);
   const { kind } = playerInput;
@@ -97,6 +112,7 @@ export async function runTurn(gid, parentId, playerInput, emit, conn, signal) {
   if (parent?.result.ending) throw { code: 'branch_ended' };
   if (parent) {
     const known = existingChild(tree, parent, playerInput.text);
+    if (known && batch) return known;
     if (known) {
       // Same answer at the same node: replay the stored turn, no LLM call, tree unchanged
       for (const ln of known.lines) emit({ type: 'line', line: ln });
@@ -115,7 +131,7 @@ export async function runTurn(gid, parentId, playerInput, emit, conn, signal) {
 
   const emitLines = (lines) => {
     for (const ln of lines) {
-      if (ln.char_id) images.request(['sprite', gid, ln.char_id, ln.expr], images.P_SPEAKER);
+      if (ln.char_id && !batch) images.request(['sprite', gid, ln.char_id, ln.expr], images.P_SPEAKER);
       emit({ type: 'line', line: ln });
     }
   };
@@ -156,14 +172,26 @@ export async function runTurn(gid, parentId, playerInput, emit, conn, signal) {
   let node;
   let scenes;
   try {
+    if (batch && parent) {
+      // The player may have reached this branch live while it was being written
+      const twin = existingChild(await store.loadTree(gid), parent, playerInput.text);
+      if (twin) return twin;
+    }
     const g = await store.loadGame(gid);
     if (result.scene_change) {
-      const sc = result.scene;
+      let sc = result.scene;
       if (!g.scenes[sc.id]) {
-        g.scenes[sc.id] = { name: sc.name, image_prompt: sc.image_prompt };
-        await store.saveGame(g);
+        if (plan && Object.keys(g.scenes).length >= BATCH_MAX_SCENES) {
+          // Parallel batch turns can pass the budget check together; the last ones stay put
+          sc = null;
+          result = { ...result, scene_change: false, scene: null };
+          notes = [...notes, 'new scene dropped (scene budget used up)'];
+        } else {
+          g.scenes[sc.id] = { name: sc.name, image_prompt: sc.image_prompt };
+          await store.saveGame(g);
+        }
       }
-      sceneId = sc.id;
+      if (sc) sceneId = sc.id;
     }
     scenes = g.scenes;
     const baseState = parent ? parent.state
@@ -174,11 +202,11 @@ export async function runTurn(gid, parentId, playerInput, emit, conn, signal) {
       state: applyState(baseState, result.state_changes), summary, bgm_mood: result.bgm_mood, weather: result.weather,
       model: res.candidate.model, repair_notes: notes,
     });
-    await store.setAutosave(gid, node.id, node.scene_id);
+    if (!batch) await store.setAutosave(gid, node.id, node.scene_id);
   } finally {
     release();
   }
-  images.request(['scene', gid, sceneId], images.P_SCENE);
+  images.request(['scene', gid, sceneId], batch ? images.P_EXPR : images.P_SCENE);
   emit({ type: 'final', node, scenes });
   return node;
 }

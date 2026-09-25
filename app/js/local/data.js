@@ -238,6 +238,9 @@ export const DATA = {
  },
  "limits": {
   "BATCH_MAX_SCENES": 8,
+  "BATCH_MAX_NODES": 400,
+  "BATCH_CONCURRENCY": 6,
+  "BATCH_TURN_RETRIES": 2,
   "MAX_CHARACTERS": 4,
   "MAX_FREE_INPUT": 120,
   "LIMIT_SCALE": {
