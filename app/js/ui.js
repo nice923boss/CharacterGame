@@ -7,6 +7,19 @@ export function esc(text) {
   return String(text ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+// Thumbnails show a loading label until the whole image has arrived, instead of a picture drawn strip by strip
+export const thumbAttr = (url) => (url ? ` data-thumb="${esc(url)}" data-loading="${esc(t('load.thumb'))}"` : '');
+
+export function loadThumbs(root) {
+  for (const el of root.querySelectorAll('[data-thumb]')) {
+    const url = el.dataset.thumb;
+    const img = new Image();
+    img.onload = () => { el.style.backgroundImage = `url('${url}')`; delete el.dataset.thumb; };
+    img.onerror = () => { console.warn('thumbnail failed', url); delete el.dataset.thumb; };
+    img.src = url;
+  }
+}
+
 export function openModal(id) { $(id).hidden = false; }
 export function closeModal(id) { $(id).hidden = true; }
 
