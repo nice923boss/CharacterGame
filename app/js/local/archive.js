@@ -29,16 +29,15 @@ function dosTime(d) {
   };
 }
 
-// entries: [{ name, bytes: Uint8Array }] -> Blob
+// entries: [{ name, bytes: Uint8Array, crc }] -> Blob
 function zip(entries) {
   const enc = new TextEncoder();
   const { time, date } = dosTime(new Date());
   const parts = [];
   const central = [];
   let offset = 0;
-  for (const { name, bytes } of entries) {
+  for (const { name, bytes, crc } of entries) {
     const nameBytes = enc.encode(name);
-    const crc = crc32(bytes);
     const local = new DataView(new ArrayBuffer(30));
     local.setUint32(0, 0x04034b50, true);
     local.setUint16(4, 20, true);
@@ -77,22 +76,29 @@ function zip(entries) {
 
 const jsonBytes = (obj) => new TextEncoder().encode(JSON.stringify(obj, null, 1));
 
-// Builds the zip and starts the browser download; resolves with { games, files }
-export async function exportProgress() {
+// Builds the zip and starts the browser download; resolves with { games, files }.
+// onProgress(pct) runs after each file (by file count; demo images may still come over the network)
+export async function exportProgress(onProgress = () => {}) {
   await ready;
   const entries = [];
   const games = await store.listGames();
+  const pathsOf = new Map(games.map((g) => [g.id, store.filePaths().filter((p) => p.startsWith(`${g.id}/`)).sort()]));
+  const total = games.reduce((n, g) => n + 2 + pathsOf.get(g.id).length, 2);
+  const add = (name, bytes) => {
+    entries.push({ name, bytes, crc: crc32(bytes) });
+    onProgress(Math.min(99, Math.floor((entries.length * 100) / total)));
+  };
   for (const g of games) {
-    entries.push({ name: `saves/games/${g.id}/game.json`, bytes: jsonBytes(await store.loadGame(g.id)) });
-    entries.push({ name: `saves/games/${g.id}/tree.json`, bytes: jsonBytes(await store.loadTree(g.id)) });
-    for (const path of store.filePaths().filter((p) => p.startsWith(`${g.id}/`)).sort()) {
+    add(`saves/games/${g.id}/game.json`, jsonBytes(await store.loadGame(g.id)));
+    add(`saves/games/${g.id}/tree.json`, jsonBytes(await store.loadTree(g.id)));
+    for (const path of pathsOf.get(g.id)) {
       const blob = await store.fileBlob(path);
-      entries.push({ name: `saves/games/${path}`, bytes: new Uint8Array(await blob.arrayBuffer()) });
+      add(`saves/games/${path}`, new Uint8Array(await blob.arrayBuffer()));
     }
   }
-  entries.push({ name: 'saves/slots.json', bytes: jsonBytes(await store.loadSlots()) });
+  add('saves/slots.json', jsonBytes(await store.loadSlots()));
   const auto = await store.loadAutosave();
-  if (auto) entries.push({ name: 'saves/autosave.json', bytes: jsonBytes(auto) });
+  if (auto) add('saves/autosave.json', jsonBytes(auto));
   const stamp = store.nowIso().slice(0, 16).replace(/[-:]/g, '').replace('T', '-');
   const a = document.createElement('a');
   a.href = URL.createObjectURL(zip(entries));
