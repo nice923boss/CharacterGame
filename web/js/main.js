@@ -55,9 +55,10 @@ const actions = {
   },
   importDir() { $('#import-dir').click(); },
   async exportZip() {
-    toast(t('archive.exporting'), false, 60000);
+    const show = (pct) => toast(t('archive.exporting', { pct }), false, 60000);
+    show(0);
     try {
-      const r = await (await import('./local/archive.js')).exportProgress();
+      const r = await (await import('./local/archive.js')).exportProgress(show);
       toast(t('archive.exported', r));
     } catch (e) { console.error(e); toast(t('err.local_internal'), true); }
   },
