@@ -73,6 +73,56 @@ const sleep = (ms, signal) => new Promise((resolve, reject) => {
   signal.addEventListener('abort', () => { clearTimeout(t); reject({ code: 'cancelled' }); }, { once: true });
 });
 
+// The node the player is on (autosave) and every node written under it
+async function focusOf(gid, tree) {
+  const auto = await store.loadAutosave();
+  const out = new Set();
+  const nid = auto?.game_id === gid ? auto.node_id : null;
+  if (!tree.nodes[nid]) return out;
+  const stack = [nid];
+  while (stack.length) {
+    const n = stack.pop();
+    out.add(n);
+    stack.push(...(tree.nodes[n].children || []).filter((c) => tree.nodes[c]));
+  }
+  return out;
+}
+
+const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+
+// Writes every open option: the player's own branch first, then shallow turns before deep ones, so the player can
+// start at the opening and rarely catches up with the writer. The order is worked out again after every finished
+// turn, because the player moves while the batch runs.
+async function walkOptions(gid, last, turn) {
+  const tried = new Set();
+  const running = new Set();
+  for (;;) {
+    const tree = await store.loadTree(gid);
+    const focus = await focusOf(gid, tree);
+    const todo = [];
+    const stack = [[tree.root, 1]];
+    while (stack.length) {
+      const [nid, depth] = stack.pop();
+      const node = tree.nodes[nid];
+      if (node.result.ending || depth >= last) continue;
+      for (const [opt, child] of optionChildren(tree, node)) {
+        const key = `${nid}\n${opt.replace(/\s+/g, '')}`;
+        if (child) stack.push([child.id, depth + 1]);
+        else if (!tried.has(key)) todo.push({ later: focus.has(nid) ? 0 : 1, depth, nid, opt, key });
+      }
+    }
+    todo.sort((a, b) => a.later - b.later || a.depth - b.depth || cmp(a.nid, b.nid) || cmp(a.opt, b.opt));
+    for (const item of todo.slice(0, BATCH_CONCURRENCY - running.size)) {
+      tried.add(item.key);
+      const p = turn(item.nid, { kind: 'option', text: item.opt }).finally(() => running.delete(p));
+      p.catch(() => {});   // a cancelled turn is reported once, through the race below
+      running.add(p);
+    }
+    if (!running.size) return;
+    await Promise.race(running);
+  }
+}
+
 async function walk(gid, signal) {
   const failed = [];
   const game = await store.loadGame(gid);
@@ -99,16 +149,6 @@ async function walk(gid, signal) {
     return null;
   };
 
-  const expand = async (node, depth) => {
-    if (node.result.ending || depth >= last) return;
-    const tree = await store.loadTree(gid);
-    await Promise.all(optionChildren(tree, tree.nodes[node.id]).map(([opt, child]) => branch(node.id, opt, child, depth + 1)));
-  };
-  const branch = async (parentId, opt, child, depth) => {
-    const written = child || await turn(parentId, { kind: 'option', text: opt });
-    if (written) await expand(written, depth);
-  };
-
   let tree = await store.loadTree(gid);
   let root = tree.root ? tree.nodes[tree.root] : await turn(null, { kind: 'opening' });
   if (!root) {   // the player may have opened it live meanwhile
@@ -119,7 +159,7 @@ async function walk(gid, signal) {
     await save(gid, { state: 'error', error: failed[failed.length - 1].error, finished_at: store.nowIso() });
     return;
   }
-  await expand(root, 1);
+  await walkOptions(gid, last, turn);
   console.info(`batch text done ${gid}: ${textProgress(game, await store.loadTree(gid))[0]} nodes, ${failed.length} branches skipped`);
 
   // Queue every scene and sprite and wait until each one is drawn or failed

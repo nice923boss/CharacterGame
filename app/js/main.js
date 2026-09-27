@@ -3,9 +3,9 @@ import { LOCAL, get, post } from './api.js';
 import { applyStatic, setLang, t } from './i18n.js';
 import { sound } from './sound.js';
 import { createStage } from './stage.js';
-import { $, bindSettings, confirmBox, openModal, toast } from './ui.js';
+import { $, bindSettings, confirmBox, openModal, progress, toast } from './ui.js';
 import { initSetup, isBatchMode, resetSetup, startGame } from './setup.js';
-import { enterGame, initGame, leaveGame, openSlots, openTree } from './game.js';
+import { currentGameId, enterGame, initGame, leaveGame, openSlots, openTree } from './game.js';
 import { openStories } from './stories.js';
 import { initBatches, refreshBatches, requestNotifyPermission } from './batch.js';
 
@@ -79,10 +79,36 @@ $('#setup-start').onclick = async () => {
   $('#setup-start').disabled = false;
   if (!game) return;
   if (!game.batch) { play(game.id, null); return; }
-  // Batch: the server writes the whole tree in the background; batch.js announces it when done
+  // Batch: the tree is written in the background, the player's branch first; play starts once the opening is written
+  const root = await waitOpening(game.id);
+  if (root) {
+    play(game.id, root);
+    toast(t(LOCAL ? 'batch.playingLocal' : 'batch.playing', { title: game.title }), false, 8000);
+    return;
+  }
   await toTitle();
   toast(t(LOCAL ? 'batch.startedLocal' : 'batch.started', { title: game.title }), false, 8000);
 };
+
+const OPENING_POLL_MS = 1500;
+
+// Resolves with the opening node id, or null when the player stops waiting or the batch stopped before writing it
+async function waitOpening(gid) {
+  let waiting = true;
+  const box = progress(t('batch.opening'), t('batch.openingSub'), () => { waiting = false; });
+  try {
+    while (waiting) {
+      const g = (await get('/api/games').catch(() => [])).find((x) => x.id === gid);
+      if (g?.root) return waiting ? g.root : null;
+      const b = (await get('/api/batches').catch(() => [])).find((x) => x.id === gid);
+      if (b && !['running', 'images'].includes(b.state)) return null;
+      await new Promise((resolve) => { setTimeout(resolve, OPENING_POLL_MS); });
+    }
+    return null;
+  } finally {
+    box.close();
+  }
+}
 
 bindSettings((s) => {
   sound.setVolumes(s.bgm / 100, s.sfx / 100);
@@ -117,7 +143,7 @@ initBatches(async (gid) => {
   const games = await get('/api/games').catch(() => []);
   const g = games.find((x) => x.id === gid);
   if (g?.root) play(gid, g.root);
-});
+}, currentGameId);
 
 const refreshHealth = () => get('/api/health').then((h) => { health = h; }).catch(() => { health = false; })
   .finally(paintHealth);

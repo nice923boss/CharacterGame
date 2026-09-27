@@ -301,6 +301,37 @@ function batchTurnText(game, turn) {
   return `${t.h_turn}\n${rows.join('\n')}`;
 }
 
+// First chapter (0-based) of turn `turn`: batch games spread the chapters over their fixed turns, live games move on
+// one chapter every LIVE_TURNS_PER_CHAPTER turns and then stay on the last one
+function chapterStart(game, turn) {
+  const n = game.novel.chapters.length;
+  if (game.batch) return Math.min(n, Math.floor((turn - 1) * n / game.batch.turns));
+  return Math.min(n - 1, Math.floor((turn - 1) / PR.LIVE_TURNS_PER_CHAPTER));
+}
+
+function novelText(game, lang) {
+  const t = T(lang);
+  const novel = game.novel;
+  const rows = novel.title ? [pyFormat(t.novel_src, { title: novel.title })] : [];
+  novel.chapters.forEach((c, i) => rows.push(pyFormat(t.chapter_row, { i: i + 1, title: c.title, summary: c.summary })));
+  rows.push(t.novel_rule);
+  return `${t.h_novel}\n${rows.join('\n')}`;
+}
+
+function chapterText(game, turn, lang) {
+  const t = T(lang);
+  const chapters = game.novel.chapters;
+  const n = chapters.length;
+  const a = chapterStart(game, turn);
+  const nxt = chapterStart(game, turn + 1);
+  const b = Math.max(a, nxt - 1);
+  const rows = [a === b ? pyFormat(t.chapter_now, { i: a + 1, title: chapters[a].title, n })
+    : pyFormat(t.chapter_span, { a: a + 1, b: b + 1, n })];
+  if (b === n - 1) rows.push(t.chapter_last);
+  else if (nxt > b) rows.push(pyFormat(t.chapter_next, { title: chapters[nxt].title }));
+  return `${t.h_chapter}\n${rows.join('\n')}`;
+}
+
 function nodeTranscript(node, protagonist, lang) {
   const rows = [];
   const pi = node.player_input || {};
@@ -321,6 +352,7 @@ export function turnMessages(game, path, playerInput, scene) {
   const parts = [
     `${t.h_world}\n${worldText(game.world, lang)}\n${protagonistText(game, lang)}`,
     `${t.h_chars}\n${charactersText(game, lang)}`,
+    ...(game.novel ? [novelText(game, lang)] : []),
     `${t.h_known}\n${known}`,
     `${t.h_scene}\n${scene.id}${t.colon}${scene.name}`,
     `${t.h_state}\n${pyDumps(state)}`,
@@ -329,6 +361,7 @@ export function turnMessages(game, path, playerInput, scene) {
     parts.push(`${t.h_summary}\n` + summary.slice(-PR.SUMMARY_ITEMS).map((s, i) => `${i + 1}. ${s}`).join('\n'));
   }
   if (recent.length) parts.push(`${t.h_recent}\n${recent.join('\n')}`);
+  if (game.novel) parts.push(chapterText(game, path.length + 1, lang));
   if (game.batch) parts.push(batchTurnText(game, path.length + 1));
   parts.push(playerInput.kind === 'opening' ? pyFormat(t.opening, { name: protagonist })
     : pyFormat(t.player, { text: playerInput.text }));
@@ -340,6 +373,17 @@ export function setupMessages(world, characters, lang) {
   const chars = characters.map((c) => `- ${c.name}${T(lang).colon}${c.appearance}`).join('\n');
   return [{ role: 'system', content: PR.SETUP_SYSTEM[lang] },
     { role: 'user', content: pyFormat(PR.SETUP_USER[lang], { world: worldText(world, lang), characters: chars }) }];
+}
+
+export const novelNotesMessages = (title, i, n, text, lang) =>
+  [{ role: 'system', content: PR.NOVEL_NOTES_SYSTEM[lang] },
+    { role: 'user', content: pyFormat(PR.NOVEL_NOTES_USER[lang], { title, i, n, text }) }];
+
+export function novelMessages(title, notes, lang, maxChars, minCh, maxCh) {
+  const body = notes.map((x, i) => `### ${i + 1}\n${x}`).join('\n\n');
+  return [{ role: 'system', content: PR.NOVEL_SYSTEM[lang] },
+    { role: 'user', content: pyFormat(PR.NOVEL_USER[lang], { title, notes: body, max_chars: maxChars,
+      min_ch: minCh, max_ch: maxCh }) }];
 }
 
 export const repairMessages = (turnMsgs, replyText, lang, key = 'repair') =>

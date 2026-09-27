@@ -5,6 +5,7 @@ import * as store from './store.js';
 import * as images from './images.js';
 import * as turns from './turns.js';
 import * as batch from './batch.js';
+import { analyzeNovel } from './novel.js';
 import { loadOpenCC } from './story.js';
 
 const KEY = 'cg-nvidia-key';
@@ -154,7 +155,9 @@ export function job(url, body, onEvent) {
       else if (parts[0] === 'games' && parts[2] === 'turn') {
         await store.loadGame(parts[1]);
         await turns.runTurn(parts[1], body.parent_id ?? null, body.input || {}, emit, conn(), ctrl.signal);
-      } else throw { code: 'http', params: { status: 404 } };
+      }
+      else if (parts[0] === 'novel' && parts[1] === 'analyze') await analyzeNovel(body, emit, conn(), ctrl.signal);
+      else throw { code: 'http', params: { status: 404 } };
     } catch (e) {
       if (ctrl.signal.aborted) throw { code: 'cancelled' };
       throw e;
