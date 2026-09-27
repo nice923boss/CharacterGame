@@ -21,7 +21,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from server import asset_service, config, nvidia_image, prompts, turn_parser, turn_service  # noqa: E402
+from server import asset_service, config, novel_service, nvidia_image, prompts, turn_parser, turn_service  # noqa: E402
 
 OUT = ROOT / "dist" / "pages"
 DEMO_GAMES = ["g_20260925_145203"]
@@ -40,7 +40,9 @@ def data_module() -> str:
     data = {
         "relay": RELAY,
         "prompts": {k: getattr(p, k) for k in ("TURN_SYSTEM", "ENDING_RULE", "NO_ENDING_RULE", "SETUP_SYSTEM",
-                                               "SETUP_USER", "TEXT", "RECENT_NODES", "SUMMARY_ITEMS")},
+                                               "SETUP_USER", "TEXT", "RECENT_NODES", "SUMMARY_ITEMS",
+                                               "LIVE_TURNS_PER_CHAPTER", "NOVEL_NOTES_SYSTEM", "NOVEL_NOTES_USER",
+                                               "NOVEL_SYSTEM", "NOVEL_USER")},
         "parser": {k: getattr(tp, k) for k in ("EXPRESSIONS", "MOODS", "WEATHERS", "LANGS", "NARRATOR",
                                                "PROTAGONIST_ALIASES", "FALLBACK_OPTIONS", "MAX_OPTION_CHARS",
                                                "ENDING_TYPES", "MAX_ENDING_TITLE", "MAX_GAME_TITLE")},
@@ -52,7 +54,10 @@ def data_module() -> str:
         "limits": {**{k: getattr(config, k) for k in ("BATCH_MAX_SCENES", "BATCH_MAX_NODES", "BATCH_CONCURRENCY",
                                                    "BATCH_TURN_RETRIES")},
                    "MAX_CHARACTERS": turn_service.MAX_CHARACTERS,
-                   "MAX_FREE_INPUT": turn_service.MAX_FREE_INPUT, "LIMIT_SCALE": turn_service.LIMIT_SCALE},
+                   "MAX_FREE_INPUT": turn_service.MAX_FREE_INPUT, "LIMIT_SCALE": turn_service.LIMIT_SCALE,
+                   "NOVEL_MAX_CHAPTERS": turn_service.NOVEL_MAX_CHAPTERS,
+                   **{k: getattr(novel_service, k) for k in ("NOVEL_PART_CHARS", "NOVEL_MAX_PARTS", "NOVEL_PARALLEL",
+                                                             "NOVEL_MIN_CHAPTERS")}},
         "art": {**{k: getattr(a, k) for k in ("BG_W", "BG_H", "SP_W", "SP_H", "STYLE", "FRAMING", "EXPR_PROMPT",
                                               "BG_STYLE", "FLUX_BLANK", "FLUX_BG_TAIL")},
                 "TALL": 1.35, "SOFTEN": nvidia_image.SOFTEN, "FLUX_PATH": nvidia_image.URL.split(".com", 1)[1],

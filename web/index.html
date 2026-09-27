@@ -42,7 +42,7 @@
   <!-- 2. setup -->
   <section id="scr-setup" class="screen" hidden>
     <div class="panel setup-panel">
-      <header class="panel-head"><h2 data-i18n="setup.title">新的故事</h2><button class="btn small ghost" data-act="back" data-i18n="common.back">返回</button></header>
+      <header class="panel-head"><h2 data-i18n="setup.title">新的故事</h2><span class="head-acts"><button class="btn small" id="novel-import" data-i18n="setup.novel.import">匯入小說</button><input type="file" id="novel-file" accept=".txt,text/plain" hidden><button class="btn small ghost" data-act="back" data-i18n="common.back">返回</button></span></header>
       <div class="setup-body">
         <div class="col">
           <h3 data-i18n="setup.world">世界</h3>
@@ -59,6 +59,12 @@
           <div class="row2">
             <label><span data-i18n="setup.name">名字</span><input id="p-name" maxlength="12"></label>
             <label><span data-i18n="setup.profile">簡介</span><input id="p-profile" maxlength="200"></label>
+          </div>
+          <div id="novel-box" hidden>
+            <h3><span data-i18n="setup.novel.title">小說章節</span> <small id="novel-name"></small></h3>
+            <p class="hint" data-i18n="setup.novel.hint"></p>
+            <div id="chapter-list"></div>
+            <button class="btn small ghost" id="novel-clear" data-i18n="setup.novel.clear">取消匯入</button>
           </div>
         </div>
         <div class="col">

@@ -107,6 +107,8 @@ html[lang="en"] .subtitle { letter-spacing: 0.06em; }
   background: rgba(6, 9, 20, 0.45); }
 .char-card header { display: flex; justify-content: space-between; align-items: center; color: var(--gold);
   font-family: var(--serif); font-size: 2.1cqh; margin-bottom: 0.6cqh; }
+.head-acts { display: flex; gap: 1cqh; }
+#novel-box .hint { margin-bottom: 0.8cqh; }
 .panel-foot { display: flex; align-items: center; gap: 2cqh; justify-content: space-between; margin-top: 1cqh; }
 #setup-msg.error { color: var(--danger); }
 .mode-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6cqh 2cqh; margin-top: 1cqh; padding-top: 1cqh;

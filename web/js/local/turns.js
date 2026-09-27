@@ -9,7 +9,7 @@ import {
   turnMessages,
 } from './story.js';
 
-const { MAX_CHARACTERS, MAX_FREE_INPUT, LIMIT_SCALE, BATCH_MAX_SCENES, BATCH_MAX_NODES } = DATA.limits;
+const { MAX_CHARACTERS, MAX_FREE_INPUT, LIMIT_SCALE, BATCH_MAX_SCENES, BATCH_MAX_NODES, NOVEL_MAX_CHAPTERS } = DATA.limits;
 const { LANGS, NARRATOR, MAX_GAME_TITLE } = DATA.parser;
 
 // Nodes in a full batch tree: the opening is turn 1 and every non-ending node has `options` children
@@ -49,6 +49,19 @@ export async function createGame(payload, emit, conn, signal) {
     }
     if (!world.goal) throw { code: 'batch_goal' };
   }
+  let novel = null;
+  if (payload.novel) {
+    const rows = payload.novel.chapters;
+    if (!Array.isArray(rows) || rows.length < 1 || rows.length > NOVEL_MAX_CHAPTERS ||
+        !rows.every((r) => r && typeof r === 'object')) {
+      throw { code: 'chapter_count', params: { max: NOVEL_MAX_CHAPTERS } };
+    }
+    novel = {
+      title: checkText(payload.novel.title, 'novel_title', 60 * x, false),
+      chapters: rows.map((r, idx) => ({ title: checkText(r.title, 'chapter_title', 20 * x, true, { i: idx + 1 }),
+        summary: checkText(r.summary, 'chapter_summary', 200 * x, true, { i: idx + 1 }) })),
+    };
+  }
 
   emit({ type: 'phase', code: 'setup_art' });
   const res = await llm.stream(setupMessages(world, chars, lang), (ev) => { if (ev.type === 'status') emit(ev); }, 0.5, conn, signal);
@@ -75,6 +88,7 @@ export async function createGame(payload, emit, conn, signal) {
     first_scene: sid,
     setup_model: res.candidate.model,
     ...(batch ? { batch } : {}),
+    ...(novel ? { novel } : {}),
   };
   await store.saveGame(game);
   images.ensureGame(game, sid);
@@ -92,10 +106,31 @@ export function existingChild(tree, parent, text) {
 }
 
 const locks = new Map();   // gid -> promise chain, so two turns never write the same tree at once
+const writing = new Map();   // batch turns in progress, by gid, parent and option
 
 // batch=true: written ahead by the batch walker, so no autosave, no sprite requests, and a known child is
 // returned as is instead of being replayed
 export async function runTurn(gid, parentId, playerInput, emit, conn, signal, batch = false) {
+  const key = `${gid}\n${parentId}\n${String(playerInput.text ?? '').replace(/\s+/g, '')}`;
+  if (!batch && writing.has(key)) {
+    // The batch is writing this very branch: wait for it and replay it instead of writing a second copy
+    emit({ type: 'phase', code: 'batch_wait' });
+    await Promise.race([writing.get(key), new Promise((_, reject) => {
+      signal?.addEventListener('abort', () => reject({ code: 'cancelled' }), { once: true });
+    })]);
+  }
+  if (!batch || parentId == null) return writeTurn(gid, parentId, playerInput, emit, conn, signal, batch);
+  const done = writeTurn(gid, parentId, playerInput, emit, conn, signal, batch);
+  const settled = done.then(() => null, () => null);
+  writing.set(key, settled);
+  try {
+    return await done;
+  } finally {
+    if (writing.get(key) === settled) writing.delete(key);
+  }
+}
+
+async function writeTurn(gid, parentId, playerInput, emit, conn, signal, batch) {
   const game = await store.loadGame(gid);
   const tree = await store.loadTree(gid);
   const { kind } = playerInput;
@@ -174,7 +209,8 @@ export async function runTurn(gid, parentId, playerInput, emit, conn, signal, ba
   try {
     if (batch && parent) {
       // The player may have reached this branch live while it was being written
-      const twin = existingChild(await store.loadTree(gid), parent, playerInput.text);
+      const fresh = await store.loadTree(gid);
+      const twin = existingChild(fresh, fresh.nodes[parentId], playerInput.text);
       if (twin) return twin;
     }
     const g = await store.loadGame(gid);

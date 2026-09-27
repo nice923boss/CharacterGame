@@ -6,6 +6,7 @@ from .turn_parser import EXPRESSIONS, MOODS, NARRATOR, WEATHERS, game_lang
 
 RECENT_NODES = 6
 SUMMARY_ITEMS = 16
+LIVE_TURNS_PER_CHAPTER = 3     # write-as-you-play novel games move on one chapter about every 3 turns
 
 TURN_SYSTEM = {"zh": """你是一款視覺小說 RPG 的劇情引擎。依照世界設定、角色設定、前情摘要與最近對話，寫出「這一輪」的劇情，並給玩家下一步選項。
 
@@ -116,6 +117,85 @@ Output:
 }}
 ```"""}
 
+# Novel import: every part of the book is turned into notes, then one call adapts all the notes into a setup draft
+NOVEL_NOTES_SYSTEM = {"zh": "你是小說分析助手，替一部小說整理改編成互動遊戲用的筆記。只輸出筆記，不要其他文字。",
+                      "en": "You analyse novels and write notes for adapting them into an interactive game. "
+                            "Output only the notes and nothing else."}
+
+NOVEL_NOTES_USER = {"zh": """以下是小說{title}的第 {i} 段原文（共 {n} 段）。請用繁體中文整理成筆記：
+1. 人物：每位出場人物一行，寫名字、外觀（年齡、髮型髮色、服裝）、個性、說話方式、與其他人物的關係，原文沒寫的就略過
+2. 年代與地點的線索
+3. 本段依序發生的重要事件，5 到 10 條
+全部 600 字內。
+
+## 原文
+{text}""",
+                    "en": """Below is part {i} of {n} of the novel{title}. Write notes in English:
+1. People: one row per person who appears, with name, looks (age, hair, clothes), personality, way of speaking and relationships to the others; skip what the text does not say
+2. Clues about the era and the place
+3. The important events of this part in order, 5 to 10 items
+At most 400 words in total.
+
+## Text
+{text}"""}
+
+NOVEL_SYSTEM = {"zh": "你是互動視覺小說的編劇，要把一部小說改編成由玩家扮演主角的遊戲。只輸出一個 ```json 區塊，不要其他文字。",
+                "en": "You are the writer of an interactive visual novel, adapting a novel into a game where the player "
+                      "plays the protagonist. Output only one ```json block and nothing else."}
+
+NOVEL_USER = {"zh": """以下是小說{title}各段的分析筆記，依原文順序排列。
+
+{notes}
+
+請改編成遊戲設定，輸出：
+```json
+{{
+  "world": {{"era": "年代與時代特徵，40 字內", "place": "主要舞台，40 字內", "genre": "類型，20 字內", "tone": "基調，20 字內",
+            "extra": "玩家需要知道的背景或世界規則，120 字內", "goal": "主角在故事結尾要達成的目標，寫成能判定成敗的一句話，60 字內"}},
+  "protagonist": {{"name": "主角名字，照原著", "profile": "主角的身分與處境，100 字內"}},
+  "characters": [
+    {{"name": "角色名字，照原著", "appearance": "年齡、髮型髮色、瞳色、服裝顏色、配件，原著沒寫的合理補上，100 字內",
+      "personality": "個性，50 字內", "speech": "說話方式，50 字內", "relationship": "與主角的關係，50 字內"}}
+  ],
+  "chapters": [
+    {{"title": "關卡名稱，12 字內", "summary": "這一關主角面對的處境、衝突與要做的事，80 字內"}}
+  ]
+}}
+```
+- protagonist 是原著的主角，由玩家扮演
+- characters：主角以外最重要的 1 到 {max_chars} 位角色，不可包含主角，名字不可重複
+- chapters：依原著劇情順序切成 {min_ch} 到 {max_ch} 關，每關是一段有明確衝突的劇情，最後一關通往結局
+- world 的 extra、protagonist 的 profile 與 characters 只寫故事開頭時的狀態，後段才揭露的真相、轉折與身分只寫在對應關卡的 summary
+- title 只寫關卡名稱，不要加「第一章」「第1關」這類編號
+- 全部用繁體中文""",
+              "en": """Below are the notes on each part of the novel{title}, in the order of the book.
+
+{notes}
+
+Adapt it into a game setup and output:
+```json
+{{
+  "world": {{"era": "era and its features, at most 25 words", "place": "main setting, at most 25 words",
+            "genre": "genre, at most 6 words", "tone": "tone, at most 6 words",
+            "extra": "background or world rules the player needs, at most 70 words",
+            "goal": "what the protagonist must achieve by the end, one sentence whose success or failure can be judged, at most 35 words"}},
+  "protagonist": {{"name": "the protagonist's name as in the book", "profile": "who the protagonist is and their situation, at most 60 words"}},
+  "characters": [
+    {{"name": "name as in the book", "appearance": "age, hair style and color, eye color, clothing colors, accessories; fill in what the book leaves out, at most 60 words",
+      "personality": "at most 30 words", "speech": "way of speaking, at most 30 words", "relationship": "relationship to the protagonist, at most 30 words"}}
+  ],
+  "chapters": [
+    {{"title": "chapter name, at most 6 words", "summary": "the situation, conflict and task the protagonist faces in this chapter, at most 50 words"}}
+  ]
+}}
+```
+- protagonist is the main character of the book, played by the player
+- characters: the 1 to {max_chars} most important people other than the protagonist, never the protagonist, no repeated names
+- chapters: {min_ch} to {max_ch} chapters in the order of the book, each a stretch of story with a clear conflict; the last one leads to the ending
+- world extra, the protagonist profile and characters describe things as they stand when the story begins; truths, twists and identities revealed later go only in the summary of their chapter
+- a title is only the chapter name, with no numbering such as "Chapter 1"
+- write everything in English"""}
+
 # Labels and fixed sentences inside the user message
 TEXT = {
     "zh": {"era": "年代", "place": "地點", "genre": "類型", "tone": "基調", "extra": "補充", "goal": "結局目標",
@@ -134,7 +214,14 @@ TEXT = {
            "scene_budget": "盡量沿用「已知場景」，真的換到新地點才新增（全篇最多 {max} 個場景，目前 {n} 個）。",
            "scene_full": "場景數已達上限：不可新增場景，只能留在原地或換到「已知場景」中的地點。",
            "force_ending": "本輪是最後一輪，ending 不可為 null。台詞不要重寫，只輸出本輪的 ```json 區塊，"
-                           "ending 照系統訊息的格式填，type 依主角至今的選擇判定 good 或 bad，options 填 []。"},
+                           "ending 照系統訊息的格式填，type 依主角至今的選擇判定 good 或 bad，options 填 []。",
+           "h_novel": "## 原著關卡大綱", "novel_src": "本作改編自小說《{title}》。",
+           "novel_rule": "劇情大致依關卡順序推進，保留原著人物的個性與關係；玩家的選擇可以改變事件的經過與結果，不要照抄原文。",
+           "chapter_row": "{i}. {title}：{summary}", "h_chapter": "## 本輪關卡",
+           "chapter_now": "目前在第 {i} 關「{title}」（共 {n} 關）。",
+           "chapter_span": "本輪涵蓋第 {a} 到 {b} 關（共 {n} 關），把這幾關的重點濃縮在本輪。",
+           "chapter_next": "本輪是這一關的尾聲，把劇情引向下一關「{title}」。",
+           "chapter_last": "這是最後一關，劇情要朝結局推進。"},
     "en": {"era": "Era", "place": "Place", "genre": "Genre", "tone": "Tone", "extra": "Notes", "goal": "Ending goal",
            "look": "Looks", "personality": "Personality", "speech": "Way of speaking",
            "relationship": "Relationship to the protagonist",
@@ -159,7 +246,17 @@ TEXT = {
                          "\"Known scenes\".",
            "force_ending": "This is the last turn, so ending must not be null. Do not rewrite the dialogue; output "
                            "only this turn's ```json block: ending in the format from the system message, its type good or "
-                           "bad from the protagonist's choices so far, and options set to []."},
+                           "bad from the protagonist's choices so far, and options set to [].",
+           "h_novel": "## Chapters of the original", "novel_src": "This story is adapted from the novel \"{title}\".",
+           "novel_rule": "Move through the chapters roughly in order and keep the characters' personalities and "
+                         "relationships from the book; the player's choices may change how events go and how they "
+                         "turn out. Do not copy the book's text.",
+           "chapter_row": "{i}. {title}: {summary}", "h_chapter": "## Chapter this turn",
+           "chapter_now": "Now in chapter {i}, \"{title}\" (of {n}).",
+           "chapter_span": "This turn covers chapters {a} to {b} (of {n}); fold the key points of these chapters "
+                           "into this turn.",
+           "chapter_next": "This turn closes the chapter; lead the story toward the next one, \"{title}\".",
+           "chapter_last": "This is the last chapter; move the story toward the ending."},
 }
 
 
@@ -217,6 +314,41 @@ def batch_turn_text(game: dict, turn: int) -> str:
     return f"{T['h_turn']}\n" + "\n".join(rows)
 
 
+def chapter_start(game: dict, turn: int) -> int:
+    """First chapter (0-based) of turn `turn`. Batch games spread the chapters over their fixed turns; live games move
+    on one chapter every LIVE_TURNS_PER_CHAPTER turns and then stay on the last one."""
+    n = len(game["novel"]["chapters"])
+    if game.get("batch"):
+        return min(n, (turn - 1) * n // game["batch"]["turns"])
+    return min(n - 1, (turn - 1) // LIVE_TURNS_PER_CHAPTER)
+
+
+def novel_text(game: dict, lang: str) -> str:
+    T = TEXT[lang]
+    novel = game["novel"]
+    rows = [T["novel_src"].format(title=novel["title"])] if novel.get("title") else []
+    rows += [T["chapter_row"].format(i=i, title=c["title"], summary=c["summary"])
+             for i, c in enumerate(novel["chapters"], 1)]
+    rows.append(T["novel_rule"])
+    return f"{T['h_novel']}\n" + "\n".join(rows)
+
+
+def chapter_text(game: dict, turn: int, lang: str) -> str:
+    """Which chapter(s) this turn plays, and a nudge toward the next chapter on the turn that closes one."""
+    T = TEXT[lang]
+    chapters = game["novel"]["chapters"]
+    n = len(chapters)
+    a, nxt = chapter_start(game, turn), chapter_start(game, turn + 1)
+    b = max(a, nxt - 1)
+    rows = [T["chapter_now"].format(i=a + 1, title=chapters[a]["title"], n=n) if a == b
+            else T["chapter_span"].format(a=a + 1, b=b + 1, n=n)]
+    if b == n - 1:
+        rows.append(T["chapter_last"])
+    elif nxt > b:
+        rows.append(T["chapter_next"].format(title=chapters[nxt]["title"]))
+    return f"{T['h_chapter']}\n" + "\n".join(rows)
+
+
 def _node_transcript(node: dict, protagonist: str, lang: str) -> list[str]:
     rows = []
     pi = node.get("player_input") or {}
@@ -239,6 +371,7 @@ def turn_messages(game: dict, path: list[dict], player_input: dict, scene: dict)
 
     parts = [f"{T['h_world']}\n{world_text(game['world'], lang)}\n{protagonist_text(game, lang)}",
              f"{T['h_chars']}\n{characters_text(game, lang)}",
+             *([novel_text(game, lang)] if game.get("novel") else []),
              f"{T['h_known']}\n{known}",
              f"{T['h_scene']}\n{scene['id']}{T['colon']}{scene['name']}",
              f"{T['h_state']}\n" + json.dumps(state, ensure_ascii=False)]
@@ -247,6 +380,8 @@ def turn_messages(game: dict, path: list[dict], player_input: dict, scene: dict)
         parts.append(f"{T['h_summary']}\n" + "\n".join(f"{i + 1}. {s}" for i, s in enumerate(items)))
     if recent:
         parts.append(f"{T['h_recent']}\n" + "\n".join(recent))
+    if game.get("novel"):
+        parts.append(chapter_text(game, len(path) + 1, lang))
     if game.get("batch"):
         parts.append(batch_turn_text(game, len(path) + 1))
     if player_input["kind"] == "opening":
@@ -261,6 +396,18 @@ def setup_messages(world: dict, characters: list[dict], lang: str) -> list[dict]
     chars = "\n".join(f"- {c['name']}{TEXT[lang]['colon']}{c['appearance']}" for c in characters)
     return [{"role": "system", "content": SETUP_SYSTEM[lang]},
             {"role": "user", "content": SETUP_USER[lang].format(world=world_text(world, lang), characters=chars)}]
+
+
+def novel_notes_messages(title: str, i: int, n: int, text: str, lang: str) -> list[dict]:
+    return [{"role": "system", "content": NOVEL_NOTES_SYSTEM[lang]},
+            {"role": "user", "content": NOVEL_NOTES_USER[lang].format(title=title, i=i, n=n, text=text)}]
+
+
+def novel_messages(title: str, notes: list[str], lang: str, max_chars: int, min_ch: int, max_ch: int) -> list[dict]:
+    body = "\n\n".join(f"### {i}\n{x}" for i, x in enumerate(notes, 1))
+    return [{"role": "system", "content": NOVEL_SYSTEM[lang]},
+            {"role": "user", "content": NOVEL_USER[lang].format(title=title, notes=body, max_chars=max_chars,
+                                                                min_ch=min_ch, max_ch=max_ch)}]
 
 
 def repair_messages(turn_msgs: list[dict], reply_text: str, lang: str, key: str = "repair") -> list[dict]:

@@ -161,19 +161,6 @@ class BatchService:
                 self._save(gid, failed=failed)
                 return None
 
-            async def expand(node: dict, depth: int) -> None:
-                if node["result"].get("ending") or depth >= last:
-                    return
-                tree = self.store.load_tree(gid)
-                await asyncio.gather(*(child_branch(node["id"], opt, child, depth + 1)
-                                       for opt, child in option_children(tree, tree["nodes"][node["id"]])))
-
-            async def child_branch(parent_id: str, opt: str, child: dict | None, depth: int) -> None:
-                if child is None:
-                    child = await turn(parent_id, {"kind": "option", "text": opt})
-                if child:
-                    await expand(child, depth)
-
             if game["batch"].get("merge"):
                 if not await self._merge_text(gid, game, turn):
                     self._save(gid, state="error", error=(failed or [{}])[-1].get("error", "internal"),
@@ -191,7 +178,7 @@ class BatchService:
             if root is None:
                 self._save(gid, state="error", error=failed[-1]["error"], finished_at=now_iso())
                 return
-            await expand(root, 1)
+            await self._walk(gid, last, turn)
             made, _planned = text_progress(game, self.store.load_tree(gid))
             log.info("batch text done %s: %d nodes, %d branches skipped", gid, made, len(failed))
 
@@ -203,6 +190,51 @@ class BatchService:
         except Exception:
             log.error("batch crashed %s\n%s", gid, config.mask(traceback.format_exc()))
             self._save(gid, state="error", error="internal", finished_at=now_iso())
+
+    def _focus(self, gid: str, tree: dict) -> set[str]:
+        """The node the player is on (autosave) and every node written under it."""
+        auto = self.store.load_autosave() or {}
+        nid = auto.get("node_id") if auto.get("game_id") == gid else None
+        if nid not in tree["nodes"]:
+            return set()
+        out, stack = set(), [nid]
+        while stack:
+            n = stack.pop()
+            out.add(n)
+            stack.extend(c for c in tree["nodes"][n].get("children", []) if c in tree["nodes"])
+        return out
+
+    async def _walk(self, gid: str, last: int, turn) -> None:
+        """Write every open option: the player's own branch first, then shallow turns before deep ones, so the
+        player can start at the opening and rarely catches up with the writer. The order is worked out again
+        after every finished turn, because the player moves while the batch runs."""
+        tried: set[tuple[str, str]] = set()
+        running: set[asyncio.Task] = set()
+        try:
+            while True:
+                tree = self.store.load_tree(gid)
+                focus = self._focus(gid, tree)
+                todo, stack = [], [(tree["root"], 1)]
+                while stack:
+                    nid, depth = stack.pop()
+                    node = tree["nodes"][nid]
+                    if node["result"].get("ending") or depth >= last:
+                        continue
+                    for opt, child in option_children(tree, node):
+                        if child:
+                            stack.append((child["id"], depth + 1))
+                        elif (nid, "".join(opt.split())) not in tried:
+                            todo.append((nid not in focus, depth, nid, opt))
+                for _later, _depth, nid, opt in sorted(todo)[:config.BATCH_CONCURRENCY - len(running)]:
+                    tried.add((nid, "".join(opt.split())))
+                    running.add(asyncio.create_task(turn(nid, {"kind": "option", "text": opt})))
+                if not running:
+                    return
+                _done, running = await asyncio.wait(running, return_when=asyncio.FIRST_COMPLETED)
+        finally:
+            for t in running:
+                t.cancel()
+            await asyncio.gather(*running, return_exceptions=True)
 
     async def _merge_text(self, gid: str, game: dict, turn) -> bool:
         """Merge-back walker. The main line (saved in batch.json) is written to an ending; every other option of

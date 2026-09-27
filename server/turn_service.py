@@ -17,6 +17,7 @@ log = config.setup_logging()
 
 MAX_CHARACTERS = 4
 MAX_FREE_INPUT = 120
+NOVEL_MAX_CHAPTERS = 10           # a batch is at most 10 turns deep, so more chapters could never all be reached
 # English needs about twice the characters of Chinese for the same content; the web client uses the same factor
 LIMIT_SCALE = {"zh": 1, "en": 2}
 
@@ -50,6 +51,7 @@ class TurnService:
         self.llm = llm
         self.assets = assets
         self._locks: dict[str, asyncio.Lock] = {}
+        self._writing: dict[tuple, asyncio.Future] = {}   # batch turns in progress, by (gid, parent, option)
 
     # ---------- new game ----------
 
@@ -82,6 +84,17 @@ class TurnService:
                 raise TurnError("batch_size", max=config.BATCH_MAX_NODES)
             if not world["goal"]:
                 raise TurnError("batch_goal")
+        novel = None
+        if payload.get("novel"):
+            n = payload["novel"]
+            rows = n.get("chapters") if isinstance(n, dict) else None
+            if not isinstance(rows, list) or not 1 <= len(rows) <= NOVEL_MAX_CHAPTERS or \
+                    not all(isinstance(r, dict) for r in rows):
+                raise TurnError("chapter_count", max=NOVEL_MAX_CHAPTERS)
+            novel = {"title": _check_text(n.get("title"), "novel_title", 60 * x, False),
+                     "chapters": [{"title": _check_text(r.get("title"), "chapter_title", 20 * x, i=i),
+                                   "summary": _check_text(r.get("summary"), "chapter_summary", 200 * x, i=i)}
+                                  for i, r in enumerate(rows, 1)]}
 
         async def status_only(ev):
             if ev["type"] == "status":
@@ -113,6 +126,7 @@ class TurnService:
             "first_scene": sid,
             "setup_model": res.candidate.model,
             **({"batch": batch} if batch else {}),
+            **({"novel": novel} if novel else {}),
         }
         self.store.save_game(game)
         self.assets.ensure_game(game, sid)
@@ -135,6 +149,23 @@ class TurnService:
     async def run_turn(self, gid: str, parent_id: str | None, player_input: dict, emit, batch: bool = False) -> dict:
         """batch=True: written ahead by the batch walker, so no autosave, no sprite requests, and the
         scene waits behind the images of the game on screen."""
+        key = (gid, parent_id, "".join(str(player_input.get("text") or "").split()))
+        writing = self._writing.get(key)
+        if writing and not batch:
+            # The batch is writing this very branch: wait for it and replay it instead of writing a second copy
+            await emit({"type": "phase", "code": "batch_wait"})
+            await asyncio.wait([writing])
+        if not batch or parent_id is None:
+            return await self._turn(gid, parent_id, player_input, emit, batch)
+        done = asyncio.get_running_loop().create_future()
+        self._writing[key] = done
+        try:
+            return await self._turn(gid, parent_id, player_input, emit, batch)
+        finally:
+            self._writing.pop(key, None)
+            done.set_result(None)
+
+    async def _turn(self, gid: str, parent_id: str | None, player_input: dict, emit, batch: bool) -> dict:
         game = self.store.load_game(gid)
         tree = self.store.load_tree(gid)
         kind = player_input.get("kind")
@@ -222,7 +253,8 @@ class TurnService:
         async with self._locks.setdefault(gid, asyncio.Lock()):
             if batch and parent:
                 # The player may have reached this branch live while it was being written
-                twin = self._existing_child(self.store.load_tree(gid), parent, player_input["text"])
+                fresh = self.store.load_tree(gid)
+                twin = self._existing_child(fresh, fresh["nodes"][parent_id], player_input["text"])
                 if twin:
                     return twin
             if result["scene_change"]:

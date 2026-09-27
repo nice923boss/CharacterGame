@@ -186,3 +186,62 @@ async def test_cancel_marks_batch_cancelled(store):
     await asyncio.sleep(0)
     assert await batches.stop("g_test")
     assert batches.load("g_test")["state"] == "cancelled" and "g_test" not in batches.tasks
+
+
+class GateLLM(TreeLLM):
+    """The opening answers at once; every later turn waits for its own gate, in call order."""
+
+    def __init__(self):
+        super().__init__()
+        self.gates = []
+
+    async def stream(self, messages, emit, temperature=0.8):
+        if self.calls:
+            gate = asyncio.Event()
+            self.gates.append(gate)
+            await gate.wait()
+        return await super().stream(messages, emit, temperature)
+
+
+async def _settle():
+    for _ in range(20):
+        await asyncio.sleep(0)
+
+
+async def test_live_turn_waits_for_the_batch_writing_the_same_branch(tmp_path):
+    store = Store(tmp_path)
+    store.save_game(BATCH_GAME)
+    llm = GateLLM()
+    turns = TurnService(store, llm, DoneAssets())
+    root = await turns.run_turn("g_test", None, {"kind": "opening"}, _quiet)
+    ahead = asyncio.create_task(turns.run_turn("g_test", root["id"], {"kind": "option", "text": "往東"}, _quiet, True))
+    await _settle()
+    events = []
+
+    async def emit(ev):
+        events.append(ev)
+    live = asyncio.create_task(turns.run_turn("g_test", root["id"], {"kind": "option", "text": "往東"}, emit))
+    await _settle()
+    assert events == [{"type": "phase", "code": "batch_wait"}] and len(llm.gates) == 1    # no second LLM call
+    llm.gates[0].set()
+    written, played = await ahead, await live
+    assert played["id"] == written["id"] and events[-1]["replayed"]
+    assert store.load_tree("g_test")["nodes"][root["id"]]["children"] == [written["id"]]
+    assert store.load_autosave()["node_id"] == written["id"]
+
+
+async def test_batch_keeps_the_branch_the_player_wrote_first(tmp_path):
+    store = Store(tmp_path)
+    store.save_game(BATCH_GAME)
+    llm = GateLLM()
+    turns = TurnService(store, llm, DoneAssets())
+    root = await turns.run_turn("g_test", None, {"kind": "opening"}, _quiet)
+    live = asyncio.create_task(turns.run_turn("g_test", root["id"], {"kind": "option", "text": "往東"}, _quiet))
+    await _settle()
+    ahead = asyncio.create_task(turns.run_turn("g_test", root["id"], {"kind": "option", "text": "往東"}, _quiet, True))
+    await _settle()
+    llm.gates[0].set()
+    played = await live
+    llm.gates[1].set()
+    assert (await ahead)["id"] == played["id"]
+    assert store.load_tree("g_test")["nodes"][root["id"]]["children"] == [played["id"]]

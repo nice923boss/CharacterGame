@@ -17,6 +17,7 @@ from . import comfy_client, config, nvidia_image
 from .asset_service import AssetService
 from .batch_service import BatchService
 from .llm_client import LLMClient, LLMError
+from .novel_service import NovelService
 from .story_store import Store
 from .turn_service import TurnError, TurnService
 
@@ -25,6 +26,7 @@ store = Store()
 assets = AssetService(store)
 turns = TurnService(store, LLMClient(), assets)
 batches = BatchService(store, turns, assets)
+novels = NovelService(turns.llm)
 TASKS: dict[str, asyncio.Task] = {}
 
 
@@ -139,6 +141,11 @@ async def create_game(payload: dict = Body(...)):
         if game.get("batch"):
             batches.start(game["id"])
     return sse_job(work)
+
+
+@app.post("/api/novel/analyze")
+async def analyze_novel(payload: dict = Body(...)):
+    return sse_job(lambda emit: novels.analyze(payload, emit))
 
 
 @app.get("/api/batches")

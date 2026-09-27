@@ -10,6 +10,7 @@ const ACK_KEY = 'chienzhi.batchAcked';
 const ACTIVE = ['running', 'images'];
 
 let onPlay = null;
+let playingId = () => null;
 let timer = null;
 let seen = {};   // gid -> state at the previous poll, so failures are reported once per page
 
@@ -46,10 +47,11 @@ function systemNotice(b) {
 
 let asking = false;
 async function announce(b) {
-  asking = true;
   ack(b.id);
   sound.play('select');
   systemNotice(b);
+  if (playingId() === b.id) { toast(t('batch.doneHere', { nodes: b.nodes })); return; }   // already playing this story
+  asking = true;
   const notes = (b.failed ? t('batch.failedNote', { n: b.failed }) : '') +
     (b.image_errors ? t('batch.imgNote', { n: b.image_errors }) : '');
   const go = await confirmBox(t('batch.doneAsk', { title: b.title, nodes: b.nodes, notes }), t('batch.play'));
@@ -72,9 +74,10 @@ async function poll() {
   if (ready && !asking && $('#mdl-confirm').hidden) announce(ready);
 }
 
-// onPlayGame(gid) opens a finished batch story at its opening
-export function initBatches(onPlayGame) {
+// onPlayGame(gid) opens a finished batch story at its opening; currentGame() is the story being played, if any
+export function initBatches(onPlayGame, currentGame) {
   onPlay = onPlayGame;
+  playingId = currentGame;
   poll();
   timer = setInterval(poll, POLL_MS);
 }
