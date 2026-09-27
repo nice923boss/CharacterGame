@@ -13,7 +13,7 @@ GitHub Pages 版的遊戲整個跑在玩家的瀏覽器裡：故事、存檔、�
 ## 內建轉送
 
 Pages 版已內建 `https://chienzhi-relay.cattravelworld.com`（`tools/build_pages.py` 的 `RELAY`），
-學員在設定只要填輝達 API Key，轉送網址留空。設定裡自己填的網址會優先於內建值。
+設定頁的轉送網址欄會預先填好內建網址，學員只要填輝達 API Key。設定裡自己填的網址會優先於內建值；清空或存回內建網址則繼續跟隨內建值。
 
 它是部署在 Cloudflare 機房的 Worker，擁有者的電腦關機也能用。
 
