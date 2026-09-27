@@ -185,7 +185,7 @@ $('#set-key-save').addEventListener('click', async () => {
 
 if (LOCAL) {
   get('/api/settings').then((s) => {
-    $('#set-relay').value = s.relay || '';
+    $('#set-relay').value = s.relay || s.relay_default || '';
     if (s.relay_default) $('#set-relay').placeholder = t('settings.relayBuiltin', { url: s.relay_default });
   }).catch(() => {});
   $('#set-relay-save').addEventListener('click', async () => {

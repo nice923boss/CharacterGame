@@ -97,7 +97,12 @@ export async function request(method, url, body) {
   if (method === 'GET' && a === 'health') return health();
   if (a === 'settings' && !gid) return { image_nvidia: true, image_comfy: false, relay: lsGet(RELAY), relay_default: DATA.relay || '' };
   if (a === 'settings' && gid === 'nvidia_key') { lsSet(KEY, validKey(body?.key)); return { nvidia_key: true }; }
-  if (a === 'settings' && gid === 'relay') { const r = validRelay(body?.relay); lsSet(RELAY, r); return { relay: r }; }
+  if (a === 'settings' && gid === 'relay') {
+    // Saving the built-in address (or an empty field) keeps following the built-in relay
+    const r = validRelay(body?.relay);
+    lsSet(RELAY, r === DATA.relay ? '' : r);
+    return { relay: r || DATA.relay || '' };
+  }
   if (a === 'batches') return batch.list();
   if (a === 'games' && sub === 'batch' && method === 'POST' && act === 'cancel') {
     await store.loadGame(gid);
