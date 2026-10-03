@@ -71,7 +71,7 @@ async function poll() {
   const done = acked();
   for (const b of list) {
     if (b.state === 'error' && seen[b.id] && seen[b.id] !== 'error') {
-      toast(t('batch.failed', { title: b.title, msg: errorText(b.error || 'internal') }), true);
+      toast(t('batch.failed', { title: b.title, msg: errorText(b.error || 'internal') }), true, 0, { code: b.error });
     }
     seen[b.id] = b.state;
   }

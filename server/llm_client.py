@@ -236,8 +236,9 @@ class LLMClient:
                             empty_n += 1
                         else:
                             retry_n += 1
-                        await self._countdown(wait, emit, {"model": cand.label, "reason": f.kind, "attempt": attempt,
-                                                           "max": most, "waited": round(self._clock() - started)},
+                        await self._countdown(wait, emit, {"model": cand.label, "reason": f.kind, "status": f.status,
+                                                           "attempt": attempt, "max": most,
+                                                           "waited": round(self._clock() - started)},
                                               waits.skip)
                         continue
                     n = self.streak[cand.cooldown_key] = self.streak.get(cand.cooldown_key, 0) + 1
@@ -246,7 +247,7 @@ class LLMClient:
                     if not is_last:
                         self._note(cand.label, "switch", 0)
                         await emit({"type": "status", "state": "switch", "from": cand.label,
-                                    "to": order[idx + 1].label, "reason": f.kind})
+                                    "to": order[idx + 1].label, "reason": f.kind, "status": f.status})
                     break
                 self.streak.pop(cand.cooldown_key, None)
                 self.cooldown.pop(cand.cooldown_key, None)

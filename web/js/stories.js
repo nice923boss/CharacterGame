@@ -1,7 +1,7 @@
 // Story list on the title screen: open a story at its latest turn, or delete it with its tree, images, slots and autosave.
 import { del, get, post } from './api.js';
 import { t } from './i18n.js';
-import { $, confirmBox, esc, loadThumbs, openModal, thumbAttr, toast } from './ui.js';
+import { $, closeModal, confirmBox, esc, loadThumbs, openModal, thumbAttr, toast, toastError } from './ui.js';
 import { batchRow, rearm, refreshBatches } from './batch.js';
 
 const ACTIVE = ['running', 'images'];
@@ -12,7 +12,7 @@ export async function openStories(onChange, onOpen) {
   try {
     [games, slots, auto, batches] = await Promise.all([get('/api/games'), get('/api/slots'), get('/api/autosave'),
       get('/api/batches')]);
-  } catch (e) { toast(e.message, true); return; }
+  } catch (e) { toastError(e); return; }
   const batchOf = (gid) => batches.find((b) => b.id === gid);
   // A batch story opens at its opening, so every option ahead is already written; a live story at its latest turn
   const openAt = (g) => (g.batch ? g.root : g.latest);
@@ -53,7 +53,7 @@ export async function openStories(onChange, onOpen) {
       await post(`/api/games/${gid}/batch/${act}`, {});
       if (act === 'resume') rearm(gid);
       batches = await get('/api/batches');
-    } catch (e) { toast(e.message, true); return; }
+    } catch (e) { toastError(e); return; }
     paint();
     refreshBatches();
     toast(t(act === 'cancel' ? 'stories.batchStopped' : 'stories.batchResumed', { title: g.title || gid }));
@@ -66,7 +66,7 @@ export async function openStories(onChange, onOpen) {
     $('#story-list').querySelectorAll('[data-open-story]').forEach((b) => {
       b.onclick = () => {
         const g = games.find((x) => x.id === b.dataset.openStory);
-        $('#mdl-stories').hidden = true;
+        closeModal('#mdl-stories');
         onOpen(g.id, openAt(g));
       };
     });
@@ -79,7 +79,7 @@ export async function openStories(onChange, onOpen) {
     const used = refs(gid);
     const text = t('stories.delAsk', { title: g.title || gid, used: used ? t('stories.delUsed', { used }) : '' });
     if (!(await confirmBox(text, t('common.delete')))) return;
-    try { await del(`/api/games/${gid}`); } catch (e) { toast(e.message, true); return; }
+    try { await del(`/api/games/${gid}`); } catch (e) { toastError(e); return; }
     games = games.filter((x) => x.id !== gid);
     batches = batches.filter((x) => x.id !== gid);
     refreshBatches();

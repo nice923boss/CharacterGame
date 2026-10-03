@@ -3,7 +3,10 @@
 import { del, get, job, post } from './api.js';
 import { sound } from './sound.js';
 import { LIMIT_SCALE, t } from './i18n.js';
-import { $, closeModal, confirmBox, esc, loadThumbs, openModal, progress, settings, statusText, thumbAttr, toast } from './ui.js';
+import {
+  $, closeModal, confirmBox, esc, helpNode, loadThumbs, openModal, paintWait, progress, settings, statusText, thumbAttr, toast,
+  toastError,
+} from './ui.js';
 import { renderTree } from './tree.js';
 
 const G = {
@@ -95,7 +98,7 @@ async function showAssetProblems() {
     G.assets = await post(`/api/games/${gid}/assets/retry${sceneQuery()}`);
     toast(t('chip.retried'));
     paintAssetChip();
-  } catch (e) { toast(e.message, true); }
+  } catch (e) { toastError(e); }
 }
 
 // Right-click (a long press on touch) on the scene or a character draws it again
@@ -122,7 +125,7 @@ async function askRedraw(x, y) {
     G.assets = await post(`/api/games/${gid}/assets/redraw`, { kind, target, new_seed: answer.checked });
     toast(t('redraw.started'));
     paintAssetChip();
-  } catch (e) { toast(e.message, true); }
+  } catch (e) { toastError(e); }
 }
 
 // Loading panel: shown while the scene or an on-stage sprite is still being drawn or downloaded, so a blank
@@ -303,7 +306,7 @@ function setBusy(busy) {
 function paintRetry(text) {
   $('#retry-text').textContent = text;
   $('#retry').hidden = !text;
-  if (!text) $('#retry-now').hidden = true;
+  if (!text) { $('#retry-now').hidden = true; paintWait($('#retry'), null); }
 }
 
 // Errors from the network rather than the story: worth sending again once it is back
@@ -312,10 +315,12 @@ const NET_REASONS = ['network', 'connect'];
 const isNetwork = (e) => NET_CODES.includes(e.code) || (e.code === 'all_failed' && !!e.params?.errors?.length
   && e.params.errors.every((x) => NET_REASONS.includes(x.reason)));
 
-function paintFailed(msg) {
+// code: error code that gets a "what to do" line (C10)
+function paintFailed(msg, code = '') {
   const opening = G.lastInput?.kind === 'opening';
   $('#failed').hidden = !msg;
   $('#failed-text').textContent = msg || '';
+  $('#failed-help').replaceChildren(helpNode(code) || '');
   $('#failed-retry').textContent = t(opening ? 'game.retryOpening' : 'game.retry');
   $('#failed-exit').hidden = !opening;
   $('#free-form').hidden = !!msg && opening;
@@ -323,7 +328,7 @@ function paintFailed(msg) {
 
 // The turn did not go through: the screen stays where it was, with the same input one click away.
 // msg null (the player cancelled): no failure row
-function failTurn(msg, network = false) {
+function failTurn(msg, network = false, code = '') {
   const hidden = document.hidden || G.hiddenAt >= G.turnStart;   // the page was in the background meanwhile
   G.lastInput = { ...G.lastInput, failed: true, network, hidden };
   const cur = G.tree.nodes[G.currentId];
@@ -334,7 +339,7 @@ function failTurn(msg, network = false) {
     $('#dialog-wait').hidden = true;
     setBusy(false);
   }
-  paintFailed(msg && G.lastInput.kind === 'opening' ? t('game.openingFailed', { msg }) : msg);
+  paintFailed(msg && G.lastInput.kind === 'opening' ? t('game.openingFailed', { msg }) : msg, code);
   // A phone cut the turn off in the background and the page is back: send it again once by itself
   if (network && hidden && !document.hidden && navigator.onLine) setTimeout(retryLast, 0);
 }
@@ -387,8 +392,10 @@ async function sendInput(kind, text) {
     } else if (ev.type === 'status') {
       lastStatus = ev.state === 'waiting' ? '' : statusText(ev);
       $('#retry-now').hidden = ev.state !== 'retry';
+      paintWait($('#retry'), ev);
     } else if (ev.type === 'phase') {
       lastStatus = t(`phase.${ev.code}`);
+      paintWait($('#retry'), null);
     }
   });
   if (!G.typing && !G.queue.length) $('#dialog-wait').hidden = false;
@@ -420,7 +427,7 @@ async function sendInput(kind, text) {
     if (cur) showStatic(cur);
     else { $('#dialog-text').textContent = ''; $('#nameplate').hidden = true; }
     if (e.code === 'cancelled' && cur) { toast(t('game.cancelled')); failTurn(null); }
-    else failTurn(e.code === 'cancelled' ? t('game.cancelled') : e.message, isNetwork(e));
+    else failTurn(e.code === 'cancelled' ? t('game.cancelled') : e.message, isNetwork(e), e.code);
   } finally {
     clearInterval(clock);
     G.paintClock = null;
@@ -455,7 +462,7 @@ export async function enterGame(stage, gid, nodeId, onExit) {
     Object.assign(G, { game: data.game, tree: data.tree, assets: data.assets });
   } catch (e) {
     box.close();
-    toast(e.message, true);
+    toastError(e);
     return false;
   }
   box.close();
@@ -539,7 +546,7 @@ function slotHtml(s, i, mode) {
 export async function openSlots(mode, onLoad) {
   $('#slots-title').textContent = t(mode === 'save' ? 'slots.save' : 'slots.load');
   let slots;
-  try { slots = await get('/api/slots'); } catch (e) { toast(e.message, true); return; }
+  try { slots = await get('/api/slots'); } catch (e) { toastError(e); return; }
   const paint = () => {
     $('#slot-grid').innerHTML = slots.map((s, i) => slotHtml(s, i, mode)).join('');
     loadThumbs($('#slot-grid'));
@@ -558,7 +565,7 @@ export async function openSlots(mode, onLoad) {
         slots = await post(`/api/slots/${i}`, { game_id: G.game.id, node_id: G.currentId, label });
         paint();
         toast(t('slots.saved', { n: i + 1 }));
-      } catch (err) { toast(err.message, true); }
+      } catch (err) { toastError(err); }
     } else if (slots[i]) {
       closeModal('#mdl-slots');
       onLoad(slots[i].game_id, slots[i].node_id);
@@ -638,7 +645,9 @@ export function initGame() {
   $('#failed-retry').onclick = retryLast;
   $('#failed-exit').onclick = () => G.onExit?.();
   document.addEventListener('keydown', (e) => {
-    if ($('#scr-game').hidden || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    // Keys belong to an open dialog, a form field, or a button the keyboard moved to (I04)
+    if ($('#scr-game').hidden || document.querySelector('.modal:not([hidden])')) return;
+    if (e.target.closest?.('input, textarea, select, button:focus-visible, a:focus-visible, summary:focus-visible')) return;
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); advance(); }
   });
   $('#free-form').addEventListener('submit', (e) => { e.preventDefault(); sendInput('free', $('#free-input').value); });

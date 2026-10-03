@@ -2,7 +2,7 @@
 // The story is written in the current UI language; presets.json holds one preset set per language.
 import { get, job } from './api.js';
 import { errorText, lang, scaleMaxLength, t } from './i18n.js';
-import { $, esc, progress, statusText } from './ui.js';
+import { $, esc, helpNode, progress } from './ui.js';
 
 const MAX_CHARS = 4;
 // Batch mode limits and timing, from server/config.py and the spike in docs/dev-log.md
@@ -123,8 +123,7 @@ async function importNovel(file) {
   running = job('/api/novel/analyze', { lang, title, text }, (ev) => {
     if (ev.type === 'progress') box.update(t('setup.novel.progress', ev));
     else if (ev.type === 'phase') box.update(`${t(`phase.${ev.code}`)}…`);
-    if (ev.type === 'status') box.retry(ev, () => running.retryNow());
-    if (ev.type === 'status' && ev.state !== 'waiting') box.update(null, statusText(ev));
+    if (ev.type === 'status') box.status(ev, () => running.retryNow());
   });
   try {
     const { draft } = await running.done;
@@ -139,7 +138,7 @@ async function importNovel(file) {
     fitTurns(draft.novel.chapters.length);
     setMsg(t('setup.novel.done', { n: draft.novel.chapters.length }));
   } catch (e) {
-    setMsg(e.message, true);
+    setError(e);
   } finally {
     box.close();
   }
@@ -185,6 +184,13 @@ function setMsg(text, error = false) {
   $('#setup-msg').classList.toggle('error', error);
 }
 
+// An error with its "what to do" line and settings button (C10)
+function setError(e) {
+  setMsg(e.message, true);
+  const help = helpNode(e.code);
+  if (help) $('#setup-msg').append(help);
+}
+
 function payload() {
   const world = {};
   for (const k of ['era', 'place', 'genre', 'tone', 'extra', 'goal']) world[k] = $(`#w-${k}`).value.trim();
@@ -213,15 +219,14 @@ export async function startGame() {
   const box = progress(t('setup.building'), t('setup.buildingSub'), () => running && running.cancel());
   running = job('/api/games', body, (ev) => {
     if (ev.type === 'phase') box.update(`${t(`phase.${ev.code}`)}…`);
-    if (ev.type === 'status') box.retry(ev, () => running.retryNow());
-    if (ev.type === 'status' && ev.state !== 'waiting') box.update(null, statusText(ev));
+    if (ev.type === 'status') box.status(ev, () => running.retryNow());
   });
   try {
     const final = await running.done;
     setMsg(t('setup.done', { s: Math.round((Date.now() - t0) / 1000) }));
     return final.game;
   } catch (e) {
-    setMsg(e.message, true);
+    setError(e);
     return null;
   } finally {
     box.close();

@@ -25,6 +25,7 @@ const backend = LOCAL ? import('./local/backend.js') : null;
 const isApi = (path) => path.startsWith('/api/');
 // Local modules throw { code, params } like the server's error events; anything else is a bug
 function asError(e) {
+  if (e?.name === 'QuotaExceededError') return fail('storage_full');
   if (e instanceof Error && e.code) return e;
   if (e?.code && !(e instanceof Error)) return fail(e.code, e.params);
   console.error(e);

@@ -3,7 +3,7 @@ import { LOCAL, activeJobs, get, post } from './api.js';
 import { applyStatic, setLang, t } from './i18n.js';
 import { sound } from './sound.js';
 import { createStage } from './stage.js';
-import { $, bindSettings, confirmBox, openModal, progress, toast } from './ui.js';
+import { $, bindSettings, confirmBox, openModal, progress, toast, toastError } from './ui.js';
 import { initSetup, isBatchMode, resetSetup, startGame } from './setup.js';
 import { currentGameId, enterGame, initGame, leaveGame, openSlots, openTree } from './game.js';
 import { openStories } from './stories.js';
@@ -55,12 +55,12 @@ const actions = {
   },
   importDir() { $('#import-dir').click(); },
   async exportZip() {
-    const show = (pct) => toast(t('archive.exporting', { pct }), false, 60000);
+    const show = (pct) => toast(t('archive.exporting', { pct }), false, 60000, { id: 'archive' });
     show(0);
     try {
       const r = await (await import('./local/archive.js')).exportProgress(show);
-      toast(t('archive.exported', r));
-    } catch (e) { console.error(e); toast(t('err.local_internal'), true); }
+      toast(t('archive.exported', r), false, 4000, { id: 'archive' });
+    } catch (e) { console.error(e); toast(t('err.local_internal'), true, 0, { id: 'archive' }); }
   },
 };
 
@@ -137,7 +137,7 @@ function paintHealth() {
 }
 
 document.querySelectorAll('[data-lang]').forEach((b) => {
-  b.onclick = () => { setLang(b.dataset.lang); paintHealth(); refreshBatches(); };
+  b.onclick = () => { setLang(b.dataset.lang); paintHealth(); paintBusy(); refreshBatches(); };
 });
 
 applyStatic();
@@ -154,6 +154,39 @@ const refreshHealth = () => get('/api/health').then((h) => { health = h; }).catc
   .finally(paintHealth);
 refreshHealth();
 
+// NVIDIA busy light from the last 5 minutes of requests: a line on the title screen, a dot in the game toolbar (A16)
+const BUSY_POLL_MS = 15000;
+let busy = null;
+let busyWas = '';
+function busyText() {
+  const label = t(`busy.${busy.level}`);
+  if (!busy.requests) return label;
+  const avg = busy.avg_first_s != null ? t('busy.avg', { s: busy.avg_first_s }) : '';
+  return label + t('busy.detail', { requests: busy.requests, busy: busy.busy, avg });
+}
+function paintBusy() {
+  if (!busy) return;
+  const text = busyText();
+  $('#busy').hidden = false;
+  $('#busy').dataset.level = busy.level;
+  $('#busy span').textContent = text;
+  $('#busy-dot').hidden = false;
+  $('#busy-dot').dataset.level = busy.level;
+  $('#busy-dot').title = text;
+  $('#busy-dot').setAttribute('aria-label', text);
+  if (busy.level === 'red' && busyWas !== 'red' && !$('#scr-game').hidden) toast(t('busy.redToast'), false, 8000, { id: 'busy' });
+  busyWas = busy.level;
+}
+async function refreshBusy() {
+  if (document.hidden) return;
+  try { busy = (await get('/api/stats')).recent; } catch (e) { console.warn('busy stats unavailable', e); return; }
+  paintBusy();
+}
+$('#busy-dot').addEventListener('click', () => { if (busy) toast(busyText(), false, 6000, { id: 'busy' }); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshBusy(); });
+setInterval(refreshBusy, BUSY_POLL_MS);
+refreshBusy();
+
 // Image engines and the image mode live on the server: background batches draw with them too
 async function bindImageEngines() {
   const boxes = { image_nvidia: $('#set-img-nvidia'), image_comfy: $('#set-img-comfy') };
@@ -169,7 +202,7 @@ async function bindImageEngines() {
   };
   paint();
   mode.addEventListener('change', async () => {
-    try { current = await post('/api/settings', { image_mode: mode.value }); } catch (e) { toast(e.message, true); }
+    try { current = await post('/api/settings', { image_mode: mode.value }); } catch (e) { toastError(e); }
     paint();
   });
   for (const [k, el] of Object.entries(boxes)) {
@@ -177,7 +210,7 @@ async function bindImageEngines() {
       try {
         current = await post('/api/settings', { [k]: el.checked });
         refreshHealth();
-      } catch (e) { toast(e.message, true); }
+      } catch (e) { toastError(e); }
       paint();
     });
   }
@@ -191,7 +224,7 @@ $('#set-key-save').addEventListener('click', async () => {
     $('#set-key').value = '';
     toast(t('settings.keySaved'));
     refreshHealth();
-  } catch (e) { toast(e.message, true); }
+  } catch (e) { toastError(e); }
 });
 
 // ---------- browser-only (GitHub Pages) build ----------
@@ -207,7 +240,7 @@ if (LOCAL) {
       $('#set-relay').value = r.relay;
       toast(t('settings.relaySaved'));
       refreshHealth();
-    } catch (e) { toast(e.message, true); }
+    } catch (e) { toastError(e); }
   });
   $('#set-demo').addEventListener('click', async () => {
     if (!(await confirmBox(t('settings.demoAsk'), t('common.ok')))) return;
@@ -220,12 +253,12 @@ if (LOCAL) {
   $('#import-dir').addEventListener('change', async (e) => {
     const files = e.target.files;
     if (!files?.length) return;
-    toast(t('archive.importing'), false, 60000);
+    toast(t('archive.importing'), false, 60000, { id: 'archive' });
     try {
       const r = await (await import('./local/archive.js')).importFolder(files);
-      toast(r.games ? t('archive.imported', r) : t('archive.none'), !r.games, 8000);
+      toast(r.games ? t('archive.imported', r) : t('archive.none'), !r.games, 8000, { id: 'archive' });
       refreshContinue();
-    } catch (err) { console.error(err); toast(t('err.local_internal'), true); }
+    } catch (err) { console.error(err); toast(t('err.local_internal'), true, 0, { id: 'archive' }); }
     e.target.value = '';
   });
   // Offline cache for the app shell and CDN libraries (sw.js is generated by tools/build_pages.py)

@@ -321,7 +321,7 @@ export async function stream(messages, emit, temperature, conn, signal) {
         if (!(f instanceof AttemptFailure)) throw f;
         note(cand.label, f.kind, (Date.now() - t0) / 1000, f.status);
         console.warn(`llm ${cand.label} attempt failed: ${f.message}`);
-        const info = { model: cand.label, reason: f.kind, waited: Math.round((Date.now() - started) / 1000) };
+        const info = { model: cand.label, reason: f.kind, status: f.status, waited: Math.round((Date.now() - started) / 1000) };
         if (f.kind === 'network') {
           // Same relay for every model: switching would not help
           if (networkN >= NETWORK_BACKOFF_S.length) throw { code: 'relay_unreachable' };
@@ -346,7 +346,7 @@ export async function stream(messages, emit, temperature, conn, signal) {
         });
         if (!isLast) {
           note(cand.label, 'switch', 0);
-          emit({ type: 'status', state: 'switch', from: cand.label, to: order[idx + 1].label, reason: f.kind });
+          emit({ type: 'status', state: 'switch', from: cand.label, to: order[idx + 1].label, reason: f.kind, status: f.status });
         }
         break;
       }

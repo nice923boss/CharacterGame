@@ -35,6 +35,7 @@
       </div>
       <input type="file" id="import-dir" webkitdirectory multiple hidden>
       <p class="health" id="health" data-i18n="health.checking">檢查連線中…</p>
+      <p class="busy" id="busy" aria-live="polite" hidden><i></i><span></span></p>
       <div class="batch-panel" id="batch-panel" hidden></div>
     </div>
   </section>
@@ -97,6 +98,7 @@
     <button id="asset-chip" type="button" hidden></button>
     <div id="stage-loading" hidden><p></p><div class="batch-bar"><i></i></div></div>
     <div id="toolbar">
+      <button class="btn tiny busy-dot" id="busy-dot" type="button" hidden><i></i></button>
       <button class="btn tiny" data-act="save" data-i18n="game.save">存檔</button>
       <button class="btn tiny" data-act="load" data-i18n="game.load">讀檔</button>
       <button class="btn tiny" data-act="tree" data-i18n="game.tree">節點樹</button>
@@ -107,10 +109,11 @@
       <span id="retry-text"></span>
       <button class="btn tiny" id="retry-now" data-i18n="common.retryNow" hidden>立即重試</button>
       <button class="btn tiny" id="retry-cancel" data-i18n="common.cancel">取消</button>
+      <div class="wait" hidden><div class="batch-bar"><i></i></div><details><summary data-i18n="status.more">細節</summary><span class="wait-detail"></span></details></div>
     </div>
     <div id="choices" hidden>
       <div id="failed" class="panel" hidden>
-        <span id="failed-text"></span>
+        <span id="failed-msg" role="alert"><span id="failed-text"></span><span id="failed-help"></span></span>
         <button class="btn small" id="failed-retry" type="button" data-i18n="game.retry">重試</button>
         <button class="btn small ghost" id="failed-exit" type="button" data-i18n="game.toTitleOk">回到標題</button>
       </div>
@@ -161,21 +164,11 @@
   <section id="mdl-settings" class="modal" hidden>
     <div class="panel settings-panel">
       <header class="panel-head"><h2 data-i18n="settings.title">設定</h2><button class="btn small ghost" data-close data-i18n="common.close">關閉</button></header>
-      <label><span data-i18n="settings.speed">文字速度</span><input type="range" id="set-speed" min="10" max="120" step="5"><output id="out-speed"></output></label>
-      <label><span data-i18n="settings.bgm">音樂音量</span><input type="range" id="set-bgm" min="0" max="100" step="5"><output id="out-bgm"></output></label>
-      <label><span data-i18n="settings.sfx">音效音量</span><input type="range" id="set-sfx" min="0" max="100" step="5"><output id="out-sfx"></output></label>
-      <label class="check"><input type="checkbox" id="set-weather"><span data-i18n="settings.weather">顯示天氣粒子</span></label>
-      <label><span data-i18n="settings.imageMode">圖片產生</span><select id="set-img-mode">
-        <option value="all" data-i18n="settings.imgMode.all">全部（場景、立繪與所有表情）</option>
-        <option value="basic" data-i18n="settings.imgMode.basic">精簡（只畫場景與平靜立繪，省額度）</option>
-        <option value="off" data-i18n="settings.imgMode.off">關閉（只玩文字）</option>
-      </select></label>
-      <p class="hint" data-i18n="redraw.hint">在場景或角色上按右鍵（觸控長按）可以重新繪製</p>
-      <p class="hint server-only" data-i18n="settings.images">生圖引擎：只勾一個就只用那個；兩個都勾時，輝達失敗才改用 ComfyUI</p>
-      <label class="check server-only"><input type="checkbox" id="set-img-nvidia"><span data-i18n="settings.imgNvidia">輝達 FLUX.2（雲端）</span></label>
-      <label class="check server-only"><input type="checkbox" id="set-img-comfy"><span data-i18n="settings.imgComfy">本機 ComfyUI</span></label>
+      <h3 data-i18n="settings.sec.conn">連線</h3>
       <label class="key"><span data-i18n="settings.key">輝達 API Key</span><input type="password" id="set-key" autocomplete="off" maxlength="200" data-i18n-ph="settings.keyPh"><button class="btn small" id="set-key-save" data-i18n="settings.keySave">儲存</button></label>
+      <p class="hint field" data-i18n="settings.keyHint"></p>
       <label class="key local-only"><span data-i18n="settings.relay">轉送網址</span><input type="url" id="set-relay" autocomplete="off" maxlength="300" data-i18n-ph="settings.relayPh"><button class="btn small" id="set-relay-save" data-i18n="settings.keySave">儲存</button></label>
+      <p class="hint field local-only" data-i18n="settings.relayHint"></p>
       <details class="help local-only">
         <summary data-i18n="relay.q">轉送網址是什麼？怎麼填？</summary>
         <p data-i18n="relay.why"></p>
@@ -185,9 +178,41 @@
         <ol><li data-i18n="relay.s1"></li><li data-i18n="relay.s2"></li><li data-i18n="relay.s3"></li><li data-i18n="relay.s4"></li><li data-i18n="relay.s5"></li></ol>
         <p><a href="relay-worker.js" target="_blank" rel="noopener" data-i18n="relay.code">查看轉送程式碼（relay-worker.js）</a></p>
       </details>
-      <p class="hint local-only" data-i18n="settings.localHint">網頁版：金鑰與轉送網址只存在這台電腦的瀏覽器，故事與圖片也存在瀏覽器裡，換電腦前請先下載進度。</p>
+      <label><span data-i18n="settings.patience">忙碌時最多等</span><select id="set-patience">
+        <option value="60" data-i18n="settings.patience.60">1 分鐘</option>
+        <option value="300" data-i18n="settings.patience.300">5 分鐘</option>
+        <option value="600" data-i18n="settings.patience.600">10 分鐘</option>
+        <option value="86400" data-i18n="settings.patience.forever">一直等到成功</option>
+      </select></label>
+      <p class="hint field" data-i18n="settings.patienceHint"></p>
+      <label><span data-i18n="settings.prefer">模型偏好</span><select id="set-prefer">
+        <option value="quality" data-i18n="settings.prefer.quality">品質優先</option>
+        <option value="speed" data-i18n="settings.prefer.speed">速度優先</option>
+      </select></label>
+      <p class="hint field" data-i18n="settings.preferHint"></p>
       <p class="hint" id="set-models"></p>
+      <h3 data-i18n="settings.sec.game">遊戲</h3>
+      <label><span data-i18n="settings.speed">文字速度</span><input type="range" id="set-speed" min="10" max="120" step="5"><output id="out-speed"></output></label>
+      <p class="hint field" data-i18n="settings.speedHint"></p>
+      <label><span data-i18n="settings.bgm">音樂音量</span><input type="range" id="set-bgm" min="0" max="100" step="5"><output id="out-bgm"></output></label>
+      <label><span data-i18n="settings.sfx">音效音量</span><input type="range" id="set-sfx" min="0" max="100" step="5"><output id="out-sfx"></output></label>
+      <p class="hint field" data-i18n="settings.volumeHint"></p>
+      <label class="check"><input type="checkbox" id="set-weather"><span data-i18n="settings.weather">顯示天氣粒子</span></label>
+      <p class="hint field" data-i18n="settings.weatherHint"></p>
+      <label><span data-i18n="settings.imageMode">圖片產生</span><select id="set-img-mode">
+        <option value="all" data-i18n="settings.imgMode.all">全部（場景、立繪與所有表情）</option>
+        <option value="basic" data-i18n="settings.imgMode.basic">精簡（只畫場景與平靜立繪，省額度）</option>
+        <option value="off" data-i18n="settings.imgMode.off">關閉（只玩文字）</option>
+      </select></label>
+      <p class="hint field" data-i18n="redraw.hint">在場景或角色上按右鍵（觸控長按）可以重新繪製</p>
+      <p class="hint server-only" data-i18n="settings.images">生圖引擎：只勾一個就只用那個；兩個都勾時，輝達失敗才改用 ComfyUI</p>
+      <label class="check server-only"><input type="checkbox" id="set-img-nvidia"><span data-i18n="settings.imgNvidia">輝達 FLUX.2（雲端）</span></label>
+      <label class="check server-only"><input type="checkbox" id="set-img-comfy"><span data-i18n="settings.imgComfy">本機 ComfyUI</span></label>
+      <h3 data-i18n="settings.sec.data">資料</h3>
+      <p class="hint local-only" data-i18n="settings.localHint">網頁版：金鑰與轉送網址只存在這台電腦的瀏覽器，故事與圖片也存在瀏覽器裡，換電腦前請先下載進度。</p>
+      <p class="hint server-only" data-i18n="settings.serverHint"></p>
       <div class="menu row local-only"><button class="btn small ghost" id="set-demo" data-i18n="settings.restoreDemo">還原示範故事</button></div>
+      <p class="hint field local-only" data-i18n="settings.demoHint"></p>
     </div>
   </section>
 
@@ -216,14 +241,16 @@
   <!-- loading / progress overlay (setup and loading a game) -->
   <section id="mdl-progress" class="modal" hidden>
     <div class="panel confirm-panel">
-      <p id="progress-text"></p>
+      <p id="progress-text" aria-live="polite"></p>
       <p class="hint" id="progress-sub"></p>
+      <div class="wait" hidden><div class="batch-bar"><i></i></div><details><summary data-i18n="status.more">細節</summary><span class="wait-detail"></span></details></div>
       <div class="menu row"><button class="btn ghost" id="progress-now" data-i18n="common.retryNow" hidden>立即重試</button><button class="btn ghost" id="progress-cancel" data-i18n="common.cancel">取消</button></div>
     </div>
   </section>
 
-  <div id="toast" hidden></div>
-  <div id="offline" hidden data-i18n="net.offline">網路已中斷，送出會暫停，恢復連線後自動重試</div>
+  <div id="toast" aria-live="polite"></div>
+  <div id="sr-live" class="sr-only" aria-live="polite"></div>
+  <div id="offline" role="alert" hidden data-i18n="net.offline">網路已中斷，送出會暫停，恢復連線後自動重試</div>
   <footer class="credit" data-i18n="app.credit">製作者：黃政文</footer>
 </div>
 <script type="module" src="js/main.js"></script>

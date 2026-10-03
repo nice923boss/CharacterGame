@@ -70,6 +70,7 @@ async def test_speed_preference_switches_immediately():
     res = await client(busy_a, rec).stream([{"role": "user", "content": "x"}], rec.emit, waits=Waits(prefer="speed"))
     assert res.candidate is B
     assert "switch" in rec.states() and rec.sleeps == []
+    assert [e["status"] for e in rec.events if e.get("state") == "switch"] == [503]   # shown under "details"
 
 
 async def test_quality_preference_retries_first_model_before_switching():
@@ -94,6 +95,7 @@ async def test_transient_on_last_candidate_counts_down():
     retries = [e for e in rec.events if e.get("state") == "retry"]
     assert [e["remaining"] for e in retries] == [2, 1, 4, 3, 2, 1]
     assert retries[0]["attempt"] == 1 and retries[-1]["attempt"] == 2
+    assert {e["status"] for e in retries} == {429}
 
 
 async def test_wrapped_error_in_200_and_empty_reply_then_switch():
