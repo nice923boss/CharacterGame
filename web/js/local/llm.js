@@ -1,6 +1,7 @@
 // Browser port of server/llm_client.py. Calls go to the player's CORS relay with the player's own NVIDIA key;
 // the same retry groups, cooldowns, RPM window, watchdogs and content filter as the server.
 import { DATA } from './data.js';
+import { diag } from './diag.js';
 
 const L = DATA.llm;
 // Failure kinds as in the server, plus network (this browser cannot reach the relay) and upstream (the relay
@@ -47,6 +48,11 @@ export function retryAfter(value) {
   if (/^\s*-?\d+(\.\d+)?\s*$/.test(value)) return Math.max(Number(value), 0);
   const at = Date.parse(value);
   return Number.isNaN(at) ? null : Math.max((at - Date.now()) / 1000, 0);
+}
+
+// The relay marks its answers when its daily request allowance is 80% used (J03); main.js tells the player once
+export function relayNotice(resp) {
+  if (resp.headers.get('x-relay-quota') === 'near') globalThis.dispatchEvent?.(new Event('cg-relay-quota'));
 }
 
 // A hidden tab may run timers only once a minute; coming back wakes every sleeper, and the waits below
@@ -107,10 +113,12 @@ function classify(message, code) {
 }
 
 function note(model, outcome, s, status = null) {
+  const row = { model, outcome, status, s: Math.round(s * 10) / 10 };
   change((st) => {
-    st.history.push({ t: Date.now() / 1000, model, outcome, status, s: Math.round(s * 10) / 10 });
+    st.history.push({ t: Date.now() / 1000, ...row });
     if (st.history.length > HISTORY_KEEP) st.history.splice(0, st.history.length - HISTORY_KEEP);
   });
+  diag('text', row);
 }
 
 function waitFor(base, f) {
@@ -206,10 +214,12 @@ async function attempt(cand, messages, emit, temperature, conn, signal) {
       if (e.message === 'watchdog') throw new AttemptFailure('timeout', 'no headers');
       throw new AttemptFailure('network', String(e));
     }
+    relayNotice(resp);
     if (resp.status !== 200) {
       const status = resp.status;
       const text = (await resp.text().catch(() => '')).slice(0, 300);
       if (status === 403 && text.includes('origin_not_allowed')) throw { code: 'relay_origin' };
+      if (status === 429 && text.includes('relay_quota')) throw { code: 'relay_quota' };
       if (status === 401 || status === 403) throw { code: 'key_rejected' };
       if (status === 502 && text.includes('upstream_unreachable')) throw new AttemptFailure('upstream', text, false, null, status);
       if (status === 410 || (status === 404 && MODEL_GONE.test(text))) {

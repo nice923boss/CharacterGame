@@ -1,5 +1,6 @@
 """Paths, secrets and tuning constants. Secrets are read here only and never leave the backend."""
 import logging
+import logging.handlers
 import pathlib
 from dataclasses import dataclass, field
 
@@ -121,7 +122,9 @@ def setup_logging() -> logging.Logger:
     log = logging.getLogger("cg")
     if not log.handlers:
         log.setLevel(logging.INFO)
-        h = logging.FileHandler(LOGS / "server.log", encoding="utf-8")
+        # 5 MB per file, keeping server.log.1 to .3 (J04)
+        h = logging.handlers.RotatingFileHandler(LOGS / "server.log", maxBytes=5 * 1024 * 1024, backupCount=3,
+                                                 encoding="utf-8")
         h.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
         log.addHandler(h)
         sh = logging.StreamHandler()

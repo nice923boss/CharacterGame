@@ -3,7 +3,7 @@ import { LOCAL, activeJobs, get, post } from './api.js';
 import { applyStatic, setLang, t } from './i18n.js';
 import { sound } from './sound.js';
 import { createStage } from './stage.js';
-import { $, bindSettings, confirmBox, openModal, progress, toast, toastError } from './ui.js';
+import { $, bindSettings, confirmBox, openModal, progress, reloadSettings, toast, toastError } from './ui.js';
 import { initSetup, isBatchMode, resetSetup, startGame } from './setup.js';
 import { currentGameId, enterGame, initGame, leaveGame, openSlots, openTree } from './game.js';
 import { openStories } from './stories.js';
@@ -123,6 +123,9 @@ async function waitOpening(gid) {
   }
 }
 
+// The relay's daily allowance is 80% used (J03): say so once per page load, it stays until closed
+if (LOCAL) window.addEventListener('cg-relay-quota', () => toast(t('relay.quotaNear'), false, 0), { once: true });
+
 // Reloading or closing now would cut off a turn; the browser build's batch would pause too (the server's goes on)
 window.addEventListener('beforeunload', (e) => {
   if (activeJobs() > 0 || (LOCAL && batchActive())) { e.preventDefault(); e.returnValue = ''; }
@@ -165,9 +168,8 @@ function paintHealth() {
     ? t('health.localModels', { list, relay: t(health.relay_default ? 'health.relayDefault' : health.relay ? 'health.relay' : 'health.noRelay') }) : t('health.models', { list });
 }
 
-document.querySelectorAll('[data-lang]').forEach((b) => {
-  b.onclick = () => { setLang(b.dataset.lang); paintHealth(); paintBusy(); refreshBatches(); if (LOCAL) paintBackup(); };
-});
+function switchLang(code) { setLang(code); paintHealth(); paintBusy(); refreshBatches(); if (LOCAL) paintBackup(); }
+document.querySelectorAll('[data-lang]').forEach((b) => { b.onclick = () => switchLang(b.dataset.lang); });
 
 applyStatic();
 initGame();
@@ -286,13 +288,28 @@ if (LOCAL) {
       refreshContinue();
     } catch (e) { console.error(e); toast(t('err.local_internal'), true); }
   });
+  $('#set-diag').addEventListener('click', async () => {
+    try {
+      await (await import('./local/archive.js')).downloadDiag();
+      toast(t('settings.diagDone'), false, 6000);
+    } catch (e) { console.error(e); toast(t('err.local_internal'), true); }
+  });
   $('#import-dir').addEventListener('change', async (e) => {
     const files = e.target.files;
     if (!files?.length) return;
     toast(t('archive.importing'), false, 60000, { id: 'archive' });
     try {
       const r = await (await import('./local/archive.js')).importFolder(files);
-      toast(r.games ? t('archive.imported', r) : t('archive.none'), !r.games, 8000, { id: 'archive' });
+      if (r.settings) {   // H07, first so the message below is in the restored language
+        reloadSettings();
+        if (r.settings.lang) switchLang(r.settings.lang);
+        const s = await get('/api/settings');
+        $('#set-relay').value = s.relay || s.relay_default || '';
+        $('#set-img-mode').value = s.image_mode;
+        refreshHealth();
+      }
+      const done = r.settings ? 'archive.importedAll' : 'archive.imported';
+      toast(r.games ? t(done, r) : t('archive.none'), !r.games, 8000, { id: 'archive' });
       refreshContinue();
     } catch (err) { console.error(err); toast(t('err.local_internal'), true, 0, { id: 'archive' }); }
     e.target.value = '';

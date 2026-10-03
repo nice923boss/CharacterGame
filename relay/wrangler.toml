@@ -7,3 +7,14 @@ routes = [{ pattern = "chienzhi-relay.cattravelworld.com", custom_domain = true 
 
 [vars]
 ALLOWED_ORIGINS = "https://nice923boss.github.io,http://localhost:8766,http://127.0.0.1:8766"
+# Daily Worker requests of the account (free plan); the relay warns at 80% and refuses at 95%
+DAILY_LIMIT = "100000"
+
+# Per-day request count (class Usage in worker.js); SQLite-backed Durable Objects work on the free plan
+[[durable_objects.bindings]]
+name = "USAGE"
+class_name = "Usage"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Usage"]

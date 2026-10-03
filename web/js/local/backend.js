@@ -9,11 +9,14 @@ import * as llm from './llm.js';
 import { hint, probe, relayState, remember, verdict } from './check.js';
 import { analyzeNovel } from './novel.js';
 import { loadOpenCC } from './story.js';
+import { diag, watchErrors } from './diag.js';
 
 const KEY = 'cg-nvidia-key';
 const RELAY = 'cg-relay';
 const MODE = 'cg-image-mode';
 const KEY_AT = 'cg-nvidia-key-at';
+const UI = 'chienzhi.settings';
+const LANG = 'chienzhi.lang';
 
 function lsGet(k) { try { return localStorage.getItem(k) || ''; } catch { return ''; } }
 function lsSet(k, v) {
@@ -51,6 +54,8 @@ async function importDemo(force) {
   await store.kvPut('demoVersion', index.version);
   return index.games.length;
 }
+
+watchErrors();
 
 export const ready = (async () => {
   await store.openStore();
@@ -100,7 +105,20 @@ const health = () => ({
   models: DATA.llm.candidates.map((c) => c.label), demo: DATA.demo, ...keyInfo(),
 });
 
+// Error codes go to the diagnostic log (J01); only all_failed keeps its params (model and reason, no text)
+const failure = (e) => ({
+  code: e?.code || 'crash', ...(e?.code ? {} : { message: String(e?.message || e).slice(0, 200) }),
+  ...(e?.code === 'all_failed' ? { errors: e.params?.errors } : {}),
+});
+
 export async function request(method, url, body) {
+  try { return await route(method, url, body); } catch (e) {
+    diag('api_error', { route: `${method} ${new URL(url, location.href).pathname.split('/api/')[1]}`, ...failure(e) });
+    throw e;
+  }
+}
+
+async function route(method, url, body) {
   await ready;
   const u = new URL(url, location.href);
   const parts = u.pathname.slice(u.pathname.indexOf('/api/') + 5).split('/');
@@ -251,10 +269,82 @@ export function job(url, body, onEvent) {
       else throw { code: 'http', params: { status: 404 } };
     } catch (e) {
       if (ctrl.signal.aborted) throw { code: 'cancelled' };
+      diag('job_error', { job: parts.join('/'), ...failure(e) });
       throw e;
     }
     if (!final) throw { code: 'dropped' };
     return final;
   })();
   return { done, cancel: async () => ctrl.abort(), retryNow: async () => { skip.on = true; } };
+}
+
+// ---------- diagnostics file (J01) ----------
+
+// What happened lately and in which setup. The key itself is never included: only whether one is saved, and
+// the finished text is scrubbed once more in case an error message ever quoted it.
+export async function diagReport() {
+  await ready;
+  const key = lsGet(KEY);
+  const c = conn();
+  let version = null;
+  try { version = (await caches.keys()).find((k) => k.startsWith('chienzhi-')) || null; } catch { /* no cache API */ }
+  let storage = null;
+  try {
+    const est = await navigator.storage?.estimate();
+    if (est) storage = { usage: est.usage, quota: est.quota, persisted: await navigator.storage.persisted?.() };
+  } catch { /* not supported */ }
+  let relay = null;
+  try { relay = c.relay ? new URL(c.relay).origin : null; } catch { relay = 'invalid'; }
+  const report = {
+    created_at: new Date().toISOString(),
+    version,
+    browser: {
+      user_agent: navigator.userAgent, language: navigator.language, online: navigator.onLine,
+      viewport: `${innerWidth}x${innerHeight}`,
+    },
+    settings: browserSettings(),
+    relay: { origin: relay, builtin: !lsGet(RELAY) },
+    key: { saved: !!key, saved_at: lsGet(KEY_AT) || null, check: key ? verdict() : null },
+    storage,
+    stats: llm.stats(),
+    events: await store.loadDiag(),
+  };
+  delete report.settings.relay;   // shown above as its origin only
+  const text = JSON.stringify(report, null, 1);
+  return key ? text.split(key).join('***') : text;
+}
+
+// ---------- settings carried in the progress zip (H07); the key never leaves this browser ----------
+
+export function browserSettings() {
+  let ui = null;
+  try { ui = JSON.parse(lsGet(UI) || 'null'); } catch { /* unreadable: left out */ }
+  return { ui, lang: lsGet(LANG) || null, relay: lsGet(RELAY), image_mode: lsGet(MODE) || 'all' };
+}
+
+// Writes what an imported folder carried, skipping anything malformed; resolves with what was applied, or null
+export function applyBrowserSettings(s) {
+  if (!s || typeof s !== 'object') return null;
+  const applied = {};
+  if (s.ui && typeof s.ui === 'object' && !Array.isArray(s.ui)) {
+    const ui = Object.fromEntries(Object.entries(s.ui).filter(([, v]) => ['number', 'boolean', 'string'].includes(typeof v)));
+    let current = {};
+    try { current = JSON.parse(lsGet(UI) || '{}'); } catch { /* replaced below */ }
+    lsSet(UI, JSON.stringify({ ...current, ...ui }));
+    applied.ui = true;
+  }
+  if (['zh', 'en'].includes(s.lang)) { lsSet(LANG, s.lang); applied.lang = s.lang; }
+  if (typeof s.relay === 'string') {
+    try {
+      const r = validRelay(s.relay);
+      lsSet(RELAY, r === DATA.relay ? '' : r);
+      applied.relay = true;
+    } catch { console.warn('imported relay URL ignored'); }
+  }
+  if (DATA.art.IMAGE_MODES.includes(s.image_mode)) {
+    lsSet(MODE, s.image_mode);
+    images.setMode(s.image_mode);
+    applied.image_mode = s.image_mode;
+  }
+  return Object.keys(applied).length ? applied : null;
 }

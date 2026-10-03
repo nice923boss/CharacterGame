@@ -7,6 +7,7 @@ import { DATA } from './data.js';
 import * as store from './store.js';
 import * as images from './images.js';
 import * as turns from './turns.js';
+import { diag } from './diag.js';
 
 const { BATCH_CONCURRENCY, BATCH_TURN_RETRIES, BATCH_RETRY_WAITS_S, BATCH_TAIL_WAIT_S, BATCH_GROW_AFTER } = DATA.limits;
 const IMAGE_POLL_MS = 5000;
@@ -33,13 +34,19 @@ const limiter = {
   },
   acquire() { return new Promise((resolve) => { this.waiting.push(resolve); this.pump(); }); },
   release() { this.active -= 1; this.pump(); },
-  busy() { this.limit = Math.max(1, Math.floor(this.limit / 2)); this.streak = 0; },
+  busy() { this.limit = Math.max(1, Math.floor(this.limit / 2)); this.streak = 0; diag('batch_slower', { limit: this.limit }); },
   ok() {
     this.streak += 1;
-    if (this.streak >= BATCH_GROW_AFTER && this.limit < this.most) { this.limit += 1; this.streak = 0; this.pump(); }
+    if (this.streak >= BATCH_GROW_AFTER && this.limit < this.most) {
+      this.limit += 1; this.streak = 0; this.pump();
+      diag('batch_faster', { limit: this.limit });
+    }
   },
 };
 const isBusy = (e) => e?.code === 'all_failed' && (e.params?.errors || []).some((x) => BUSY.includes(x.reason));
+
+// For tools/js_tests
+export const _test = { limiter, isBusy };
 
 const load = (gid) => store.kvGet(PREFIX + gid);
 

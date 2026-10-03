@@ -103,7 +103,7 @@ export function confirmBox(text, okText = t('common.ok'), checkLabel = '') {
 const HELP = {
   no_key: ['key', '#set-key'], key_rejected: ['key', '#set-key'], bad_key: ['key', '#set-key'],
   no_relay: ['relay', '#set-relay'], relay_unreachable: ['relay', '#set-relay'],
-  relay_origin: ['relay', '#set-relay'], bad_relay: ['relay', '#set-relay'],
+  relay_origin: ['relay', '#set-relay'], bad_relay: ['relay', '#set-relay'], relay_quota: ['relay', '#set-relay'],
   all_failed: ['busy', '#set-patience'], offline: ['network'], dropped: ['network'], storage_full: ['storage'],
 };
 // A settings field this build does not show (the relay in the server build)
@@ -265,6 +265,10 @@ function readSettings() {
 
 export const settings = readSettings();
 
+let reload = () => {};
+// Settings an imported progress folder brought back (H07): read them again and repaint the controls
+export const reloadSettings = () => reload();
+
 export function bindSettings(onChange) {
   const map = { speed: '#set-speed', bgm: '#set-bgm', sfx: '#set-sfx' };
   const paint = () => {
@@ -272,32 +276,41 @@ export function bindSettings(onChange) {
     $('#out-bgm').textContent = settings.bgm;
     $('#out-sfx').textContent = settings.sfx;
   };
+  const fill = () => {
+    for (const [k, sel] of Object.entries(map)) $(sel).value = settings[k];
+    $('#set-weather').checked = settings.weather;
+    $('#set-patience').value = String(settings.patience);
+    $('#set-prefer').value = settings.prefer;
+    $('#set-auto').value = String(settings.auto);
+    $('#set-font').value = settings.font;
+    $('#set-contrast').checked = settings.contrast;
+  };
   for (const [k, sel] of Object.entries(map)) {
-    $(sel).value = settings[k];
     $(sel).addEventListener('input', () => {
       settings[k] = Number($(sel).value);
       save();
     });
   }
-  $('#set-weather').checked = settings.weather;
   $('#set-weather').addEventListener('change', () => { settings.weather = $('#set-weather').checked; save(); });
   // H02, H03: sent with every job (api.js)
-  $('#set-patience').value = String(settings.patience);
   $('#set-patience').addEventListener('change', () => { settings.patience = Number($('#set-patience').value); save(); });
-  $('#set-prefer').value = settings.prefer;
   $('#set-prefer').addEventListener('change', () => { settings.prefer = $('#set-prefer').value; save(); });
   // G03, I06
-  $('#set-auto').value = String(settings.auto);
   $('#set-auto').addEventListener('change', () => { settings.auto = Number($('#set-auto').value); save(); });
-  $('#set-font').value = settings.font;
   $('#set-font').addEventListener('change', () => { settings.font = $('#set-font').value; save(); });
-  $('#set-contrast').checked = settings.contrast;
   $('#set-contrast').addEventListener('change', () => { settings.contrast = $('#set-contrast').checked; save(); });
   function save() {
     try { localStorage.setItem(KEY, JSON.stringify(settings)); } catch { /* private mode: keep in memory */ }
     paint();
     onChange(settings);
   }
+  reload = () => {
+    Object.assign(settings, readSettings());
+    fill();
+    paint();
+    onChange(settings);
+  };
+  fill();
   paint();
   onChange(settings);
 }

@@ -11,6 +11,7 @@ const CHECK = 'cg-key-check';
 
 function classify(status, text) {
   if (status === 403 && text.includes('origin_not_allowed')) return 'relay_origin';
+  if (status === 429 && text.includes('relay_quota')) return 'relay_quota';
   if (status === 502 && text.includes('upstream_unreachable')) return 'upstream';
   if (status === 401 || status === 403) return 'key_rejected';
   if (status === 200 || status === 422) return 'ok';
@@ -55,7 +56,7 @@ export async function relayState(relay) {
 
 export function remember(results) {
   const verdict = results.some((r) => r.state === 'key_rejected') ? 'rejected'
-    : results.some((r) => KEY_SEEN.includes(r.status)) ? 'valid' : null;
+    : results.some((r) => r.state !== 'relay_quota' && KEY_SEEN.includes(r.status)) ? 'valid' : null;
   try { localStorage.setItem(CHECK, JSON.stringify({ at: Date.now(), verdict })); } catch { /* shows "not tested" */ }
 }
 

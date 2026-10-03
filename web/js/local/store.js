@@ -80,6 +80,14 @@ export const kvGet = (key) => idbGet('kv', key);
 export const kvPut = (key, value) => idbPut('kv', key, value);
 export const kvKeys = () => tx('kv', 'readonly', (s) => s.getAllKeys());
 
+// Diagnostic events (J01): only the newest DIAG_KEEP are kept, read and trimmed in one transaction
+export const DIAG_KEEP = 200;
+export const addDiag = (event) => tx('kv', 'readwrite', (s) => {
+  const req = s.get('diag');
+  req.onsuccess = () => { s.put([...(req.result || []), event].slice(-DIAG_KEEP), 'diag'); };
+});
+export const loadDiag = async () => (await kvGet('diag')) || [];
+
 export function nowIso() {
   const d = new Date();
   const p = (n) => String(Math.abs(n)).padStart(2, '0');

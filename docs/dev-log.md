@@ -546,3 +546,52 @@ n_0006 底下實際有 3 條分支：n_0007（原路線）、n_0022（第一次 
   - G07 的擁擠提示：要一輪超過平均兩倍且多 20 秒，沒有在瀏覽器實測，只讀程式確認
   - 實機觸控、手機旋轉、iOS Safari 的 `dvh`；螢幕閱讀器朗讀紀錄視窗
   - 換場回合重播途中存檔：標籤與縮圖會是換場前的場景（只讀程式確認）
+
+## 21. 改進清單 Phase 9：診斷紀錄、log 輪替、瀏覽器版自動測試、轉送額度計數與尖峰實測（2026-10-04）
+
+- 範圍：J01、J03、J04、J05、J07、J09、H07，加上 Service Worker 快取混版的修正；J01、J03、J07、H07 只在瀏覽器版，J04、J05、J09 在伺服器端
+- 診斷紀錄（J01）
+  - 新檔 `web/js/local/diag.js`：重試、換模型、錯誤代碼、耗時寫進 IndexedDB 的 `kv` 存放區（`store.js` 的 `addDiag`、`loadDiag`），只留最近 200 筆；事件不含金鑰與故事內容，文字欄位截到 200 字
+  - 另外記錄沒人接住的錯誤：`window` 的 `error`（`page_error`）與 `unhandledrejection`（`unhandled`）
+  - 設定頁「下載診斷檔」存成 `chienzhi-diag-YYYYMMDD-HHMM.json`：事件、建置版本、瀏覽器版本字串（userAgent）、語言與視窗大小、目前設定、轉送網址的網域、儲存空間用量、模型統計；金鑰只記有沒有填與填入時間
+- 轉送額度計數（J03）
+  - `relay/worker.js` 以 Durable Object `Usage`（`USAGE` 綁定）記每天的請求數（UTC 日期，台灣時間早上 8 點換日）；各執行個體先在記憶體累加，最多每 30 秒回報一次
+  - 到 `DAILY_LIMIT`（`wrangler.toml` 設 100000）的 80%：回應加 `x-relay-quota: near`，遊戲提醒一次「轉送服務今天的 Cloudflare 免費額度已用掉八成…」；到 95%：直接回 429 `relay_quota`（帶 CORS 標頭），遊戲說明額度已滿、不再重試；預檢（OPTIONS）照常通過
+  - `GET /usage` 回傳 `{limit, days}`：最近 7 天每天的次數，沒有玩家或金鑰資料
+  - 部署：Durable Object 需要帳號有 workers.dev 子網域（沒有時部署報錯 10063）；經黃政文同意，以 wrangler 的登入權杖呼叫 Cloudflare API 建立 `cattravelworld.workers.dev`（Chrome 沒有登入 Cloudflare，不能代為登入）。`workers_dev = false`，轉送不會出現在那個網址
+  - `relay/README.md` 加上「每日額度計數」一節，寫明做法與限制
+- log 輪替（J04）：`server/config.py` 改用 `RotatingFileHandler`，每檔 5 MB，保留 `server.log.1` 到 `.3`
+- 測試不寫正式 log（J05）：新檔 `server/tests/conftest.py` 先替 `cg` logger 掛上 `NullHandler`，`setup_logging()` 看到已有處理器就不再加檔案處理器
+- 瀏覽器版自動測試（J07）
+  - `tools/js_tests/`：`harness.mjs`（在 Node 裡模擬 `fetch`、計時器與 localStorage，按順序回應預設的假回應）加 4 個測試檔，共 30 項：`llm.test.mjs` 12、`images.test.mjs` 6、`batch.test.mjs` 5、`relay.test.mjs` 7
+  - 涵蓋：忙碌重試與隨機延遲範圍、Retry-After 與上限、模型退役換手與冷卻、偏好速度、沒標頭或沒資料的逾時、轉送 502、轉送與金鑰拒絕立即停止、轉送額度、連不上轉送、全部忙碌的 `all_failed`、耐心等待；批次並行數減半與加回、等待；轉送 Worker 的計數、提醒、擋下、7 天清理
+  - `server/tests/test_browser_js.py` 把 `web/js` 複製到暫存資料夾，放進 `build_pages.py` 產生的 `data.js` 後跑 `node --test`，所以一般 pytest 就會跑到；沒有 Node 時跳過
+- 尖峰實測（J09）：新檔 `tools/peak_probe.py`，用 `.env` 指定的金鑰以示範故事的節點重播 N 輪，只用輝達模型，回報成功數、耗時、等待與換模型次數；不存故事，金鑰只以遮罩形式出現
+- 備份帶設定（H07）
+  - 匯出的 zip 多一個 `browser-settings.json`：介面設定（音量、速度、字體等）、語言、轉送網址、生圖模式；不含金鑰
+  - 讀入時還原這些設定，通知改成「已讀入 N 個故事、M 個存檔，並還原音量、速度、語言、轉送網址等設定（金鑰不在備份裡，要另外填）」
+  - 逐欄檢查型別與允許值，不合格的欄位略過
+- Service Worker 快取混版（GAPS 既有項目）：`tools/build_pages.py` 的 `stamp_modules` 在每個相對模組網址與 `index.html` 的 `main.js`、`style.css` 後加 `?v=<版本>`，瀏覽器不會把兩個版本的模組接在一起
+- 驗收
+  - `node --check` 所有改過的 JS；pytest：175 passed（含 Node 測試 30 項）
+  - J07 刻意改壞檢查：llm、images、batch 改壞 4 處都被抓到；relay 改壞 5 處（不擋、不提醒、回報失敗時不加回、不清舊日、回報間隔）都被抓到
+  - J04：跑完整套 pytest 後 `logs/server.log` 大小不變（889180 位元組）；在暫存資料夾測試輪替，留下 `server.log` 與 `.1` 到 `.3`，各約 5 MB
+  - J01（Pages 建置 + 本機假轉送）：「下載診斷檔」產生 1880 位元組、6 筆事件、金鑰欄為「沒填」的檔案，通知「診斷檔已下載，回報問題時請附上這個檔案」；`page_error` 與 `unhandled` 都有記到；寫入 230 筆後只留最後 200 筆（第 30 到 229 筆）
+  - H07：匯出 zip 20 個檔，含 `browser-settings.json`、沒有金鑰；讀入後速度 77、音樂 12、大字體、中文、轉送網址、生圖關閉都還原；壞資料（速度是物件、語言 fr、轉送 `javascript:`、生圖模式 everything）只套用合格的字體一欄
+  - SW：建置後 29 個模組網址都帶版本、0 個漏掉；快取名稱 `chienzhi-<版本>`；新版等待中時按更新通知的「重新整理」換到新版本
+  - J03 本機（`wrangler dev`，上限設 10）：第 8 次起帶 `near`，第 10 次起回 429 `relay_quota`；回報後 `/usage` 為 17
+  - J03 正式部署：版本 `325398a6`，綁定 `USAGE`、`ALLOWED_ORIGINS`、`DAILY_LIMIT`；`/usage` 回 `{"limit":100000,"days":{"2026-10-03":7}}`；OPTIONS 204；POST 照常轉給輝達（帶 CORS 標頭）；不允許的來源 403；GET `/v1/...` 405
+  - 瀏覽器（重新建置後）：額度提醒兩次事件只跳一次，文字正確；首頁正常
+  - J09（2026-10-04 00:34 到 00:45，偏好品質，測試金鑰）：20 輪全部成功，都在 ultra；總耗時中位數 32.2 秒、最長 83.4 秒；第一筆資料中位數 1.0 秒；3 輪遇到 503 忙碌（第 1 輪兩次共等 7 秒，第 13、20 輪各 3 秒），共等 13 秒，0 次換模型；輸出裡沒有金鑰
+- 修正（測試中發現）
+  - `peak_probe.py` 說明原寫「什麼都不存」，但用戶端照常把嘗試紀錄寫進 `logs/server.log`（已遮罩）：改正說明
+  - llm 測試有一處改壞沒抓到（401 與一般錯誤都丟出不重試的錯誤，測試分不出來）：測試改為比對錯誤代碼
+  - 瀏覽器實測一開始看不到額度提醒：舊版 Service Worker 仍在服務，新版在等待；按更新通知的「重新整理」後正常（屬設計行為）
+- 與清單的差異
+  - J03 用 Durable Object 計數，不用 Analytics Engine 或 KV（Durable Object 一次處理一個回報，加總不會互相覆蓋）
+  - J09 只跑一次（台灣時間 00:34，美國白天）；稱為「尖峰」是推估，不是確定的忙碌時段
+- 未驗證
+  - 正式轉送真的用完額度：只在 `wrangler dev` 用上限 10 模擬
+  - Cloudflare 免費方案實際每日上限（照官方說明設 10 萬）
+  - 學員從後台貼上的 Worker 沒有 `USAGE` 綁定時的行為：只讀程式確認不計數、不擋
+  - J09 只有單一時段；燈號門檻仍未用真正的忙碌時段校正

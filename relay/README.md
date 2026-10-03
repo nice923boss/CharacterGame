@@ -27,6 +27,24 @@ npx wrangler deploy    # 依 wrangler.toml 部署，並綁定 chienzhi-relay.cat
 
 `wrangler.toml` 的 `ALLOWED_ORIGINS` 是允許使用這個轉送的網站來源（只填 `https://網域`，不含路徑），逗號分隔。
 
+## 每日額度計數
+
+Cloudflare 免費方案每天大約 10 萬次 Worker 請求（`wrangler.toml` 的 `DAILY_LIMIT`，以帳號實際方案為準）。
+超過後 Cloudflare 回的錯誤頁沒有 CORS 標頭，遊戲只會看到「連不上」，所以轉送自己計數：
+
+- 每個請求計入當天次數（UTC 日期，台灣時間早上 8 點換日），存在 Durable Object `Usage`（`USAGE` 綁定）。
+- 用到 80%：回應加上 `x-relay-quota: near`，遊戲提醒一次。
+- 用到 95%：轉送直接回 429 `relay_quota`（帶 CORS 標頭），遊戲說明轉送今日額度已滿，不再重試。預檢（OPTIONS）照常通過。
+- `GET /usage` 回傳 `{limit, days}`：最近 7 天每天的請求次數，沒有玩家或金鑰資料。
+
+限制：
+
+- 計數是近似值：每個執行個體最多每 30 秒回報一次總數，各執行個體的第一個請求還不知道當天總數。
+- 只算這支轉送；同帳號其他 Worker 的請求不算進來。
+- Durable Object 需要帳號有 workers.dev 子網域，沒有時部署會出現錯誤 10063。本帳號已建 `cattravelworld.workers.dev`；
+  `workers_dev = false`，轉送不會出現在那個網址。
+- 學員從後台貼上的版本沒有 `USAGE` 綁定：不計數、不擋。`tools/dev_relay.py` 也不計數。
+
 ## 學員自己架（選用）
 
 設定頁「轉送網址是什麼？怎麼填？」有步驟：在 Cloudflare 後台建立 Worker，貼上 `relay-worker.js`，

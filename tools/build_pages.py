@@ -6,7 +6,8 @@
 - copies the demo story (final images only, no .raw intermediates) and writes demo/index.json
 - bakes in the built-in relay (RELAY) so players only enter their own NVIDIA key, and copies relay/worker.js
   as relay-worker.js for anyone who wants to run their own relay
-- writes sw.js, which keeps the app shell and CDN libraries in the browser cache
+- writes sw.js, which keeps the app shell and CDN libraries in the browser cache, and stamps that version on
+  every module URL (?v=), so a browser never joins modules of two builds
 - refuses to finish when any secret from .env appears in the output
 
 Run from the project root: python tools/build_pages.py
@@ -112,6 +113,28 @@ def service_worker(version: str) -> str:
         .replace("__CDN__", json.dumps(CDN))
 
 
+# Relative module specifiers: from './x.js', import('../x.js'), import './x.js'
+MODULE_SPEC = re.compile(r"""((?:\bfrom|\bimport)\s*\(?\s*)(['"])(\.{1,2}/[^'"?]+\.js)\2""")
+
+
+def stamp_modules(version: str) -> None:
+    """Every relative module URL carries the build version. Without it a module fetched outside the service
+    worker (first visit, or the HTTP cache) could come from another build than the module importing it."""
+    for f in OUT.rglob("*.js"):
+        if f.name in ("sw.js", "relay-worker.js") or "demo" in f.relative_to(OUT).parts:
+            continue
+        text = f.read_text(encoding="utf-8")
+        stamped = MODULE_SPEC.sub(lambda m: f"{m[1]}{m[2]}{m[3]}?v={version}{m[2]}", text)
+        if stamped != text:
+            f.write_text(stamped, encoding="utf-8")
+    index = OUT / "index.html"
+    html = index.read_text(encoding="utf-8")
+    for ref in ('src="js/main.js"', 'href="css/style.css"'):
+        assert html.count(ref) == 1, ref
+        html = html.replace(ref, f'{ref[:-1]}?v={version}"')
+    index.write_text(html, encoding="utf-8")
+
+
 def secret_scan() -> None:
     """Every .env value that could identify a private endpoint or key must be absent from the output."""
     needles = [v for k, v in config.ENV.items() if v and len(v) >= 6 and
@@ -152,7 +175,9 @@ def main() -> None:
         if p.is_file():
             shell_digest.update(p.relative_to(OUT).as_posix().encode())
             shell_digest.update(p.read_bytes())
-    (OUT / "sw.js").write_text(service_worker(shell_digest.hexdigest()[:12]), encoding="utf-8")
+    version = shell_digest.hexdigest()[:12]
+    (OUT / "sw.js").write_text(service_worker(version), encoding="utf-8")
+    stamp_modules(version)
     (OUT / ".nojekyll").write_text("", encoding="utf-8")
     secret_scan()
     size = sum(f.stat().st_size for f in OUT.rglob("*") if f.is_file()) / 1e6

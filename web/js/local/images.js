@@ -5,6 +5,7 @@
 import { DATA } from './data.js';
 import * as store from './store.js';
 import * as llm from './llm.js';
+import { diag } from './diag.js';
 import { t } from '../i18n.js';
 
 const A = DATA.art;
@@ -220,11 +221,13 @@ function failed(job, e) {
     rounds.set(k, n + 1);
     later.set(k, { key: job.key, due: Date.now() + A.AUTO_RETRY_S * 1000, priority: job.priority, error: msg });
     console.warn(`asset failed ${k} (automatic retry ${n + 1} in ${A.AUTO_RETRY_S}s): ${msg}`);
+    diag('image_requeue', { asset: k, round: n + 1, error: msg });
     return;
   }
   rounds.delete(k);
   errors.set(k, msg);
   console.error(`asset failed ${k}: ${msg}`);
+  diag('image_failed', { asset: k, error: msg });
 }
 
 async function loop() {
@@ -247,7 +250,9 @@ async function loop() {
     try {
       await run(job.key);
       rounds.delete(k);
-      console.info(`asset done ${k} ${((performance.now() - t0) / 1000).toFixed(1)}s`);
+      const s = Math.round((performance.now() - t0) / 100) / 10;
+      console.info(`asset done ${k} ${s}s`);
+      diag('image_done', { asset: k, s });
     } catch (e) {   // a failed image must not stop the queue; the player sees the error state
       failed(job, e);
     } finally {
@@ -339,22 +344,29 @@ async function draw(prompt, seed) {
         method: 'POST', body, signal: ctrl.signal,
         headers: { Authorization: `Bearer ${key}`, Accept: 'application/json', 'Content-Type': 'application/json' },
       });
+      llm.relayNotice(res);
       if (res.status === 200) data = await res.json();
     } catch (e) {
       if (backoff === null) throw new ImageFailed(ctrl.signal.aborted ? t('img.timeout', { s: A.TIMEOUT_S }) : t('img.network'));
+      diag('image_retry', { reason: ctrl.signal.aborted ? 'timeout' : 'network', wait: backoff });
       await wait(backoff);
       continue;
     } finally {
       clearTimeout(timer);
     }
     if (data) break;
+    if (res.status === 429 && (await res.text().catch(() => '')).includes('relay_quota')) {
+      throw new ImageFailed(t('err.relay_quota'), false);
+    }
     if (res.status === 401 || res.status === 403) throw new ImageFailed(t('img.keyRejected', { status: res.status }), false);
     if (!A.RETRY_STATUS.includes(res.status) || backoff === null) {
       // NVIDIA also answers 404 while a function is briefly unavailable, so a later round may still work
       throw new ImageFailed(t('img.http', { status: res.status }), A.RETRY_STATUS.includes(res.status) || res.status === 404);
     }
     const hint = llm.retryAfter(res.headers.get('retry-after'));
-    await wait(hint === null ? backoff : Math.min(hint, DATA.llm.RETRY_AFTER_MAX_S));
+    const pause = hint === null ? backoff : Math.min(hint, DATA.llm.RETRY_AFTER_MAX_S);
+    diag('image_retry', { status: res.status, wait: pause });
+    await wait(pause);
   }
   const art = (data.artifacts || [{}])[0] || {};
   if (art.finishReason !== 'SUCCESS' || !art.base64) {
@@ -364,6 +376,9 @@ async function draw(prompt, seed) {
   const bytes = Uint8Array.from(atob(art.base64), (c) => c.charCodeAt(0));
   return createImageBitmap(new Blob([bytes]));
 }
+
+// For tools/js_tests: draw one image with a given connection, without starting the queue (it needs IndexedDB)
+export const _test = { draw, useConn: (getConn) => { conn = getConn; } };
 
 // Center-crop the square to the target aspect ratio, then resize; returns ImageData
 function fit(img, width, height) {
