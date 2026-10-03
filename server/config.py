@@ -64,12 +64,13 @@ NO_THINK = {"chat_template_kwargs": {"enable_thinking": False}}
 NV_BASE = "https://integrate.api.nvidia.com/v1"
 
 # Order decided by the Owner after the spike: ultra no-think first, local qwen as fallback.
-# super no-think is a last resort (fastest but weaker story logic in the spike).
+# lightning no-think is the last resort: nemotron-3-super was retired on 2026-10-03 (HTTP 410); in that day's
+# spike lightning wrote setup, opening and a turn for a zh and an en story with no repairs (docs/dev-log.md).
 CANDIDATES = [
     Candidate("ultra", "nvidia", NV_BASE, "NVIDIA_API_KEY", "nvidia/nemotron-3-ultra-550b-a55b", NO_THINK),
     Candidate("qwen", "local", ENV.get("LOCAL_LLM_BASE_URL", ""), "LOCAL_LLM_API_KEY",
               ENV.get("LOCAL_LLM_MODEL", ""), NO_THINK),
-    Candidate("super", "nvidia", NV_BASE, "NVIDIA_API_KEY", "nvidia/nemotron-3-super-120b-a12b", NO_THINK),
+    Candidate("lightning", "nvidia", NV_BASE, "NVIDIA_API_KEY", "nvidia/nemotron-3.5-lightning-30b-a3b", NO_THINK),
 ]
 
 # LLM tuning (PLAN section 6)
@@ -83,7 +84,15 @@ RPM_LIMIT = 35
 TRANSIENT_STATUS = {404, 408, 409, 425, 429, 500, 502, 503, 504}
 TRANSIENT_BACKOFF_S = [2, 4, 8, 16, 32]
 EMPTY_BACKOFF_S = [2, 5]          # then switch candidate instead of waiting 89 s
-COOLDOWN_S = 90                   # a failed candidate is skipped this long
+COOLDOWN_STEPS_S = [90, 180, 300]  # a failed candidate is skipped this long; failures in a row lengthen it,
+                                   # one success clears it
+RETRY_AFTER_MAX_S = 60            # a Retry-After header replaces the backoff table, capped
+JITTER = (0.7, 1.3)               # every backoff wait is scaled by a random factor in this range
+PRIMARY_RETRY_S = [3, 6]          # "quality" preference: the first model retries before switching
+PATIENCE_STEP_S = 20              # after the backoff table, the last model retries this often until patience runs out
+PATIENCE_MAX_S = 86400            # "wait until it works" in the settings page
+STATS_KEEP = 2000                 # attempts kept for /api/stats and the busy light
+BUSY_WINDOW_S = 300
 
 # Batch mode (whole tree written ahead). Spike 2026-09-25: 6 and 8 parallel ultra calls, no 429,
 # 13-16 s typical, slowest 50 s; 6 keeps ~24 calls/min under RPM_LIMIT

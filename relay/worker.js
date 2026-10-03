@@ -41,10 +41,19 @@ export default {
     const headers = { 'Content-Type': request.headers.get('Content-Type') || 'application/json' };
     for (const h of ['Authorization', 'Accept']) if (request.headers.get(h)) headers[h] = request.headers.get(h);
     // Request bodies are small JSON, so read them whole (streaming a request body needs duplex support)
-    const upstream = await fetch(route.upstream + url.pathname, { method: 'POST', headers, body: await request.arrayBuffer() });
-    return new Response(upstream.body, {
-      status: upstream.status,
-      headers: { 'Content-Type': upstream.headers.get('Content-Type') || 'application/json', ...cors },
-    });
+    const body = await request.arrayBuffer();
+    let upstream;
+    try {
+      upstream = await fetch(route.upstream + url.pathname, { method: 'POST', headers, body });
+    } catch (e) {
+      // The page tells "relay down" (no answer at all) from "NVIDIA unreachable" (this answer) and retries
+      return json(502, { error: 'upstream_unreachable' }, cors);
+    }
+    const out = { 'Content-Type': upstream.headers.get('Content-Type') || 'application/json', ...cors };
+    // The page waits as long as NVIDIA asks (Retry-After) instead of guessing
+    const passed = [...upstream.headers.keys()].filter((h) => h === 'retry-after' || h.startsWith('x-ratelimit-'));
+    for (const h of passed) out[h] = upstream.headers.get(h);
+    if (passed.length) out['Access-Control-Expose-Headers'] = passed.join(', ');
+    return new Response(upstream.body, { status: upstream.status, headers: out });
   },
 };

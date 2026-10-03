@@ -5,6 +5,7 @@ import * as store from './store.js';
 import * as images from './images.js';
 import * as turns from './turns.js';
 import * as batch from './batch.js';
+import * as llm from './llm.js';
 import { analyzeNovel } from './novel.js';
 import { loadOpenCC } from './story.js';
 
@@ -95,6 +96,7 @@ export async function request(method, url, body) {
   const scene = u.searchParams.get('scene');
   const [a, gid, sub, act] = parts;
   if (method === 'GET' && a === 'health') return health();
+  if (method === 'GET' && a === 'stats') return llm.stats();
   if (a === 'settings' && !gid) return { image_nvidia: true, image_comfy: false, relay: lsGet(RELAY), relay_default: DATA.relay || '' };
   if (a === 'settings' && gid === 'nvidia_key') { lsSet(KEY, validKey(body?.key)); return { nvidia_key: true }; }
   if (a === 'settings' && gid === 'relay') {
@@ -143,6 +145,8 @@ export async function request(method, url, body) {
 // Same contract as api.job: onEvent gets every event (final included); done resolves with the final event
 export function job(url, body, onEvent) {
   const ctrl = new AbortController();
+  const skip = { on: false };   // "retry now": ends the current countdown
+  const jobConn = () => ({ ...conn(), waits: { ...(body.waits || {}), skip } });
   const done = (async () => {
     await ready;
     let final = null;
@@ -154,14 +158,14 @@ export function job(url, body, onEvent) {
     const parts = new URL(url, location.href).pathname.split('/api/')[1].split('/');
     try {
       if (parts[0] === 'games' && parts.length === 1) {
-        const game = await turns.createGame(body, emit, conn(), ctrl.signal);
+        const game = await turns.createGame(body, emit, jobConn(), ctrl.signal);
         if (game.batch) await batch.start(game.id);
       }
       else if (parts[0] === 'games' && parts[2] === 'turn') {
         await store.loadGame(parts[1]);
-        await turns.runTurn(parts[1], body.parent_id ?? null, body.input || {}, emit, conn(), ctrl.signal);
+        await turns.runTurn(parts[1], body.parent_id ?? null, body.input || {}, emit, jobConn(), ctrl.signal);
       }
-      else if (parts[0] === 'novel' && parts[1] === 'analyze') await analyzeNovel(body, emit, conn(), ctrl.signal);
+      else if (parts[0] === 'novel' && parts[1] === 'analyze') await analyzeNovel(body, emit, jobConn(), ctrl.signal);
       else throw { code: 'http', params: { status: 404 } };
     } catch (e) {
       if (ctrl.signal.aborted) throw { code: 'cancelled' };
@@ -170,5 +174,5 @@ export function job(url, body, onEvent) {
     if (!final) throw { code: 'dropped' };
     return final;
   })();
-  return { done, cancel: async () => ctrl.abort() };
+  return { done, cancel: async () => ctrl.abort(), retryNow: async () => { skip.on = true; } };
 }

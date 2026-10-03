@@ -7,7 +7,7 @@ import asyncio
 import re
 
 from . import config, prompts
-from .llm_client import LLMClient
+from .llm_client import LLMClient, Waits
 from .turn_parser import LANGS, NARRATOR, clip, last_json, to_trad
 from .turn_service import LIMIT_SCALE, MAX_CHARACTERS, NOVEL_MAX_CHAPTERS, TurnError
 
@@ -82,7 +82,7 @@ class NovelService:
     def __init__(self, llm: LLMClient):
         self.llm = llm
 
-    async def analyze(self, payload: dict, emit) -> dict:
+    async def analyze(self, payload: dict, emit, waits: Waits | None = None) -> dict:
         lang = payload.get("lang") if payload.get("lang") in LANGS else "zh"
         text = clean_text(payload.get("text"))
         title = str(payload.get("title") or "").strip().strip("《》\"'")[:60]
@@ -103,7 +103,8 @@ class NovelService:
         async def notes(i: int, part: str) -> str:
             async with sem:
                 res = await self.llm.stream(prompts.novel_notes_messages(title_part(title, lang), i, len(parts),
-                                                                         part, lang), status_only, temperature=0.3)
+                                                                         part, lang), status_only, temperature=0.3,
+                                            waits=waits)
             done[0] += 1
             await emit({"type": "progress", "done": done[0], "total": len(parts)})
             return res.content.strip()
@@ -112,7 +113,7 @@ class NovelService:
         await emit({"type": "phase", "code": "novel_outline"})
         res = await self.llm.stream(prompts.novel_messages(title_part(title, lang), all_notes, lang, MAX_CHARACTERS,
                                                            NOVEL_MIN_CHAPTERS, NOVEL_MAX_CHAPTERS),
-                                    status_only, temperature=0.4)
+                                    status_only, temperature=0.4, waits=waits)
         d = last_json(res.content)
         if not isinstance(d, dict):
             log.warning("novel draft unusable: %s", config.mask(res.content[:800]))

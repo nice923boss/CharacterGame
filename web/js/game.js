@@ -236,6 +236,7 @@ function setBusy(busy) {
 function paintRetry(text) {
   $('#retry-text').textContent = text;
   $('#retry').hidden = !text;
+  if (!text) $('#retry-now').hidden = true;
 }
 
 async function sendInput(kind, text) {
@@ -261,6 +262,7 @@ async function sendInput(kind, text) {
       toast(t('game.reset'));
     } else if (ev.type === 'status') {
       lastStatus = ev.state === 'waiting' ? '' : statusText(ev);
+      $('#retry-now').hidden = ev.state !== 'retry';
     } else if (ev.type === 'phase') {
       lastStatus = t(`phase.${ev.code}`);
     }
@@ -472,4 +474,5 @@ export function initGame() {
   });
   $('#free-form').addEventListener('submit', (e) => { e.preventDefault(); sendInput('free', $('#free-input').value); });
   $('#retry-cancel').onclick = () => G.running && G.running.cancel();
+  $('#retry-now').onclick = () => { $('#retry-now').hidden = true; if (G.running) G.running.retryNow(); };
 }

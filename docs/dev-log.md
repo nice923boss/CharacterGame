@@ -220,3 +220,40 @@ n_0006 底下實際有 3 條分支：n_0007（原路線）、n_0022（第一次 
   - 批次寫某分支時登記進行中；玩家點同一分支時等它寫完直接重播，不另外呼叫 LLM
 - pytest：82 passed（新增 `test_novel.py`，`test_batch.py` 加 2 項競態測試）
 - 未驗證：場景圖（本次 ComfyUI 未開，本機版場景圖失敗暫用前一張，與本功能無關）；大型樹（364 節點）完整跑完；批次進行中重新整理頁面後的等待狀態
+
+## 13. 改進清單 Phase 1：忙碌重試機制（2026-10-03）
+
+- 需求：`docs/改進清單.html` 勾選 98 項（B06、B08 不做），分 9 階段實作；本階段處理共用伺服器忙碌時的等待重試，涵蓋 A01～A08、A11～A13、J02、J06
+- 設計（伺服器 `server/llm_client.py` 與瀏覽器 `web/js/local/llm.js` 同一套規則）
+  - 可重試：暫時性狀態碼、連線失敗、回應截斷、逾時；瀏覽器版另含轉送回報的 upstream 錯誤
+  - Retry-After 取代退避表（上限 60 秒）；每次等待乘 0.7～1.3 隨機抖動
+  - 品質優先時第一順位先等 3、6 秒重試再換模型；最後一個模型退避表用完後每 20 秒重試，直到耐心上限（預設 300 秒）
+  - 冷卻 90、180、300 秒，連續失敗拉長，成功一次清除；被跳過的模型顯示 cooling
+  - 瀏覽器版冷卻、連續失敗數、每分鐘請求數存在 localStorage `cg-llm-state`，跨分頁共用、重新整理後保留；storage 無法使用時才改用記憶體
+  - 網路錯誤重試 1、3、6 秒，仍失敗回報轉送連不上，不換模型
+  - 等待中可按「立即重試」（伺服器版 `POST /api/tasks/{tid}/retry_now`）
+  - 伺服器版 `GET /api/stats`：各模型嘗試次數、成功率、錯誤種類
+  - 轉送 Worker 把 retry-after、x-ratelimit-* 轉給瀏覽器並加進 Access-Control-Expose-Headers；已部署（version d9272886-afa3-451f-8237-93abf50871e9），實測 CORS 正常、錯誤內容原樣轉出
+- A12 實測（真實輝達金鑰，只印遮蔽後內容）
+  - 不存在的模型名：404，內容只有 `404 page not found`
+  - 暫時無法服務：404 `Function '…': Not found for account`，仍算暫時性，照樣重試
+  - 判斷模型不存在的規則加入 `404 page not found` 與 410，兩者直接換模型不重試
+  - 200 與 410 回應都沒有 Retry-After 或 x-ratelimit-* 標頭
+- 發現：nemotron-3-super-120b-a12b 於 2026-10-03 退役，回 410（end of life 09:00Z）
+  - Spike（`tools/story_cases.py` 的 zh1_ghost_market、en1_blackmoor，各跑設定、開場、1 回合）
+  - lightning（nemotron-3.5-lightning-30b-a3b）：中文設定 4.8 秒、開場 32.4 秒、回合 16.7 秒；英文 5.3、28.9、5.2 秒；兩局都無修復紀錄、選項 4 個
+  - ultra 對照：中文 8.5、23.7、24.2 秒；英文 32.0、20.6、14.5 秒，過程中多次暫時性錯誤後成功
+  - llama-3.1-nemotron-ultra-253b-v1、nemotron-nano-3-30b-a3b：兩局都在重試用完後全部失敗
+  - 決定：第三順位改為 lightning（`config.CANDIDATES`、`tools/build_pages.py`），介面名稱「輝達 lightning」
+- 瀏覽器版驗收（pages 建置 + 本機假轉送，逐一情境）
+  - Retry-After 2 秒：等約 2 秒後同模型成功
+  - upstream 502：重試一次成功
+  - 模型不存在（model_not_found JSON、`404 page not found`、410）：不重試，直接換 lightning，狀態列顯示「{from}：模型已下架或名稱錯誤，改用{to}」
+  - 連不上轉送：重試 3 次後回報，不換模型
+  - 全部忙碌：冷卻中的模型跳過，進入耐心等待，按立即重試會馬上再試
+  - 清空 localStorage 後冷卻狀態正確歸零
+- 修正
+  - 清空 localStorage 後記憶體裡的舊冷卻狀態仍在：改成每次從空白狀態合併讀回
+  - 中文換模型訊息缺分隔：補冒號，同類訊息掃描無其他缺漏
+- pytest：94 passed（`test_llm_client.py` 新增 Retry-After、抖動、耐心等待、立即重試、410、`404 page not found` 等情境）
+- 未驗證：輝達真實 429 是否帶 Retry-After（本次沒遇到 429）；lightning 長局品質；更新版本後需重新整理兩次才載入新檔（Service Worker 安裝時序，Phase 7 的 F06 處理）

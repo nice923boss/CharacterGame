@@ -60,10 +60,13 @@ export function progress(text, sub = '', onCancel = null) {
   $('#progress-sub').textContent = sub;
   $('#progress-cancel').hidden = !onCancel;
   $('#progress-cancel').onclick = onCancel;
+  $('#progress-now').hidden = true;
   openModal('#mdl-progress');
   return {
     update(t, s) { if (t != null) $('#progress-text').textContent = t; if (s != null) $('#progress-sub').textContent = s; },
-    close() { closeModal('#mdl-progress'); $('#progress-cancel').onclick = null; },
+    // Shows "retry now" while a retry countdown runs
+    retry(ev, onNow) { $('#progress-now').hidden = ev.state !== 'retry'; $('#progress-now').onclick = onNow; },
+    close() { closeModal('#mdl-progress'); $('#progress-cancel').onclick = $('#progress-now').onclick = null; },
   };
 }
 
@@ -71,11 +74,13 @@ export function progress(text, sub = '', onCancel = null) {
 export function statusText(ev) {
   const p = { ...ev, reason: t(`reason.${ev.reason}`) };
   for (const k of ['model', 'from', 'to']) if (ev[k]) p[k] = t(`model.${ev[k]}`);
+  if (ev.state === 'retry' && ev.max == null) return t('status.queue', p);   // past the backoff table, queueing
   if (['retry', 'switch', 'rpm'].includes(ev.state)) return t(`status.${ev.state}`, p);
   return '';
 }
 
-const DEFAULTS = { speed: 45, bgm: 55, sfx: 70, weather: true };
+// patience: seconds to keep queueing when every model is busy; prefer: quality (retry the first model) or speed
+const DEFAULTS = { speed: 45, bgm: 55, sfx: 70, weather: true, patience: 300, prefer: 'quality' };
 const KEY = 'chienzhi.settings';
 
 function readSettings() {

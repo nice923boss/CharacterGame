@@ -32,7 +32,7 @@ CDN = ["https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js",
 RELAY = "https://chienzhi-relay.cattravelworld.com"
 # Hosted models only (same ids and order as config.CANDIDATES without the local endpoint)
 CANDIDATES = [{"label": "ultra", "provider": "nvidia", "model": "nvidia/nemotron-3-ultra-550b-a55b"},
-              {"label": "super", "provider": "nvidia", "model": "nvidia/nemotron-3-super-120b-a12b"}]
+              {"label": "lightning", "provider": "nvidia", "model": "nvidia/nemotron-3.5-lightning-30b-a3b"}]
 
 
 def data_module() -> str:
@@ -49,7 +49,9 @@ def data_module() -> str:
         "llm": {"candidates": CANDIDATES, "extra": config.NO_THINK,
                 **{k: getattr(config, k) for k in ("CONNECT_TIMEOUT_S", "FIRST_DATA_TIMEOUT_S", "IDLE_TIMEOUT_S",
                                                    "TOTAL_TIMEOUT_S", "MAX_TOKENS", "CHAR_CAP", "RPM_LIMIT",
-                                                   "TRANSIENT_BACKOFF_S", "EMPTY_BACKOFF_S", "COOLDOWN_S")},
+                                                   "TRANSIENT_BACKOFF_S", "EMPTY_BACKOFF_S", "COOLDOWN_STEPS_S",
+                                                   "RETRY_AFTER_MAX_S", "JITTER", "PRIMARY_RETRY_S",
+                                                   "PATIENCE_STEP_S", "PATIENCE_MAX_S", "BUSY_WINDOW_S")},
                 "TRANSIENT_STATUS": sorted(config.TRANSIENT_STATUS)},
         "limits": {**{k: getattr(config, k) for k in ("BATCH_MAX_SCENES", "BATCH_MAX_NODES", "BATCH_CONCURRENCY",
                                                    "BATCH_TURN_RETRIES")},

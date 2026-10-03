@@ -33,7 +33,7 @@ class ScriptedLLM:
         self.replies = list(replies)
         self.candidates = [CAND]
 
-    async def stream(self, messages, emit, temperature=0.8):
+    async def stream(self, messages, emit, temperature=0.8, waits=None):
         text = self.replies.pop(0)
         await emit({"type": "delta", "text": text})
         return LLMResult(text, "stop", CAND, False)

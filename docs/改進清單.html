@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>千枝物語改進清單</title>
+<style>
+:root {
+  --bg: #f6f5f2; --card: #ffffff; --text: #1f1d1a; --muted: #6b665e; --line: #e2ded6;
+  --accent: #2f6f5e; --accent-soft: #e3f0ec; --hi: #b4442f; --mid: #a87412; --lo: #5c6b7a;
+  --chip: #efece6; --chip-on: #2f6f5e; --chip-on-text: #ffffff; --done: #f1f7f4;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161714; --card: #1f201c; --text: #ebe8e1; --muted: #a39e94; --line: #34352f;
+    --accent: #6cc0a5; --accent-soft: #1f3530; --hi: #ef8a73; --mid: #e0b14f; --lo: #9fb0c0;
+    --chip: #2a2b26; --chip-on: #6cc0a5; --chip-on-text: #10201b; --done: #1c2a25;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161714; --card: #1f201c; --text: #ebe8e1; --muted: #a39e94; --line: #34352f;
+  --accent: #6cc0a5; --accent-soft: #1f3530; --hi: #ef8a73; --mid: #e0b14f; --lo: #9fb0c0;
+  --chip: #2a2b26; --chip-on: #6cc0a5; --chip-on-text: #10201b; --done: #1c2a25;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 15px/1.6 "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+}
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 16px 120px; }
+header { padding: 28px 0 8px; }
+h1 { font-size: 24px; margin: 0 0 6px; }
+.lead { color: var(--muted); margin: 0 0 4px; }
+.bar {
+  position: sticky; top: 0; z-index: 5; background: var(--bg);
+  padding: 10px 0; border-bottom: 1px solid var(--line);
+}
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 6px 0; }
+input[type="search"], select, textarea {
+  font: inherit; color: var(--text); background: var(--card);
+  border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px;
+}
+input[type="search"] { flex: 1 1 220px; min-width: 0; }
+button {
+  font: inherit; cursor: pointer; border-radius: 8px; padding: 7px 12px;
+  border: 1px solid var(--line); background: var(--card); color: var(--text);
+}
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--chip-on-text); font-weight: 600; }
+.chip { background: var(--chip); border-color: transparent; padding: 5px 10px; font-size: 13px; }
+.chip.on { background: var(--chip-on); color: var(--chip-on-text); }
+.count { font-weight: 600; color: var(--accent); margin-left: auto; white-space: nowrap; }
+.cat-title { font-size: 17px; margin: 26px 0 8px; display: flex; gap: 8px; align-items: baseline; }
+.cat-title small { color: var(--muted); font-weight: 400; font-size: 13px; }
+.item {
+  display: grid; grid-template-columns: 28px 1fr; gap: 6px 10px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 14px; margin: 8px 0; cursor: pointer;
+}
+.item.checked { background: var(--done); border-color: var(--accent); }
+.item input { width: 20px; height: 20px; margin: 3px 0 0; accent-color: var(--accent); cursor: pointer; }
+.head { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; }
+.id { font-family: ui-monospace, Consolas, monospace; color: var(--muted); font-size: 13px; }
+.title { font-weight: 600; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.tag { font-size: 12px; padding: 1px 8px; border-radius: 99px; background: var(--chip); color: var(--muted); }
+.tag.hi { color: var(--hi); } .tag.mid { color: var(--mid); } .tag.lo { color: var(--lo); }
+.tag.pick { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.desc { grid-column: 2; font-size: 14px; }
+.desc p { margin: 3px 0; }
+.desc b { color: var(--muted); font-weight: 600; }
+.files { font-family: ui-monospace, Consolas, monospace; font-size: 12px; color: var(--muted); word-break: break-all; }
+.legend { font-size: 13px; color: var(--muted); }
+.empty { text-align: center; color: var(--muted); padding: 40px 0; }
+.out {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+  background: var(--card); border-top: 1px solid var(--line); box-shadow: 0 -4px 16px rgba(0,0,0,.08);
+}
+.out .wrap { padding-bottom: 12px; padding-top: 10px; }
+.out textarea { width: 100%; min-height: 56px; resize: vertical; }
+.out .out-preview { display: none; width: 100%; min-height: 140px; margin-top: 8px; font-family: ui-monospace, Consolas, monospace; font-size: 13px; }
+.out .out-preview.show { display: block; }
+.msg { font-size: 13px; color: var(--accent); }
+@media (max-height: 760px) {
+  .bar { position: static; }
+  .out textarea#note { min-height: 38px; }
+}
+@media (max-width: 600px) {
+  h1 { font-size: 20px; }
+  .bar { position: static; }
+  .out .out-preview { min-height: 100px; max-height: 35vh; }
+  .item { padding: 10px 12px; }
+  .count { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>千枝物語改進清單（100 項）</h1>
+    <p class="lead">重點：輝達共用伺服器忙碌時的等待重試、避免中斷、操作體驗、系統穩定性。勾選要製作的項目，按下方「複製已勾選」貼回對話即可。</p>
+    <p class="legend">影響：高／中／低。工作量：小（半天內）／中（1 到 2 天）／大（3 天以上）。「優先推薦」＝影響高且工作量小。勾選狀態自動存在這台電腦的瀏覽器。</p>
+  </header>
+
+  <div class="bar">
+    <div class="row">
+      <input type="search" id="q" placeholder="搜尋標題、說明、檔名" aria-label="搜尋">
+      <select id="f-impact" aria-label="影響篩選">
+        <option value="">全部影響</option><option>高</option><option>中</option><option>低</option>
+      </select>
+      <select id="f-effort" aria-label="工作量篩選">
+        <option value="">全部工作量</option><option>小</option><option>中</option><option>大</option>
+      </select>
+      <select id="f-scope" aria-label="版本篩選">
+        <option value="">全部版本</option><option>兩者</option><option>瀏覽器版</option><option>伺服器版</option>
+      </select>
+    </div>
+    <div class="row" id="cats"></div>
+    <div class="row">
+      <button class="chip" id="only-picked">只看推薦</button>
+      <button class="chip" id="only-checked">只看已勾選</button>
+      <button id="check-visible">勾選目前顯示的</button>
+      <button id="uncheck-visible">取消目前顯示的</button>
+      <button id="clear-all">全部清除</button>
+      <span class="count" id="count"></span>
+    </div>
+  </div>
+
+  <main id="list"></main>
+</div>
+
+<div class="out">
+  <div class="wrap">
+    <div class="row">
+      <textarea id="note" placeholder="補充說明（選填）：例如優先順序、哪幾項想合併、等待上限想設幾分鐘" aria-label="補充說明"></textarea>
+    </div>
+    <div class="row">
+      <button class="primary" id="copy">複製已勾選</button>
+      <button id="toggle-preview">顯示文字</button>
+      <span class="msg" id="msg" role="status" aria-live="polite"></span>
+    </div>
+    <textarea class="out-preview" id="preview" readonly aria-label="已勾選文字"></textarea>
+  </div>
+</div>
+
+<script>
+const CATS = {
+  A: '輝達忙碌等待重試',
+  B: '金鑰與轉送設定',
+  C: '避免中斷與錯誤復原',
+  D: '批次穩定性',
+  E: '生圖佇列',
+  F: '存檔與資料安全',
+  G: '遊玩操作體驗',
+  H: '設定與引導',
+  I: '行動裝置與無障礙',
+  J: '監控、測試與效能',
+};
+
+// [id, title, current state, proposed change, files, impact, effort, scope]
+const ITEMS = [
+  ['A01', '讀取 Retry-After 標頭決定等待秒數',
+    '429／503 時固定照 2、4、8、16、32 秒退避，不看伺服器回傳的建議等待時間，可能太早重試又被拒，或等太久。',
+    '回應有 Retry-After 時以它為準（上限 60 秒），沒有才用退避表。',
+    'server/llm_client.py, web/js/local/llm.js', '高', '小', '兩者'],
+  ['A02', '轉送 Worker 轉發 Retry-After 等上游標頭',
+    'relay/worker.js 只回傳內容與 CORS 標頭，瀏覽器版讀不到輝達給的 Retry-After 與速率限制資訊。',
+    '複製 retry-after、x-ratelimit-* 到回應，並加進 Access-Control-Expose-Headers。A01 的瀏覽器版需要這項。',
+    'relay/worker.js', '高', '小', '瀏覽器版'],
+  ['A03', '退避等待加入隨機抖動',
+    '批次 6 條並行或多個分頁同時被 429 時，會在同一秒一起重試、一起再撞牆。',
+    '每次等待乘上 0.7 到 1.3 的隨機係數，把重試時間錯開。',
+    'server/llm_client.py, web/js/local/llm.js', '高', '小', '兩者'],
+  ['A04', '耐心等待模式（所有模型都忙時不直接報錯）',
+    '三個候選模型都失敗後（最後一個約重試 62 秒）就丟出「所有模型都暫時無法回應」，玩家只能自己再按一次。',
+    '遇到暫時性錯誤時改為持續排隊，最長等待時間可設定（預設 5 分鐘）。畫面顯示「伺服器擁擠，已等 2:15，20 秒後再試」與「繼續等」「取消」按鈕。金鑰被拒等非暫時性錯誤照舊立即報錯。',
+    'server/llm_client.py, web/js/local/llm.js, web/js/game.js, web/js/i18n.js', '高', '中', '兩者'],
+  ['A05', '第一順位模型遇 429 先短暫重試再換',
+    '非最後一個候選遇到暫時性錯誤時立即換下一個，ultra 一忙就掉到 super，劇情品質下降。',
+    'ultra 先重試 1 到 2 次（約 3、6 秒）再換模型；可與 H03 的「品質優先／速度優先」設定連動。',
+    'server/llm_client.py, web/js/local/llm.js', '中', '小', '兩者'],
+  ['A06', '模型冷卻時間自適應',
+    '失敗的模型固定略過 90 秒，伺服器持續忙碌時每 90 秒又去撞一次；恢復很快時又白白略過。',
+    '連續失敗時延長冷卻（90、180、300 秒），成功一次就歸零；狀態列顯示「ultra 冷卻中，剩 xx 秒」。',
+    'server/llm_client.py, web/js/local/llm.js', '中', '小', '兩者'],
+  ['A07', '冷卻與每分鐘請求數跨分頁共用',
+    'llm.js 的冷卻表與 RPM 視窗只存在單一分頁記憶體，開兩個分頁各算各的，合計可能超過 35 RPM 而觸發 429。',
+    '用 BroadcastChannel 或 localStorage 讓所有分頁共用同一份計數與冷卻表。',
+    'web/js/local/llm.js', '中', '中', '瀏覽器版'],
+  ['A08', '重新整理後保留冷卻狀態',
+    '重新整理頁面就重設冷卻，剛被 429 的模型馬上又被打。',
+    '冷卻到期時間存 localStorage，載入時讀回。',
+    'web/js/local/llm.js', '低', '小', '瀏覽器版'],
+  ['A09', '生圖請求計入同一個速率限制',
+    '生圖（FLUX）請求不計入文字的 RPM 視窗，同一把金鑰文字與生圖一起衝，容易讓文字回合被 429。',
+    '文字與生圖共用一個節流器，或另設生圖 RPM 上限，並以文字回合優先。',
+    'web/js/local/images.js, web/js/local/llm.js, server/nvidia_image.py, server/asset_service.py', '高', '中', '兩者'],
+  ['A10', '文字回合進行中暫停背景生圖',
+    '玩家等文字時，背景還在畫表情與其他場景，佔用同一把金鑰的配額。',
+    '文字回合送出期間暫停生圖佇列（目前場景圖除外），回合結束再繼續。',
+    'web/js/local/images.js, web/js/local/turns.js, server/asset_service.py', '中', '小', '兩者'],
+  ['A11', '逾時也納入重試',
+    '首包 30 秒、閒置 45 秒逾時直接換模型，不重試。共用伺服器忙碌時常見「接受連線但回很慢」。',
+    '逾時視為暫時性錯誤，最後一個候選也套用退避；耐心等待模式（A04）也涵蓋逾時。',
+    'server/llm_client.py, web/js/local/llm.js', '中', '小', '兩者'],
+  ['A12', '重新確認 404 是否算暫時性錯誤',
+    'TRANSIENT_STATUS 包含 404；若模型名稱真的下架，會白白重試一輪才放棄。',
+    '查輝達官方行為：404 內容是 model not found 時直接換模型並在 log 留警告，其餘維持重試。',
+    'server/config.py, web/js/local/llm.js', '低', '小', '兩者'],
+  ['A13', '重試倒數旁加「立即重試」按鈕',
+    '倒數期間玩家只能等或取消。',
+    '加「現在重試」，跳過剩餘等待（仍受 RPM 限制）。',
+    'web/js/game.js, web/js/local/llm.js, server/llm_client.py', '中', '小', '兩者'],
+  ['A14', '等待畫面改成白話並加進度條',
+    '狀態文字像「ultra：伺服器忙碌，第 3/5 次重試，16 秒後再試」，偏工程語言。',
+    '主文改成「輝達共用伺服器擁擠，正在排隊（第 3 次）」，模型與錯誤碼收進可展開的細節；加倒數進度條。',
+    'web/js/game.js, web/js/ui.js, web/js/i18n.js', '中', '小', '兩者'],
+  ['A15', '換模型時不讓已顯示台詞突然消失',
+    '換模型重來時送出 reset 事件，已顯示的台詞被清掉，玩家以為當掉。',
+    '保留畫面上的台詞並標示「換用其他模型重寫中」，新內容到達再替換。',
+    'web/js/game.js, web/js/local/turns.js, server/turn_service.py', '中', '中', '兩者'],
+  ['A16', '服務擁擠指示燈',
+    '玩家不知道現在輝達端忙不忙，只能送出後才知道。',
+    '標題畫面與遊戲中顯示最近 5 分鐘的 429 次數與平均回應時間（綠／黃／紅），擁擠時建議改玩已寫好的分支。',
+    'web/js/main.js, web/js/game.js, web/js/local/llm.js, server/llm_client.py', '中', '中', '兩者'],
+
+  ['B01', '儲存金鑰時自動測試連線',
+    '儲存時只檢查空白與長度，貼錯的金鑰要等到開新故事才失敗。',
+    '儲存時送一次極小請求（max_tokens 1），分三種結果：金鑰無效、轉送不通、伺服器忙碌但金鑰有效。',
+    'web/js/main.js, web/js/local/backend.js, server/main.py', '高', '小', '兩者'],
+  ['B02', '設定頁「測試連線」按鈕',
+    '沒有辦法隨時確認連線狀態。',
+    '一顆按鈕分別測文字與生圖兩條路，顯示結果與延遲毫秒。',
+    'web/js/main.js, web/index.html', '中', '小', '兩者'],
+  ['B03', '金鑰格式檢查與自動清理',
+    '複製時常多了引號、Bearer 前綴、換行或空白，不檢查 nvapi- 前綴。',
+    '儲存前自動去除多餘字元，不是 nvapi- 開頭時提示確認。',
+    'web/js/local/backend.js, server/main.py', '中', '小', '兩者'],
+  ['B04', '顯示已存金鑰末四碼與儲存時間',
+    '看不出目前存的是哪一把金鑰。',
+    '顯示「nvapi-****AB12，10/3 儲存」。',
+    'web/js/main.js', '低', '小', '兩者'],
+  ['B05', '標題狀態列顯示金鑰是否有效',
+    'health 只看有沒有填金鑰，不知道金鑰能不能用。',
+    '快取最近一次測試結果（10 分鐘內有效），顯示「金鑰有效／被拒／未測試」。',
+    'web/js/main.js, web/js/local/backend.js', '中', '小', '兩者'],
+  ['B06', '金鑰失效時就地換金鑰並續跑',
+    '回合中遇到 401／403 直接失敗，要回標題進設定改完再重來。',
+    '跳出輸入框讓玩家貼新金鑰，存好後自動重送同一回合。',
+    'web/js/game.js, web/js/ui.js', '中', '中', '兩者'],
+  ['B07', '自訂轉送網址儲存時驗證',
+    '轉送網址格式錯誤（缺 https、多斜線）要到使用時才報 bad_relay。',
+    '儲存時檢查格式並實際連一次，不通就提示，不存。',
+    'web/js/main.js, web/js/local/backend.js', '中', '小', '瀏覽器版'],
+  ['B08', '轉送備援網址',
+    '內建轉送掛掉或超過每日用量（免費方案每天 10 萬次請求）時，瀏覽器版整個不能用。',
+    '設定可填第二個轉送網址，第一個連不上或回 429 用量錯誤時自動切換。',
+    'web/js/local/llm.js, web/js/local/images.js, web/js/local/backend.js', '中', '中', '瀏覽器版'],
+  ['B09', '首次使用引導',
+    '新使用者要自己找金鑰申請頁、自己摸索設定。',
+    '三步驟引導：申請金鑰連結、貼上並測試（B01）、先玩示範故事或開新故事。沒填金鑰時「開新故事」直接帶到引導。',
+    'web/js/main.js, web/index.html, web/js/i18n.js', '高', '中', '兩者'],
+
+  ['C01', '失敗後一鍵「重試這個選項」',
+    '失敗後只有自由輸入會回填，點選項的要再點一次，很多玩家不知道可以重試。',
+    '錯誤訊息旁加「重試」按鈕，用同一個輸入重送；保留 lastInput 即可。',
+    'web/js/game.js', '高', '小', '兩者'],
+  ['C02', '開場失敗不要踢回標題',
+    '開場失敗時沒有目前節點，直接回到標題，玩家得重新找故事。',
+    '留在遊戲畫面顯示錯誤，提供「重試開場」與「回標題」。',
+    'web/js/game.js', '高', '小', '兩者'],
+  ['C03', '伺服器版斷線後接回同一個回合',
+    '串流中斷會報 dropped，而且伺服器在串流關閉時取消任務，已等的時間全部浪費。',
+    '任務與串流脫鉤：任務繼續跑，事件暫存在記憶體，前端用 task id 重新連線取回（設 5 分鐘保留期）。',
+    'server/main.py, web/js/api.js, web/js/game.js', '高', '大', '伺服器版'],
+  ['C04', 'SSE 心跳避免長等待被切線',
+    '重試等待時可能很久沒有事件，代理、防毒或瀏覽器可能判定連線閒置而切斷。',
+    '每 15 秒送一行 SSE 註解（: ping）。',
+    'server/main.py', '中', '小', '伺服器版'],
+  ['C05', '網路斷線偵測與恢復後自動重試',
+    '沒有處理 online／offline 事件，斷網時只看到「連不上」類錯誤。',
+    '離線時顯示「網路已中斷」橫幅並暫停送出；恢復連線後自動重試剛才失敗的回合。',
+    'web/js/game.js, web/js/main.js, web/js/ui.js', '高', '小', '兩者'],
+  ['C06', '轉送連不上時短暫重試',
+    '瀏覽器版遇到轉送 fetch 失敗直接報 relay_unreachable 不重試；Wi-Fi 切換、筆電休眠醒來很常見。',
+    '網路層錯誤重試 2 到 3 次（約 1、3、6 秒）再報錯。',
+    'web/js/local/llm.js', '高', '小', '瀏覽器版'],
+  ['C07', '回合或批次進行中離開頁面時警告',
+    '重新整理或關閉分頁會中斷回合，沒有任何提示。',
+    '回合或批次進行中掛 beforeunload 警告。',
+    'web/js/game.js, web/js/main.js', '中', '小', '兩者'],
+  ['C08', '分頁從背景切回時校正倒數與狀態',
+    '分頁在背景時計時器被節流，切回來時倒數與狀態可能錯亂。',
+    'visibilitychange 時重算倒數並立即刷新狀態與素材。',
+    'web/js/game.js', '中', '小', '兩者'],
+  ['C09', '訊息提示改為佇列',
+    'toast 同一時間只顯示一則，後來的會蓋掉前一則，錯誤可能一閃即逝。',
+    '訊息排隊顯示；錯誤類訊息需手動關閉，一般訊息自動消失。',
+    'web/js/ui.js', '中', '小', '兩者'],
+  ['C10', '錯誤訊息附「怎麼辦」',
+    '例如金鑰被拒只說「金鑰被拒」，沒說下一步。',
+    '每個錯誤碼加一行建議做法，必要時附「開啟設定」按鈕直接跳到對應欄位。',
+    'web/js/i18n.js, web/js/ui.js, web/js/api.js', '高', '小', '兩者'],
+  ['C11', '生圖錯誤訊息改走翻譯並統一用詞',
+    'images.js 錯誤字串寫死中文且叫「中繼站」，設定頁叫「轉送網址」，英文介面會跳出中文。',
+    '改用 i18n 的 t()，統一稱「轉送網址」。',
+    'web/js/local/images.js, web/js/i18n.js', '中', '小', '瀏覽器版'],
+  ['C12', 'Worker 上游錯誤回傳帶 CORS 的 JSON',
+    '上游 fetch 拋例外時 Worker 變成 Cloudflare 錯誤頁且不帶 CORS 標頭，瀏覽器只看到「連不上」，分不出是轉送還是輝達的問題。',
+    'try/catch 回傳 502 JSON（含 CORS 標頭），前端顯示「轉送正常，輝達端無回應」並照暫時性錯誤重試。',
+    'relay/worker.js, web/js/local/llm.js', '高', '小', '瀏覽器版'],
+  ['C13', 'JSON 修補呼叫失敗時保住這一回合',
+    '台詞已完整但結尾 JSON 壞掉時，會再呼叫一次修補；這次若碰上忙碌而失敗，整回合（已顯示的台詞）作廢。',
+    '修補呼叫失敗時改用本機預設規則（repair 已能補預設選項）存下節點，並在節點記錄 repair_notes。',
+    'web/js/local/turns.js, server/turn_service.py', '中', '中', '兩者'],
+  ['C14', '中斷的回合可從已收到的文字續寫',
+    '回合中途失敗時，已收到的台詞全部丟掉，重試要從頭等。',
+    '暫存已收到的內容，重試時把它當作開頭請模型接著寫，縮短等待。',
+    'web/js/local/turns.js, web/js/local/llm.js, server/turn_service.py', '中', '大', '兩者'],
+
+  ['D01', '批次遇 429 自動降低並行數',
+    '批次並行固定 6 條；共用伺服器忙碌時 6 條一起排隊，大量分支被跳過（GAPS 記載 ultra 批次仍會 429）。',
+    '遇 429 並行數減半（最低 1），連續成功 N 次再逐步加回。',
+    'web/js/local/batch.js, server/batch_service.py', '高', '中', '兩者'],
+  ['D02', '批次分支重試之間加等待',
+    '每個分支最多重試 2 次但中間不等，前一次已用盡退避，立刻再試多半又失敗。',
+    '分支重試間隔改為約 30、90 秒（期間不佔並行名額）。',
+    'web/js/local/batch.js, server/batch_service.py', '高', '小', '兩者'],
+  ['D03', '批次尾端補寫失敗分支',
+    '失敗的分支在本輪被記為已嘗試，不會再寫，故事樹留下缺口。',
+    '主要分支寫完後等 2 分鐘，把失敗分支再補寫一輪。',
+    'web/js/local/batch.js, server/batch_service.py', '高', '小', '兩者'],
+  ['D04', '繼續批次時保留失敗清單',
+    '重新開始批次會把失敗清單清空（GAPS 已列），看不出哪些分支曾失敗。',
+    '保留歷史，該分支重寫成功才移除。',
+    'web/js/local/batch.js, server/batch_service.py', '中', '小', '兩者'],
+  ['D05', '批次進行中防止螢幕休眠',
+    '瀏覽器版批次要開著頁面，電腦休眠或分頁被節流時就停住。',
+    '批次進行中申請 Screen Wake Lock，並提示「請保持此分頁開啟」。',
+    'web/js/local/batch.js, web/js/batch.js', '中', '小', '瀏覽器版'],
+  ['D06', '任何分頁都能停止批次',
+    '只能在執行批次的那個分頁停止（GAPS 已列）。',
+    '用 BroadcastChannel 傳停止指令給實際執行的分頁。',
+    'web/js/local/batch.js', '中', '小', '瀏覽器版'],
+  ['D07', '批次預估剩餘時間',
+    '只顯示已寫節點數，不知道還要多久。',
+    '依最近 10 個節點的平均耗時估算，伺服器擁擠時標示「預估時間延長」。',
+    'web/js/batch.js, web/js/local/batch.js, server/batch_service.py', '中', '小', '兩者'],
+  ['D08', '批次暫停與繼續',
+    '只能停止（變成已取消），再開要重新掃描。',
+    '加暫停狀態：保留進度與失敗清單，繼續時直接接上。',
+    'web/js/batch.js, web/js/local/batch.js, server/batch_service.py', '中', '中', '兩者'],
+  ['D09', '在故事樹上手動補寫失敗分支',
+    '失敗分支只是一個數字，玩家無法指定補寫哪一條。',
+    '故事樹標出失敗分支，點一下單獨補寫。',
+    'web/js/tree.js, web/js/local/batch.js, server/batch_service.py', '中', '中', '兩者'],
+
+  ['E01', '瀏覽器版生圖請求加逾時',
+    'images.js 的生圖 fetch 沒有逾時也不能中止，一次卡住就卡死整個循序佇列，後面的圖都不會畫。',
+    '加 AbortController，120 秒逾時（與伺服器版一致），逾時算可重試錯誤。',
+    'web/js/local/images.js', '高', '小', '瀏覽器版'],
+  ['E02', '生圖網路錯誤也重試',
+    '網路錯誤立刻報「連不上中繼站」；伺服器版連線錯誤也直接拋出不重試。',
+    '網路錯誤比照 429 重試 2 次。',
+    'web/js/local/images.js, server/nvidia_image.py', '高', '小', '兩者'],
+  ['E03', '生圖重試讀 Retry-After 並延長',
+    '生圖重試只等 3、8 秒共 11 秒就放棄，尖峰時段很容易整批失敗。',
+    '讀 Retry-After；退避延長為 3、8、20、45 秒。',
+    'web/js/local/images.js, server/nvidia_image.py', '中', '小', '兩者'],
+  ['E04', '失敗的圖自動延後重排',
+    '失敗的圖要等下次進入故事才重排，玩這一局時一直缺圖。',
+    '失敗 2 分鐘後自動重排，最多 3 輪；仍失敗才標為錯誤。',
+    'web/js/local/images.js, server/asset_service.py', '中', '小', '兩者'],
+  ['E05', '單張圖片「重新繪製」',
+    '背景或立繪失敗、不滿意時沒有重畫的入口。',
+    '在場景或立繪上右鍵／長按出現「重新繪製」，可選換種子。',
+    'web/js/game.js, web/js/local/images.js, server/main.py, server/asset_service.py', '中', '中', '兩者'],
+  ['E06', '產圖佇列持久化',
+    '佇列在記憶體，重新整理就要重排（GAPS 已列）。',
+    '待畫清單存 IndexedDB，啟動時恢復。',
+    'web/js/local/images.js, web/js/local/store.js', '中', '中', '瀏覽器版'],
+  ['E07', '遊戲中顯示生圖進度',
+    '玩家不知道背景還在畫、還是已經失敗。',
+    '角落小圖示顯示「繪製中 2 張排隊」，失敗時變紅，點開看原因與重試。',
+    'web/js/game.js, web/index.html', '中', '小', '兩者'],
+  ['E08', '多視窗時生圖優先權不再來回切換',
+    '開多個視窗時優先權會來回搶（GAPS 已列）。',
+    '以最後有互動的分頁為準（focus、visibilitychange），其他分頁降為背景優先。',
+    'web/js/local/images.js', '低', '中', '瀏覽器版'],
+
+  ['F01', '申請持久儲存',
+    '瀏覽器空間不足時可能自動清掉 IndexedDB，存檔全沒。',
+    '第一次存檔時呼叫 navigator.storage.persist()，結果顯示在設定頁。',
+    'web/js/local/store.js, web/js/main.js', '高', '小', '瀏覽器版'],
+  ['F02', '儲存空間用量顯示與預警',
+    '沒有檢查用量，圖片多了會碰到上限。',
+    '設定頁用 navigator.storage.estimate() 顯示已用／可用，超過 80% 提示匯出或刪舊故事。',
+    'web/js/main.js, web/js/local/store.js', '中', '小', '瀏覽器版'],
+  ['F03', '儲存空間已滿時明確提示',
+    'IndexedDB 寫入失敗只回傳原始錯誤，玩家看到的是「內部錯誤」。',
+    '辨識 QuotaExceededError，顯示「儲存空間已滿」與處理方式，畫面上的台詞保留不丟。',
+    'web/js/local/store.js, web/js/i18n.js', '高', '小', '瀏覽器版'],
+  ['F04', '定期提醒匯出備份',
+    '清除瀏覽器資料或換電腦，故事就不見了。',
+    '標題畫面顯示「上次備份是 x 天前」，超過 7 天或新增 30 回合就提醒，一鍵匯出 zip。',
+    'web/js/main.js, web/js/local/archive.js', '中', '小', '瀏覽器版'],
+  ['F05', 'IndexedDB 版本衝突處理',
+    '開資料庫時沒處理 onblocked／onversionchange，日後資料庫升版時舊分頁會卡住新分頁。',
+    '舊分頁收到 versionchange 就關閉連線並提示重新整理。',
+    'web/js/local/store.js', '中', '小', '瀏覽器版'],
+  ['F06', '新版本上線提示',
+    'Service Worker 安裝後立刻接管，舊頁面已載入的程式可能與新快取混用。',
+    '偵測到新版本時顯示「有新版本，重新整理即可套用」；回合進行中不打斷。',
+    'tools/sw_template.js, web/js/main.js', '中', '小', '瀏覽器版'],
+  ['F07', '繁簡轉換程式庫改為本機打包',
+    'opencc-js 靠 CDN（GAPS 已列），第一次載入 CDN 失敗時繁簡轉換壞掉。',
+    '把 opencc-js 放進 dist/pages，由 Service Worker 預先快取。',
+    'tools/build_pages.py, tools/sw_template.js', '中', '小', '瀏覽器版'],
+  ['F08', '刪除故事可復原，進行中禁止刪除',
+    '刪除後無法還原；回合進行中刪除還會留下殘留資料夾（GAPS 已列）。',
+    '先移到「最近刪除」保留 7 天；回合或批次進行中的故事不能刪。',
+    'web/js/stories.js, web/js/local/store.js, server/story_store.py', '中', '中', '兩者'],
+  ['F09', '自動存檔保留多份',
+    '自動存檔只有一份，在故事樹誤跳節點就覆蓋掉原本的進度。',
+    '保留最近 5 個自動存檔點，可從讀檔畫面選回。',
+    'web/js/local/store.js, server/story_store.py, web/js/game.js', '中', '小', '兩者'],
+
+  ['G01', '選項數字快捷鍵 1 到 4',
+    '鍵盤只支援空白鍵與 Enter 前進，選選項要用滑鼠。',
+    '按 1 到 4 直接選對應選項。',
+    'web/js/game.js', '高', '小', '兩者'],
+  ['G02', '文字歷程（回看前面台詞）',
+    '台詞一過就看不到，忘了前面說什麼只能開故事樹。',
+    '滾輪向上或按 L 開歷程視窗，列出本回合與前幾回合台詞。',
+    'web/js/game.js, web/index.html, web/style.css', '高', '中', '兩者'],
+  ['G03', '自動播放',
+    '每一句都要點擊才前進。',
+    '台詞打完停 N 秒自動前進（秒數可在設定調整），遇到選項停下。',
+    'web/js/game.js, web/js/ui.js', '中', '小', '兩者'],
+  ['G04', '快進已讀台詞',
+    '重玩已寫好的分支時仍要一句句點過。',
+    '按住 Ctrl 快進；重播節點可直接跳到選項。',
+    'web/js/game.js', '中', '小', '兩者'],
+  ['G05', 'Esc 關閉對話框與選單',
+    '確認框、設定、故事樹都要用滑鼠關閉。',
+    'Esc 關閉最上層視窗；確認框 Enter 確認。',
+    'web/js/ui.js, web/js/main.js, web/js/tree.js', '中', '小', '兩者'],
+  ['G06', '等待生成時仍可回看、存檔、調設定',
+    '生成中畫面幾乎鎖住，玩家只能盯著倒數。',
+    '生成期間開放歷程、設定、存檔選單（存的是送出前的節點）。',
+    'web/js/game.js', '中', '中', '兩者'],
+  ['G07', '生成中顯示一般所需時間',
+    '只顯示「撰寫中 xx 秒」，不知道正常要多久。',
+    '依最近幾回合平均耗時顯示「通常約 25 秒」，超出很多時改顯示擁擠提示。',
+    'web/js/game.js', '低', '小', '兩者'],
+  ['G08', '自由輸入保留草稿',
+    '送出失敗會回填，但切換畫面後輸入內容就消失。',
+    '輸入框內容暫存 sessionStorage，回到同一節點時還原。',
+    'web/js/game.js', '低', '小', '兩者'],
+  ['G09', '自由輸入剩餘字數',
+    '超過字數上限送出後才報「太長」。',
+    '輸入框旁顯示剩餘字數，超過時送出鈕停用。',
+    'web/js/game.js, web/index.html', '低', '小', '兩者'],
+  ['G10', '結局畫面加「回到分岔點」',
+    '看到結局後只能回標題或自己開故事樹找。',
+    '結局畫面列出最近 3 個分岔點，一鍵跳回。',
+    'web/js/game.js', '中', '小', '兩者'],
+  ['G11', '故事樹標示目前位置與未探索選項',
+    '故事樹看不出自己在哪、哪些選項還沒走過。',
+    '高亮目前節點，未寫的選項畫成虛線節點，點擊即從那裡開始。',
+    'web/js/tree.js', '中', '中', '兩者'],
+  ['G12', '修正跳到換場回合時舊台詞疊在新場景',
+    '從故事樹跳到換場的那一輪時，舊台詞會疊在新場景上（GAPS 已列）。',
+    '跳轉時先清空台詞層再套用新場景。',
+    'web/js/game.js, web/js/stage.js', '中', '小', '兩者'],
+  ['G13', '前情摘要壓縮，長篇不忘早期劇情',
+    '前情摘要不壓縮，超過約 16 輪後早期事件會被遺忘（GAPS 已列）。',
+    '每 8 輪把舊摘要壓成一段長期記憶，與近期摘要分開送入提示詞。',
+    'web/js/local/story.js, server/prompts.py, server/turn_service.py', '中', '中', '兩者'],
+
+  ['H01', '設定頁分區並加說明',
+    '金鑰、轉送、音量、文字速度擠在同一頁，新手不知道各欄位的用途。',
+    '分「連線」「遊戲」「資料」三區，每個欄位一行說明或提示。',
+    'web/index.html, web/style.css, web/js/i18n.js', '中', '小', '兩者'],
+  ['H02', '忙碌時最長等待時間可設定',
+    '搭配 A04：有人想一直等，有人想快點放棄。',
+    '設定選項：1 分鐘、5 分鐘、10 分鐘、一直等到成功。',
+    'web/js/ui.js, web/index.html', '中', '小', '兩者'],
+  ['H03', '模型偏好：品質優先或速度優先',
+    '換模型的策略固定，玩家無法選擇。',
+    '「品質優先」：ultra 忙碌時多等；「速度優先」：一忙就換 super。',
+    'web/js/ui.js, web/js/local/llm.js, server/llm_client.py', '中', '小', '兩者'],
+  ['H04', '生圖開關與省配額模式',
+    '配額吃緊時無法減少生圖請求。',
+    '設定可關閉生圖，或只畫場景不畫表情差分。',
+    'web/js/ui.js, web/js/local/images.js, server/asset_service.py', '中', '小', '兩者'],
+  ['H05', '常見錯誤說明頁',
+    '錯誤訊息沒有延伸說明。',
+    '教學網站加一頁常見錯誤（忙碌、金鑰被拒、轉送不通、空間已滿）與處理步驟，錯誤訊息附連結。',
+    '教學網站/, web/js/i18n.js', '中', '小', '兩者'],
+  ['H06', '沒填金鑰時引導先玩示範故事',
+    '沒有金鑰的新使用者一進來就卡在設定。',
+    '標題畫面在無金鑰時突出「先玩示範故事」，需要生成新內容時才提示填金鑰。',
+    'web/js/main.js, web/js/local/backend.js', '中', '小', '瀏覽器版'],
+  ['H07', '設定匯出與匯入',
+    '換電腦或換瀏覽器時音量、速度、轉送網址都要重設。',
+    '設定（預設不含金鑰）一併放進匯出 zip，匯入時還原。',
+    'web/js/local/archive.js, web/js/ui.js', '低', '小', '瀏覽器版'],
+
+  ['I01', '手機版面調整',
+    '台詞框、選項、立繪在手機寬度下的排版未特別處理。',
+    '直式手機版面：台詞框加高、選項全寬、立繪縮小。',
+    'web/style.css, web/js/stage.js', '中', '中', '瀏覽器版'],
+  ['I02', '觸控手勢',
+    '手機上只能點擊。',
+    '點擊前進、向上滑開歷程、長按開選單。',
+    'web/js/game.js', '中', '中', '瀏覽器版'],
+  ['I03', '手機切回前景時恢復中斷的回合',
+    '手機切到背景時，進行中的請求常被系統中斷，回來只看到錯誤。',
+    '回到前景時偵測中斷的回合，自動重試或顯示「重試」（搭配 C05、C06）。',
+    'web/js/game.js', '高', '小', '瀏覽器版'],
+  ['I04', '鍵盤焦點管理',
+    '對話框開啟時焦點不一定移入，Tab 會跑到背後畫面。',
+    '開啟時焦點移入並鎖在對話框內，關閉後回到原本位置。',
+    'web/js/ui.js', '低', '小', '兩者'],
+  ['I05', '重試倒數與錯誤可被螢幕閱讀器讀出',
+    '狀態變化只有視覺顯示。',
+    '狀態與錯誤區加 aria-live，按鈕補 aria-label。',
+    'web/index.html, web/js/ui.js', '低', '小', '兩者'],
+  ['I06', '台詞字級與高對比設定',
+    '台詞字級固定，長時間閱讀吃力。',
+    '設定可選小、中、大字級與高對比模式。',
+    'web/js/ui.js, web/style.css', '中', '小', '兩者'],
+
+  ['J01', '瀏覽器版診斷紀錄與匯出',
+    '瀏覽器版錯誤只寫在主控台，玩家回報問題時無從查起。',
+    '最近 200 筆事件（重試、換模型、錯誤碼、耗時）存 IndexedDB，設定頁可「匯出診斷檔」（不含金鑰）。',
+    'web/js/local/llm.js, web/js/local/images.js, web/js/local/store.js, web/js/main.js', '高', '中', '瀏覽器版'],
+  ['J02', '伺服器版重試統計',
+    'log 有零散紀錄，但看不出今天 429 幾次、平均等多久。',
+    '統計每次 429、換模型、等待秒數，提供 /api/stats 簡表。',
+    'server/llm_client.py, server/main.py', '中', '小', '伺服器版'],
+  ['J03', '轉送用量統計與接近上限警告',
+    'Worker 沒有用量紀錄，接近免費額度上限時不會知道。',
+    '用 Workers Analytics 或 KV 計數；接近上限時回傳專用錯誤碼，前端提示改用自架轉送。',
+    'relay/worker.js, web/js/i18n.js', '中', '中', '瀏覽器版'],
+  ['J04', 'log 檔輪替',
+    'logs/server.log 會無限長大。',
+    '改用 RotatingFileHandler（5 MB，保留 3 份）。',
+    'server/config.py', '低', '小', '伺服器版'],
+  ['J05', '測試不寫入正式 log',
+    'pytest 執行時會寫進 logs/server.log（GAPS 已列），干擾除錯。',
+    '測試時改用暫存目錄或關閉檔案 handler。',
+    'server/config.py, pytest.ini', '低', '小', '伺服器版'],
+  ['J06', '伺服器版忙碌與斷線情境測試',
+    'test_llm_client.py 已有基本測試，新的重試行為需要測試保護。',
+    '用假回應模擬 429、503、Retry-After、逾時、連線中斷，驗證抖動、冷卻、耐心等待模式、取消。',
+    'server/tests/test_llm_client.py, server/tests/test_nvidia_image.py', '高', '中', '伺服器版'],
+  ['J07', '瀏覽器版重試邏輯自動測試',
+    'llm.js、images.js、batch.js 沒有任何自動測試，只能手動驗。',
+    '用 Node 內建測試加假 fetch，涵蓋重試、換模型、逾時、relay 錯誤、批次降速。',
+    'web/js/local/*.js（新增測試目錄）', '中', '中', '瀏覽器版'],
+  ['J08', '伺服器版連線重用',
+    '每次請求都新開 httpx.AsyncClient，多一次 TLS 交握，忙碌時更慢也更容易逾時。',
+    '共用一個 AsyncClient（程式結束時關閉）。',
+    'server/llm_client.py, server/nvidia_image.py', '中', '小', '伺服器版'],
+  ['J09', '尖峰時段實測腳本當改進基準',
+    '沒有數據可比較改進前後的差異。',
+    '用自己的金鑰在尖峰時段跑 20 回合，記錄成功率、平均等待、換模型次數，寫進 dev-log。',
+    'tools/（新增腳本）, docs/dev-log.md', '中', '小', '兩者'],
+];
+
+const KEY = 'chienzhi.improvements.checked';
+const isPick = (it) => it[5] === '高' && it[6] === '小';
+let checked = new Set();
+try {
+  const raw = localStorage.getItem(KEY);
+  if (raw) checked = new Set(JSON.parse(raw));
+} catch (e) { console.warn('勾選狀態讀取失敗，改用空白清單', e); }
+
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify([...checked])); }
+  catch (e) { console.warn('勾選狀態儲存失敗（只影響重新整理後是否保留）', e); }
+}
+
+const $ = (s) => document.querySelector(s);
+const state = { cat: '', onlyPicked: false, onlyChecked: false };
+const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const lvl = (v) => (v === '高' || v === '大' ? 'hi' : v === '中' ? 'mid' : 'lo');
+
+function renderCats() {
+  const box = $('#cats');
+  const all = [['', `全部分類（${ITEMS.length}）`], ...Object.entries(CATS).map(([k, v]) =>
+    [k, `${k} ${v}（${ITEMS.filter((it) => it[0][0] === k).length}）`])];
+  box.innerHTML = all.map(([k, label]) =>
+    `<button class="chip${state.cat === k ? ' on' : ''}" data-cat="${k}">${esc(label)}</button>`).join('');
+}
+
+function visible() {
+  const q = $('#q').value.trim().toLowerCase();
+  const fi = $('#f-impact').value, fe = $('#f-effort').value, fs = $('#f-scope').value;
+  return ITEMS.filter((it) =>
+    (!state.cat || it[0][0] === state.cat) &&
+    (!fi || it[5] === fi) && (!fe || it[6] === fe) && (!fs || it[7] === fs) &&
+    (!state.onlyPicked || isPick(it)) && (!state.onlyChecked || checked.has(it[0])) &&
+    (!q || it.slice(0, 5).join(' ').toLowerCase().includes(q)));
+}
+
+function render() {
+  const list = visible();
+  const groups = {};
+  for (const it of list) (groups[it[0][0]] ||= []).push(it);
+  const html = Object.keys(CATS).filter((k) => groups[k]).map((k) => {
+    const n = ITEMS.filter((it) => it[0][0] === k && checked.has(it[0])).length;
+    return `<h2 class="cat-title">${k}. ${esc(CATS[k])}<small>已勾選 ${n}</small></h2>` +
+      groups[k].map((it) => {
+        const [id, title, now, fix, files, impact, effort, scope] = it;
+        const on = checked.has(id);
+        return `<label class="item${on ? ' checked' : ''}" data-id="${id}">
+  <input type="checkbox" ${on ? 'checked' : ''} aria-label="${id} ${esc(title)}">
+  <div>
+    <div class="head"><span class="id">${id}</span><span class="title">${esc(title)}</span></div>
+    <div class="tags">
+      ${isPick(it) ? '<span class="tag pick">優先推薦</span>' : ''}
+      <span class="tag ${lvl(impact)}">影響 ${impact}</span>
+      <span class="tag ${lvl(effort)}">工作量 ${effort}</span>
+      <span class="tag">${scope}</span>
+    </div>
+  </div>
+  <div class="desc">
+    <p><b>現況：</b>${esc(now)}</p>
+    <p><b>做法：</b>${esc(fix)}</p>
+    <p class="files">${esc(files)}</p>
+  </div>
+</label>`;
+      }).join('');
+  }).join('');
+  $('#list').innerHTML = html || '<p class="empty">沒有符合條件的項目</p>';
+  $('#count').textContent = `已勾選 ${checked.size} / ${ITEMS.length}（顯示 ${list.length} 項）`;
+  $('#only-picked').classList.toggle('on', state.onlyPicked);
+  $('#only-checked').classList.toggle('on', state.onlyChecked);
+  updatePreview();
+}
+
+function outputText() {
+  const picked = ITEMS.filter((it) => checked.has(it[0]));
+  if (!picked.length) return '';
+  const lines = [`千枝物語改進清單，已勾選 ${picked.length} / ${ITEMS.length} 項：`];
+  for (const [k, name] of Object.entries(CATS)) {
+    const rows = picked.filter((it) => it[0][0] === k);
+    if (!rows.length) continue;
+    lines.push('', `【${k} ${name}】`);
+    for (const it of rows) lines.push(`${it[0]} ${it[1]}`);
+  }
+  const note = $('#note').value.trim();
+  if (note) lines.push('', `補充說明：${note}`);
+  return lines.join('\n');
+}
+
+function updatePreview() { $('#preview').value = outputText(); }
+
+function flash(text) {
+  $('#msg').textContent = text;
+  clearTimeout(flash.t);
+  flash.t = setTimeout(() => { $('#msg').textContent = ''; }, 4000);
+}
+
+async function copy() {
+  const text = outputText();
+  if (!text) { flash('還沒有勾選任何項目'); return; }
+  try {
+    await navigator.clipboard.writeText(text);
+    flash(`已複製 ${checked.size} 項，貼回對話即可`);
+  } catch (e) {
+    // Clipboard API can be blocked on file:// pages; fall back to selecting the visible text box
+    const box = $('#preview');
+    box.classList.add('show');
+    $('#toggle-preview').textContent = '隱藏文字';
+    box.focus();
+    box.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (err) { console.warn('複製失敗', err); }
+    flash(ok ? `已複製 ${checked.size} 項，貼回對話即可` : '無法自動複製，請在下方文字框按 Ctrl+C');
+  }
+}
+
+document.addEventListener('change', (e) => {
+  const item = e.target.closest('.item');
+  if (!item || e.target.type !== 'checkbox') return;
+  const id = item.dataset.id;
+  if (e.target.checked) checked.add(id); else checked.delete(id);
+  save();
+  render();
+});
+$('#cats').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-cat]');
+  if (!b) return;
+  state.cat = b.dataset.cat;
+  renderCats();
+  render();
+});
+['#q', '#f-impact', '#f-effort', '#f-scope'].forEach((s) => $(s).addEventListener('input', render));
+$('#only-picked').onclick = () => { state.onlyPicked = !state.onlyPicked; render(); };
+$('#only-checked').onclick = () => { state.onlyChecked = !state.onlyChecked; render(); };
+$('#check-visible').onclick = () => { visible().forEach((it) => checked.add(it[0])); save(); render(); };
+$('#uncheck-visible').onclick = () => { visible().forEach((it) => checked.delete(it[0])); save(); render(); };
+$('#clear-all').onclick = () => {
+  if (!checked.size || !confirm(`確定清除全部 ${checked.size} 項勾選？`)) return;
+  checked.clear();
+  save();
+  render();
+};
+$('#note').addEventListener('input', updatePreview);
+$('#copy').onclick = copy;
+$('#toggle-preview').onclick = () => {
+  const show = $('#preview').classList.toggle('show');
+  $('#toggle-preview').textContent = show ? '隱藏文字' : '顯示文字';
+};
+
+renderCats();
+render();
+</script>
+</body>
+</html>

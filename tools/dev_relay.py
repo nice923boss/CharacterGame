@@ -75,12 +75,19 @@ def make_handler(origins: set[str], env_key: str | None):
             auth = f"Bearer {env_key}" if env_key else self.headers.get("Authorization")
             if auth:
                 headers["Authorization"] = auth
+            started = False
             try:
                 with httpx.stream("POST", upstream + path, content=body, headers=headers,
                                   timeout=httpx.Timeout(300, connect=15)) as res:
                     self.send_response(res.status_code)
+                    started = True
                     self.cors(origin)
                     self.send_header("Content-Type", res.headers.get("Content-Type", "application/json"))
+                    passed = [h for h in res.headers if h == "retry-after" or h.startswith("x-ratelimit-")]
+                    for h in passed:
+                        self.send_header(h, res.headers[h])
+                    if passed:
+                        self.send_header("Access-Control-Expose-Headers", ", ".join(passed))
                     self.send_header("Connection", "close")
                     self.end_headers()
                     for chunk in res.iter_raw():
@@ -88,6 +95,8 @@ def make_handler(origins: set[str], env_key: str | None):
                         self.wfile.flush()
             except httpx.HTTPError as e:
                 sys.stderr.write(f"relay upstream error: {type(e).__name__}\n")
+                if not started:
+                    self.reply(502, {"error": "upstream_unreachable"}, origin)
                 self.close_connection = True
 
     return Relay

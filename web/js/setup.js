@@ -123,7 +123,8 @@ async function importNovel(file) {
   running = job('/api/novel/analyze', { lang, title, text }, (ev) => {
     if (ev.type === 'progress') box.update(t('setup.novel.progress', ev));
     else if (ev.type === 'phase') box.update(`${t(`phase.${ev.code}`)}…`);
-    else if (ev.type === 'status' && ev.state !== 'waiting') box.update(null, statusText(ev));
+    if (ev.type === 'status') box.retry(ev, () => running.retryNow());
+    if (ev.type === 'status' && ev.state !== 'waiting') box.update(null, statusText(ev));
   });
   try {
     const { draft } = await running.done;
@@ -212,7 +213,8 @@ export async function startGame() {
   const box = progress(t('setup.building'), t('setup.buildingSub'), () => running && running.cancel());
   running = job('/api/games', body, (ev) => {
     if (ev.type === 'phase') box.update(`${t(`phase.${ev.code}`)}…`);
-    else if (ev.type === 'status' && ev.state !== 'waiting') box.update(null, statusText(ev));
+    if (ev.type === 'status') box.retry(ev, () => running.retryNow());
+    if (ev.type === 'status' && ev.state !== 'waiting') box.update(null, statusText(ev));
   });
   try {
     const final = await running.done;

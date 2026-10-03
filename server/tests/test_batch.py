@@ -41,7 +41,7 @@ class TreeLLM:
         self.fail = fail
         self.calls = 0
 
-    async def stream(self, messages, emit, temperature=0.8):
+    async def stream(self, messages, emit, temperature=0.8, waits=None):
         self.calls += 1
         last = messages[-1]["content"]
         if "ending 不可為 null。台詞不要重寫" in last:
@@ -195,7 +195,7 @@ class GateLLM(TreeLLM):
         super().__init__()
         self.gates = []
 
-    async def stream(self, messages, emit, temperature=0.8):
+    async def stream(self, messages, emit, temperature=0.8, waits=None):
         if self.calls:
             gate = asyncio.Event()
             self.gates.append(gate)

@@ -16,7 +16,7 @@ from fastapi.staticfiles import StaticFiles
 from . import comfy_client, config, nvidia_image
 from .asset_service import AssetService
 from .batch_service import BatchService
-from .llm_client import LLMClient, LLMError
+from .llm_client import LLMClient, LLMError, Waits
 from .novel_service import NovelService
 from .story_store import Store
 from .turn_service import TurnError, TurnService
@@ -28,6 +28,7 @@ turns = TurnService(store, LLMClient(), assets)
 batches = BatchService(store, turns, assets)
 novels = NovelService(turns.llm)
 TASKS: dict[str, asyncio.Task] = {}
+SKIPS: dict[str, asyncio.Event] = {}    # "retry now" button of each running job
 
 
 @asynccontextmanager
@@ -37,6 +38,7 @@ async def lifespan(_app):
     batches.resume_all()
     log.info("server up on http://%s:%s", config.HOST, config.PORT)
     yield
+    await turns.llm.aclose()
 
 
 app = FastAPI(lifespan=lifespan)
@@ -46,17 +48,20 @@ def _event(ev: dict) -> str:
     return f"data: {json.dumps(ev, ensure_ascii=False)}\n\n"
 
 
-def sse_job(work) -> StreamingResponse:
-    """Run `work(emit)` as a task and stream its events. Closing the stream cancels the task."""
+def sse_job(work, payload: dict | None = None) -> StreamingResponse:
+    """Run `work(emit, waits)` as a task and stream its events. Closing the stream cancels the task.
+    waits: how long the player agreed to queue for a busy model (payload["waits"]) and the retry-now switch."""
     q: asyncio.Queue = asyncio.Queue()
     tid = uuid.uuid4().hex[:12]
+    skip = asyncio.Event()
+    waits = Waits.from_payload((payload or {}).get("waits"), skip)
 
     async def emit(ev: dict) -> None:
         await q.put(ev)
 
     async def runner():
         try:
-            await work(emit)
+            await work(emit, waits)
         except (TurnError, LLMError) as e:
             await q.put({"type": "error", "code": e.code, "params": e.params})
         except asyncio.CancelledError:
@@ -70,6 +75,7 @@ def sse_job(work) -> StreamingResponse:
 
     task = asyncio.create_task(runner())
     TASKS[tid] = task
+    SKIPS[tid] = skip
 
     async def stream():
         yield _event({"type": "task", "id": tid})
@@ -83,6 +89,7 @@ def sse_job(work) -> StreamingResponse:
             if not task.done():
                 task.cancel()
             TASKS.pop(tid, None)
+            SKIPS.pop(tid, None)
 
     return StreamingResponse(stream(), media_type="text/event-stream",
                              headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
@@ -101,6 +108,11 @@ def _game_or_404(gid: str) -> dict:
 async def health():
     return {"comfy": await comfy_client.online(), "nvidia_image": nvidia_image.available(),
             "engines": assets.engines(), "models": [c.label for c in turns.llm.candidates]}
+
+
+@app.get("/api/stats")
+async def stats():
+    return turns.llm.stats()
 
 
 @app.get("/api/settings")
@@ -136,16 +148,16 @@ async def list_games():
 
 @app.post("/api/games")
 async def create_game(payload: dict = Body(...)):
-    async def work(emit):
-        game = await turns.create_game(payload, emit)
+    async def work(emit, waits):
+        game = await turns.create_game(payload, emit, waits)
         if game.get("batch"):
             batches.start(game["id"])
-    return sse_job(work)
+    return sse_job(work, payload)
 
 
 @app.post("/api/novel/analyze")
 async def analyze_novel(payload: dict = Body(...)):
-    return sse_job(lambda emit: novels.analyze(payload, emit))
+    return sse_job(lambda emit, waits: novels.analyze(payload, emit, waits), payload)
 
 
 @app.get("/api/batches")
@@ -201,7 +213,8 @@ async def asset_status(gid: str, scene: str | None = None):
 @app.post("/api/games/{gid}/turn")
 async def turn(gid: str, payload: dict = Body(...)):
     _game_or_404(gid)
-    return sse_job(lambda emit: turns.run_turn(gid, payload.get("parent_id"), payload.get("input") or {}, emit))
+    return sse_job(lambda emit, waits: turns.run_turn(gid, payload.get("parent_id"), payload.get("input") or {}, emit,
+                                                     waits=waits), payload)
 
 
 @app.post("/api/tasks/{tid}/cancel")
@@ -211,6 +224,15 @@ async def cancel(tid: str):
         task.cancel()
         return {"ok": True}
     return {"ok": False}
+
+
+@app.post("/api/tasks/{tid}/retry_now")
+async def retry_now(tid: str):
+    """Cut the current countdown short: the next attempt starts at once."""
+    skip = SKIPS.get(tid)
+    if skip:
+        skip.set()
+    return {"ok": bool(skip)}
 
 
 def _with_thumb(save: dict | None) -> dict | None:

@@ -8,7 +8,7 @@ import random
 
 from . import config, prompts
 from .asset_service import P_EXPR, P_SCENE, P_SPEAKER, AssetService
-from .llm_client import LLMClient
+from .llm_client import LLMClient, Waits
 from .story_store import Store, now_iso
 from .turn_parser import (LANGS, MAX_GAME_TITLE, NARRATOR, Cast, LineStream, apply_state, clip, game_lang, last_json,
                           mostly_ascii, repair, slug)
@@ -55,7 +55,7 @@ class TurnService:
 
     # ---------- new game ----------
 
-    async def create_game(self, payload: dict, emit) -> dict:
+    async def create_game(self, payload: dict, emit, waits: Waits | None = None) -> dict:
         lang = payload.get("lang") if payload.get("lang") in LANGS else "zh"
         x = LIMIT_SCALE[lang]
         world = {k: _check_text((payload.get("world") or {}).get(k), k, 200 * x, k in ("era", "place"))
@@ -101,7 +101,8 @@ class TurnService:
                 await emit(ev)
 
         await emit({"type": "phase", "code": "setup_art"})
-        res = await self.llm.stream(prompts.setup_messages(world, chars, lang), status_only, temperature=0.5)
+        res = await self.llm.stream(prompts.setup_messages(world, chars, lang), status_only, temperature=0.5,
+                                   waits=waits)
         d = last_json(res.content) or {}
         looks = {str(x.get("name", "")).strip(): str(x.get("appearance_en", "")).strip()
                  for x in d.get("characters") or [] if isinstance(x, dict)}
@@ -146,7 +147,8 @@ class TurnService:
                 return child
         return None
 
-    async def run_turn(self, gid: str, parent_id: str | None, player_input: dict, emit, batch: bool = False) -> dict:
+    async def run_turn(self, gid: str, parent_id: str | None, player_input: dict, emit, batch: bool = False,
+                       waits: Waits | None = None) -> dict:
         """batch=True: written ahead by the batch walker, so no autosave, no sprite requests, and the
         scene waits behind the images of the game on screen."""
         key = (gid, parent_id, "".join(str(player_input.get("text") or "").split()))
@@ -156,16 +158,17 @@ class TurnService:
             await emit({"type": "phase", "code": "batch_wait"})
             await asyncio.wait([writing])
         if not batch or parent_id is None:
-            return await self._turn(gid, parent_id, player_input, emit, batch)
+            return await self._turn(gid, parent_id, player_input, emit, batch, waits)
         done = asyncio.get_running_loop().create_future()
         self._writing[key] = done
         try:
-            return await self._turn(gid, parent_id, player_input, emit, batch)
+            return await self._turn(gid, parent_id, player_input, emit, batch, waits)
         finally:
             self._writing.pop(key, None)
             done.set_result(None)
 
-    async def _turn(self, gid: str, parent_id: str | None, player_input: dict, emit, batch: bool) -> dict:
+    async def _turn(self, gid: str, parent_id: str | None, player_input: dict, emit, batch: bool,
+                    waits: Waits | None = None) -> dict:
         game = self.store.load_game(gid)
         tree = self.store.load_tree(gid)
         kind = player_input.get("kind")
@@ -219,7 +222,7 @@ class TurnService:
             else:
                 await emit(ev)
 
-        res = await self.llm.stream(msgs, on_event)
+        res = await self.llm.stream(msgs, on_event, waits=waits)
         await emit_lines(holder[0].finish())
         lines = holder[0].lines
         if not lines:

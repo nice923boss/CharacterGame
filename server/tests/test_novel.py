@@ -35,7 +35,7 @@ class NovelLLM:
         self.draft = draft
         self.prompts = []
 
-    async def stream(self, messages, emit, temperature=0.8):
+    async def stream(self, messages, emit, temperature=0.8, waits=None):
         self.prompts.append(messages[-1]["content"])
         text = f"```json\n{json.dumps(self.draft, ensure_ascii=False)}\n```" if "改編成遊戲設定" in messages[-1][
             "content"] else "人物：阿明"

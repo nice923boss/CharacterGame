@@ -1,6 +1,7 @@
 // Thin client for the FastAPI backend. SSE jobs are POST streams read with fetch.
 // Server errors arrive as codes; Error.message is the translated text and Error.code keeps the code.
 import { errorText } from './i18n.js';
+import { settings } from './ui.js';
 
 function fail(code, params = {}) {
   const e = new Error(errorText(code, params));
@@ -48,12 +49,18 @@ function localJob(path, body, onEvent) {
     inner = b.job(path, body, onEvent);
     try { return await inner.done; } catch (e) { throw asError(e); }
   })();
-  return { done, cancel: async () => { cancelled = true; if (inner) await inner.cancel(); } };
+  return {
+    done,
+    cancel: async () => { cancelled = true; if (inner) await inner.cancel(); },
+    retryNow: async () => { if (inner) await inner.retryNow(); },
+  };
 }
 
-// Starts a server job; onEvent gets every event. Returns { done, cancel }.
+// Starts a server job; onEvent gets every event. Returns { done, cancel, retryNow }.
 // done resolves with the final event, or rejects with an Error (message is player-facing).
+// Every job carries how long the player agreed to queue for a busy model (settings page).
 export function job(path, body, onEvent) {
+  body = { ...body, waits: { patience: settings.patience, prefer: settings.prefer } };
   if (LOCAL) return localJob(path, body, onEvent);
   const ctrl = new AbortController();
   let taskId = null;
@@ -103,5 +110,9 @@ export function job(path, body, onEvent) {
     if (taskId) { try { await post(`/api/tasks/${taskId}/cancel`, {}); } catch { /* stream abort below still stops it */ } }
     ctrl.abort();
   };
-  return { done, cancel };
+  // Cuts the current retry countdown short
+  const retryNow = async () => {
+    if (taskId) { try { await post(`/api/tasks/${taskId}/retry_now`, {}); } catch (e) { console.warn('retry now failed', e); } }
+  };
+  return { done, cancel, retryNow };
 }
