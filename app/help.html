@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>千枝物語｜常見問題</title>
+<!-- Common errors and what to do (H05). Error messages in the game link here by anchor: #busy #key #relay #network #storage -->
+<style>
+  :root { --bg: #0c1020; --panel: #141b31; --gold: #d2ae68; --gold-dim: #8f7443; --ink: #f4ecdc; --muted: #b3ab9c;
+    --accent: #7f9ed8; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.75 'Noto Sans TC', system-ui, sans-serif; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.6em; color: var(--gold); margin: 0 0 4px; }
+  h2 { font-size: 1.2em; color: var(--gold); margin: 0 0 8px; }
+  nav { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 12px 0 24px; }
+  a { color: var(--accent); }
+  section { background: var(--panel); border: 1px solid var(--gold-dim); border-radius: 8px; padding: 16px 20px;
+    margin: 0 0 16px; scroll-margin-top: 16px; }
+  section:target { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold-dim); }
+  dt { color: var(--muted); font-size: 0.9em; margin-top: 8px; }
+  dd { margin: 0; }
+  ol { margin: 4px 0 0; padding-left: 1.4em; }
+  .lang { float: right; font-size: 0.9em; }
+  .lead { color: var(--muted); margin: 0; }
+  .credit { max-width: 760px; margin: -40px auto 0; padding: 0 16px 16px; text-align: right; font-size: 12px; color: #8a8478; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<main lang="zh-Hant" data-lang="zh">
+  <a class="lang" href="#" data-switch="en">English</a>
+  <h1>常見問題</h1>
+  <p class="lead">遊戲裡的錯誤訊息旁有「說明」連結，會帶你到對應的段落。</p>
+  <nav>
+    <a href="#busy">輝達伺服器忙碌</a><a href="#key">金鑰被拒絕</a><a href="#relay">連不上轉送服務</a>
+    <a href="#network">網路或連線中斷</a><a href="#storage">儲存空間已滿</a>
+  </nav>
+
+  <section id="busy">
+    <h2>輝達伺服器忙碌</h2>
+    <dl>
+      <dt>看到什麼</dt>
+      <dd>狀態列顯示「輝達共用伺服器擁擠」並倒數重試，或最後出現「所有模型都暫時無法回應」。</dd>
+      <dt>為什麼</dt>
+      <dd>build.nvidia.com 的免費共用伺服器同時太多人使用，回覆 429（請求太多）或 503（暫時無法服務）。不是金鑰或電腦的問題。</dd>
+      <dt>怎麼做</dt>
+      <dd><ol>
+        <li>先等倒數跑完，遊戲會自己再試；想馬上試就按「立即重試」。</li>
+        <li>失敗後按失敗訊息旁的「重試」，會用同一個輸入重送，不用重打。</li>
+        <li>常常遇到時，打開設定的「連線」區，把「忙碌時最多等」改成「10 分鐘」或「一直等到成功」。</li>
+        <li>想早點有回應，把「模型偏好」改成「速度優先」，第一個模型一忙就換下一個。</li>
+        <li>標題畫面的燈號或遊戲工具列的圓點變紅時，可以先從節點樹玩已經寫好的分支，晚點再寫新的。</li>
+      </ol></dd>
+    </dl>
+  </section>
+
+  <section id="key">
+    <h2>金鑰被拒絕</h2>
+    <dl>
+      <dt>看到什麼</dt>
+      <dd>「請先到設定填寫輝達 API Key」、「輝達拒絕了這把金鑰」或「金鑰格式不對」。</dd>
+      <dt>為什麼</dt>
+      <dd>金鑰沒填、貼錯（多了空格或少了字），或已經過期、被刪除。</dd>
+      <dt>怎麼做</dt>
+      <dd><ol>
+        <li>到 build.nvidia.com 登入，產生一把新的金鑰，它以 nvapi- 開頭。</li>
+        <li>打開設定的「連線」區，把金鑰貼進「輝達 API Key」，按「儲存」。錯誤訊息旁的「開啟設定」會直接跳到這一欄。</li>
+        <li>貼上時注意前後不要多出空格。</li>
+        <li>回到遊戲按「重試」。</li>
+      </ol></dd>
+    </dl>
+  </section>
+
+  <section id="relay">
+    <h2>連不上轉送服務（網頁版）</h2>
+    <dl>
+      <dt>看到什麼</dt>
+      <dd>「請先到設定填寫轉送網址」、「連不上轉送網址」、「轉送服務不接受這個網站來源」或「轉送網址格式不對」。</dd>
+      <dt>為什麼</dt>
+      <dd>瀏覽器不能直接呼叫輝達 API，網頁版要經過轉送服務。網址填錯、轉送服務停了，或轉送服務沒有允許這個網站，都會連不上。伺服器版沒有這一欄，不會遇到。</dd>
+      <dt>怎麼做</dt>
+      <dd><ol>
+        <li>打開設定的「連線」區，看「轉送網址」。不確定時清空後按「儲存」，會改用內建網址。</li>
+        <li>用自己部署的轉送服務時，確認網址以 https:// 開頭，而且服務還在執行。</li>
+        <li>出現「不接受這個網站來源」時，把目前這個網站的網址加進轉送服務的 ALLOWED_ORIGINS 允許清單。</li>
+        <li>修好後回到遊戲按「重試」。</li>
+      </ol></dd>
+    </dl>
+  </section>
+
+  <section id="network">
+    <h2>網路或連線中斷</h2>
+    <dl>
+      <dt>看到什麼</dt>
+      <dd>畫面頂端出現「網路已中斷」橫幅，或訊息「連線中斷，這一輪沒有完成」、「連不上遊戲伺服器」。</dd>
+      <dt>為什麼</dt>
+      <dd>網路斷了、手機切到背景太久，或伺服器版的遊戲伺服器被關掉了。</dd>
+      <dt>怎麼做</dt>
+      <dd><ol>
+        <li>確認網路恢復；恢復後遊戲會自動重送剛才的輸入。</li>
+        <li>沒有自動重送就按「重試」。中斷後 10 分鐘內重試，已收到的台詞會保留，從中斷處接著寫。</li>
+        <li>伺服器版：確認「啟動千枝物語.bat」開的視窗還在；被關掉了就再執行一次，然後重新整理頁面。</li>
+      </ol></dd>
+    </dl>
+  </section>
+
+  <section id="storage">
+    <h2>儲存空間已滿（網頁版）</h2>
+    <dl>
+      <dt>看到什麼</dt>
+      <dd>「瀏覽器的儲存空間已滿，這次的內容沒有存下來」。</dd>
+      <dt>為什麼</dt>
+      <dd>網頁版把故事、圖片與存檔都放在瀏覽器裡，圖片多了會用完瀏覽器分給這個網站的空間。無痕視窗的空間更小。</dd>
+      <dt>怎麼做</dt>
+      <dd><ol>
+        <li>在標題畫面按「下載進度到電腦」，先把全部進度備份成 zip。</li>
+        <li>打開「管理故事」，刪掉不再玩的故事；刪掉的故事會先移到下方「最近刪除」保留 7 天，要按「永久刪除」才會騰出空間。</li>
+        <li>回到遊戲重做剛才的操作。這一輪的台詞仍會播完，之後按「重試」會重新寫這一輪，內容可能和剛才不同。</li>
+        <li>之後想找回刪掉的故事，把 zip 解壓縮，再用「讀取資料夾進度」選那個資料夾。</li>
+        <li>建議用一般視窗玩，不要用無痕視窗。</li>
+      </ol></dd>
+    </dl>
+  </section>
+</main>
+
+<main lang="en" data-lang="en" hidden>
+  <a class="lang" href="#" data-switch="zh">中文</a>
+  <h1>Common problems</h1>
+  <p class="lead">Error messages in the game have a "Help" link that brings you to the matching section.</p>
+  <nav>
+    <a href="#busy">NVIDIA servers busy</a><a href="#key">Key rejected</a><a href="#relay">Relay unreachable</a>
+    <a href="#network">Network or connection lost</a><a href="#storage">Storage full</a>
+  </nav>
+
+  <section id="busy-en">
+    <h2>NVIDIA servers busy</h2>
+    <dl>
+      <dt>What you see</dt>
+      <dd>The status line says the shared NVIDIA servers are crowded and counts down to a retry, or ends with "No model can answer right now".</dd>
+      <dt>Why</dt>
+      <dd>Too many people are using the free shared servers at build.nvidia.com, which answer 429 (too many requests) or 503 (temporarily unavailable). Your key and computer are fine.</dd>
+      <dt>What to do</dt>
+      <dd><ol>
+        <li>Let the countdown finish and the game tries again by itself; press "Retry now" to try at once.</li>
+        <li>After a failure, press "Retry" next to the error; it sends the same input again.</li>
+        <li>If it happens often, open the Connection part of Settings and set "Wait when busy" to 10 minutes or "Until it works".</li>
+        <li>For a faster answer, set "Model choice" to "Speed first" so the next model takes over as soon as the first is busy.</li>
+        <li>When the light on the title screen or the dot in the game toolbar turns red, play branches that are already written from the tree and write new ones later.</li>
+      </ol></dd>
+    </dl>
+  </section>
+
+  <section id="key-en">
+    <h2>Key rejected</h2>
+    <dl>
+      <dt>What you see</dt>
+      <dd>"Enter your NVIDIA API key in Settings first", "NVIDIA rejected this key" or "Invalid key".</dd>
+      <dt>Why</dt>
+      <dd>The key is missing, was pasted wrong (extra spaces or missing characters), or has expired or been deleted.</dd>
+      <dt>What to do</dt>
+      <dd><ol>
+        <li>Sign in at build.nvidia.com and create a new key; it starts with nvapi-.</li>
+        <li>Open the Connection part of Settings, paste it into "NVIDIA API key" and press Save. "Open Settings" next to the error jumps to this field.</li>
+        <li>Make sure no spaces came along before or after the key.</li>
+        <li>Go back to the game and press "Retry".</li>
+      </ol></dd>
+    </dl>
+  </section>
+
+  <section id="relay-en">
+    <h2>Relay unreachable (web version)</h2>
+    <dl>
+      <dt>What you see</dt>
+      <dd>"Enter a relay URL in Settings first", "Cannot reach the relay URL", a message that the relay does not accept this site, or "Invalid relay URL".</dd>
+      <dt>Why</dt>
+      <dd>Browsers cannot call the NVIDIA API directly, so the web version goes through a relay. A wrong URL, a stopped relay, or a relay that does not allow this site all end here. The server version has no relay and never shows this.</dd>
+      <dt>What to do</dt>
+      <dd><ol>
+        <li>Open the Connection part of Settings and check "Relay URL". If unsure, clear it and press Save to use the built-in relay.</li>
+        <li>With your own relay, check that the URL starts with https:// and that the relay is running.</li>
+        <li>If the relay does not accept this site, add this site's address to the relay's ALLOWED_ORIGINS list.</li>
+        <li>Go back to the game and press "Retry".</li>
+      </ol></dd>
+    </dl>
+  </section>
+
+  <section id="network-en">
+    <h2>Network or connection lost</h2>
+    <dl>
+      <dt>What you see</dt>
+      <dd>A "You are offline" banner at the top, or "The connection dropped; this turn did not finish" or "Cannot reach the game server".</dd>
+      <dt>Why</dt>
+      <dd>The network went down, the phone stayed in the background too long, or the server version's game server was closed.</dd>
+      <dt>What to do</dt>
+      <dd><ol>
+        <li>Wait for the network to come back; the game then sends your last input again by itself.</li>
+        <li>If it does not, press "Retry". Within 10 minutes of the break, the lines already received are kept and the story goes on from there.</li>
+        <li>Server version: check that the window opened by 啟動千枝物語.bat is still there; if it was closed, run it again and reload the page.</li>
+      </ol></dd>
+    </dl>
+  </section>
+
+  <section id="storage-en">
+    <h2>Storage full (web version)</h2>
+    <dl>
+      <dt>What you see</dt>
+      <dd>"The browser storage is full; this was not saved".</dd>
+      <dt>Why</dt>
+      <dd>The web version keeps stories, pictures and saves in the browser, and pictures use up the space the browser gives this site. Private windows get even less.</dd>
+      <dt>What to do</dt>
+      <dd><ol>
+        <li>On the title screen, press "Download Progress" to back everything up as a zip.</li>
+        <li>Open "Manage Stories" and delete stories you no longer play; deleted stories first wait 7 days under "Recently deleted", and only "Delete for good" frees space.</li>
+        <li>Go back to the game and do it again. The lines of that turn still play to the end; "Retry" then writes the turn again, so it may come out different.</li>
+        <li>To bring a deleted story back later, unzip the backup and pick the folder with "Load Progress Folder".</li>
+        <li>Play in a normal window rather than a private one.</li>
+      </ol></dd>
+    </dl>
+  </section>
+</main>
+
+<footer class="credit">製作者：黃政文</footer>
+
+<script>
+  // Opens in the game's language (localStorage chienzhi.lang); the switch links change this page only.
+  // English sections use "-en" ids
+  const KEY = 'chienzhi.lang';
+  function pick() {
+    try { const v = localStorage.getItem(KEY); if (v === 'zh' || v === 'en') return v; } catch { /* storage blocked */ }
+    return navigator.language?.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+  }
+  function show(lang) {
+    for (const m of document.querySelectorAll('main')) m.hidden = m.dataset.lang !== lang;
+    document.documentElement.lang = lang === 'zh' ? 'zh-Hant' : 'en';
+    document.title = lang === 'zh' ? '千枝物語｜常見問題' : 'Thousand Branches: common problems';
+    const id = location.hash.slice(1).replace(/-en$/, '');
+    if (!id) return;
+    const target = document.getElementById(lang === 'en' ? `${id}-en` : id);
+    if (target) { history.replaceState(null, '', `#${target.id}`); target.scrollIntoView(); }
+  }
+  for (const a of document.querySelectorAll('[data-switch]')) {
+    a.onclick = (e) => {
+      e.preventDefault();
+      show(a.dataset.switch);
+    };
+  }
+  for (const a of document.querySelectorAll('main[data-lang="en"] nav a')) a.href += '-en';
+  show(pick());
+</script>
+</body>
+</html>

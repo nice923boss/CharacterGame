@@ -1,8 +1,20 @@
 // Progress download and folder import for the browser build. The zip mirrors the server's saves/ folder
-// (games/<id>/game.json, tree.json, assets/..., slots.json, autosave.json), so either side can read it.
-import * as store from './store.js';
-import * as images from './images.js';
-import { ready } from './backend.js';
+// (games/<id>/game.json, tree.json, assets/..., slots.json, autosaves.json), so either side can read it.
+import * as store from './store.js?v=35d64fef8e0b';
+import * as images from './images.js?v=35d64fef8e0b';
+import { applyBrowserSettings, browserSettings, diagReport, ready } from './backend.js?v=35d64fef8e0b';
+import { DATA } from './data.js?v=35d64fef8e0b';
+
+// Turns in the player's own stories (the bundled demo left out), for the backup reminder on the title screen
+const ownTurns = (games) => games.filter((g) => g.id !== DATA.demo).reduce((n, g) => n + g.nodes, 0);
+const ownGames = (games) => games.filter((g) => g.id !== DATA.demo).length;
+
+// { games, turns, backup: { at, turns } | null }: the last download and how many turns there were then
+export async function backupInfo() {
+  await ready;
+  const games = await store.listGames();
+  return { games: ownGames(games), turns: ownTurns(games), backup: (await store.kvGet('backup')) || null };
+}
 
 // ---------- zip (stored, no compression: the files are already PNG) ----------
 
@@ -76,6 +88,24 @@ function zip(entries) {
 
 const jsonBytes = (obj) => new TextEncoder().encode(JSON.stringify(obj, null, 1));
 
+// Local date and time for file names, e.g. 20261004-0130
+const fileStamp = () => store.nowIso().slice(0, 16).replace(/[-:]/g, '').replace('T', '-');
+
+function saveFile(blob, name) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+}
+
+// The file a player sends along with a problem report (J01)
+export async function downloadDiag() {
+  saveFile(new Blob([await diagReport()], { type: 'application/json' }), `chienzhi-diag-${fileStamp()}.json`);
+}
+
 // Builds the zip and starts the browser download; resolves with { games, files }.
 // onProgress(pct) runs after each file (by file count; demo images may still come over the network)
 export async function exportProgress(onProgress = () => {}) {
@@ -83,7 +113,7 @@ export async function exportProgress(onProgress = () => {}) {
   const entries = [];
   const games = await store.listGames();
   const pathsOf = new Map(games.map((g) => [g.id, store.filePaths().filter((p) => p.startsWith(`${g.id}/`)).sort()]));
-  const total = games.reduce((n, g) => n + 2 + pathsOf.get(g.id).length, 2);
+  const total = games.reduce((n, g) => n + 2 + pathsOf.get(g.id).length, 3);
   const add = (name, bytes) => {
     entries.push({ name, bytes, crc: crc32(bytes) });
     onProgress(Math.min(99, Math.floor((entries.length * 100) / total)));
@@ -97,16 +127,12 @@ export async function exportProgress(onProgress = () => {}) {
     }
   }
   add('saves/slots.json', jsonBytes(await store.loadSlots()));
-  const auto = await store.loadAutosave();
-  if (auto) add('saves/autosave.json', jsonBytes(auto));
-  const stamp = store.nowIso().slice(0, 16).replace(/[-:]/g, '').replace('T', '-');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(zip(entries));
-  a.download = `chienzhi-saves-${stamp}.zip`;
-  document.body.append(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+  const autos = await store.loadAutosaves();
+  if (autos.length) add('saves/autosaves.json', jsonBytes(autos));
+  // Volume, speed, language, relay URL and image mode (H07); never the key
+  add('saves/browser-settings.json', jsonBytes(browserSettings()));
+  saveFile(zip(entries), `chienzhi-saves-${fileStamp()}.zip`);
+  await store.kvPut('backup', { at: new Date().toISOString(), turns: ownTurns(games) });
   return { games: games.length, files: entries.length };
 }
 
@@ -115,7 +141,8 @@ export async function exportProgress(onProgress = () => {}) {
 // Only finished images and sprite metadata; .raw intermediates and anything else are left out
 const KEEP = /^assets\/(scenes\/[^/.]+\.png|sprites\/[^/]+\/([^/.]+\.png|meta\.json))$/;
 
-// files: the FileList of an <input webkitdirectory>. Resolves with { games, slots, autosave }.
+// files: the FileList of an <input webkitdirectory>. Resolves with { games, slots, autosave, settings }
+// (settings: what browser-settings.json changed, or null).
 export async function importFolder(files) {
   await ready;
   const all = [...files].map((f) => ({ f, path: f.webkitRelativePath || f.name }));
@@ -144,12 +171,14 @@ export async function importFolder(files) {
     }
     await store.saveTree(gid, tree);
     await store.saveGame(game);
+    await store.untrash(gid);
     imported.push({ gid, root: m[1] });
   }
-  // slots.json / autosave.json sit two levels above a story (saves/games/<id>/): take them when present
+  // slots.json / autosaves.json (autosave.json before 2026-10) sit two levels above a story (saves/games/<id>/)
   const roots = new Set(imported.map((x) => x.root.replace(/games\/$/, '')));
   let slotCount = 0;
   let autosave = false;
+  let settings = null;
   for (const root of roots) {
     const known = new Set((await store.listGames()).map((g) => g.id));
     const slotFile = byPath.get(`${root}slots.json`);
@@ -163,16 +192,25 @@ export async function importFolder(files) {
         await store.putSlots(slots);
       } catch (e) { console.warn('slots.json unreadable', e); }
     }
-    const autoFile = byPath.get(`${root}autosave.json`);
+    const autoFile = byPath.get(`${root}autosaves.json`) || byPath.get(`${root}autosave.json`);
     if (autoFile) {
       try {
-        const a = JSON.parse(await autoFile.text());
-        if (a && known.has(a.game_id)) {
-          await store.setAutosave(a.game_id, a.node_id, a.scene_id);
-          autosave = true;
+        const data = JSON.parse(await autoFile.text());
+        // Oldest first, so the newest ends up on top of the list
+        for (const a of (Array.isArray(data) ? data : [data]).reverse()) {
+          if (a && known.has(a.game_id)) {
+            await store.setAutosave(a.game_id, a.node_id, a.scene_id);
+            autosave = true;
+          }
         }
-      } catch (e) { console.warn('autosave.json unreadable', e); }
+      } catch (e) { console.warn(`${autoFile.name} unreadable`, e); }
+    }
+    const setFile = byPath.get(`${root}browser-settings.json`);
+    if (setFile) {
+      try { settings = applyBrowserSettings(JSON.parse(await setFile.text())) || settings; } catch (e) {
+        console.warn('browser-settings.json unreadable', e);
+      }
     }
   }
-  return { games: imported.length, slots: slotCount, autosave };
+  return { games: imported.length, slots: slotCount, autosave, settings };
 }

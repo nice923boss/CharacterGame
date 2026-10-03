@@ -1,13 +1,13 @@
 // Browser port of server/turn_service.py: world setup and one story turn, reporting through emit(event).
 // A node is written only after the whole turn succeeded, so a cancelled or failed turn leaves the tree as it was.
-import { DATA } from './data.js';
-import * as store from './store.js';
-import * as images from './images.js';
-import * as llm from './llm.js';
+import { DATA } from './data.js?v=35d64fef8e0b';
+import * as store from './store.js?v=35d64fef8e0b';
+import * as images from './images.js?v=35d64fef8e0b';
+import * as llm from './llm.js?v=35d64fef8e0b';
 import {
   Cast, LineStream, applyState, clip, gameLang, lastJson, mostlyAscii, repair, repairMessages, setupMessages, slug,
   turnMessages,
-} from './story.js';
+} from './story.js?v=35d64fef8e0b';
 
 const { MAX_CHARACTERS, MAX_FREE_INPUT, LIMIT_SCALE, BATCH_MAX_SCENES, BATCH_MAX_NODES, NOVEL_MAX_CHAPTERS } = DATA.limits;
 const { LANGS, NARRATOR, MAX_GAME_TITLE } = DATA.parser;
@@ -106,36 +106,82 @@ export function existingChild(tree, parent, text) {
 }
 
 const locks = new Map();   // gid -> promise chain, so two turns never write the same tree at once
-const writing = new Map();   // batch turns in progress, by gid, parent and option
+const writing = new Map();   // turns in progress by gid, parent and input: { settled, batch }
+const partials = new Map();   // whole lines of a turn that broke off, same key: { text, until }
+const PARTIAL_KEEP_MS = 600 * 1000;   // how long they wait for the player to try again
+
+// A turn of this story is being written (by the player or the batch): the story cannot be deleted now
+export const turnBusy = (gid) => [...writing.keys()].some((k) => k.startsWith(`${gid}
+`));
+const wholeLines = (text) => text.slice(0, text.lastIndexOf('\n') + 1);
+
+function takePartial(key) {
+  const p = partials.get(key);
+  partials.delete(key);
+  return p && Date.now() < p.until ? p.text : '';
+}
+
+function keepPartial(key, text, cast) {
+  const now = Date.now();
+  for (const [k, p] of partials) if (p.until <= now) partials.delete(k);
+  if (text && new LineStream(cast).feed(text).length) partials.set(key, { text, until: now + PARTIAL_KEEP_MS });
+}
 
 // batch=true: written ahead by the batch walker, so no autosave, no sprite requests, and a known child is
 // returned as is instead of being replayed
 export async function runTurn(gid, parentId, playerInput, emit, conn, signal, batch = false) {
   const key = `${gid}\n${parentId}\n${String(playerInput.text ?? '').replace(/\s+/g, '')}`;
-  if (!batch && writing.has(key)) {
-    // The batch is writing this very branch: wait for it and replay it instead of writing a second copy
-    emit({ type: 'phase', code: 'batch_wait' });
-    await Promise.race([writing.get(key), new Promise((_, reject) => {
+  const busy = writing.get(key);
+  if (!batch && busy) {
+    // This branch is being written already (by the batch, or by an earlier request): wait for it and
+    // replay it instead of writing a second copy
+    emit({ type: 'phase', code: busy.batch ? 'batch_wait' : 'same_wait' });
+    await Promise.race([busy.settled, new Promise((_, reject) => {
       signal?.addEventListener('abort', () => reject({ code: 'cancelled' }), { once: true });
     })]);
   }
-  if (!batch || parentId == null) return writeTurn(gid, parentId, playerInput, emit, conn, signal, batch);
-  const done = writeTurn(gid, parentId, playerInput, emit, conn, signal, batch);
-  const settled = done.then(() => null, () => null);
-  writing.set(key, settled);
+  if (writing.has(key)) return writeTurn(gid, parentId, playerInput, emit, conn, signal, batch, key);
+  const done = writeTurn(gid, parentId, playerInput, emit, conn, signal, batch, key);
+  const entry = { settled: done.then(() => null, () => null), batch };
+  writing.set(key, entry);
   try {
     return await done;
   } finally {
-    if (writing.get(key) === settled) writing.delete(key);
+    if (writing.get(key) === entry) writing.delete(key);
   }
 }
 
-async function writeTurn(gid, parentId, playerInput, emit, conn, signal, batch) {
+async function replay(gid, game, node, emit) {
+  // Same answer at the same node: replay the stored turn, no LLM call, tree unchanged
+  for (const ln of node.lines) emit({ type: 'line', line: ln });
+  await store.setAutosave(gid, node.id, node.scene_id);
+  images.request(['scene', gid, node.scene_id], images.P_SCENE);
+  emit({ type: 'final', node, scenes: game.scenes, replayed: true });
+  return node;
+}
+
+// A failed repair call must not throw away a turn whose dialogue is already on screen
+async function tryComplete(msgs, conn, signal, failed, label) {
+  try {
+    return (await llm.complete(msgs, 0.3, conn, signal)).content;
+  } catch (e) {
+    if (!e?.code || e.code === 'cancelled' || signal?.aborted) throw e;
+    failed.push(`${label} call failed (${e.code})`);
+    return '';
+  }
+}
+
+async function writeTurn(gid, parentId, playerInput, emit, conn, signal, batch, key) {
   const game = await store.loadGame(gid);
   const tree = await store.loadTree(gid);
   const { kind } = playerInput;
   if (parentId == null) {
-    if (tree.root !== null || kind !== 'opening') throw { code: 'already_started' };
+    if (kind !== 'opening') throw { code: 'already_started' };
+    if (tree.root !== null) {
+      // Sent again after the opening was saved (or the batch wrote it): replay it
+      const root = tree.nodes[tree.root];
+      return batch ? root : replay(gid, game, root, emit);
+    }
     playerInput = { kind: 'opening', text: '' };
   } else {
     if (!tree.nodes[parentId]) throw { code: 'node_not_found' };
@@ -148,21 +194,18 @@ async function writeTurn(gid, parentId, playerInput, emit, conn, signal, batch) 
   if (parent) {
     const known = existingChild(tree, parent, playerInput.text);
     if (known && batch) return known;
-    if (known) {
-      // Same answer at the same node: replay the stored turn, no LLM call, tree unchanged
-      for (const ln of known.lines) emit({ type: 'line', line: ln });
-      await store.setAutosave(gid, known.id, known.scene_id);
-      images.request(['scene', gid, known.scene_id], images.P_SCENE);
-      emit({ type: 'final', node: known, scenes: game.scenes, replayed: true });
-      return known;
-    }
+    if (known) return replay(gid, game, known, emit);
   }
   let sceneId = parent ? parent.scene_id : game.first_scene;
   const scene = { id: sceneId, ...game.scenes[sceneId] };
   const lang = gameLang(game);
   const cast = new Cast(game.characters, game.protagonist.name, lang);
   const msgs = turnMessages(game, path, playerInput, scene);
+  // The same turn broke off before: keep its whole lines and ask only for the rest
+  const partial = batch ? '' : takePartial(key);
   let lineStream = new LineStream(cast);
+  let raw = partial;     // text of the current attempt, the resumed part included
+  let broken = '';       // whole lines of the last attempt that was reset
 
   const emitLines = (lines) => {
     for (const ln of lines) {
@@ -171,20 +214,41 @@ async function writeTurn(gid, parentId, playerInput, emit, conn, signal, batch) 
     }
   };
   const onEvent = (ev) => {
-    if (ev.type === 'delta') emitLines(lineStream.feed(ev.text));
-    else if (ev.type === 'reset') { lineStream = new LineStream(cast); emit(ev); } else emit(ev);
+    if (ev.type === 'delta') {
+      raw += ev.text;
+      emitLines(lineStream.feed(ev.text));
+    } else if (ev.type === 'reset') {
+      broken = wholeLines(raw);
+      raw = partial;
+      lineStream = new LineStream(cast);
+      emit({ ...ev, keep: lineStream.feed(partial).length });   // the resumed lines stay
+    } else emit(ev);
   };
 
-  const res = await llm.stream(msgs, onEvent, 0.8, conn, signal);
+  if (partial) {
+    emit({ type: 'phase', code: 'resume_partial' });
+    emitLines(lineStream.feed(partial));
+  }
+  let res;
+  try {
+    res = await llm.stream(partial ? repairMessages(msgs, partial, lang, 'continue') : msgs, onEvent, 0.8, conn, signal);
+  } catch (e) {
+    if (!batch) {
+      const mine = wholeLines(raw);
+      keepPartial(key, mine.length >= broken.length ? mine : broken, cast);
+    }
+    throw e;
+  }
+  const content = partial + res.content;
   emitLines(lineStream.finish());
   const { lines } = lineStream;
   if (!lines.length) throw { code: 'no_lines' };
 
-  let d = lastJson(res.content);
+  let d = lastJson(content);
+  const failed = [];
   if (d === null) {
     emit({ type: 'phase', code: 'repair_json' });
-    const fix = await llm.complete(repairMessages(msgs, res.content, lang), 0.3, conn, signal);
-    d = lastJson(fix.content);
+    d = lastJson(await tryComplete(repairMessages(msgs, content, lang), conn, signal, failed, 'repair'));
   }
   const current = { scene_id: sceneId, bgm_mood: parent ? parent.bgm_mood : 'calm', weather: parent ? (parent.weather ?? 'none') : 'none' };
   const plan = game.batch;
@@ -194,10 +258,11 @@ async function writeTurn(gid, parentId, playerInput, emit, conn, signal, batch) 
   if (plan && allowEnding && !result.ending && path.length + 1 >= plan.turns) {
     // The tree is only finite if the last turn ends; ask for the ending JSON on its own
     emit({ type: 'phase', code: 'repair_json' });
-    const fix = await llm.complete(repairMessages(msgs, res.content, lang, 'force_ending'), 0.3, conn, signal);
-    [result, notes] = repair({ ...(d || {}), ...(lastJson(fix.content) || {}) }, cast, game.scenes, current, opts);
+    const extra = lastJson(await tryComplete(repairMessages(msgs, content, lang, 'force_ending'), conn, signal, failed, 'ending'));
+    [result, notes] = repair({ ...(d || {}), ...(extra || {}) }, cast, game.scenes, current, opts);
     notes = [...notes, result.ending ? 'ending forced' : 'forced ending missing'];
   }
+  notes = [...notes, ...failed, ...(partial ? ['resumed after a break'] : [])];
   if (signal?.aborted) throw { code: 'cancelled' };
 
   const prev = locks.get(gid) || Promise.resolve();
@@ -207,11 +272,18 @@ async function writeTurn(gid, parentId, playerInput, emit, conn, signal, batch) 
   let node;
   let scenes;
   try {
+    const fresh = await store.loadTree(gid);
     if (batch && parent) {
       // The player may have reached this branch live while it was being written
-      const fresh = await store.loadTree(gid);
       const twin = existingChild(fresh, fresh.nodes[parentId], playerInput.text);
       if (twin) return twin;
+    }
+    if (!parent && fresh.root !== null) {
+      // Someone else saved the opening meanwhile; a tree has one root, so show theirs
+      const root = fresh.nodes[fresh.root];
+      if (batch) return root;
+      emit({ type: 'reset', keep: 0 });
+      return await replay(gid, game, root, emit);
     }
     const g = await store.loadGame(gid);
     if (result.scene_change) {

@@ -1,9 +1,9 @@
 // Batch progress on the title screen, and the "tree finished" notice: in-game popup, sound and a browser notification.
 // The server keeps working with the page closed; the notice needs this page open (it is found by polling).
-import { get } from './api.js';
-import { errorText, t } from './i18n.js';
-import { sound } from './sound.js';
-import { $, confirmBox, esc, toast } from './ui.js';
+import { LOCAL, get } from './api.js?v=35d64fef8e0b';
+import { errorText, t } from './i18n.js?v=35d64fef8e0b';
+import { sound } from './sound.js?v=35d64fef8e0b';
+import { $, confirmBox, esc, toast } from './ui.js?v=35d64fef8e0b';
 
 const POLL_MS = 5000;
 const ACK_KEY = 'chienzhi.batchAcked';
@@ -24,7 +24,16 @@ function ack(gid, on = true) {
   try { localStorage.setItem(ACK_KEY, JSON.stringify([...all])); } catch { /* storage blocked: popup may repeat after reload */ }
 }
 
-export const batchRow = (b) => t('batch.row', { nodes: b.nodes, planned: b.planned, images: b.images, total: b.images_total });
+// Time left from the last finished turns (D07): minutes, or hours past two hours
+function etaText(b) {
+  if (b.eta_s == null) return b.slow ? t('batch.slow') : '';
+  const min = Math.max(1, Math.ceil(b.eta_s / 60));
+  const time = min > 120 ? t('batch.hours', { n: (min / 60).toFixed(1) }) : t('batch.minutes', { n: min });
+  return t('batch.eta', { time }) + (b.slow ? t('batch.slow') : '');
+}
+
+export const batchRow = (b) => t('batch.row', { nodes: b.nodes, planned: b.planned, images: b.images, total: b.images_total }) +
+  (b.state === 'running' ? etaText(b) : '');
 
 function paintPanel(list) {
   const active = list.filter((b) => ACTIVE.includes(b.state));
@@ -34,7 +43,7 @@ function paintPanel(list) {
     const pct = b.state === 'running' ? b.nodes / Math.max(1, b.planned) : b.images / Math.max(1, b.images_total);
     return `<div><b>${esc(b.title)}</b>・${esc(t(`batch.state.${b.state}`))}<br>${esc(batchRow(b))}</div>` +
       `<div class="batch-bar"><i style="width:${Math.round(pct * 100)}%"></i></div>`;
-  }).join('') : '';
+  }).join('') + (LOCAL ? `<p class="hint">${esc(t('batch.keepOpen'))}</p>` : '') : '';
 }
 
 function systemNotice(b) {
@@ -59,14 +68,19 @@ async function announce(b) {
   if (go) onPlay(b.id);
 }
 
+let anyActive = false;
+// A batch was writing or drawing at the last poll (the browser build pauses it when the page closes)
+export const batchActive = () => anyActive;
+
 async function poll() {
   let list;
   try { list = await get('/api/batches'); } catch { return; }   // server down: the title screen health line says so
+  anyActive = list.some((b) => ACTIVE.includes(b.state));
   paintPanel(list);
   const done = acked();
   for (const b of list) {
     if (b.state === 'error' && seen[b.id] && seen[b.id] !== 'error') {
-      toast(t('batch.failed', { title: b.title, msg: errorText(b.error || 'internal') }), true);
+      toast(t('batch.failed', { title: b.title, msg: errorText(b.error || 'internal') }), true, 0, { code: b.error });
     }
     seen[b.id] = b.state;
   }

@@ -1,77 +1,138 @@
 // Browser port of server/asset_service.py + cutout.py for NVIDIA FLUX.2 only: one sequential queue with the
-// same priorities, scenes and sprites drawn through the player's relay, sprites cut out with the chroma key.
+// same priorities, automatic re-queues, image modes and redraws, scenes and sprites drawn through the player's
+// relay, sprites cut out with the chroma key. The queue is kept in IndexedDB, so a reload carries on with it.
 // Skipped against the server: ComfyUI, rembg, the iso residue pass and the .raw intermediates.
-import { DATA } from './data.js';
-import * as store from './store.js';
+import { DATA } from './data.js?v=35d64fef8e0b';
+import * as store from './store.js?v=35d64fef8e0b';
+import * as llm from './llm.js?v=35d64fef8e0b';
+import { diag } from './diag.js?v=35d64fef8e0b';
+import { t } from '../i18n.js?v=35d64fef8e0b';
 
 const A = DATA.art;
 const EXPRESSIONS = DATA.parser.EXPRESSIONS;
 export const P_SCENE = 0; export const P_SPEAKER = 1; export const P_CALM = 2; export const P_EXPR = 3;
-const WEB_ONLY_NVIDIA = '此角色立繪不是由輝達產生，網頁版無法補表情';
+const QUEUE = 'imageQueue';         // kv record holding the queue between page loads
+const FRONT_FRESH_MS = 10000;       // a front tab that stopped announcing itself this long ago no longer counts
+
+// retryable: false when trying the same prompt again later cannot help (filtered prompt, refused key)
+class ImageFailed extends Error {
+  constructor(message, retryable = true) {
+    super(message);
+    this.retryable = retryable;
+  }
+}
 
 const jobs = new Map();     // key string -> { key, priority, seq }
 const errors = new Map();   // key string -> message
-let running = null;
+const later = new Map();    // key string -> { key, due (epoch ms), priority, error }: failed, queued again at due
+const rounds = new Map();   // key string -> automatic re-queues so far
+let current = null;         // the job being drawn
 let seq = 0;
 let wake = null;
 let started = false;
 let active = null;
+let turns = 0;              // story turns being written right now
+let mode = 'all';
 let conn = () => ({ key: '', relay: '' });
 
 const ks = (key) => key.join('|');
+const running = () => (current ? ks(current.key) : null);
 
-export function init(getConn) {
+export function init(getConn, imageMode = 'all') {
   conn = getConn;
-  if (!started) { started = true; loop(); }
+  mode = A.IMAGE_MODES.includes(imageMode) ? imageMode : 'all';
+  if (started) return;
+  started = true;
+  restore().catch((e) => console.error('image queue restore failed', e)).then(loop);
 }
 
 export const setActive = (gid) => { active = gid; };
+
+function wakeUp() { if (wake) wake(); }
 
 function pathOf(key) {
   return key[0] === 'scene' ? store.scenePath(key[1], key[2]) : store.spritePath(key[1], key[2], key[3]);
 }
 
-export function request(key, priority) {
+const wanted = (key) => mode !== 'off' && (mode !== 'basic' || key[0] === 'scene' || key[3] === 'calm');
+
+// Images the new mode does not draw leave the queue; the next poll queues what it adds back
+export function setMode(value) {
+  if (!A.IMAGE_MODES.includes(value)) return;
+  mode = value;
+  for (const [k, j] of jobs) if (!wanted(j.key)) jobs.delete(k);
+  for (const [k, l] of later) if (!wanted(l.key)) later.delete(k);
+  persist();
+  wakeUp();
+}
+
+// retry=false leaves a failed image (or one waiting for its automatic retry) alone
+export function request(key, priority, retry = true) {
   const k = ks(key);
-  if (store.hasFile(pathOf(key)) || k === running) return;
-  errors.delete(k);
+  if (store.hasFile(pathOf(key)) || k === running() || !wanted(key)) return;
+  if (errors.has(k) || later.has(k)) {
+    if (!retry) return;
+    errors.delete(k);
+    later.delete(k);
+    rounds.delete(k);
+  }
   const job = jobs.get(k);
   if (job) job.priority = Math.min(job.priority, priority);
   else jobs.set(k, { key, priority, seq: ++seq });
-  if (wake) { wake(); wake = null; }
+  persist();
+  wakeUp();
 }
 
-export const failed = (key) => errors.has(ks(key));
-
 export function forget(gid) {
-  for (const [k, j] of jobs) if (j.key[1] === gid) jobs.delete(k);
-  for (const k of [...errors.keys()]) if (k.split('|')[1] === gid) errors.delete(k);
+  for (const map of [jobs, later]) for (const [k, j] of map) if (j.key[1] === gid) map.delete(k);
+  for (const map of [errors, rounds]) for (const k of [...map.keys()]) if (k.split('|')[1] === gid) map.delete(k);
+  persist();
 }
 
 const order = (j) => [j.key[1] !== active ? 1 : 0, j.priority, j.seq];
 const less = (a, b) => { for (let i = 0; i < 3; i += 1) if (a[i] !== b[i]) return a[i] < b[i]; return false; };
 
+// Wrap the writing of a story turn: meanwhile only the background on screen is drawn
+export async function textTurn(fn) {
+  turns += 1;
+  try {
+    return await fn();
+  } finally {
+    turns -= 1;
+    wakeUp();
+  }
+}
+
+const runnable = (j) => !turns || (j.priority === P_SCENE && j.key[1] === active);
+
 export function ensureGame(game, sceneId = null, retry = true) {
   const gid = game.id;
-  const wanted = sceneId ? [[['scene', gid, sceneId], P_SCENE]] : [];
-  for (const c of game.characters) wanted.push([['sprite', gid, c.id, 'calm'], P_CALM]);
-  for (const c of game.characters) for (const e of EXPRESSIONS.slice(1)) wanted.push([['sprite', gid, c.id, e], P_EXPR]);
-  for (const [key, p] of wanted) if (retry || !errors.has(ks(key))) request(key, p);
+  const list = sceneId ? [[['scene', gid, sceneId], P_SCENE]] : [];
+  for (const c of game.characters) list.push([['sprite', gid, c.id, 'calm'], P_CALM]);
+  for (const c of game.characters) for (const e of EXPRESSIONS.slice(1)) list.push([['sprite', gid, c.id, e], P_EXPR]);
+  for (const [key, p] of list) request(key, p, retry);
 }
 
 // Same shape as the server's status, plus the url to show (blob or bundled demo file)
 export function status(game) {
   const gid = game.id;
+  const now = Date.now();
+  const busy = current ? 1 : 0;
   const one = (key) => {
     const k = ks(key);
     const path = pathOf(key);
     if (store.hasFile(path)) return { state: 'done', v: store.fileVersion(path), url: store.fileUrl(path) };
-    if (k === running) return { state: 'running' };
+    if (!wanted(key)) return { state: 'off' };
+    if (k === running()) return { state: 'running' };
     if (errors.has(k)) return { state: 'error', error: errors.get(k) };
+    if (later.has(k)) {
+      const l = later.get(k);
+      return { state: 'queued', retry_in: Math.max(0, Math.round((l.due - now) / 1000)), error: l.error, ahead: jobs.size + busy };
+    }
     if (jobs.has(k)) {
       const mine = order(jobs.get(k));
       const ahead = [...jobs.values()].filter((j) => less(order(j), mine)).length;
-      return { state: 'queued', ahead: ahead + (running ? 1 : 0) };
+      return { state: 'queued', ahead: ahead + busy };
     }
     return { state: 'missing' };
   };
@@ -79,28 +140,124 @@ export function status(game) {
     scenes: Object.fromEntries(Object.keys(game.scenes).map((sid) => [sid, one(['scene', gid, sid])])),
     sprites: Object.fromEntries(game.characters.map((c) =>
       [c.id, Object.fromEntries(EXPRESSIONS.map((e) => [e, one(['sprite', gid, c.id, e])]))])),
-    queue: jobs.size + (running ? 1 : 0),
+    queue: jobs.size + later.size + busy,
+    paused: turns > 0,
   };
+}
+
+// ---------- the queue between page loads ----------
+
+let saveTimer = null;
+function persist() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const all = [...jobs.values(), ...(current ? [current] : [])];
+    store.kvPut(QUEUE, { jobs: all.map((j) => [j.key, j.priority]), later: [...later.values()], rounds: [...rounds] })
+      .catch((e) => console.error('image queue save failed', e));
+  }, 500);
+}
+
+async function restore() {
+  const saved = await store.kvGet(QUEUE);
+  if (!saved) return;
+  for (const [key, priority] of saved.jobs || []) request(key, priority);
+  for (const l of saved.later || []) if (wanted(l.key) && !store.hasFile(pathOf(l.key))) later.set(ks(l.key), l);
+  for (const [k, n] of saved.rounds || []) rounds.set(k, n);
+}
+
+// ---------- tabs: the one the player used last draws first ----------
+// Every tab runs its own queue. The tab in front announces itself; a tab behind it waits while the front tab
+// still has images to draw, so two tabs do not split the request limit or draw the same picture twice.
+
+const TAB = Math.random().toString(36).slice(2);
+const channel = typeof BroadcastChannel === 'function' ? new BroadcastChannel('cg-images') : null;
+let front = null;   // { tab, busy, at } from the tab in front
+
+const inFront = () => document.visibilityState === 'visible' && document.hasFocus();
+
+function announce() {
+  if (channel && inFront()) channel.postMessage({ tab: TAB, busy: jobs.size > 0 || !!current, at: Date.now() });
+}
+
+if (channel) {
+  channel.onmessage = (ev) => {
+    front = ev.data;
+    if (!front.busy) wakeUp();
+  };
+  window.addEventListener('focus', announce);
+  document.addEventListener('visibilitychange', announce);
+  setInterval(announce, 3000);
+}
+
+const behind = () => !inFront() && !!front && front.tab !== TAB && front.busy && Date.now() - front.at < FRONT_FRESH_MS;
+
+// ---------- loop ----------
+
+// Resolves after ms (null: only when woken)
+function idle(ms) {
+  return new Promise((resolve) => {
+    const timer = ms === null ? null : setTimeout(done, ms);
+    function done() { clearTimeout(timer); wake = null; resolve(); }
+    wake = done;
+  });
+}
+
+// Failed images whose wait is over go back into the queue
+function promote() {
+  const now = Date.now();
+  for (const [k, l] of later) {
+    if (l.due > now) continue;
+    later.delete(k);
+    if (!wanted(l.key) || store.hasFile(pathOf(l.key))) continue;
+    if (!jobs.has(k)) jobs.set(k, { key: l.key, priority: l.priority, seq: ++seq });
+  }
+}
+
+function failed(job, e) {
+  const k = ks(job.key);
+  const msg = String(e?.message || e).slice(0, 300);
+  const n = rounds.get(k) || 0;
+  if (e?.retryable !== false && n < A.AUTO_RETRY_ROUNDS) {
+    rounds.set(k, n + 1);
+    later.set(k, { key: job.key, due: Date.now() + A.AUTO_RETRY_S * 1000, priority: job.priority, error: msg });
+    console.warn(`asset failed ${k} (automatic retry ${n + 1} in ${A.AUTO_RETRY_S}s): ${msg}`);
+    diag('image_requeue', { asset: k, round: n + 1, error: msg });
+    return;
+  }
+  rounds.delete(k);
+  errors.set(k, msg);
+  console.error(`asset failed ${k}: ${msg}`);
+  diag('image_failed', { asset: k, error: msg });
 }
 
 async function loop() {
   for (;;) {
-    if (!jobs.size) { await new Promise((resolve) => { wake = resolve; }); continue; }
-    let job = null;
-    for (const j of jobs.values()) if (!job || less(order(j), order(job))) job = j;
+    promote();
+    const ready = behind() ? [] : [...jobs.values()].filter(runnable);
+    if (!ready.length) {
+      const dues = [...later.values()].map((l) => Math.max(0, l.due - Date.now()));
+      let ms = dues.length ? Math.min(...dues) : null;
+      if (jobs.size && behind()) ms = Math.min(ms ?? 3000, 3000);
+      await idle(ms);
+      continue;
+    }
+    let job = ready[0];
+    for (const j of ready) if (less(order(j), order(job))) job = j;
     const k = ks(job.key);
     jobs.delete(k);
-    running = k;
+    current = job;
     const t0 = performance.now();
     try {
       await run(job.key);
-      console.info(`asset done ${k} ${((performance.now() - t0) / 1000).toFixed(1)}s`);
+      rounds.delete(k);
+      const s = Math.round((performance.now() - t0) / 100) / 10;
+      console.info(`asset done ${k} ${s}s`);
+      diag('image_done', { asset: k, s });
     } catch (e) {   // a failed image must not stop the queue; the player sees the error state
-      const msg = String(e?.message || e).slice(0, 300);
-      errors.set(k, msg);
-      console.error(`asset failed ${k}: ${msg}`);
+      failed(job, e);
     } finally {
-      running = null;
+      current = null;
+      persist();
     }
   }
 }
@@ -112,6 +269,37 @@ async function run(key) {
   if (key[0] === 'scene') await scene(game, key[2]);
   else if (key[3] === 'calm') await calm(game, key[2]);
   else await expression(game, key[2], key[3]);
+}
+
+// ---------- redraw ----------
+
+const seedsPath = (gid) => `${gid}/assets/seeds.json`;
+
+// A redrawn image keeps its new seed in assets/seeds.json; otherwise the seed comes from the game
+async function seedOf(game, kind, target) {
+  const saved = (await store.readJsonFile(seedsPath(game.id))) || {};
+  if (`${kind}:${target}` in saved) return saved[`${kind}:${target}`];
+  if (kind === 'scene') return game.seed + [...target].reduce((s, ch) => s + ch.codePointAt(0), 0);
+  return charOf(game, target).seed;
+}
+
+// Draw one background, or one character's whole sprite set, again (newSeed: with a new random seed; the same
+// seed repeats the picture on FLUX). False when that image is being drawn right now.
+export async function redraw(game, kind, target, newSeed = true) {
+  const gid = game.id;
+  const keys = kind === 'scene' ? [['scene', gid, target]] : EXPRESSIONS.map((e) => ['sprite', gid, target, e]);
+  if (keys.some((key) => ks(key) === running())) return false;
+  for (const key of keys) for (const map of [jobs, later, errors, rounds]) map.delete(ks(key));
+  if (newSeed) {
+    const saved = (await store.readJsonFile(seedsPath(gid))) || {};
+    const next = { ...saved, [`${kind}:${target}`]: Math.floor(Math.random() * 2 ** 31) };
+    await store.putFile(seedsPath(gid), new Blob([JSON.stringify(next)], { type: 'application/json' }));
+  }
+  const files = kind === 'scene' ? [store.scenePath(gid, target)]
+    : store.filePaths().filter((p) => p.startsWith(`${gid}/assets/sprites/${target}/`));
+  for (const p of files) await store.deleteFile(p);
+  for (const key of keys) request(key, key[0] === 'scene' ? P_SCENE : key[3] === 'calm' ? P_SPEAKER : P_EXPR);
+  return true;
 }
 
 // ---------- prompts ----------
@@ -138,34 +326,59 @@ function soften(prompt) {
 
 const wait = (s) => new Promise((resolve) => { setTimeout(resolve, s * 1000); });
 
+// Busy answers, network errors and timeouts retry with the backoff table (a Retry-After header replaces the
+// table step); every attempt first takes a slot in the request window shared with the story text
 async function draw(prompt, seed) {
   const { key, relay } = conn();
-  if (!key) throw new Error('尚未在設定填寫輝達 API 金鑰');
-  if (!relay) throw new Error('尚未在設定填寫中繼站網址');
+  if (!key) throw new ImageFailed(t('img.noKey'), false);
+  if (!relay) throw new ImageFailed(t('img.noRelay'), false);
   const body = JSON.stringify({ prompt: soften(prompt), width: A.SIZE, height: A.SIZE, seed: seed % 2 ** 31, steps: A.STEPS });
-  let res;
+  let data;
   for (const backoff of [...A.RETRY_BACKOFF_S, null]) {
+    await llm.imageSlot();
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), A.TIMEOUT_S * 1000);
+    let res;
     try {
       res = await fetch(`${relay}${A.FLUX_PATH}`, {
-        method: 'POST', body,
+        method: 'POST', body, signal: ctrl.signal,
         headers: { Authorization: `Bearer ${key}`, Accept: 'application/json', 'Content-Type': 'application/json' },
       });
+      llm.relayNotice(res);
+      if (res.status === 200) data = await res.json();
     } catch (e) {
-      throw new Error('連不上中繼站，請檢查設定裡的中繼站網址');
+      if (backoff === null) throw new ImageFailed(ctrl.signal.aborted ? t('img.timeout', { s: A.TIMEOUT_S }) : t('img.network'));
+      diag('image_retry', { reason: ctrl.signal.aborted ? 'timeout' : 'network', wait: backoff });
+      await wait(backoff);
+      continue;
+    } finally {
+      clearTimeout(timer);
     }
-    if (res.status === 200) break;
-    if (res.status === 401 || res.status === 403) throw new Error(`輝達金鑰被拒絕（HTTP ${res.status}）`);
-    if (!A.RETRY_STATUS.includes(res.status) || backoff === null) throw new Error(`輝達生圖失敗：HTTP ${res.status}`);
-    await wait(backoff);
+    if (data) break;
+    if (res.status === 429 && (await res.text().catch(() => '')).includes('relay_quota')) {
+      throw new ImageFailed(t('err.relay_quota'), false);
+    }
+    if (res.status === 401 || res.status === 403) throw new ImageFailed(t('img.keyRejected', { status: res.status }), false);
+    if (!A.RETRY_STATUS.includes(res.status) || backoff === null) {
+      // NVIDIA also answers 404 while a function is briefly unavailable, so a later round may still work
+      throw new ImageFailed(t('img.http', { status: res.status }), A.RETRY_STATUS.includes(res.status) || res.status === 404);
+    }
+    const hint = llm.retryAfter(res.headers.get('retry-after'));
+    const pause = hint === null ? backoff : Math.min(hint, DATA.llm.RETRY_AFTER_MAX_S);
+    diag('image_retry', { status: res.status, wait: pause });
+    await wait(pause);
   }
-  const art = ((await res.json()).artifacts || [{}])[0] || {};
+  const art = (data.artifacts || [{}])[0] || {};
   if (art.finishReason !== 'SUCCESS' || !art.base64) {
-    if (art.finishReason === 'CONTENT_FILTERED') throw new Error('輝達內容過濾擋下這段提示詞（CONTENT_FILTERED）');
-    throw new Error(`輝達生圖沒有回傳圖片（${String(art.finishReason).replace(/ONT_[A-Za-z0-9_-]+/g, '***').slice(0, 60)}）`);
+    if (art.finishReason === 'CONTENT_FILTERED') throw new ImageFailed(t('img.filtered'), false);
+    throw new ImageFailed(t('img.noImage', { reason: String(art.finishReason).replace(/ONT_[A-Za-z0-9_-]+/g, '***').slice(0, 60) }));
   }
   const bytes = Uint8Array.from(atob(art.base64), (c) => c.charCodeAt(0));
   return createImageBitmap(new Blob([bytes]));
 }
+
+// For tools/js_tests: draw one image with a given connection, without starting the queue (it needs IndexedDB)
+export const _test = { draw, useConn: (getConn) => { conn = getConn; } };
 
 // Center-crop the square to the target aspect ratio, then resize; returns ImageData
 function fit(img, width, height) {
@@ -351,14 +564,14 @@ function cutoutFull(img) {
 
 function paddedBbox(img, pad = 6) {
   const { width: w, height: h, data } = img;
-  let l = w; let t = h; let r = -1; let b = -1;
+  let l = w; let top = h; let r = -1; let b = -1;
   for (let y = 0; y < h; y += 1) {
     for (let x = 0; x < w; x += 1) {
-      if (data[(y * w + x) * 4 + 3]) { l = Math.min(l, x); r = Math.max(r, x); t = Math.min(t, y); b = Math.max(b, y); }
+      if (data[(y * w + x) * 4 + 3]) { l = Math.min(l, x); r = Math.max(r, x); top = Math.min(top, y); b = Math.max(b, y); }
     }
   }
-  if (r < 0) throw new Error('去背後沒有留下角色');
-  return [Math.max(0, l - pad), Math.max(0, t - pad), Math.min(w, r + 1 + pad), Math.min(h, b + 1 + pad)];
+  if (r < 0) throw new Error(t('img.emptyCutout'));
+  return [Math.max(0, l - pad), Math.max(0, top - pad), Math.min(w, r + 1 + pad), Math.min(h, b + 1 + pad)];
 }
 
 function faceBox(img) {
@@ -386,14 +599,15 @@ function faceBox(img) {
 const charOf = (game, cid) => game.characters.find((c) => c.id === cid);
 
 async function scene(game, sid) {
-  const seed = game.seed + [...sid].reduce((s, ch) => s + ch.codePointAt(0), 0);
+  const seed = await seedOf(game, 'scene', sid);
   const img = fit(await draw(fluxScenePrompt(game.style_en || '', game.scenes[sid].image_prompt), seed), A.BG_W, A.BG_H);
   await store.putFile(store.scenePath(game.id, sid), await toPng(img));
 }
 
 async function calm(game, cid) {
   const c = charOf(game, cid);
-  const full = cutoutFull(fit(await draw(fluxSpritePrompt(c.appearance_en, 'calm'), c.seed), A.SP_W, A.SP_H));
+  const seed = await seedOf(game, 'sprite', cid);
+  const full = cutoutFull(fit(await draw(fluxSpritePrompt(c.appearance_en, 'calm'), seed), A.SP_W, A.SP_H));
   const crop = paddedBbox(full);
   const meta = { crop, face: faceBox(full), engine: 'nvidia' };
   await store.putFile(store.metaPath(game.id, cid), new Blob([JSON.stringify(meta)], { type: 'application/json' }));
@@ -404,8 +618,9 @@ async function calm(game, cid) {
 async function expression(game, cid, expr) {
   if (!store.hasFile(store.spritePath(game.id, cid, 'calm'))) await calm(game, cid);
   const meta = await store.readJsonFile(store.metaPath(game.id, cid));
-  if (!meta || meta.engine !== 'nvidia') throw new Error(WEB_ONLY_NVIDIA);
+  if (!meta || meta.engine !== 'nvidia') throw new ImageFailed(t('img.webOnlyNvidia'), false);
   const c = charOf(game, cid);
-  const full = cutoutFull(fit(await draw(fluxSpritePrompt(c.appearance_en, expr), c.seed), A.SP_W, A.SP_H));
+  const seed = await seedOf(game, 'sprite', cid);
+  const full = cutoutFull(fit(await draw(fluxSpritePrompt(c.appearance_en, expr), seed), A.SP_W, A.SP_H));
   await store.putFile(store.spritePath(game.id, cid, expr), await toPng(full, meta.crop));
 }
