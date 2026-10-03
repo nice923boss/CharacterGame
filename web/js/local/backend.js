@@ -148,10 +148,19 @@ export async function request(method, url, body) {
     await store.loadGame(gid);
     return { ok: await batch.stop(gid) };
   }
+  if (a === 'games' && sub === 'batch' && method === 'POST' && act === 'pause') {
+    await store.loadGame(gid);
+    return { ok: await batch.stop(gid, 'paused') };
+  }
   if (a === 'games' && sub === 'batch' && method === 'POST' && act === 'resume') {
     if (!(await store.loadGame(gid)).batch) throw { code: 'not_batch' };
     await batch.start(gid);
     return batch.status(gid);
+  }
+  if (a === 'games' && sub === 'batch' && method === 'POST' && act === 'branch') {
+    if (!(await store.loadGame(gid)).batch) throw { code: 'not_batch' };
+    const node = await batch.rewrite(gid, String(body?.parent || ''), String(body?.option || ''));
+    return { node_id: node.id };
   }
   if (a === 'autosave') return withThumb(await store.loadAutosave());
   if (a === 'slots' && !gid) return slotsOut(await store.loadSlots());

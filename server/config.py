@@ -101,6 +101,9 @@ BATCH_CONCURRENCY = 6
 BATCH_MAX_NODES = 400
 BATCH_MAX_SCENES = 8              # every new scene is ~66 s of GPU; a full tree would invent dozens
 BATCH_TURN_RETRIES = 2            # a branch that still fails is left for live generation
+BATCH_RETRY_WAITS_S = [30, 90]    # wait before each retry of a branch, spent outside the slot
+BATCH_TAIL_WAIT_S = 120           # after the whole pass, failed branches get one more try after this wait
+BATCH_GROW_AFTER = 5              # a busy answer halves the parallel turns; this many successes add one back
 
 # ComfyUI
 COMFY_URL = "http://127.0.0.1:8000"

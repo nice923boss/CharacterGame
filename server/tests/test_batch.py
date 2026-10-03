@@ -7,7 +7,7 @@ import asyncio
 import pytest
 
 from server import config
-from server.batch_service import BatchService, text_progress
+from server.batch_service import BatchService, Limiter, text_progress
 from server.llm_client import LLMError, LLMResult
 from server.story_store import Store
 from server.turn_parser import Cast, repair
@@ -34,19 +34,24 @@ async def _quiet(_ev):
 
 class TreeLLM:
     """Answers by prompt content: every turn invents a new scene, the last turn forgets its ending,
-    and the action in `fail` always fails."""
+    and the action in `fail` always fails (as a busy model would)."""
 
     def __init__(self, fail: str | None = None):
         self.candidates = [CAND]
         self.fail = fail
         self.calls = 0
+        self.failures = 0
+        self.actions = []        # first two characters of each turn's player action, in call order
 
     async def stream(self, messages, emit, temperature=0.8, waits=None):
         self.calls += 1
         last = messages[-1]["content"]
+        action = last.split("## 玩家本輪行動")[-1].strip()
+        self.actions.append(action[:2])
         if "ending 不可為 null。台詞不要重寫" in last:
             text = '```json\n{"ending": {"type": "good", "title": "歸來"}, "options": []}\n```'
-        elif self.fail and last.split("## 玩家本輪行動")[-1].strip().startswith(self.fail):
+        elif self.fail and action.startswith(self.fail):
+            self.failures += 1
             raise LLMError([{"model": "t", "reason": "transient"}])
         else:
             text = _reply(f"s{self.calls}")
@@ -68,6 +73,14 @@ class DoneAssets(NullAssets):
     def status(self, game):
         return {"scenes": {s: {"state": "done"} for s in game["scenes"]},
                 "sprites": {c["id"]: {"calm": {"state": "done"}} for c in game["characters"]}, "queue": 0}
+
+
+@pytest.fixture(autouse=True)
+def no_waits(monkeypatch):
+    """The real waits are 30 s and 90 s between tries and 2 minutes before the last pass; tests that look at
+    them set their own."""
+    monkeypatch.setattr(config, "BATCH_RETRY_WAITS_S", [0, 0])
+    monkeypatch.setattr(config, "BATCH_TAIL_WAIT_S", 0)
 
 
 @pytest.fixture
@@ -168,10 +181,18 @@ async def test_merge_batch_rejoins_the_main_line_and_leaves_no_option_open(store
 
 
 async def test_failed_branch_is_recorded_and_resume_fills_it(store):
-    batches, _ = await _run(store, TreeLLM(fail="往西"))
+    llm = TreeLLM(fail="往西")
+    batches, _ = await _run(store, llm)
     b = batches.load("g_test")
     assert b["state"] == "done" and len(b["failed"]) == 2                     # root->往西 and 往東->往西
     assert text_progress(BATCH_GAME, store.load_tree("g_test")) == (3, 7)
+    assert llm.failures == 2 * (1 + config.BATCH_TURN_RETRIES + 1)            # every try, then the last pass
+    assert batches.limiter.limit < config.BATCH_CONCURRENCY                   # busy answers took slots away
+
+    batches.start("g_test")
+    assert len(batches.load("g_test")["failed"]) == 2                         # resuming keeps the list
+    await batches.tasks["g_test"]
+    assert len(batches.load("g_test")["failed"]) == 2                         # failed again: replaced, not added
 
     batches.turns.llm = TreeLLM()
     batches.start("g_test")
@@ -186,6 +207,117 @@ async def test_cancel_marks_batch_cancelled(store):
     await asyncio.sleep(0)
     assert await batches.stop("g_test")
     assert batches.load("g_test")["state"] == "cancelled" and "g_test" not in batches.tasks
+
+
+async def test_pause_is_kept_after_a_restart_and_resume_goes_on(store):
+    assets = DoneAssets()
+    batches = BatchService(store, TurnService(store, TreeLLM(), assets), assets)
+    batches.start("g_test")
+    await asyncio.sleep(0)
+    assert await batches.stop("g_test", "paused")
+    assert batches.load("g_test")["state"] == "paused"
+    batches.resume_all()                                                      # a paused batch waits for the player
+    assert "g_test" not in batches.tasks
+    batches.start("g_test")
+    await batches.tasks["g_test"]
+    assert batches.status("g_test")["nodes"] == 7
+
+
+async def test_limiter_halves_when_busy_and_grows_back(monkeypatch):
+    monkeypatch.setattr(config, "BATCH_GROW_AFTER", 2)
+    lim = Limiter(6)
+    lim.busy()
+    assert lim.limit == 3
+    for _ in range(3):
+        lim.busy()
+    assert lim.limit == 1                                                     # never below one
+    for _ in range(4):
+        lim.ok()
+    assert lim.limit == 3
+    for _ in range(20):
+        lim.ok()
+    assert lim.limit == 6                                                     # never above the configured limit
+
+    lim = Limiter(1)
+    await lim.__aenter__()
+    second = asyncio.create_task(lim.__aenter__())
+    await _settle()
+    assert not second.done()
+    await lim.__aexit__(None, None, None)
+    await _settle()
+    assert second.done() and lim.active == 1
+
+
+class FlakyLLM(TreeLLM):
+    """The first `n` calls fail like a busy model; the opening is always the first call."""
+
+    def __init__(self, n: int):
+        super().__init__()
+        self.left = n
+
+    async def stream(self, messages, emit, temperature=0.8, waits=None):
+        if self.left:
+            self.left -= 1
+            raise LLMError([{"model": "t", "reason": "transient"}])
+        return await super().stream(messages, emit, temperature)
+
+
+async def test_opening_retries_wait_without_holding_a_slot(store, monkeypatch):
+    monkeypatch.setattr(config, "BATCH_RETRY_WAITS_S", [30, 90])
+    assets = DoneAssets()
+    batches = BatchService(store, TurnService(store, FlakyLLM(2), assets), assets)
+    waits = []
+
+    async def record(seconds):
+        waits.append((seconds, batches.limiter.active))
+    batches._sleep = record
+    batches.start("g_test")
+    await batches.tasks["g_test"]
+    assert waits == [(30, 0), (90, 0)]
+    assert batches.status("g_test")["nodes"] == 7 and batches.load("g_test")["failed"] == []
+
+
+async def test_walker_lets_other_branches_run_while_a_failed_one_waits(store, monkeypatch):
+    monkeypatch.setattr(config, "BATCH_CONCURRENCY", 1)
+    monkeypatch.setattr(config, "BATCH_RETRY_WAITS_S", [0.05, 0.05])
+    llm = TreeLLM(fail="往西")
+    batches, _ = await _run(store, llm)
+    # opening, root->往東, root->往西 fails; the next turn in the only slot is another branch, not the retry
+    assert llm.actions[2:4] == ["往西", "往東"]
+    assert batches.status("g_test")["failed"] == 2
+
+
+async def test_merge_batch_retries_failed_side_branches_after_the_pass(store, monkeypatch):
+    monkeypatch.setattr(config, "BATCH_MAX_SCENES", 3)
+    store.save_game({**BATCH_GAME, "batch": {"options": 3, "turns": 4, "merge": 2}})
+    llm = TreeLLM(fail="往西")
+    batches, _ = await _run(store, llm)
+    b = batches.status("g_test")
+    assert b["state"] == "done" and b["failed"] > 0
+    assert llm.failures == b["failed"] * (1 + config.BATCH_TURN_RETRIES + 1)
+
+
+async def test_rewrite_writes_one_failed_branch(store):
+    batches, _ = await _run(store, TreeLLM(fail="往西"))
+    root = store.load_tree("g_test")["root"]
+    with pytest.raises(TurnError) as e:
+        await batches.rewrite("g_test", root, "往北")                       # not an option of that node
+    assert e.value.code == "no_branch"
+    with pytest.raises(LLMError):
+        await batches.rewrite("g_test", root, "往西")
+    batches.turns.llm = TreeLLM()
+    node = await batches.rewrite("g_test", root, " 往 西 ")                  # spaces do not matter
+    assert node["parent"] == root
+    s = batches.status("g_test")
+    assert s["failed"] == 1 and s["failed_list"][0]["parent"] != root
+
+
+async def _until(cond):
+    for _ in range(500):
+        if cond():
+            return
+        await asyncio.sleep(0)
+    raise AssertionError("condition never came true")
 
 
 class GateLLM(TreeLLM):
@@ -245,3 +377,21 @@ async def test_batch_keeps_the_branch_the_player_wrote_first(tmp_path):
     llm.gates[1].set()
     assert (await ahead)["id"] == played["id"]
     assert store.load_tree("g_test")["nodes"][root["id"]]["children"] == [played["id"]]
+
+
+async def test_status_estimates_time_left_and_flags_a_busy_model(store):
+    llm = GateLLM()
+    assets = DoneAssets()
+    batches = BatchService(store, TurnService(store, llm, assets), assets)
+    batches.start("g_test")
+    await _until(lambda: len(llm.gates) == 2)
+    assert batches.status("g_test")["eta_s"] is None                          # one finished turn: no estimate yet
+    llm.gates[0].set()
+    await _until(lambda: len(batches.done_at["g_test"]) == 2)
+    s = batches.status("g_test")
+    assert s["eta_s"] is not None and s["eta_s"] >= 0 and s["slow"] is False
+    batches.limiter.busy()
+    assert batches.status("g_test")["slow"] is True
+    await batches.stop("g_test")
+    s = batches.status("g_test")
+    assert s["eta_s"] is None and s["slow"] is False

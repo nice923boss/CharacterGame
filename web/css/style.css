@@ -222,6 +222,9 @@ html[lang="en"] .subtitle { letter-spacing: 0.06em; }
 #tree-view .edge { stroke: #56607f; stroke-width: 2; fill: none; }
 #tree-view .edge.onpath { stroke: var(--gold); }
 #tree-view .edge.link { stroke-dasharray: 4 4; opacity: .7; }
+#tree-view .edge.failed { stroke: var(--danger); stroke-dasharray: 3 4; opacity: .8; }
+#tree-view .node.failed circle { fill: rgba(120, 30, 40, 0.55); stroke: var(--danger); stroke-dasharray: 3 2; }
+#tree-view .node.failed:hover circle { fill: rgba(170, 40, 50, 0.8); stroke: var(--danger); }
 #tree-view .scene-box { fill: rgba(127, 158, 216, 0.08); stroke: rgba(127, 158, 216, 0.4); stroke-dasharray: 4 3; rx: 8; }
 #tree-view .scene-label { fill: var(--accent); font-size: 12px; font-family: var(--serif); }
 #tree-tip { position: absolute; max-width: 40cqw; background: var(--panel-solid); border: 0.2cqh solid var(--gold-dim);

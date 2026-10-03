@@ -1,36 +1,70 @@
 // Browser port of server/batch_service.py (the merge-back walker is left out): writes the whole option tree of a
 // batch game while this page is open. Progress sits in IndexedDB (kv `batch:<gid>`) and the tree itself is the
-// checkpoint, so a closed or reloaded page picks up at the first branch not written yet.
+// checkpoint, so a closed or reloaded page picks up at the first branch not written yet. Turns run up to
+// BATCH_CONCURRENCY at a time, fewer while the model is busy; a failed branch waits outside its slot before each
+// retry, and whatever still fails gets one more try after the whole pass.
 import { DATA } from './data.js';
 import * as store from './store.js';
 import * as images from './images.js';
 import * as turns from './turns.js';
 
-const { BATCH_CONCURRENCY, BATCH_TURN_RETRIES } = DATA.limits;
+const { BATCH_CONCURRENCY, BATCH_TURN_RETRIES, BATCH_RETRY_WAITS_S, BATCH_TAIL_WAIT_S, BATCH_GROW_AFTER } = DATA.limits;
 const IMAGE_POLL_MS = 5000;
+const STOP_WAIT_MS = 10000;
 const ACTIVE = ['running', 'images'];
 const PREFIX = 'batch:';
+const BUSY = ['transient', 'timeout', 'upstream'];   // failure reasons that mean the model (or the relay) is overloaded
+const ETA_WINDOW = 10;                               // finished turns the time estimate averages over
 
-const tasks = new Map();   // gid -> { ctrl, done } for batches this page is running
+const tasks = new Map();   // gid -> { ctrl, done, stopAs } for batches this page started
+const here = new Set();    // gids this page is writing right now (it holds their lock)
+const doneAt = new Map();  // gid -> times of the last finished turns
 let conn = () => ({ key: '', relay: '' });
 
-// One limit for all batches together, like the server's semaphore
-let free = BATCH_CONCURRENCY;
-const waiting = [];
-const acquire = () => (free > 0 ? (free -= 1, Promise.resolve()) : new Promise((resolve) => { waiting.push(resolve); }));
-const release = () => { const next = waiting.shift(); if (next) next(); else free += 1; };
+// Seconds to wait before try number n + 1 of a branch (n >= 1)
+const retryWait = (n) => BATCH_RETRY_WAITS_S[Math.min(n, BATCH_RETRY_WAITS_S.length) - 1];
+
+// How many batch turns may talk to the model at once, shared by every batch of this page. A busy answer halves the
+// limit, never below 1; BATCH_GROW_AFTER successes in a row give one slot back.
+const limiter = {
+  most: BATCH_CONCURRENCY, limit: BATCH_CONCURRENCY, active: 0, streak: 0, waiting: [],
+  pump() {
+    while (this.waiting.length && this.active < this.limit) { this.active += 1; this.waiting.shift()(); }
+  },
+  acquire() { return new Promise((resolve) => { this.waiting.push(resolve); this.pump(); }); },
+  release() { this.active -= 1; this.pump(); },
+  busy() { this.limit = Math.max(1, Math.floor(this.limit / 2)); this.streak = 0; },
+  ok() {
+    this.streak += 1;
+    if (this.streak >= BATCH_GROW_AFTER && this.limit < this.most) { this.limit += 1; this.streak = 0; this.pump(); }
+  },
+};
+const isBusy = (e) => e?.code === 'all_failed' && (e.params?.errors || []).some((x) => BUSY.includes(x.reason));
 
 const load = (gid) => store.kvGet(PREFIX + gid);
 
-// Progress writes of one game run one after another, so parallel branches never drop each other's fields
+// Progress writes of one game run one after another, so parallel branches never drop each other's fields.
+// fields may be a function of the stored record, for changes that depend on it.
 const saving = new Map();
 function save(gid, fields) {
   const run = (saving.get(gid) || Promise.resolve()).then(async () => {
     try { await store.loadGame(gid); } catch { return; }   // never bring back the record of a deleted game
-    await store.kvPut(PREFIX + gid, { ...(await load(gid) || {}), ...fields });
+    const old = await load(gid) || {};
+    await store.kvPut(PREFIX + gid, { ...old, ...(typeof fields === 'function' ? await fields(old) : fields) });
   });
   saving.set(gid, run.catch((e) => console.error(`batch progress save failed ${gid}`, e)));
   return run;
+}
+
+const branchKey = (parentId, option) => `${parentId}\n${String(option).replace(/\s+/g, '')}`;
+
+// Recorded failures whose branch is still unwritten; the player or a later pass may have written it since
+function openFailed(tree, failed) {
+  return failed.filter((f) => {
+    if (f.parent === null) return tree.root === null;
+    const parent = tree.nodes[f.parent];
+    return !!parent && !turns.existingChild(tree, parent, f.option);
+  });
 }
 
 // (option text, existing child or null) for each distinct option of a node
@@ -70,8 +104,9 @@ const imageStates = (a) => [...Object.values(a.scenes).map((s) => s.state),
   ...Object.values(a.sprites).flatMap((sp) => Object.values(sp).map((s) => s.state))].filter((s) => s !== 'off');
 
 const sleep = (ms, signal) => new Promise((resolve, reject) => {
-  const t = setTimeout(resolve, ms);
-  signal.addEventListener('abort', () => { clearTimeout(t); reject({ code: 'cancelled' }); }, { once: true });
+  const stop = () => { clearTimeout(t); reject({ code: 'cancelled' }); };
+  const t = setTimeout(() => { signal.removeEventListener('abort', stop); resolve(); }, ms);
+  signal.addEventListener('abort', stop, { once: true });
 });
 
 // The node the player is on (autosave) and every node written under it
@@ -91,76 +126,131 @@ async function focusOf(gid, tree) {
 
 const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
+// One try at one branch inside a limiter slot: { node } or { error }. Cancelling the batch throws.
+async function attempt(gid, parentId, input, signal) {
+  await limiter.acquire();
+  try {
+    if (signal.aborted) throw { code: 'cancelled' };
+    const node = await turns.runTurn(gid, parentId, input, () => {}, conn(), signal, true);
+    limiter.ok();
+    doneAt.set(gid, [...(doneAt.get(gid) || []), Date.now()].slice(-(ETA_WINDOW + 1)));
+    return { node };
+  } catch (e) {
+    if (signal.aborted) throw { code: 'cancelled' };
+    if (isBusy(e)) limiter.busy();
+    if (!e?.code) console.error(`batch turn crashed ${gid}`, e);
+    return { error: e?.code || 'internal' };
+  } finally {
+    limiter.release();
+  }
+}
+
+// Records a branch that used up its tries; the same branch failing again replaces its old entry
+function fail(gid, parentId, option, error) {
+  console.warn(`batch branch skipped ${gid} parent=${parentId}: ${error}`);
+  const key = branchKey(parentId, option);
+  return save(gid, async (old) => ({
+    failed: [...openFailed(await store.loadTree(gid), (old.failed || []).filter((f) => branchKey(f.parent, f.option) !== key)),
+      { parent: parentId, option, error }],
+  }));
+}
+
+// The opening with all its tries, each wait spent outside any slot
+async function opening(gid, tries, signal) {
+  let error = null;
+  for (let n = 0; n < tries; n += 1) {
+    if (n) await sleep(retryWait(n) * 1000, signal);
+    const r = await attempt(gid, null, { kind: 'opening' }, signal);
+    if (r.node) return r.node;
+    error = r.error;
+  }
+  await fail(gid, null, '', error);
+  return null;
+}
+
 // Writes every open option: the player's own branch first, then shallow turns before deep ones, so the player can
 // start at the opening and rarely catches up with the writer. The order is worked out again after every finished
-// turn, because the player moves while the batch runs.
-async function walkOptions(gid, last, turn) {
+// turn, because the player moves while the batch runs. A failed branch gives its slot to the others while it waits
+// for its next try; after `tries` failures it is recorded and skipped.
+async function walkOptions(gid, last, tries, signal) {
   const tried = new Set();
-  const running = new Set();
+  const later = new Map();     // branch -> { due, n }: when it may try again, tries so far
+  const running = new Map();   // promise -> the branch it writes, with its tries before this one
   for (;;) {
     const tree = await store.loadTree(gid);
     const focus = await focusOf(gid, tree);
+    const now = Date.now();
     const todo = [];
+    const stillOpen = new Set();
     const stack = [[tree.root, 1]];
     while (stack.length) {
       const [nid, depth] = stack.pop();
       const node = tree.nodes[nid];
       if (node.result.ending || depth >= last) continue;
       for (const [opt, child] of optionChildren(tree, node)) {
-        const key = `${nid}\n${opt.replace(/\s+/g, '')}`;
-        if (child) stack.push([child.id, depth + 1]);
-        else if (!tried.has(key)) todo.push({ later: focus.has(nid) ? 0 : 1, depth, nid, opt, key });
+        const key = branchKey(nid, opt);
+        if (child) { stack.push([child.id, depth + 1]); continue; }
+        stillOpen.add(key);
+        const away = focus.has(nid) ? 0 : 1;
+        if (!tried.has(key)) todo.push({ away, depth, nid, opt, key, n: 0 });
+        else if (later.get(key)?.due <= now) todo.push({ away, depth, nid, opt, key, n: later.get(key).n });
       }
     }
-    todo.sort((a, b) => a.later - b.later || a.depth - b.depth || cmp(a.nid, b.nid) || cmp(a.opt, b.opt));
-    for (const item of todo.slice(0, BATCH_CONCURRENCY - running.size)) {
+    for (const key of later.keys()) if (!stillOpen.has(key)) later.delete(key);   // the player wrote it meanwhile
+    todo.sort((a, b) => a.away - b.away || a.depth - b.depth || cmp(a.nid, b.nid) || cmp(a.opt, b.opt) || a.n - b.n);
+    for (const item of todo.slice(0, Math.max(0, limiter.limit - running.size))) {
       tried.add(item.key);
-      const p = turn(item.nid, { kind: 'option', text: item.opt }).finally(() => running.delete(p));
+      later.delete(item.key);
+      const p = attempt(gid, item.nid, { kind: 'option', text: item.opt }, signal).then((r) => [p, r]);
       p.catch(() => {});   // a cancelled turn is reported once, through the race below
-      running.add(p);
+      running.set(p, item);
     }
-    if (!running.size) return;
-    await Promise.race(running);
+    if (!running.size && !later.size) return;
+    // Wake for a finished turn or for the next retry that comes due (one already due waits for room)
+    const waits = [...running.keys()];
+    const dues = [...later.values()].map((l) => l.due).filter((d) => d > now);
+    if (dues.length) {
+      const timer = sleep(Math.max(0, Math.min(...dues) - Date.now()), signal).then(() => null);
+      timer.catch(() => {});
+      waits.push(timer);
+    }
+    const done = await Promise.race(waits);
+    if (!done) continue;
+    const [p, r] = done;
+    const { nid, opt, n } = running.get(p);
+    running.delete(p);
+    if (r.node) continue;
+    if (n + 1 < tries) later.set(branchKey(nid, opt), { due: Date.now() + retryWait(n + 1) * 1000, n: n + 1 });
+    else await fail(gid, nid, opt, r.error);
   }
 }
 
 async function walk(gid, signal) {
-  const failed = [];
   const game = await store.loadGame(gid);
   const last = game.batch.turns;
-
-  const turn = async (parentId, input) => {
-    let error = null;
-    for (let i = 0; i <= BATCH_TURN_RETRIES; i += 1) {
-      await acquire();
-      try {
-        if (signal.aborted) throw { code: 'cancelled' };
-        return await turns.runTurn(gid, parentId, input, () => {}, conn(), signal, true);
-      } catch (e) {
-        if (signal.aborted) throw { code: 'cancelled' };
-        if (!e?.code) console.error(`batch turn crashed ${gid}`, e);
-        error = e?.code || 'internal';
-      } finally {
-        release();
-      }
-    }
-    failed.push({ parent: parentId, option: input.text || '', error });
-    console.warn(`batch branch skipped ${gid} parent=${parentId}: ${error}`);
-    await save(gid, { failed });
-    return null;
+  const rootless = async () => (await store.loadTree(gid)).root === null;
+  // One pass over every open branch with `tries` tries each; false when the opening could not be written
+  const pass = async (tries) => {
+    if (await rootless() && !(await opening(gid, tries, signal)) && await rootless()) return false;   // unless the player opened it live meanwhile
+    await walkOptions(gid, last, tries, signal);
+    return true;
   };
+  const stillFailed = async () => openFailed(await store.loadTree(gid), (await load(gid))?.failed || []);
 
-  let tree = await store.loadTree(gid);
-  let root = tree.root ? tree.nodes[tree.root] : await turn(null, { kind: 'opening' });
-  if (!root) {   // the player may have opened it live meanwhile
-    tree = await store.loadTree(gid);
-    if (tree.root) root = tree.nodes[tree.root];
+  let ok = await pass(1 + BATCH_TURN_RETRIES);
+  if ((await stillFailed()).length) {
+    // The busy spell may be over by now: every branch that failed gets one more try
+    console.info(`batch tail pass ${gid} in ${BATCH_TAIL_WAIT_S} s`);
+    await sleep(BATCH_TAIL_WAIT_S * 1000, signal);
+    ok = await pass(1);
   }
-  if (!root) {
-    await save(gid, { state: 'error', error: failed[failed.length - 1].error, finished_at: store.nowIso() });
+  const failed = await stillFailed();
+  await save(gid, { failed });
+  if (!ok) {
+    const error = failed.find((f) => f.parent === null)?.error || 'internal';
+    await save(gid, { state: 'error', error, finished_at: store.nowIso() });
     return;
   }
-  await walkOptions(gid, last, turn);
   console.info(`batch text done ${gid}: ${textProgress(game, await store.loadTree(gid))[0]} nodes, ${failed.length} branches skipped`);
 
   // Queue every scene and sprite and wait until each one is drawn or failed
@@ -176,19 +266,61 @@ async function walk(gid, signal) {
   console.info(`batch done ${gid}`);
 }
 
-async function run(gid, ctrl) {
+async function run(gid, task) {
   try {
-    await walk(gid, ctrl.signal);
+    await walk(gid, task.ctrl.signal);
   } catch (e) {
-    if (ctrl.signal.aborted) {
-      await save(gid, { state: 'cancelled', finished_at: store.nowIso() });
-      console.info(`batch cancelled ${gid}`);
+    if (task.ctrl.signal.aborted) {
+      const state = task.stopAs || 'cancelled';
+      await save(gid, { state, finished_at: store.nowIso() });
+      console.info(`batch ${state} ${gid}`);
     } else {
       console.error(`batch crashed ${gid}`, e);
       await save(gid, { state: 'error', error: e?.code || 'internal', finished_at: store.nowIso() });
     }
   }
 }
+
+// While this page writes a batch the screen stays on, so the device does not sleep and freeze the tab. The browser
+// drops the lock whenever the tab is hidden; it is asked for again when the tab shows.
+let awake = null;
+let asking = false;
+async function holdAwake() {
+  if (!navigator.wakeLock || asking) return;
+  if (here.size && !awake && document.visibilityState === 'visible') {
+    asking = true;
+    try {
+      awake = await navigator.wakeLock.request('screen');
+      awake.addEventListener('release', () => { awake = null; });
+    } catch (e) {
+      console.warn('screen wake lock refused', e);
+    } finally {
+      asking = false;
+    }
+    if (!here.size) holdAwake();   // the batch ended while the browser was answering
+  } else if (!here.size && awake) {
+    const lock = awake;
+    awake = null;
+    lock.release().catch((e) => console.warn('screen wake lock release failed', e));
+  }
+}
+document.addEventListener('visibilitychange', () => { holdAwake(); });
+
+// Only one tab writes a given batch (Web Locks); a stop from any other tab reaches it through this channel
+const channel = typeof BroadcastChannel === 'function' ? new BroadcastChannel('cg-batch') : null;
+
+async function stopHere(gid, as) {
+  const task = tasks.get(gid);
+  task.stopAs = as;
+  task.ctrl.abort();
+  await Promise.race([task.done, new Promise((resolve) => { setTimeout(resolve, STOP_WAIT_MS); })]);
+}
+
+channel?.addEventListener('message', async ({ data }) => {
+  if (data?.type !== 'stop' || !here.has(data.gid)) return;
+  await stopHere(data.gid, data.as);
+  channel.postMessage({ type: 'stopped', gid: data.gid });
+});
 
 export function init(getConn) { conn = getConn; }
 
@@ -197,24 +329,56 @@ export function init(getConn) { conn = getConn; }
 export async function start(gid) {
   if (tasks.has(gid)) return;
   const ctrl = new AbortController();
-  const task = { ctrl, done: Promise.resolve() };
+  const task = { ctrl, done: Promise.resolve(), stopAs: null };
   tasks.set(gid, task);
+  doneAt.set(gid, []);
   const old = await load(gid) || {};
-  await save(gid, { state: 'running', started_at: old.started_at || store.nowIso(), finished_at: null, failed: [], error: null });
-  const go = () => run(gid, ctrl);
+  // The failed list stays: a branch leaves it only once it is written
+  await save(gid, { state: 'running', started_at: old.started_at || store.nowIso(), finished_at: null, error: null });
+  const go = async () => {
+    here.add(gid);
+    holdAwake();
+    try { await run(gid, task); } finally { here.delete(gid); holdAwake(); }
+  };
   task.done = (navigator.locks
     ? navigator.locks.request(PREFIX + gid, { ifAvailable: true }, (lock) => (lock ? go() : null))
     : go()
   ).catch((e) => console.error(`batch start failed ${gid}`, e)).finally(() => tasks.delete(gid));
 }
 
-// Cancels a batch running in this page and waits until it has let go of the game's records
-export async function stop(gid) {
-  const task = tasks.get(gid);
-  if (!task) return false;
-  task.ctrl.abort();
-  await Promise.race([task.done, new Promise((resolve) => { setTimeout(resolve, 10000); })]);
-  return true;
+// Stops a batch and waits until it has let go of the game's records. as = 'paused' when the player means to go on
+// later; either way the tree is the progress, so resuming continues from it. A batch another tab is writing is
+// stopped through the channel; one no tab is writing (its tab was closed) only gets its new state.
+export async function stop(gid, as = 'cancelled') {
+  if (here.has(gid)) { await stopHere(gid, as); return true; }
+  if (!ACTIVE.includes((await load(gid))?.state)) return false;
+  const held = navigator.locks && (await navigator.locks.query()).held.some((l) => l.name === PREFIX + gid);
+  if (!held) {
+    await save(gid, { state: as, finished_at: store.nowIso() });
+    return true;
+  }
+  if (!channel) return false;
+  const answered = new Promise((resolve) => {
+    const done = (ok) => { channel.removeEventListener('message', on); clearTimeout(timer); resolve(ok); };
+    const on = ({ data }) => { if (data?.type === 'stopped' && data.gid === gid) done(true); };
+    const timer = setTimeout(() => done(false), STOP_WAIT_MS);
+    channel.addEventListener('message', on);
+  });
+  channel.postMessage({ type: 'stop', gid, as });
+  return answered;
+}
+
+// Writes one branch now, outside the walker (the tree view's retry button). Errors go to the caller.
+export async function rewrite(gid, parentId, option) {
+  const parent = (await store.loadTree(gid)).nodes[parentId];
+  const key = branchKey(parentId, option);
+  if (!(parent?.result.options || []).some((o) => branchKey(parentId, o) === key)) throw { code: 'no_branch' };
+  await limiter.acquire();
+  try {
+    return await turns.runTurn(gid, parentId, { kind: 'option', text: option }, () => {}, conn(), new AbortController().signal, true);
+  } finally {
+    limiter.release();
+  }
 }
 
 // On page load: pick up every batch that was still working when the page was closed
@@ -234,11 +398,20 @@ export async function status(gid) {
   const b = await load(gid);
   if (!b) return null;
   const game = await store.loadGame(gid);
-  const [made, planned] = textProgress(game, await store.loadTree(gid));
+  const tree = await store.loadTree(gid);
+  const [made, planned] = textProgress(game, tree);
+  const failed = openFailed(tree, b.failed || []);
   const states = imageStates(images.status(game));
+  // Time left: the average gap between the last finished turns times the turns still planned (only the tab
+  // writing the batch knows those times)
+  const live = b.state === 'running' && here.has(gid);
+  const times = doneAt.get(gid) || [];
+  const eta = live && times.length >= 2
+    ? Math.round(((times[times.length - 1] - times[0]) / (times.length - 1) / 1000) * Math.max(0, planned - made)) : null;
   return {
     id: gid, title: game.title, lang: game.lang || 'zh', state: b.state, nodes: made, planned,
-    failed: (b.failed || []).length, images: states.filter((s) => s === 'done').length, images_total: states.length,
+    failed: failed.length, failed_list: failed, eta_s: eta, slow: live && limiter.limit < limiter.most,
+    images: states.filter((s) => s === 'done').length, images_total: states.length,
     image_errors: states.filter((s) => s === 'error').length, started_at: b.started_at, finished_at: b.finished_at, error: b.error,
   };
 }

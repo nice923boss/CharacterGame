@@ -14,7 +14,8 @@ async function jsonOrThrow(res) {
   if (!res.ok) {
     let detail = null;
     try { detail = (await res.json()).detail; } catch { /* body was not JSON */ }
-    throw typeof detail === 'string' ? fail(detail) : fail('http', { status: res.status });
+    throw typeof detail === 'string' ? fail(detail)
+      : detail?.code ? fail(detail.code, detail.params) : fail('http', { status: res.status });
   }
   return res.json();
 }

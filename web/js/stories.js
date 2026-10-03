@@ -38,11 +38,11 @@ export async function openStories(onChange, onOpen) {
     const b = batchOf(gid);
     return b ? `<br>${esc(t('stories.batch', { state: t(`batch.state.${b.state}`), row: batchRow(b) }))}` : '';
   };
-  // Stop a working batch; resume a stopped, failed or partly failed one
+  // Pause a working batch; resume a paused, stopped, failed or partly failed one
   const batchButton = (gid) => {
     const b = batchOf(gid);
     if (!b) return '';
-    if (ACTIVE.includes(b.state)) return `<button class="btn small ghost" data-batch-stop="${esc(gid)}">${esc(t('stories.cancelBatch'))}</button>`;
+    if (ACTIVE.includes(b.state)) return `<button class="btn small ghost" data-batch-pause="${esc(gid)}">${esc(t('stories.pauseBatch'))}</button>`;
     if (b.state !== 'done' || b.failed) return `<button class="btn small ghost" data-batch-resume="${esc(gid)}">${esc(t('stories.resumeBatch'))}</button>`;
     return '';
   };
@@ -56,7 +56,7 @@ export async function openStories(onChange, onOpen) {
     } catch (e) { toastError(e); return; }
     paint();
     refreshBatches();
-    toast(t(act === 'cancel' ? 'stories.batchStopped' : 'stories.batchResumed', { title: g.title || gid }));
+    toast(t(act === 'pause' ? 'stories.batchPaused' : 'stories.batchResumed', { title: g.title || gid }));
   };
 
   const paint = () => {
@@ -70,7 +70,7 @@ export async function openStories(onChange, onOpen) {
         onOpen(g.id, openAt(g));
       };
     });
-    $('#story-list').querySelectorAll('[data-batch-stop]').forEach((b) => { b.onclick = () => batchAct(b.dataset.batchStop, 'cancel'); });
+    $('#story-list').querySelectorAll('[data-batch-pause]').forEach((b) => { b.onclick = () => batchAct(b.dataset.batchPause, 'pause'); });
     $('#story-list').querySelectorAll('[data-batch-resume]').forEach((b) => { b.onclick = () => batchAct(b.dataset.batchResume, 'resume'); });
   };
 

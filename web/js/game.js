@@ -587,14 +587,42 @@ export async function openSlots(mode, onLoad) {
   openModal('#mdl-slots');
 }
 
-export function openTree() {
+export async function openTree() {
   openModal('#mdl-tree');   // visible first: the tree measures its labels and scrolls to the current turn
-  renderTree(G.tree, G.game, G.currentId, async (id, turn) => {
+  const draw = (failed) => renderTree(G.tree, G.game, G.currentId, async (id, turn) => {
     const sc = G.game.scenes[G.tree.nodes[id].scene_id]?.name || '';
     if (!(await confirmBox(t('tree.jump', { n: turn, scene: sc }), t('tree.jumpOk')))) return;
     closeModal('#mdl-tree');
     enterGame(G.stage, G.game.id, id, G.onExit);
-  });
+  }, failed, rewriteBranch);
+  draw([]);
+  if (!G.game.batch) return;
+  // Branches the batch gave up on show as red stubs (D09)
+  const gid = G.game.id;
+  const b = (await get('/api/batches').catch(() => [])).find((x) => x.id === gid);
+  if (b?.failed_list?.length && G.game?.id === gid && !$('#mdl-tree').hidden) draw(b.failed_list);
+}
+
+// The tree's retry button on a branch the batch could not write: writes it now, then redraws the tree
+const rewriting = new Set();
+async function rewriteBranch(f) {
+  const gid = G.game.id;
+  const key = `${f.parent}\n${f.option}`;
+  if (rewriting.has(key) || !(await confirmBox(t('tree.rewriteAsk', { option: f.option }), t('tree.rewriteOk')))) return;
+  rewriting.add(key);
+  toast(t('tree.rewriting', { option: f.option }), false, 600000, { id: 'rewrite' });
+  try {
+    await post(`/api/games/${gid}/batch/branch`, { parent: f.parent, option: f.option });
+    const data = await get(`/api/games/${gid}`);
+    if (G.game?.id === gid) G.tree = data.tree;
+  } catch (e) {
+    toast(e.message, true, 0, { id: 'rewrite', code: e.code });
+    return;
+  } finally {
+    rewriting.delete(key);
+  }
+  toast(t('tree.rewritten', { option: f.option }), false, 4000, { id: 'rewrite' });
+  if (G.game?.id === gid && !$('#mdl-tree').hidden) openTree();
 }
 
 // ---------- wiring ----------

@@ -194,6 +194,12 @@ async def cancel_batch(gid: str):
     return {"ok": await batches.stop(gid)}
 
 
+@app.post("/api/games/{gid}/batch/pause")
+async def pause_batch(gid: str):
+    _game_or_404(gid)
+    return {"ok": await batches.stop(gid, "paused")}
+
+
 @app.post("/api/games/{gid}/batch/resume")
 async def resume_batch(gid: str):
     game = _game_or_404(gid)
@@ -201,6 +207,19 @@ async def resume_batch(gid: str):
         raise HTTPException(400, "not_batch")
     batches.start(gid)
     return batches.status(gid)
+
+
+@app.post("/api/games/{gid}/batch/branch")
+async def rewrite_branch(gid: str, payload: dict = Body(...)):
+    """The tree view's retry button on a branch the batch could not write."""
+    game = _game_or_404(gid)
+    if not game.get("batch"):
+        raise HTTPException(400, "not_batch")
+    try:
+        node = await batches.rewrite(gid, str(payload.get("parent") or ""), str(payload.get("option") or ""))
+    except (TurnError, LLMError) as e:
+        raise HTTPException(400 if isinstance(e, TurnError) else 503, {"code": e.code, "params": e.params})
+    return {"node_id": node["id"]}
 
 
 @app.get("/api/games/{gid}")
