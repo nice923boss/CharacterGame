@@ -13,8 +13,12 @@ self.addEventListener('install', (event) => {
     await cache.addAll(SHELL.map((url) => new Request(url, { cache: 'reload' })));
     // A CDN hiccup must not block the install; those files are cached on first use instead
     await Promise.all(CDN.map((url) => cache.add(url).catch((e) => console.warn('precache failed', url, e))));
-    await self.skipWaiting();
   })());
+});
+
+// A new version waits until the page asks for it, so a turn being written is never cut off (F06)
+self.addEventListener('message', (event) => {
+  if (event.data === 'skip-waiting') self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {

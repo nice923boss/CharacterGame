@@ -4,23 +4,45 @@
 
 const DB_NAME = 'charactergame';
 export const SLOT_COUNT = 10;
+export const AUTOSAVE_KEEP = 5;   // autosave points kept, newest first
+export const TRASH_DAYS = 7;      // days a deleted story stays in "recently deleted"
 
 let dbPromise = null;
+let dbClosed = false;         // another tab upgraded or deleted the database: this page must reload
+let persistAsked = false;
 const files = new Map();      // path "gid/assets/..." -> { href?, blob?, v }; mirrors the files store
 const urls = new Map();       // path -> object URL handed to the page (revoked when the file changes)
+const trash = new Map();      // gid -> { deleted_at, slots }; mirrors kv 'trash' (recently deleted stories)
+
+// The page shows these as a notice: 'versionchange' (this tab let go of the database) or 'blocked'
+const notice = (kind) => window.dispatchEvent(new CustomEvent('cg-store', { detail: kind }));
 
 function db() {
+  if (dbClosed) return Promise.reject({ code: 'db_reload' });
   if (!dbPromise) {
     dbPromise = new Promise((resolve, reject) => {
       const req = indexedDB.open(DB_NAME, 1);
       req.onupgradeneeded = () => {
         for (const name of ['games', 'trees', 'files', 'kv']) req.result.createObjectStore(name);
       };
-      req.onsuccess = () => resolve(req.result);
+      req.onsuccess = () => {
+        const d = req.result;
+        // A newer version in another tab needs the database: let go of it instead of blocking that tab
+        d.onversionchange = () => { d.close(); dbClosed = true; notice('versionchange'); };
+        resolve(d);
+      };
       req.onerror = () => reject(req.error);
+      req.onblocked = () => notice('blocked');
     });
   }
   return dbPromise;
+}
+
+// Asked once per page load, on the first save, so the browser does not clear the stories when space runs low
+function askPersist() {
+  if (persistAsked || !navigator.storage?.persist) return;
+  persistAsked = true;
+  navigator.storage.persist().catch((e) => console.warn('storage.persist failed', e));
 }
 
 async function tx(store, mode, fn) {
@@ -51,6 +73,7 @@ export async function openStore() {
     };
     req.onerror = () => reject(req.error);
   });
+  for (const [gid, t] of Object.entries((await idbGet('kv', 'trash')) || {})) trash.set(gid, t);
 }
 
 export const kvGet = (key) => idbGet('kv', key);
@@ -80,7 +103,7 @@ export async function newGameId() {
 export const saveGame = (game) => idbPut('games', game.id, game);
 
 export async function loadGame(gid) {
-  const game = safeId(gid) ? await idbGet('games', gid) : null;
+  const game = safeId(gid) && !trash.has(gid) ? await idbGet('games', gid) : null;
   if (!game) throw { code: 'game_not_found' };
   return game;
 }
@@ -92,7 +115,7 @@ export async function loadTree(gid) {
 export const saveTree = (gid, tree) => idbPut('trees', gid, tree);
 
 export async function listGames() {
-  const games = (await idbAll('games')).sort((a, b) => (a.id < b.id ? 1 : -1));
+  const games = (await idbAll('games')).filter((g) => !trash.has(g.id)).sort((a, b) => (a.id < b.id ? 1 : -1));
   const out = [];
   for (const g of games) {
     const tree = await loadTree(g.id);
@@ -106,16 +129,61 @@ export async function listGames() {
   return out;
 }
 
+// ---------- recently deleted ----------
+
+const putTrash = () => idbPut('kv', 'trash', Object.fromEntries(trash));
+export const isTrashed = (gid) => trash.has(gid);
+
+// "Delete" moves a story to recently deleted for TRASH_DAYS; its slots go with it and come back on restore
 export async function deleteGame(gid) {
   await loadGame(gid);
-  const slots = (await loadSlots()).map((s) => (s && s.game_id === gid ? null : s));
-  await idbPut('kv', 'slots', slots);
-  const auto = await loadAutosave();
-  if (auto && auto.game_id === gid) await idbDel('kv', 'autosave');
+  const all = await loadSlots();
+  trash.set(gid, { deleted_at: nowIso(), slots: all.filter((s) => s && s.game_id === gid) });
+  await putTrash();
+  await putSlots(all.map((s) => (s && s.game_id === gid ? null : s)));
+  await idbPut('kv', 'autosaves', (await loadAutosaves()).filter((a) => a.game_id !== gid));
+}
+
+export async function listTrash() {
+  await purgeExpired();
+  const out = [];
+  for (const [gid, t] of trash) {
+    const game = await idbGet('games', gid);
+    out.push({ id: gid, title: game?.title || '', deleted_at: t.deleted_at, nodes: Object.keys((await loadTree(gid)).nodes).length,
+               expires_at: new Date(Date.parse(t.deleted_at) + TRASH_DAYS * 864e5).toISOString() });
+  }
+  return out.sort((a, b) => (a.deleted_at < b.deleted_at ? 1 : -1));
+}
+
+// Slots come back only where the slot is still empty
+export async function restoreGame(gid) {
+  const t = trash.get(gid);
+  if (!t) throw { code: 'game_not_found' };
+  trash.delete(gid);
+  await putTrash();
+  const slots = await loadSlots();
+  for (const s of t.slots || []) if (!slots[s.slot]) slots[s.slot] = s;
+  await putSlots(slots);
+}
+
+export async function purgeGame(gid) {
+  if (!trash.has(gid)) throw { code: 'game_not_found' };
   for (const path of [...files.keys()]) if (path.startsWith(`${gid}/`)) await deleteFile(path);
   await idbDel('kv', `batch:${gid}`);
   await idbDel('trees', gid);
   await idbDel('games', gid);
+  trash.delete(gid);
+  await putTrash();
+}
+
+export async function purgeExpired() {
+  const cutoff = Date.now() - TRASH_DAYS * 864e5;
+  for (const [gid, t] of [...trash]) if (Date.parse(t.deleted_at) < cutoff) await purgeGame(gid);
+}
+
+// An imported copy of a deleted story replaces it: drop the deleted mark without restoring its slots
+export async function untrash(gid) {
+  if (trash.delete(gid)) await putTrash();
 }
 
 // ---------- tree ----------
@@ -217,6 +285,7 @@ export async function loadSlots() {
 
 export async function saveSlot(slot, gid, nodeId, label) {
   if (!(slot >= 0 && slot < SLOT_COUNT)) throw { code: 'save_failed' };
+  askPersist();
   const tree = await loadTree(gid);
   if (!tree.nodes[nodeId]) throw { code: 'save_failed' };
   const slots = await loadSlots();
@@ -232,11 +301,24 @@ export async function deleteSlot(slot) {
   return slots;
 }
 
-export const setAutosave = (gid, nodeId, sceneId) =>
-  idbPut('kv', 'autosave', { game_id: gid, node_id: nodeId, scene_id: sceneId, saved_at: nowIso() });
+// Newest first, one per game and node, at most AUTOSAVE_KEEP. The single 'autosave' record of older
+// versions counts as the list until the next autosave writes 'autosaves'.
+export async function loadAutosaves() {
+  const list = await idbGet('kv', 'autosaves');
+  if (list) return list;
+  const old = await idbGet('kv', 'autosave');
+  return old ? [old] : [];
+}
+
+export async function setAutosave(gid, nodeId, sceneId) {
+  askPersist();
+  const entry = { game_id: gid, node_id: nodeId, scene_id: sceneId, saved_at: nowIso() };
+  const rest = (await loadAutosaves()).filter((a) => a.game_id !== gid || a.node_id !== nodeId);
+  await idbPut('kv', 'autosaves', [entry, ...rest].slice(0, AUTOSAVE_KEEP));
+}
 
 export async function loadAutosave() {
-  return (await idbGet('kv', 'autosave')) || null;
+  return (await loadAutosaves())[0] || null;
 }
 
 export const putSlots = (slots) => idbPut('kv', 'slots', slots);

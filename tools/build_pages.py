@@ -26,8 +26,7 @@ from server import asset_service, config, novel_service, nvidia_image, prompts, 
 OUT = ROOT / "dist" / "pages"
 DEMO_GAMES = [config.DEMO_GAME]
 SKIP_ASSET = re.compile(r"\.(raw|donor|face|eyes)\.|batch\.json$")
-CDN = ["https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js",
-       "https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/esm/cn2t.js"]
+CDN = ["https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js"]
 # Public CORS relay: the Cloudflare Worker in relay/worker.js on the owner's account (holds no key of its own)
 RELAY = "https://chienzhi-relay.cattravelworld.com"
 # Hosted models only (same ids and order as config.CANDIDATES without the local endpoint)

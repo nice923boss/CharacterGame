@@ -176,6 +176,10 @@ class TurnService:
             self._writing.pop(key, None)
             done.set_result(None)
 
+    def busy(self, gid: str) -> bool:
+        """A turn of this story is being written (by the player or the batch): it cannot be deleted now."""
+        return any(k[0] == gid for k in self._writing)
+
     def _take_partial(self, key: tuple) -> str:
         text, until = self._partial.pop(key, ("", 0))
         return text if time.monotonic() < until else ""

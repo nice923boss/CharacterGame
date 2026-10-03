@@ -222,6 +222,7 @@ function typeStep() {
 
 function afterLine() {
   if (G.queue.length) { G.waitingClick = true; $('#dialog-next').hidden = false; return; }
+  if (G.failAfter) { const fail = G.failAfter; G.failAfter = null; fail(); return; }
   if (G.final) { finishTurn(); return; }
   // More lines are still streaming: keep this one on screen until the player clicks
   if (G.running) { G.waitingClick = true; $('#dialog-wait').hidden = false; }
@@ -420,6 +421,12 @@ async function sendInput(kind, text) {
     else if (!G.typing && !G.waitingClick) advance();
   } catch (e) {
     if (G.game?.id !== gid) return;   // left the game, which cancelled the turn
+    // Storage full: the turn was written but not saved; its lines stay readable and the failure row comes after them (F03)
+    if (e.code === 'storage_full' && turnLines.length) {
+      G.failAfter = () => failTurn(e.message, false, e.code);
+      if (!G.typing && !G.queue.length) { G.waitingClick = false; afterLine(); }
+      return;
+    }
     G.queue = [];
     G.typing = null;
     G.waitingClick = false;   // else the retried turn's first line would wait for a click
@@ -470,7 +477,7 @@ export async function enterGame(stage, gid, nodeId, onExit) {
   const max = 120 * (LIMIT_SCALE[G.game.lang] || 1);
   $('#free-input').maxLength = max;
   $('#free-input').placeholder = t('game.freePh', { n: max });
-  Object.assign(G, { queue: [], typing: null, waitingClick: false, final: null, castExpr: {}, lastInput: null });
+  Object.assign(G, { queue: [], typing: null, waitingClick: false, final: null, failAfter: null, castExpr: {}, lastInput: null });
   $('#scr-game').hidden = false;
   clearInterval(G.pollTimer);
   G.pollTimer = setInterval(pollAssets, 3000);
@@ -521,6 +528,7 @@ export function leaveGame() {
   G.queue = [];
   G.typing = null;
   G.final = null;
+  G.failAfter = null;
   $('#scr-game').hidden = true;
   $('#asset-chip').hidden = true;
   $('#stage-loading').hidden = true;
@@ -573,14 +581,19 @@ export async function openSlots(mode, onLoad) {
   };
   $('#autosave-row').innerHTML = '';
   if (mode === 'load') {
-    const auto = await get('/api/autosave').catch(() => null);
-    if (auto) {
+    // The last few autosave points, newest first: one wrong choice can be taken back a few turns
+    const autos = await get('/api/autosaves').catch(() => []);
+    if (autos.length) {
       const games = await get('/api/games').catch(() => []);
-      const title = games.find((g) => g.id === auto.game_id)?.title || auto.game_id;
-      $('#autosave-row').innerHTML = `<button class="slot"><div class="thumb"${thumbAttr(auto.thumb)}></div><div class="meta"><b>${esc(t('slots.auto', { title }))}</b>` +
-        `${esc(String(auto.saved_at || '').slice(0, 16).replace('T', ' ') + t('slots.autoNote'))}</div></button>`;
+      const title = (a) => games.find((g) => g.id === a.game_id)?.title || a.game_id;
+      $('#autosave-row').innerHTML = `<p class="hint">${esc(t('slots.autoHint', { n: autos.length }))}</p>` + autos.map((a, i) =>
+        `<button class="slot" data-auto="${i}"><div class="thumb"${thumbAttr(a.thumb)}></div><div class="meta"><b>${esc(title(a))}</b>` +
+        `${esc(String(a.saved_at || '').slice(0, 16).replace('T', ' '))}</div></button>`).join('');
       loadThumbs($('#autosave-row'));
-      $('#autosave-row .slot').onclick = () => { closeModal('#mdl-slots'); onLoad(auto.game_id, auto.node_id); };
+      $('#autosave-row').querySelectorAll('.slot').forEach((b) => {
+        const a = autos[Number(b.dataset.auto)];
+        b.onclick = () => { closeModal('#mdl-slots'); onLoad(a.game_id, a.node_id); };
+      });
     }
   }
   paint();

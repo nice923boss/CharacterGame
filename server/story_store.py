@@ -1,14 +1,17 @@
-"""Games, node trees, save slots and autosave as JSON files with atomic writes (PLAN sections 3 and 4)."""
+"""Games, node trees, save slots, autosave points and recently deleted stories as JSON files with atomic
+writes (PLAN sections 3 and 4)."""
 import json
 import os
 import pathlib
 import shutil
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from . import config
 
 SLOT_COUNT = 10
+AUTOSAVE_KEEP = 5   # autosave points kept, newest first
+TRASH_DAYS = 7      # days a deleted story stays in saves/trash
 # Image engines: NVIDIA only by default; with both on, ComfyUI is the fallback when NVIDIA fails
 DEFAULT_SETTINGS = {"image_nvidia": True, "image_comfy": False, "image_mode": "all"}
 
@@ -86,18 +89,67 @@ class Store:
             return f"/media/{game_id}/assets/scenes/{scene_id}.png"
         return None
 
+    # ---------- recently deleted ----------
+
+    def trash_dir(self, game_id: str) -> pathlib.Path:
+        return self.root / "trash" / self.game_dir(game_id).name
+
     def delete_game(self, game_id: str) -> None:
-        """Delete a whole story (tree, branches, images) and every slot or autosave pointing at it."""
+        """Move a story to saves/trash for TRASH_DAYS. The slots pointing at it go along in deleted.json and come
+        back on restore; its autosave points are dropped."""
         folder = self.game_dir(game_id)
         if not (folder / "game.json").exists():
             raise FileNotFoundError(f"找不到遊戲 {game_id}")
-        # Clear the references first, so a failed folder delete never leaves a slot pointing at nothing
-        slots = [None if s and s["game_id"] == game_id else s for s in self.load_slots()]
+        dest = self.trash_dir(game_id)
+        if dest.exists():
+            shutil.rmtree(dest)
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        folder.rename(dest)   # first, so a folder that cannot move leaves every slot as it was
+        slots = self.load_slots()
+        _write(dest / "deleted.json", {"deleted_at": now_iso(), "slots": [s for s in slots if s and s["game_id"] == game_id]})
+        _write(self.root / "slots.json", [None if s and s["game_id"] == game_id else s for s in slots])
+        _write(self.root / "autosaves.json", [a for a in self.load_autosaves() if a["game_id"] != game_id])
+
+    def list_trash(self) -> list[dict]:
+        """Recently deleted stories, newest first (the expired ones are deleted for good first)."""
+        self.purge_expired()
+        out = []
+        for p in (self.root / "trash").glob("*/deleted.json"):
+            deleted_at = _read(p)["deleted_at"]
+            expires = datetime.fromisoformat(deleted_at) + timedelta(days=TRASH_DAYS)
+            out.append({"id": p.parent.name, "title": _read(p.parent / "game.json", {}).get("title", ""),
+                        "deleted_at": deleted_at, "expires_at": expires.isoformat(timespec="seconds"),
+                        "nodes": len(_read(p.parent / "tree.json", {"nodes": {}})["nodes"])})
+        return sorted(out, key=lambda x: x["deleted_at"], reverse=True)
+
+    def restore_game(self, game_id: str) -> None:
+        """Move a story back from the trash; its slots return only where the slot is still empty."""
+        src = self.trash_dir(game_id)
+        info = _read(src / "deleted.json")
+        if info is None:
+            raise FileNotFoundError(f"最近刪除裡沒有 {game_id}")
+        folder = self.game_dir(game_id)
+        if folder.exists():
+            raise FileExistsError(f"遊戲資料夾已存在 {game_id}")
+        src.rename(folder)
+        (folder / "deleted.json").unlink()
+        slots = self.load_slots()
+        for s in info.get("slots") or []:
+            if slots[s["slot"]] is None:
+                slots[s["slot"]] = s
         _write(self.root / "slots.json", slots)
-        auto = self.load_autosave()
-        if auto and auto["game_id"] == game_id:
-            (self.root / "autosave.json").unlink()
-        shutil.rmtree(folder)
+
+    def purge_game(self, game_id: str) -> None:
+        src = self.trash_dir(game_id)
+        if not (src / "deleted.json").exists():
+            raise FileNotFoundError(f"最近刪除裡沒有 {game_id}")
+        shutil.rmtree(src)
+
+    def purge_expired(self) -> None:
+        cutoff = datetime.now().astimezone() - timedelta(days=TRASH_DAYS)
+        for p in (self.root / "trash").glob("*/deleted.json"):
+            if datetime.fromisoformat(_read(p)["deleted_at"]) < cutoff:
+                shutil.rmtree(p.parent)
 
     # ---------- tree ----------
 
@@ -165,9 +217,20 @@ class Store:
         _write(self.root / "slots.json", slots)
         return slots
 
+    def load_autosaves(self) -> list[dict]:
+        """Newest first, one per game and node, at most AUTOSAVE_KEEP. The autosave.json of older versions
+        counts as the list until the next autosave writes autosaves.json."""
+        saves = _read(self.root / "autosaves.json")
+        if saves is None:
+            old = _read(self.root / "autosave.json")
+            saves = [old] if old else []
+        return saves
+
     def set_autosave(self, game_id: str, node_id: str, scene_id: str) -> None:
-        _write(self.root / "autosave.json",
-               {"game_id": game_id, "node_id": node_id, "scene_id": scene_id, "saved_at": now_iso()})
+        entry = {"game_id": game_id, "node_id": node_id, "scene_id": scene_id, "saved_at": now_iso()}
+        rest = [a for a in self.load_autosaves() if (a["game_id"], a["node_id"]) != (game_id, node_id)]
+        _write(self.root / "autosaves.json", [entry, *rest][:AUTOSAVE_KEEP])
 
     def load_autosave(self) -> dict | None:
-        return _read(self.root / "autosave.json")
+        saves = self.load_autosaves()
+        return saves[0] if saves else None

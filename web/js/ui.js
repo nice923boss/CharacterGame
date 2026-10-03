@@ -128,7 +128,7 @@ export function helpNode(code) {
   return box;
 }
 
-// Notices stack, newest at the bottom, at most TOAST_MAX; errors stay until closed (C09).
+// Notices stack, newest at the bottom, at most TOAST_MAX; errors and ms=0 notices stay until closed (C09).
 // id: replaces the earlier notice with the same id (progress updates); code: error code that gets help (C10)
 const TOAST_MAX = 4;
 export function toast(msg, error = false, ms = 4000, { id = '', code = '' } = {}) {
@@ -140,12 +140,16 @@ export function toast(msg, error = false, ms = 4000, { id = '', code = '' } = {}
     if (id) el.dataset.id = id;
   }
   clearTimeout(el.timer);
+  const sticky = error || !ms;
   el.classList.toggle('error', error);
+  el.classList.toggle('sticky', sticky);
   if (error) el.setAttribute('role', 'alert'); else el.removeAttribute('role');
   el.replaceChildren(msg);
   if (error) {
     const help = helpNode(code);
     if (help) el.append(help);
+  }
+  if (sticky) {
     const x = document.createElement('button');
     x.type = 'button';
     x.className = 'toast-x';

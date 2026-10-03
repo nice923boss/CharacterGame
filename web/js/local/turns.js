@@ -109,6 +109,10 @@ const locks = new Map();   // gid -> promise chain, so two turns never write the
 const writing = new Map();   // turns in progress by gid, parent and input: { settled, batch }
 const partials = new Map();   // whole lines of a turn that broke off, same key: { text, until }
 const PARTIAL_KEEP_MS = 600 * 1000;   // how long they wait for the player to try again
+
+// A turn of this story is being written (by the player or the batch): the story cannot be deleted now
+export const turnBusy = (gid) => [...writing.keys()].some((k) => k.startsWith(`${gid}
+`));
 const wholeLines = (text) => text.slice(0, text.lastIndexOf('\n') + 1);
 
 function takePartial(key) {

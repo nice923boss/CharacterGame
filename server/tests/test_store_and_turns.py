@@ -3,6 +3,8 @@
 The acceptance run uses the real endpoints (docs/dev-log.md); this file only checks the plumbing.
 """
 import asyncio
+import json
+from datetime import datetime, timedelta
 
 import pytest
 
@@ -203,3 +205,67 @@ def test_new_game_ids_are_unique_within_one_second(store):
     assert len(ids) == 3
     assert all(store.game_dir(g).is_dir() for g in ids)
     assert [g["id"] for g in store.list_games()] == ["g_test"]   # claimed but unsaved folders are not stories
+
+
+def test_deleted_game_waits_in_trash_and_restores_its_slots(store):
+    store.save_game({**GAME, "id": "g_other"})
+    for gid in ("g_test", "g_other"):
+        store.add_node(gid, {"parent": None, "scene_id": "archive"})
+    store.save_slot(0, "g_test", "n_0000", "a")
+    store.save_slot(2, "g_test", "n_0000", "c")
+    store.delete_game("g_test")
+    [item] = store.list_trash()
+    assert item["id"] == "g_test" and item["title"] == "t" and item["nodes"] == 1
+    assert datetime.fromisoformat(item["expires_at"]) - datetime.fromisoformat(item["deleted_at"]) == timedelta(days=7)
+    assert not (store.root / "games" / "g_test" / "game.json").exists()
+    store.save_slot(2, "g_other", "n_0000", "taken")                # slot 2 is used again before the restore
+    store.restore_game("g_test")
+    slots = store.load_slots()
+    assert slots[0]["game_id"] == "g_test" and slots[2]["game_id"] == "g_other"
+    assert sorted(g["id"] for g in store.list_games()) == ["g_other", "g_test"]
+    assert store.list_trash() == [] and not (store.game_dir("g_test") / "deleted.json").exists()
+    with pytest.raises(FileNotFoundError):
+        store.restore_game("g_test")
+
+
+def test_trash_purge_and_expiry(store):
+    store.delete_game("g_test")
+    store.purge_game("g_test")
+    assert store.list_trash() == [] and not store.trash_dir("g_test").exists()
+    with pytest.raises(FileNotFoundError):
+        store.purge_game("g_test")
+    store.save_game(GAME)
+    store.delete_game("g_test")
+    info = store.trash_dir("g_test") / "deleted.json"
+    old = datetime.now().astimezone() - timedelta(days=7, minutes=1)
+    info.write_text(json.dumps({"deleted_at": old.isoformat(timespec="seconds"), "slots": []}), encoding="utf-8")
+    assert store.list_trash() == [] and not store.trash_dir("g_test").exists()
+
+
+def test_autosave_keeps_the_five_newest_points(store):
+    (store.root / "autosave.json").write_text(json.dumps(
+        {"game_id": "g_test", "node_id": "n_old", "scene_id": "archive", "saved_at": "2026-10-01T10:00:00+08:00"}),
+        encoding="utf-8")
+    assert [a["node_id"] for a in store.load_autosaves()] == ["n_old"]     # autosave.json of older versions
+    for i in range(6):
+        store.set_autosave("g_test", f"n_{i:04d}", "archive")
+    store.set_autosave("g_test", "n_0003", "archive")                       # the same point moves to the top
+    assert [a["node_id"] for a in store.load_autosaves()] == ["n_0003", "n_0005", "n_0004", "n_0002", "n_0001"]
+    assert store.load_autosave()["node_id"] == "n_0003"
+
+
+def test_story_with_work_under_way_cannot_be_deleted(store, monkeypatch):
+    from fastapi import HTTPException
+    from server import main
+    monkeypatch.setattr(main, "store", store)
+    monkeypatch.setattr(main.turns, "_writing", {("g_test", None, "走"): (None, False)})
+    assert main.turns.busy("g_test") and not main.turns.busy("g_other")
+    with pytest.raises(HTTPException) as e:
+        asyncio.run(main.delete_game("g_test"))
+    assert e.value.status_code == 409 and e.value.detail == "game_busy"
+    monkeypatch.setattr(main.turns, "_writing", {})
+    monkeypatch.setattr(main.batches, "status", lambda gid: {"state": "running"})
+    with pytest.raises(HTTPException) as e:
+        asyncio.run(main.delete_game("g_test"))
+    assert e.value.detail == "game_busy"
+    assert (store.game_dir("g_test") / "game.json").exists()

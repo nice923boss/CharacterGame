@@ -1,4 +1,4 @@
-// Story list on the title screen: open a story at its latest turn, or delete it with its tree, images, slots and autosave.
+// Story list on the title screen: open a story at its latest turn, or delete it; deleted stories wait 7 days in "recently deleted".
 import { del, get, post } from './api.js';
 import { t } from './i18n.js';
 import { $, closeModal, confirmBox, esc, loadThumbs, openModal, thumbAttr, toast, toastError } from './ui.js';
@@ -8,18 +8,17 @@ const ACTIVE = ['running', 'images'];
 
 // onChange runs after a delete, so the title menu can refresh "continue"; onOpen(gid, nodeId) plays a story
 export async function openStories(onChange, onOpen) {
-  let games, slots, auto, batches;
-  try {
-    [games, slots, auto, batches] = await Promise.all([get('/api/games'), get('/api/slots'), get('/api/autosave'),
-      get('/api/batches')]);
-  } catch (e) { toastError(e); return; }
+  let games, slots, autos, batches, trash;
+  const fetchAll = () => Promise.all([get('/api/games'), get('/api/slots'), get('/api/autosaves'), get('/api/batches'),
+    get('/api/trash')]);
+  try { [games, slots, autos, batches, trash] = await fetchAll(); } catch (e) { toastError(e); return; }
   const batchOf = (gid) => batches.find((b) => b.id === gid);
   // A batch story opens at its opening, so every option ahead is already written; a live story at its latest turn
   const openAt = (g) => (g.batch ? g.root : g.latest);
 
   const refs = (gid) => {
     const n = slots.filter((s) => s?.game_id === gid).length;
-    return [n && t('stories.slots', { n }), auto?.game_id === gid && t('stories.auto')].filter(Boolean).join(t('common.sep'));
+    return [n && t('stories.slots', { n }), autos.some((a) => a.game_id === gid) && t('stories.auto')].filter(Boolean).join(t('common.sep'));
   };
 
   const row = (g) => {
@@ -31,7 +30,19 @@ export async function openStories(onChange, onOpen) {
       `${used ? esc(t('stories.usedBy', { used })) : ''}${batchLine(g.id)}</div>` +
       batchButton(g.id) +
       (openAt(g) ? `<button class="btn small" data-open-story="${esc(g.id)}">${esc(t('stories.open'))}</button>` : '') +
-      `<button class="btn small ghost" data-del-story="${esc(g.id)}">${esc(t('common.delete'))}</button></div>`;
+      // A story whose batch is still writing cannot be deleted; pause the batch first
+      (ACTIVE.includes(batchOf(g.id)?.state)
+        ? `<button class="btn small ghost" disabled title="${esc(t('stories.busyDel'))}">${esc(t('common.delete'))}</button></div>`
+        : `<button class="btn small ghost" data-del-story="${esc(g.id)}">${esc(t('common.delete'))}</button></div>`);
+  };
+
+  const daysLeft = (x) => Math.ceil((Date.parse(x.expires_at) - Date.now()) / 864e5);
+  const trashRow = (x) => {
+    const days = daysLeft(x);
+    return `<div class="story-row trashed"><div class="meta"><b>${esc(x.title || x.id)}</b>` +
+      `${esc(days > 1 ? t('stories.expires', { nodes: x.nodes, days }) : t('stories.expiresToday', { nodes: x.nodes }))}</div>` +
+      `<button class="btn small" data-restore-story="${esc(x.id)}">${esc(t('stories.restore'))}</button>` +
+      `<button class="btn small ghost" data-purge-story="${esc(x.id)}">${esc(t('stories.purge'))}</button></div>`;
   };
 
   const batchLine = (gid) => {
@@ -60,8 +71,11 @@ export async function openStories(onChange, onOpen) {
   };
 
   const paint = () => {
-    $('#story-list').innerHTML = games.length ? games.map(row).join('') : `<p class="hint">${esc(t('stories.none'))}</p>`;
+    $('#story-list').innerHTML = (games.length ? games.map(row).join('') : `<p class="hint">${esc(t('stories.none'))}</p>`) +
+      (trash.length ? `<h3 class="trash-head">${esc(t('stories.trash'))}</h3>${trash.map(trashRow).join('')}` : '');
     loadThumbs($('#story-list'));
+    $('#story-list').querySelectorAll('[data-restore-story]').forEach((b) => { b.onclick = () => restore(b.dataset.restoreStory); });
+    $('#story-list').querySelectorAll('[data-purge-story]').forEach((b) => { b.onclick = () => purge(b.dataset.purgeStory); });
     $('#story-list').querySelectorAll('[data-del-story]').forEach((b) => { b.onclick = () => remove(b.dataset.delStory); });
     $('#story-list').querySelectorAll('[data-open-story]').forEach((b) => {
       b.onclick = () => {
@@ -80,14 +94,33 @@ export async function openStories(onChange, onOpen) {
     const text = t('stories.delAsk', { title: g.title || gid, used: used ? t('stories.delUsed', { used }) : '' });
     if (!(await confirmBox(text, t('common.delete')))) return;
     try { await del(`/api/games/${gid}`); } catch (e) { toastError(e); return; }
-    games = games.filter((x) => x.id !== gid);
-    batches = batches.filter((x) => x.id !== gid);
+    await reload();
     refreshBatches();
-    slots = slots.map((s) => (s?.game_id === gid ? null : s));
-    if (auto?.game_id === gid) auto = null;
-    paint();
     toast(t('stories.deleted', { title: g.title || gid }));
     onChange();
+  };
+
+  const reload = async () => {
+    try { [games, slots, autos, batches, trash] = await fetchAll(); } catch (e) { toastError(e); }
+    paint();
+  };
+
+  // Restore puts the story back; its save slots only return where those slots are still empty
+  const restore = async (gid) => {
+    const x = trash.find((y) => y.id === gid);
+    try { await post(`/api/trash/${gid}/restore`, {}); } catch (e) { toastError(e); return; }
+    await reload();
+    refreshBatches();
+    toast(t('stories.restored', { title: x.title || gid }));
+    onChange();
+  };
+
+  const purge = async (gid) => {
+    const x = trash.find((y) => y.id === gid);
+    if (!(await confirmBox(t('stories.purgeAsk', { title: x.title || gid }), t('stories.purge')))) return;
+    try { await del(`/api/trash/${gid}`); } catch (e) { toastError(e); return; }
+    await reload();
+    toast(t('stories.purged', { title: x.title || gid }));
   };
 
   paint();

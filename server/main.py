@@ -15,7 +15,7 @@ from fastapi.staticfiles import StaticFiles
 
 from . import comfy_client, config, conn_check, nvidia_image
 from .asset_service import IMAGE_MODES, AssetService
-from .batch_service import BatchService
+from .batch_service import ACTIVE, BatchService
 from .jobs import Job, Jobs
 from .llm_client import LLMClient, LLMError, Waits
 from .novel_service import NovelService
@@ -35,6 +35,10 @@ JOBS = Jobs()
 @asynccontextmanager
 async def lifespan(_app):
     (config.SAVES / "games").mkdir(parents=True, exist_ok=True)
+    try:
+        store.purge_expired()
+    except OSError as e:
+        log.error("purging recently deleted stories failed: %s", e)
     assets.start()
     batches.resume_all()
     log.info("server up on http://%s:%s", config.HOST, config.PORT)
@@ -232,7 +236,10 @@ async def get_game(gid: str, scene: str | None = None):
 
 @app.delete("/api/games/{gid}")
 async def delete_game(gid: str):
+    """Moves the story to recently deleted; a story with a turn or a batch under way stays."""
     _game_or_404(gid)
+    if turns.busy(gid) or (batches.status(gid) or {}).get("state") in ACTIVE:
+        raise HTTPException(409, "game_busy")
     await batches.stop(gid)
     assets.forget(gid)
     try:
@@ -297,6 +304,35 @@ async def task_events(tid: str, after: int = 0):
     return follow_job(job, after)
 
 
+@app.get("/api/trash")
+async def list_trash():
+    return store.list_trash()
+
+
+@app.post("/api/trash/{gid}/restore")
+async def restore_game(gid: str):
+    try:
+        store.restore_game(gid)
+    except (FileNotFoundError, ValueError):
+        raise HTTPException(404, "game_not_found")
+    except OSError as e:
+        log.error("restore game %s failed: %s", gid, e)
+        raise HTTPException(500, "restore_failed")
+    return {"ok": True}
+
+
+@app.delete("/api/trash/{gid}")
+async def purge_game(gid: str):
+    try:
+        store.purge_game(gid)
+    except (FileNotFoundError, ValueError):
+        raise HTTPException(404, "game_not_found")
+    except OSError as e:
+        log.error("purge game %s failed: %s", gid, e)
+        raise HTTPException(500, "delete_failed")
+    return {"ok": True}
+
+
 @app.post("/api/tasks/{tid}/cancel")
 async def cancel(tid: str):
     job = JOBS.get(tid)
@@ -343,6 +379,11 @@ async def delete_slot(slot: int):
 @app.get("/api/autosave")
 async def autosave():
     return _with_thumb(store.load_autosave())
+
+
+@app.get("/api/autosaves")
+async def autosaves():
+    return [_with_thumb(a) for a in store.load_autosaves()]
 
 
 config.SAVES.joinpath("games").mkdir(parents=True, exist_ok=True)

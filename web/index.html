@@ -34,6 +34,7 @@
         <button class="btn local-only" data-act="importDir" data-i18n="menu.importDir">讀取資料夾進度</button>
         <button class="btn local-only" data-act="exportZip" data-i18n="menu.exportZip">下載進度到電腦</button>
       </div>
+      <p class="backup local-only" id="backup-line" hidden></p>
       <input type="file" id="import-dir" webkitdirectory multiple hidden>
       <p class="health" id="health" data-i18n="health.checking">檢查連線中…</p>
       <p class="busy" id="busy" aria-live="polite" hidden><i></i><span></span></p>
@@ -214,6 +215,8 @@
       <h3 data-i18n="settings.sec.data">資料</h3>
       <p class="hint local-only" data-i18n="settings.localHint">網頁版：金鑰與轉送網址只存在這台電腦的瀏覽器，故事與圖片也存在瀏覽器裡，換電腦前請先下載進度。</p>
       <p class="hint server-only" data-i18n="settings.serverHint"></p>
+      <p class="hint local-only" id="set-storage"></p>
+      <p class="hint local-only storage-warn" id="set-storage-warn" hidden></p>
       <div class="menu row local-only"><button class="btn small ghost" id="set-demo" data-i18n="settings.restoreDemo">還原示範故事</button></div>
       <p class="hint field local-only" data-i18n="settings.demoHint"></p>
     </div>

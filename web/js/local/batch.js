@@ -11,7 +11,7 @@ import * as turns from './turns.js';
 const { BATCH_CONCURRENCY, BATCH_TURN_RETRIES, BATCH_RETRY_WAITS_S, BATCH_TAIL_WAIT_S, BATCH_GROW_AFTER } = DATA.limits;
 const IMAGE_POLL_MS = 5000;
 const STOP_WAIT_MS = 10000;
-const ACTIVE = ['running', 'images'];
+export const ACTIVE = ['running', 'images'];
 const PREFIX = 'batch:';
 const BUSY = ['transient', 'timeout', 'upstream'];   // failure reasons that mean the model (or the relay) is overloaded
 const ETA_WINDOW = 10;                               // finished turns the time estimate averages over
@@ -418,7 +418,7 @@ export async function status(gid) {
 
 export async function list() {
   const ids = (await store.kvKeys()).filter((k) => typeof k === 'string' && k.startsWith(PREFIX))
-    .map((k) => k.slice(PREFIX.length)).sort().reverse();
+    .map((k) => k.slice(PREFIX.length)).filter((gid) => !store.isTrashed(gid)).sort().reverse();
   const out = [];
   for (const gid of ids) {
     try { out.push(await status(gid)); } catch (e) { console.warn(`batch status skipped ${gid}`, e); }

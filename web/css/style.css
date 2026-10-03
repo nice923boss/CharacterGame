@@ -90,6 +90,11 @@ html[lang="en"] .game-title { font-size: 7cqh; letter-spacing: 0.04em; line-heig
 html[lang="en"] .subtitle { letter-spacing: 0.06em; }
 .story-row .meta b small { font-family: var(--sans); font-size: 1.5cqh; color: var(--muted); font-weight: 400; }
 .health { margin-top: 3cqh; font-size: 1.7cqh; color: var(--muted); }
+.backup { margin: 0.8cqh 0 0; font-size: 1.6cqh; color: var(--muted); }
+.backup.remind, .btn.remind { color: var(--gold); }
+.btn.remind { background-color: rgba(96, 72, 34, 0.95); }
+.backup:not([hidden]) + .health { margin-top: 1.2cqh; }
+.storage-warn { color: var(--danger); }
 .batch-panel { margin-top: 1.6cqh; padding: 1cqh 1.4cqh; text-align: left; font-size: 1.7cqh; color: var(--muted);
   border: 0.15cqh solid var(--gold-dim); border-radius: 1cqh; background: rgba(6, 9, 20, 0.6); }
 .batch-panel h4 { margin: 0 0 0.6cqh; color: var(--gold); font-family: var(--serif); font-size: 1.9cqh; font-weight: 400; }
@@ -193,9 +198,13 @@ html[lang="en"] .subtitle { letter-spacing: 0.06em; }
   text-shadow: 0 0 0.6cqh #000; }
 .slot .del { position: absolute; top: 0.4cqh; right: 0.6cqh; }
 .slot.empty .thumb { display: grid; place-items: center; color: var(--muted); }
-#autosave-row { margin-bottom: 1.2cqh; }
+#autosave-row { margin-bottom: 1.2cqh; display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.6cqh; }
+#autosave-row:empty { display: none; }
+#autosave-row .hint { grid-column: 1 / -1; margin: 0; }
 #autosave-row .slot { flex-direction: row; height: 9cqh; }
-#autosave-row .thumb { flex: 0 0 16cqh; }
+#autosave-row .thumb { flex: 0 0 12cqh; }
+#autosave-row .meta { min-width: 0; }
+#autosave-row .meta b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #story-list { flex: 1; overflow: auto; display: flex; flex-direction: column; gap: 1.2cqh; }
 .story-row { display: flex; align-items: center; gap: 2cqh; flex: 0 0 12cqh; padding-right: 2cqh;
   border: 0.2cqh solid var(--gold-dim); border-radius: 1cqh; overflow: hidden; background: rgba(6, 9, 20, 0.6); }
@@ -206,6 +215,9 @@ html[lang="en"] .subtitle { letter-spacing: 0.06em; }
 @keyframes pulse { from { opacity: 0.35; } to { opacity: 1; } }
 .story-row .meta { flex: 1; font-size: 1.7cqh; line-height: 1.5; color: var(--muted); }
 .story-row .meta b { display: block; font-family: var(--serif); font-size: 2.2cqh; color: var(--ink); }
+.trash-head { margin-top: 1.6cqh; }
+.story-row.trashed { flex-basis: 8cqh; padding-left: 2cqh; border-style: dashed; }
+.story-row .btn[disabled] { opacity: 0.45; cursor: not-allowed; }
 
 /* ---------- tree ---------- */
 .tree-panel { width: 94cqw; height: 92cqh; display: flex; flex-direction: column; position: relative; }
@@ -250,7 +262,9 @@ html[lang="en"] .subtitle { letter-spacing: 0.06em; }
   display: flex; flex-direction: column; align-items: flex-start; gap: 0.8cqh; pointer-events: none; }
 .toast { pointer-events: auto; font-size: 2.1cqh; background: rgba(8, 12, 26, 0.92); border: 0.2cqh solid var(--gold-dim);
   border-radius: 1cqh; padding: 0.8cqh 2cqh; }
-.toast.error { position: relative; padding-right: 4.4cqh; border-color: var(--danger); color: #ffd9d4; }
+.toast.sticky { position: relative; padding-right: 4.4cqh; }
+.toast.error { border-color: var(--danger); color: #ffd9d4; }
+.toast .btn { margin-left: 1.2cqh; }
 .toast-x { position: absolute; top: 0.3cqh; right: 0.8cqh; background: none; border: 0; color: inherit; font-size: 2.8cqh;
   line-height: 1; cursor: pointer; padding: 0.2cqh 0.4cqh; }
 #offline { position: absolute; top: 0; left: 0; right: 0; z-index: 30; text-align: center; font-size: 2cqh; padding: 0.6cqh 1.6cqh;
@@ -283,7 +297,7 @@ html:not(.local) .local-only { display: none !important; }
 .busy[data-level="red"] i, .busy-dot[data-level="red"] i { background: var(--danger); }
 .err-help { display: block; margin-top: 0.4cqh; font-size: 0.85em; color: var(--ink); }
 .err-help .btn, .err-help a { margin-left: 0.8em; }
-.err-help a { color: var(--accent); }
+.err-help a { color: var(--accent); white-space: nowrap; }
 .settings-panel h3 { margin: 2.6cqh 0 0.4cqh; padding-bottom: 0.4cqh; border-bottom: 0.15cqh solid var(--gold-dim); }
 .settings-panel h3:first-of-type { margin-top: 0.8cqh; }
 .settings-panel .hint.field { margin: -1cqh 0 1.2cqh calc(14cqh + 1.6cqh); font-size: 1.7cqh; }

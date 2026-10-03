@@ -45,6 +45,7 @@ async function importDemo(force) {
     }
     await store.saveTree(gid, tree);
     await store.saveGame(game);
+    await store.untrash(gid);
     images.forget(gid);
   }
   await store.kvPut('demoVersion', index.version);
@@ -53,6 +54,7 @@ async function importDemo(force) {
 
 export const ready = (async () => {
   await store.openStore();
+  await store.purgeExpired().catch((e) => console.error('purging recently deleted stories failed', e));
   await loadOpenCC();
   await importDemo(false);
   images.init(conn, lsGet(MODE) || 'all');
@@ -163,13 +165,27 @@ export async function request(method, url, body) {
     return { node_id: node.id };
   }
   if (a === 'autosave') return withThumb(await store.loadAutosave());
+  if (a === 'autosaves') return Promise.all((await store.loadAutosaves()).map(withThumb));
   if (a === 'slots' && !gid) return slotsOut(await store.loadSlots());
   if (a === 'slots' && method === 'POST') {
     return slotsOut(await store.saveSlot(Number(gid), body?.game_id, body?.node_id, String(body?.label ?? '').slice(0, 80)));
   }
   if (a === 'slots' && method === 'DELETE') return slotsOut(await store.deleteSlot(Number(gid)));
   if (a === 'games' && !gid) return store.listGames();
+  if (a === 'trash' && !gid) return store.listTrash();
+  if (a === 'trash' && method === 'POST' && sub === 'restore') { await store.restoreGame(gid); return { ok: true }; }
+  if (a === 'trash' && method === 'DELETE') {
+    images.forget(gid);
+    try { await store.purgeGame(gid); } catch (e) {
+      if (e?.code) throw e;
+      console.error('purge game failed', e);
+      throw { code: 'delete_failed' };
+    }
+    return { ok: true };
+  }
   if (a === 'games' && method === 'DELETE') {
+    await store.loadGame(gid);
+    if (turns.turnBusy(gid) || batch.ACTIVE.includes((await batch.status(gid))?.state)) throw { code: 'game_busy' };
     await batch.stop(gid);
     images.forget(gid);
     try { await store.deleteGame(gid); } catch (e) {

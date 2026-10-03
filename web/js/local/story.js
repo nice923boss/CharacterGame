@@ -11,11 +11,11 @@ const LINE_RE = new RegExp(String.raw`^@\s*([^|:：]+?)\s*(?:\|\s*([A-Za-z]*)\s*
 const STAGE_RE = /^\*{1,2}([^*]+?)\*{1,2}\s*(?=\S)/;
 const EMPH_RE = /\*{1,2}([^*]+?)\*{1,2}/g;
 
-// Simplified -> Taiwan traditional (opencc s2twp on the server). Without the CDN library text stays as written.
+// Simplified -> Taiwan traditional (opencc s2twp on the server), opencc-js 1.0.5 bundled in web/vendor. Without it text stays as written.
 let convert = (s) => s;
 export async function loadOpenCC() {
   try {
-    const OpenCC = await import('https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/esm/cn2t.js');
+    const OpenCC = await import('../../vendor/cn2t.js');
     convert = OpenCC.Converter({ from: 'cn', to: 'twp' });
     return true;
   } catch (e) {
