@@ -111,6 +111,7 @@ export function createStage(host) {
       p.pixelDensity(1);
       p.frameRate(60);
       fit(true);
+      if (!vignette) paintVignette();   // a page opened before it has a size skips fit(), but draw needs the vignette
       blob = p.createGraphics(400, 400);
       const b = blob.drawingContext;
       const bg = b.createRadialGradient(200, 200, 0, 200, 200, 200);
