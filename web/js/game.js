@@ -28,13 +28,17 @@ function sceneUrl(sid) {
   return s.url || `/media/${G.game.id}/assets/scenes/${sid}.png?v=${s.v}`;   // url: browser-side (Pages) build
 }
 
+const sceneQuery = () => (G.sceneId ? `?scene=${encodeURIComponent(G.sceneId)}` : '');
+
 async function pollAssets() {
   if (!G.game) return;
   const gid = G.game.id;
   let assets;
-  // Polling also re-queues missing images (after a server restart) and puts this game's images first
-  const scene = G.sceneId ? `?scene=${encodeURIComponent(G.sceneId)}` : '';
-  try { assets = await get(`/api/games/${gid}/assets${scene}`); } catch { return; }
+  // Polling also re-queues missing images (after a server restart); only the window the player is looking at
+  // (focus=1) puts this game's images first, so the last one used wins
+  const front = document.visibilityState === 'visible' && document.hasFocus();
+  const query = sceneQuery() + (front ? `${G.sceneId ? '&' : '?'}focus=1` : '');
+  try { assets = await get(`/api/games/${gid}/assets${query}`); } catch { return; }
   if (G.game?.id !== gid) return;   // left or switched game while waiting
   G.assets = assets;
   const url = sceneUrl(G.sceneId);
@@ -44,18 +48,80 @@ async function pollAssets() {
   paintAssetChip();
 }
 
+// Every image of this game with a label for the chip's list
+function assetItems() {
+  const items = [];
+  for (const [sid, a] of Object.entries(G.assets?.scenes || {})) {
+    items.push({ ...a, label: t('chip.itemScene', { name: G.game.scenes[sid]?.name || sid }) });
+  }
+  for (const [cid, set] of Object.entries(G.assets?.sprites || {})) {
+    const name = G.game.characters.find((c) => c.id === cid)?.name || cid;
+    for (const [e, a] of Object.entries(set)) items.push({ ...a, label: t('chip.itemSprite', { name, expr: t(`expr.${e}`) }) });
+  }
+  return items;
+}
+
+// Corner chip: failed images in red (click for the reasons and a retry), else the image queue
 function paintAssetChip() {
   const chip = $('#asset-chip');
-  const sc = G.assets?.scenes?.[G.sceneId];
-  if (sc?.state === 'error') {   // a scene still being drawn shows in the loading panel instead
-    chip.textContent = t('chip.sceneError');
-    chip.hidden = false;
-    return;
+  const items = assetItems();
+  const failed = items.filter((a) => a.state === 'error').length;
+  const waiting = items.filter((a) => a.retry_in != null);
+  const queue = G.assets?.queue || 0;
+  chip.classList.toggle('error', failed > 0);
+  if (failed) chip.textContent = t('chip.failed', { n: failed });
+  else if (G.assets?.paused) chip.textContent = t('chip.paused', { n: queue });
+  else if (waiting.length && waiting.length === queue) {
+    chip.textContent = t('chip.waitRetry', { n: queue, s: Math.min(...waiting.map((a) => a.retry_in)) });
+  } else chip.textContent = t('chip.drawing', { n: queue });
+  chip.hidden = !failed && !queue;
+}
+
+const CHIP_LIST_MAX = 6;
+
+async function showAssetProblems() {
+  if (!G.game) return;
+  const gid = G.game.id;
+  const items = assetItems().filter((a) => a.state === 'error' || a.retry_in != null);
+  if (!items.length) { toast(t('chip.none')); return; }
+  const lines = items.slice(0, CHIP_LIST_MAX).map((a) => {
+    const p = { label: a.label, error: String(a.error || '').slice(0, 80), s: a.retry_in };
+    return t(a.state === 'error' ? 'chip.line' : 'chip.lineWait', p);
+  });
+  if (items.length > CHIP_LIST_MAX) lines.push(t('chip.more', { n: items.length - CHIP_LIST_MAX }));
+  if (!(await confirmBox([t('chip.title'), ...lines].join('\n'), t('chip.retryAll'))) || G.game?.id !== gid) return;
+  try {
+    G.assets = await post(`/api/games/${gid}/assets/retry${sceneQuery()}`);
+    toast(t('chip.retried'));
+    paintAssetChip();
+  } catch (e) { toast(e.message, true); }
+}
+
+// Right-click (a long press on touch) on the scene or a character draws it again
+async function askRedraw(x, y) {
+  const hit = G.game && G.stage.hit(x, y);
+  if (!hit) return;
+  const gid = G.game.id;
+  const { kind } = hit;
+  const target = kind === 'scene' ? G.sceneId : hit.cid;
+  if (!target) return;
+  const mode = (await get('/api/settings').catch(() => ({}))).image_mode;
+  if (mode === 'off') { toast(t('err.images_off'), true); return; }
+  let text;
+  if (kind === 'scene') text = t('redraw.scene', { name: G.game.scenes[target]?.name || target });
+  else {
+    const name = G.game.characters.find((c) => c.id === target)?.name || target;
+    // Basic mode draws only the calm portrait again; the other expressions are cleared so none keeps the old look
+    text = mode === 'basic' ? t('redraw.spriteBasic', { name })
+      : t('redraw.sprite', { name, n: Object.keys(G.assets?.sprites?.[target] || {}).length });
   }
-  const all = Object.values(G.assets?.sprites || {}).flatMap((m) => Object.values(m));
-  const ready = all.filter((x) => x.state === 'done').length;
-  chip.hidden = !all.length || ready === all.length;
-  chip.textContent = t('chip.sprites', { ready, all: all.length });
+  const answer = await confirmBox(text, t('redraw.ok'), t('redraw.newSeed'));
+  if (!answer || G.game?.id !== gid) return;
+  try {
+    G.assets = await post(`/api/games/${gid}/assets/redraw`, { kind, target, new_seed: answer.checked });
+    toast(t('redraw.started'));
+    paintAssetChip();
+  } catch (e) { toast(e.message, true); }
 }
 
 // Loading panel: shown while the scene or an on-stage sprite is still being drawn or downloaded, so a blank
@@ -68,8 +134,8 @@ function paintLoading() {
   G.stage.refreshScene();   // also swaps in a scene that finished loading while no line was typing
   const sc = G.assets?.scenes?.[G.sceneId];
   const sprites = G.assets?.sprites || {};
-  const waits = G.stage.waiting().filter((w) => (w.url ? true
-    : w.kind === 'scene' ? sc?.state !== 'error' : sprites[w.cid]?.calm?.state !== 'error'));
+  const given = (a) => !['error', 'off'].includes(a?.state);   // failed or not drawn in this image mode
+  const waits = G.stage.waiting().filter((w) => (w.url ? true : w.kind === 'scene' ? given(sc) : given(sprites[w.cid]?.calm)));
   const box = $('#stage-loading');
   loadingTicks = waits.length ? loadingTicks + 1 : 0;
   if (loadingTicks < LOADING_SHOW_AFTER) { box.hidden = true; return; }
@@ -463,11 +529,39 @@ export function openTree() {
 
 // ---------- wiring ----------
 
+const LONG_PRESS_MS = 600;
+const NOT_STAGE = 'button, input, select, form, #choices, #retry, #dialog, #ending, #toolbar';
+
 export function initGame() {
   requestAnimationFrame(typeStep);
-  $('#scr-game').addEventListener('click', (e) => {
+  const scr = $('#scr-game');
+  let press = null;         // touch or pen held on the stage: { x, y, timer, fired }
+  let pointer = 'mouse';
+  scr.addEventListener('pointerdown', (e) => {
+    pointer = e.pointerType;
+    press = null;
+    if (e.pointerType === 'mouse' || e.target.closest(NOT_STAGE)) return;
+    const p = { x: e.clientX, y: e.clientY, fired: false };
+    p.timer = setTimeout(() => { p.fired = true; askRedraw(p.x, p.y); }, LONG_PRESS_MS);
+    press = p;
+  });
+  scr.addEventListener('pointermove', (e) => {
+    if (press && !press.fired && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 12) clearTimeout(press.timer);
+  });
+  for (const ev of ['pointerup', 'pointercancel']) scr.addEventListener(ev, () => { if (press) clearTimeout(press.timer); });
+  scr.addEventListener('contextmenu', (e) => {
+    if (e.target.closest(NOT_STAGE)) return;
+    e.preventDefault();
+    if (pointer === 'mouse') askRedraw(e.clientX, e.clientY);   // touch: the long-press timer asks instead
+  });
+  scr.addEventListener('click', (e) => {
+    if (press?.fired) { press = null; return; }   // the end of a long press is not a click
     if (!e.target.closest('button, input, form, #choices, #retry')) advance();
   });
+  $('#asset-chip').addEventListener('click', showAssetProblems);
+  // Coming back to this window moves its images first right away instead of at the next poll
+  window.addEventListener('focus', pollAssets);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') pollAssets(); });
   document.addEventListener('keydown', (e) => {
     if ($('#scr-game').hidden || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); advance(); }

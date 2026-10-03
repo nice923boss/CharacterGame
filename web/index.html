@@ -94,7 +94,7 @@
   <!-- 3. main game (dialog box, 4. options live here) -->
   <section id="scr-game" class="screen" hidden>
     <div id="scene-card" hidden></div>
-    <div id="asset-chip" hidden></div>
+    <button id="asset-chip" type="button" hidden></button>
     <div id="stage-loading" hidden><p></p><div class="batch-bar"><i></i></div></div>
     <div id="toolbar">
       <button class="btn tiny" data-act="save" data-i18n="game.save">存檔</button>
@@ -160,6 +160,12 @@
       <label><span data-i18n="settings.bgm">音樂音量</span><input type="range" id="set-bgm" min="0" max="100" step="5"><output id="out-bgm"></output></label>
       <label><span data-i18n="settings.sfx">音效音量</span><input type="range" id="set-sfx" min="0" max="100" step="5"><output id="out-sfx"></output></label>
       <label class="check"><input type="checkbox" id="set-weather"><span data-i18n="settings.weather">顯示天氣粒子</span></label>
+      <label><span data-i18n="settings.imageMode">圖片產生</span><select id="set-img-mode">
+        <option value="all" data-i18n="settings.imgMode.all">全部（場景、立繪與所有表情）</option>
+        <option value="basic" data-i18n="settings.imgMode.basic">精簡（只畫場景與平靜立繪，省額度）</option>
+        <option value="off" data-i18n="settings.imgMode.off">關閉（只玩文字）</option>
+      </select></label>
+      <p class="hint" data-i18n="redraw.hint">在場景或角色上按右鍵（觸控長按）可以重新繪製</p>
       <p class="hint server-only" data-i18n="settings.images">生圖引擎：只勾一個就只用那個；兩個都勾時，輝達失敗才改用 ComfyUI</p>
       <label class="check server-only"><input type="checkbox" id="set-img-nvidia"><span data-i18n="settings.imgNvidia">輝達 FLUX.2（雲端）</span></label>
       <label class="check server-only"><input type="checkbox" id="set-img-comfy"><span data-i18n="settings.imgComfy">本機 ComfyUI</span></label>
@@ -194,6 +200,7 @@
   <section id="mdl-confirm" class="modal" hidden>
     <div class="panel confirm-panel">
       <p id="confirm-text"></p>
+      <label id="confirm-check" hidden><input type="checkbox"><span></span></label>
       <div class="menu row">
         <button class="btn primary" id="confirm-ok" data-i18n="common.ok">確定</button>
         <button class="btn ghost" id="confirm-cancel" data-i18n="common.cancel">取消</button>

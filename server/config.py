@@ -81,6 +81,7 @@ TOTAL_TIMEOUT_S = 240
 MAX_TOKENS = 4096
 CHAR_CAP = 20000
 RPM_LIMIT = 35
+IMAGE_RPM_RESERVE = 10            # hosted FLUX shares the NVIDIA per-minute limit; these calls stay for the text
 TRANSIENT_STATUS = {404, 408, 409, 425, 429, 500, 502, 503, 504}
 TRANSIENT_BACKOFF_S = [2, 4, 8, 16, 32]
 EMPTY_BACKOFF_S = [2, 5]          # then switch candidate instead of waiting 89 s

@@ -10,7 +10,7 @@ from . import config
 
 SLOT_COUNT = 10
 # Image engines: NVIDIA only by default; with both on, ComfyUI is the fallback when NVIDIA fails
-DEFAULT_SETTINGS = {"image_nvidia": True, "image_comfy": False}
+DEFAULT_SETTINGS = {"image_nvidia": True, "image_comfy": False, "image_mode": "all"}
 
 
 def _write(path: pathlib.Path, data) -> None:

@@ -28,10 +28,14 @@ document.addEventListener('click', (e) => {
   if (btn) btn.closest('.modal').hidden = true;
 });
 
-export function confirmBox(text, okText = t('common.ok')) {
+// checkLabel: also show a checkbox (ticked); OK then resolves { checked } instead of true
+export function confirmBox(text, okText = t('common.ok'), checkLabel = '') {
   return new Promise((resolve) => {
     $('#confirm-text').textContent = text;
     $('#confirm-ok').textContent = okText;
+    $('#confirm-check').hidden = !checkLabel;
+    $('#confirm-check span').textContent = checkLabel;
+    $('#confirm-check input').checked = true;
     $('#toast').hidden = true;   // an earlier notice would sit on the confirm panel
     openModal('#mdl-confirm');
     const done = (v) => {
@@ -39,7 +43,7 @@ export function confirmBox(text, okText = t('common.ok')) {
       $('#confirm-ok').onclick = $('#confirm-cancel').onclick = null;
       resolve(v);
     };
-    $('#confirm-ok').onclick = () => done(true);
+    $('#confirm-ok').onclick = () => done(checkLabel ? { checked: $('#confirm-check input').checked } : true);
     $('#confirm-cancel').onclick = () => done(false);
   });
 }

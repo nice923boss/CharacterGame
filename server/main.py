@@ -14,7 +14,7 @@ from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from . import comfy_client, config, nvidia_image
-from .asset_service import AssetService
+from .asset_service import IMAGE_MODES, AssetService
 from .batch_service import BatchService
 from .llm_client import LLMClient, LLMError, Waits
 from .novel_service import NovelService
@@ -23,8 +23,9 @@ from .turn_service import TurnError, TurnService
 
 log = config.setup_logging()
 store = Store()
-assets = AssetService(store)
-turns = TurnService(store, LLMClient(), assets)
+llm = LLMClient()
+assets = AssetService(store, rpm_gate=llm.image_slot)
+turns = TurnService(store, llm, assets)
 batches = BatchService(store, turns, assets)
 novels = NovelService(turns.llm)
 TASKS: dict[str, asyncio.Task] = {}
@@ -39,6 +40,7 @@ async def lifespan(_app):
     log.info("server up on http://%s:%s", config.HOST, config.PORT)
     yield
     await turns.llm.aclose()
+    await nvidia_image.aclose()
 
 
 app = FastAPI(lifespan=lifespan)
@@ -135,9 +137,12 @@ async def save_nvidia_key(payload: dict = Body(...)):
 async def save_settings(payload: dict = Body(...)):
     settings = {**store.load_settings(),
                 **{k: bool(v) for k, v in payload.items() if k in ("image_nvidia", "image_comfy")}}
+    if payload.get("image_mode") in IMAGE_MODES:
+        settings["image_mode"] = payload["image_mode"]
     if not (settings["image_nvidia"] or settings["image_comfy"]):
         raise HTTPException(400, "no_engine")
     store.save_settings(settings)
+    assets.set_mode(settings["image_mode"])
     return settings
 
 
@@ -149,7 +154,8 @@ async def list_games():
 @app.post("/api/games")
 async def create_game(payload: dict = Body(...)):
     async def work(emit, waits):
-        game = await turns.create_game(payload, emit, waits)
+        with assets.text_turn():
+            game = await turns.create_game(payload, emit, waits)
         if game.get("batch"):
             batches.start(game["id"])
     return sse_job(work, payload)
@@ -202,19 +208,48 @@ async def delete_game(gid: str):
 
 
 @app.get("/api/games/{gid}/assets")
-async def asset_status(gid: str, scene: str | None = None):
-    # The game on screen polls this: keep its images first in line and re-queue what a server restart dropped
+async def asset_status(gid: str, scene: str | None = None, focus: int = 0):
+    # The game on screen polls this: re-queue what a server restart dropped. Only a window the player is
+    # looking at (focus=1) moves its images first in line, so two open windows do not take turns
+    game = _game_or_404(gid)
+    if focus:
+        assets.active = gid
+    assets.ensure_game(game, scene if scene in game["scenes"] else None, retry=False)
+    return assets.status(game)
+
+
+@app.post("/api/games/{gid}/assets/retry")
+async def asset_retry(gid: str, scene: str | None = None):
+    """The asset chip's retry button: failed images and the ones waiting for their automatic retry start again."""
     game = _game_or_404(gid)
     assets.active = gid
-    assets.ensure_game(game, scene if scene in game["scenes"] else None, retry=False)
+    assets.ensure_game(game, scene if scene in game["scenes"] else None)
+    return assets.status(game)
+
+
+@app.post("/api/games/{gid}/assets/redraw")
+async def asset_redraw(gid: str, payload: dict = Body(...)):
+    game = _game_or_404(gid)
+    kind, target = payload.get("kind"), payload.get("target")
+    if not ((kind == "scene" and target in game["scenes"]) or
+            (kind == "sprite" and any(c["id"] == target for c in game["characters"]))):
+        raise HTTPException(400, "bad_target")
+    if assets.mode == "off":
+        raise HTTPException(400, "images_off")
+    assets.active = gid
+    if not assets.redraw(game, kind, target, bool(payload.get("new_seed", True))):
+        raise HTTPException(409, "drawing")
     return assets.status(game)
 
 
 @app.post("/api/games/{gid}/turn")
 async def turn(gid: str, payload: dict = Body(...)):
     _game_or_404(gid)
-    return sse_job(lambda emit, waits: turns.run_turn(gid, payload.get("parent_id"), payload.get("input") or {}, emit,
-                                                     waits=waits), payload)
+
+    async def work(emit, waits):
+        with assets.text_turn():
+            await turns.run_turn(gid, payload.get("parent_id"), payload.get("input") or {}, emit, waits=waits)
+    return sse_job(work, payload)
 
 
 @app.post("/api/tasks/{tid}/cancel")

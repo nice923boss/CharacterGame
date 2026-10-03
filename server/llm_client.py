@@ -334,6 +334,19 @@ class LLMClient:
             await emit({"type": "status", "state": "rpm", "remaining": wait, "model": cand.label})
             await self._sleep(1)
 
+    async def image_slot(self) -> None:
+        """One hosted FLUX call in the same per-minute window as the NVIDIA chat models, leaving
+        IMAGE_RPM_RESERVE calls for the story text so a busy image queue never makes a turn wait."""
+        q = self._rpm.setdefault("nvidia", deque())
+        while True:
+            now = self._clock()
+            while q and now - q[0] >= 60:
+                q.popleft()
+            if len(q) < config.RPM_LIMIT - config.IMAGE_RPM_RESERVE:
+                q.append(now)
+                return
+            await self._sleep(1)
+
     async def _attempt(self, cand: Candidate, messages: list[dict], emit: Emit, temperature: float) -> LLMResult:
         body = {"model": cand.model, "messages": messages, "stream": True, "max_tokens": config.MAX_TOKENS,
                 "temperature": temperature, **cand.extra}

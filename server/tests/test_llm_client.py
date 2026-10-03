@@ -352,3 +352,15 @@ def test_wrapped_error_shapes():
     assert wrapped_error({"error": "busy"}) == ("busy", None)
     assert wrapped_error({"object": "error", "message": "m", "code": "429"}) == ("m", 429)
     assert wrapped_error({"choices": []}) is None
+
+
+async def test_image_slot_leaves_room_for_the_story_text():
+    # Hosted FLUX shares the NVIDIA per-minute window; images stop IMAGE_RPM_RESERVE calls short of the limit
+    rec = Recorder()
+    c = client(lambda req: None, rec)
+    for _ in range(config.RPM_LIMIT - config.IMAGE_RPM_RESERVE):
+        await c.image_slot()
+    assert rec.sleeps == []
+    await c.image_slot()
+    assert 59 <= sum(rec.sleeps) <= 61                     # waited for the oldest call to leave the window
+    assert list(c._rpm["nvidia"]) == [rec.now]             # the earlier calls (all at one instant) left together

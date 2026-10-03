@@ -256,6 +256,23 @@ export function createStage(host) {
       S.cast.forEach((c) => { c.alpha = 1; c.x = c.tx; });
     },
     castIds() { return S.cast.filter((c) => !c.leaving).map((c) => c.cid); },
+    // What sits under a point on the page: the topmost sprite under an opaque pixel, else the scene
+    hit(clientX, clientY) {
+      const r = host.getBoundingClientRect();
+      const x = (clientX - r.left) / r.width * W;
+      const y = (clientY - r.top) / r.height * H;
+      if (x < 0 || y < 0 || x > W || y > H) return null;
+      for (const c of [...S.cast].reverse()) {
+        if (c.leaving || !c.img) continue;
+        const k = SPRITE_H / c.img.height * (0.97 + 0.03 * c.focus);
+        const px = Math.floor((x - (c.x - c.img.width * k / 2)) / k);
+        const py = Math.floor((y - (H - c.img.height * k + 10 * (1 - c.focus))) / k);
+        if (px >= 0 && py >= 0 && px < c.img.width && py < c.img.height && c.img.get(px, py)[3] > 16) {
+          return { kind: 'sprite', cid: c.cid };
+        }
+      }
+      return { kind: 'scene' };
+    },
     setSpeaker(cid) { S.speaker = cid; },
     setWeather(kind) { if (kind !== S.weather) { S.weather = kind; S.parts = makeParts(kind); } },
     setWeatherOn(on) { S.weatherOn = on; },

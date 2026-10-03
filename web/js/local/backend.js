@@ -11,6 +11,7 @@ import { loadOpenCC } from './story.js';
 
 const KEY = 'cg-nvidia-key';
 const RELAY = 'cg-relay';
+const MODE = 'cg-image-mode';
 
 function lsGet(k) { try { return localStorage.getItem(k) || ''; } catch { return ''; } }
 function lsSet(k, v) {
@@ -52,7 +53,7 @@ export const ready = (async () => {
   await store.openStore();
   await loadOpenCC();
   await importDemo(false);
-  images.init(conn);
+  images.init(conn, lsGet(MODE) || 'all');
   batch.init(conn);
   batch.resumeAll().catch((e) => console.error('batch resume failed', e));
 })();
@@ -97,7 +98,14 @@ export async function request(method, url, body) {
   const [a, gid, sub, act] = parts;
   if (method === 'GET' && a === 'health') return health();
   if (method === 'GET' && a === 'stats') return llm.stats();
-  if (a === 'settings' && !gid) return { image_nvidia: true, image_comfy: false, relay: lsGet(RELAY), relay_default: DATA.relay || '' };
+  if (a === 'settings' && !gid) {
+    if (method === 'POST' && DATA.art.IMAGE_MODES.includes(body?.image_mode)) {
+      lsSet(MODE, body.image_mode);
+      images.setMode(body.image_mode);
+    }
+    return { image_nvidia: true, image_comfy: false, image_mode: lsGet(MODE) || 'all', relay: lsGet(RELAY),
+             relay_default: DATA.relay || '' };
+  }
   if (a === 'settings' && gid === 'nvidia_key') { lsSet(KEY, validKey(body?.key)); return { nvidia_key: true }; }
   if (a === 'settings' && gid === 'relay') {
     // Saving the built-in address (or an empty field) keeps following the built-in relay
@@ -134,10 +142,28 @@ export async function request(method, url, body) {
   }
   if (a === 'games' && (sub === undefined || sub === 'assets') && method === 'GET') {
     const game = await store.loadGame(gid);
-    images.setActive(gid);
+    // Polling only moves this game's images first while the player looks at this tab (focus=1)
+    if (sub === undefined || u.searchParams.get('focus')) images.setActive(gid);
     images.ensureGame(game, scene && game.scenes[scene] ? scene : null, sub === undefined);
     const assets = images.status(game);
     return sub === 'assets' ? assets : { game, tree: await store.loadTree(gid), assets };
+  }
+  if (a === 'games' && sub === 'assets' && method === 'POST' && act === 'retry') {
+    const game = await store.loadGame(gid);
+    images.setActive(gid);
+    images.ensureGame(game, scene && game.scenes[scene] ? scene : null, true);
+    return images.status(game);
+  }
+  if (a === 'games' && sub === 'assets' && method === 'POST' && act === 'redraw') {
+    const game = await store.loadGame(gid);
+    const { kind, target } = body || {};
+    if (!((kind === 'scene' && game.scenes[target]) || (kind === 'sprite' && game.characters.some((c) => c.id === target)))) {
+      throw { code: 'bad_target' };
+    }
+    if ((lsGet(MODE) || 'all') === 'off') throw { code: 'images_off' };
+    images.setActive(gid);
+    if (!(await images.redraw(game, kind, target, body.new_seed !== false))) throw { code: 'drawing' };
+    return images.status(game);
   }
   throw { code: 'http', params: { status: 404 } };
 }
@@ -158,12 +184,13 @@ export function job(url, body, onEvent) {
     const parts = new URL(url, location.href).pathname.split('/api/')[1].split('/');
     try {
       if (parts[0] === 'games' && parts.length === 1) {
-        const game = await turns.createGame(body, emit, jobConn(), ctrl.signal);
+        // While a turn is written only the background on screen is drawn, so the text gets the requests
+        const game = await images.textTurn(() => turns.createGame(body, emit, jobConn(), ctrl.signal));
         if (game.batch) await batch.start(game.id);
       }
       else if (parts[0] === 'games' && parts[2] === 'turn') {
         await store.loadGame(parts[1]);
-        await turns.runTurn(parts[1], body.parent_id ?? null, body.input || {}, emit, jobConn(), ctrl.signal);
+        await images.textTurn(() => turns.runTurn(parts[1], body.parent_id ?? null, body.input || {}, emit, jobConn(), ctrl.signal));
       }
       else if (parts[0] === 'novel' && parts[1] === 'analyze') await analyzeNovel(body, emit, jobConn(), ctrl.signal);
       else throw { code: 'http', params: { status: 404 } };

@@ -125,6 +125,7 @@ class BatchService:
         a = self.assets.status(game)
         states = [s["state"] for s in a["scenes"].values()] + \
                  [s["state"] for sp in a["sprites"].values() for s in sp.values()]
+        states = [s for s in states if s != "off"]
         return {"id": gid, "title": game["title"], "lang": game.get("lang", "zh"), "state": b["state"],
                 "nodes": made, "planned": planned, "failed": len(b.get("failed") or []),
                 "images": states.count("done"), "images_total": len(states), "image_errors": states.count("error"),
@@ -303,13 +304,12 @@ class BatchService:
         while True:
             game = self.store.load_game(gid)
             for sid in game["scenes"]:
-                if ("scene", gid, sid) not in self.assets.errors:
-                    self.assets.request(("scene", gid, sid), P_EXPR)
+                self.assets.request(("scene", gid, sid), P_EXPR, retry=False)
             self.assets.ensure_game(game, retry=False)
             a = self.assets.status(game)
             states = [s["state"] for s in a["scenes"].values()] + \
                      [s["state"] for sp in a["sprites"].values() for s in sp.values()]
-            if all(s in ("done", "error") for s in states):
+            if all(s in ("done", "error", "off") for s in states):   # "off": the image mode skips it
                 break
             await asyncio.sleep(IMAGE_POLL_S)
         self._save(gid, state="done", finished_at=now_iso())

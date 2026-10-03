@@ -46,7 +46,7 @@ class NullAssets:
     def __init__(self):
         self.requests = []
 
-    def request(self, key, priority):
+    def request(self, key, priority, retry=True):
         self.requests.append((key, priority))
 
 

@@ -82,11 +82,13 @@ def _scene_setup(tmp_path, monkeypatch, settings, nvidia_fails=False):
     store = Store(tmp_path)
     store.save_settings(settings)
     svc = AssetService(store)
-    calls = []
+    calls, gates = [], []
+    svc.gates = gates
 
     def fake(engine, fail):
-        async def draw(prompt, w, h, seed, dest):
+        async def draw(prompt, w, h, seed, dest, gate=None):
             calls.append(engine)
+            gates.append(gate)
             if fail:
                 raise RuntimeError(f"{engine} down")
             dest.parent.mkdir(parents=True, exist_ok=True)
@@ -232,3 +234,138 @@ def test_eye_paste_keeps_every_pixel_outside_the_eye_band():
     ys, xs = np.nonzero(diff)
     assert diff.any() and xs.min() >= eyes[0] - 8 and xs.max() <= eyes[2] + 8
     assert ys.min() >= eyes[1] - 8 and ys.max() <= eyes[3] + 8
+
+
+# ---------- pause during turns, automatic retry, redraw, image mode ----------
+
+GAME = {"id": "g_1", "seed": 7, "style_en": "", "scenes": {"pier": {"image_prompt": "a pier"}},
+        "characters": [{"id": "c1", "seed": 3, "appearance_en": "a woman"}]}
+
+
+class Clock:
+    def __init__(self):
+        self.now = 1000.0
+
+    def __call__(self):
+        return self.now
+
+
+def test_nvidia_draws_go_through_the_rpm_gate(tmp_path, monkeypatch):
+    svc, game, _ = _scene_setup(tmp_path, monkeypatch, {"image_nvidia": True, "image_comfy": False})
+
+    async def gate():
+        pass
+
+    svc.rpm_gate = gate
+    asyncio.run(svc._scene(game, "pier"))
+    assert svc.gates == [gate]
+
+
+def test_only_the_background_on_screen_is_drawn_while_a_turn_is_written(tmp_path):
+    svc = AssetService(Store(tmp_path))
+    svc.active = "g_1"
+    svc.ensure_game(GAME, "pier")
+    svc.request(("scene", "g_2", "pier"), asset_service.P_SCENE)
+    with svc.text_turn():
+        assert [j.key for j in svc.jobs.values() if svc._runnable(j)] == [("scene", "g_1", "pier")]
+        assert svc.status(GAME)["paused"]
+    assert all(svc._runnable(j) for j in svc.jobs.values()) and not svc.status(GAME)["paused"]
+
+
+def test_failed_image_is_queued_again_later_then_marked_as_error(tmp_path):
+    clock = Clock()
+    svc = AssetService(Store(tmp_path), clock=clock)
+    key = ("sprite", "g_1", "c1", "calm")
+    job = asset_service.Job(2, 1, key)
+    for n in range(1, asset_service.AUTO_RETRY_ROUNDS + 1):
+        svc._failed(job, RuntimeError("busy"))
+        assert key in svc.later and svc.rounds[key] == n and key not in svc.errors
+        st = svc.status(GAME)["sprites"]["c1"]["calm"]
+        assert st["state"] == "queued" and st["retry_in"] == asset_service.AUTO_RETRY_S and st["error"] == "busy"
+        svc.request(key, 2, retry=False)                    # polling does not cut the wait short
+        assert key not in svc.jobs
+        clock.now += asset_service.AUTO_RETRY_S
+        svc._promote()
+        assert key in svc.jobs and key not in svc.later
+        del svc.jobs[key]
+    svc._failed(job, RuntimeError("busy"))
+    assert svc.errors[key] == "busy" and key not in svc.later and key not in svc.rounds
+
+
+def test_hopeless_failure_is_an_error_at_once(tmp_path):
+    svc = AssetService(Store(tmp_path))
+    key = ("scene", "g_1", "pier")
+    svc._failed(asset_service.Job(0, 1, key), asset_service.ImageFailed("filtered", retryable=False))
+    assert svc.errors[key] == "filtered" and key not in svc.later
+
+
+def test_retry_starts_a_waiting_image_now(tmp_path):
+    svc = AssetService(Store(tmp_path))
+    key = ("scene", "g_1", "pier")
+    svc._failed(asset_service.Job(0, 1, key), RuntimeError("busy"))
+    svc.ensure_game(GAME, "pier")                           # the chip's retry button
+    assert key in svc.jobs and key not in svc.later and key not in svc.rounds
+
+
+def test_engine_errors_are_retryable_unless_every_engine_says_no(tmp_path, monkeypatch):
+    svc, game, _ = _scene_setup(tmp_path, monkeypatch, {"image_nvidia": True, "image_comfy": False})
+
+    async def filtered(*a):
+        raise asset_service.nvidia_image.NvidiaImageError("filtered", retryable=False)
+
+    monkeypatch.setattr(asset_service.nvidia_image, "txt2img", filtered)
+    with pytest.raises(asset_service.ImageFailed) as e:
+        asyncio.run(svc._scene(game, "pier"))
+    assert not e.value.retryable
+    svc.store.save_settings({"image_nvidia": False, "image_comfy": False})
+    with pytest.raises(asset_service.ImageFailed) as e:
+        asyncio.run(svc._scene(game, "pier"))
+    assert not e.value.retryable and str(e.value) == asset_service.NO_ENGINE
+
+
+def test_redraw_deletes_the_files_and_draws_with_a_new_seed(tmp_path):
+    store = Store(tmp_path)
+    store.save_game(GAME)
+    svc = AssetService(store)
+    folder = svc.sprite_path("g_1", "c1", "calm").parent
+    folder.mkdir(parents=True)
+    for name in ("calm.png", "calm.raw.png", "smile.png", "meta.json"):
+        (folder / name).write_bytes(b"x")
+    assert svc._seed(GAME, "sprite", "c1") == 3
+    assert svc.redraw(GAME, "sprite", "c1")
+    assert list(folder.iterdir()) == []
+    assert svc.jobs[("sprite", "g_1", "c1", "calm")].priority == asset_service.P_SPEAKER
+    assert ("sprite", "g_1", "c1", "smile") in svc.jobs
+    seed = svc._seed(GAME, "sprite", "c1")
+    assert seed != 3 and svc._seed(GAME, "scene", "pier") == 7 + sum(map(ord, "pier"))
+    svc.scene_path("g_1", "pier").parent.mkdir(parents=True)
+    svc.scene_path("g_1", "pier").write_bytes(b"x")
+    assert svc.redraw(GAME, "scene", "pier", new_seed=False)
+    assert not svc.scene_path("g_1", "pier").exists() and ("scene", "g_1", "pier") in svc.jobs
+    assert svc._seed(GAME, "scene", "pier") == 7 + sum(map(ord, "pier")) and svc._seed(GAME, "sprite", "c1") == seed
+
+
+def test_redraw_waits_for_the_image_being_drawn(tmp_path):
+    svc = AssetService(Store(tmp_path))
+    svc.running = ("scene", "g_1", "pier")
+    assert not svc.redraw(GAME, "scene", "pier")
+
+
+@pytest.mark.parametrize("mode, queued", [
+    ("all", {"scene", "calm", "smile"}), ("basic", {"scene", "calm"}), ("off", set())])
+def test_image_mode_limits_what_is_drawn(tmp_path, mode, queued):
+    store = Store(tmp_path)
+    store.save_settings({"image_nvidia": True, "image_comfy": False, "image_mode": mode})
+    svc = AssetService(store)
+    svc.ensure_game(GAME, "pier")
+    assert {k[0] if k[0] == "scene" else k[3] for k in svc.jobs} & {"scene", "calm", "smile"} == queued
+    st = svc.status(GAME)
+    assert (st["sprites"]["c1"]["smile"]["state"] == "off") is (mode != "all")
+    assert (st["scenes"]["pier"]["state"] == "off") is (mode == "off")
+
+
+def test_switching_mode_drops_queued_images_it_no_longer_draws(tmp_path):
+    svc = AssetService(Store(tmp_path))
+    svc.ensure_game(GAME, "pier")
+    svc.set_mode("basic")
+    assert {k[3] for k in svc.jobs if k[0] == "sprite"} == {"calm"} and ("scene", "g_1", "pier") in svc.jobs

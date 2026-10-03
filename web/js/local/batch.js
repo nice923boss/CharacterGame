@@ -65,8 +65,9 @@ function textProgress(game, tree) {
   return [made, planned];
 }
 
+// "off": the image mode skips that image, so it counts neither as drawn nor as missing
 const imageStates = (a) => [...Object.values(a.scenes).map((s) => s.state),
-  ...Object.values(a.sprites).flatMap((sp) => Object.values(sp).map((s) => s.state))];
+  ...Object.values(a.sprites).flatMap((sp) => Object.values(sp).map((s) => s.state))].filter((s) => s !== 'off');
 
 const sleep = (ms, signal) => new Promise((resolve, reject) => {
   const t = setTimeout(resolve, ms);
@@ -166,9 +167,7 @@ async function walk(gid, signal) {
   await save(gid, { state: 'images' });
   for (;;) {
     const g = await store.loadGame(gid);
-    for (const sid of Object.keys(g.scenes)) {
-      if (!images.failed(['scene', gid, sid])) images.request(['scene', gid, sid], images.P_EXPR);
-    }
+    for (const sid of Object.keys(g.scenes)) images.request(['scene', gid, sid], images.P_EXPR, false);
     images.ensureGame(g, null, false);
     if (imageStates(images.status(g)).every((s) => s === 'done' || s === 'error')) break;
     await sleep(IMAGE_POLL_MS, signal);

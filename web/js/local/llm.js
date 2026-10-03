@@ -42,7 +42,7 @@ class AttemptFailure extends Error {
 }
 
 // Seconds from a Retry-After header (a number or an HTTP date); null when missing or unreadable
-function retryAfter(value) {
+export function retryAfter(value) {
   if (!value) return null;
   if (/^\s*-?\d+(\.\d+)?\s*$/.test(value)) return Math.max(Number(value), 0);
   const at = Date.parse(value);
@@ -150,6 +150,21 @@ async function rpmWait(label, emit, signal) {
     if (first === null) return;
     emit({ type: 'status', state: 'rpm', remaining: Math.trunc(60 - (now - first) / 1000) + 1, model: label });
     await sleep(1, signal);
+  }
+}
+
+// Hosted FLUX shares the NVIDIA per-minute limit: an image takes a slot only while IMAGE_RPM_RESERVE stay free
+// for the story text
+export async function imageSlot() {
+  for (;;) {
+    const now = Date.now();
+    let taken = false;
+    change((st) => {
+      st.rpm = st.rpm.filter((x) => now - x < 60000);
+      if (st.rpm.length < L.RPM_LIMIT - L.IMAGE_RPM_RESERVE) { st.rpm.push(now); taken = true; }
+    });
+    if (taken) return;
+    await sleep(1);
   }
 }
 

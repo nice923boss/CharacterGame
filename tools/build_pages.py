@@ -49,7 +49,7 @@ def data_module() -> str:
         "llm": {"candidates": CANDIDATES, "extra": config.NO_THINK,
                 **{k: getattr(config, k) for k in ("CONNECT_TIMEOUT_S", "FIRST_DATA_TIMEOUT_S", "IDLE_TIMEOUT_S",
                                                    "TOTAL_TIMEOUT_S", "MAX_TOKENS", "CHAR_CAP", "RPM_LIMIT",
-                                                   "TRANSIENT_BACKOFF_S", "EMPTY_BACKOFF_S", "COOLDOWN_STEPS_S",
+                                                   "IMAGE_RPM_RESERVE", "TRANSIENT_BACKOFF_S", "EMPTY_BACKOFF_S", "COOLDOWN_STEPS_S",
                                                    "RETRY_AFTER_MAX_S", "JITTER", "PRIMARY_RETRY_S",
                                                    "PATIENCE_STEP_S", "PATIENCE_MAX_S", "BUSY_WINDOW_S")},
                 "TRANSIENT_STATUS": sorted(config.TRANSIENT_STATUS)},
@@ -61,9 +61,10 @@ def data_module() -> str:
                    **{k: getattr(novel_service, k) for k in ("NOVEL_PART_CHARS", "NOVEL_MAX_PARTS", "NOVEL_PARALLEL",
                                                              "NOVEL_MIN_CHAPTERS")}},
         "art": {**{k: getattr(a, k) for k in ("BG_W", "BG_H", "SP_W", "SP_H", "STYLE", "FRAMING", "EXPR_PROMPT",
-                                              "BG_STYLE", "FLUX_BLANK", "FLUX_BG_TAIL")},
+                                              "BG_STYLE", "FLUX_BLANK", "FLUX_BG_TAIL", "AUTO_RETRY_S",
+                                              "AUTO_RETRY_ROUNDS", "IMAGE_MODES")},
                 "TALL": 1.35, "SOFTEN": nvidia_image.SOFTEN, "FLUX_PATH": nvidia_image.URL.split(".com", 1)[1],
-                "SIZE": nvidia_image.SIZE, "STEPS": nvidia_image.STEPS,
+                "SIZE": nvidia_image.SIZE, "STEPS": nvidia_image.STEPS, "TIMEOUT_S": nvidia_image.TIMEOUT_S,
                 "RETRY_STATUS": sorted(nvidia_image.RETRY_STATUS), "RETRY_BACKOFF_S": nvidia_image.RETRY_BACKOFF_S},
     }
     body = json.dumps(data, ensure_ascii=False, indent=1)

@@ -155,8 +155,10 @@ html[lang="en"] .subtitle { letter-spacing: 0.06em; }
 #retry { position: absolute; top: 1.6cqh; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 1.6cqh;
   background: rgba(40, 22, 18, 0.9); border: 0.2cqh solid var(--danger); border-radius: 1cqh; padding: 0.6cqh 1.6cqh;
   font-size: 2cqh; z-index: 6; }
-#asset-chip { position: absolute; top: 1.6cqh; left: 1.6cqw; font-size: 1.8cqh; color: var(--ink);
+#asset-chip { position: absolute; top: 1.6cqh; left: 1.6cqw; font: inherit; font-size: 1.8cqh; color: var(--ink); cursor: pointer;
   background: rgba(8, 12, 26, 0.72); border: 0.15cqh solid var(--gold-dim); border-radius: 3cqh; padding: 0.5cqh 1.6cqh; z-index: 5; }
+#asset-chip.error { border-color: var(--danger); color: #ffd9d4; }
+#asset-chip.error::before { display: none; }
 #asset-chip::before { content: ''; display: inline-block; width: 1.2cqh; height: 1.2cqh; margin-right: 0.8cqh;
   border: 0.3cqh solid var(--gold); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;
   vertical-align: -0.1cqh; }
@@ -232,6 +234,9 @@ html[lang="en"] .subtitle { letter-spacing: 0.06em; }
 .settings-panel input[type=checkbox] { width: 2.4cqh; height: 2.4cqh; accent-color: var(--gold); }
 .confirm-panel { width: 52cqw; text-align: center; }
 .confirm-panel p { font-family: var(--serif); font-size: 2.6cqh; line-height: 1.6; margin: 1cqh 0 2cqh; }
+#confirm-text { white-space: pre-line; }
+#confirm-check { display: flex; justify-content: center; align-items: center; gap: 1cqh; font-size: 2.1cqh; margin: -0.6cqh 0 2cqh; }
+#confirm-check input { width: 2.4cqh; height: 2.4cqh; accent-color: var(--gold); }
 #progress-sub { font-family: var(--sans); font-size: 1.9cqh; }
 
 #toast { position: absolute; bottom: 31cqh; left: 50%; transform: translateX(-50%); z-index: 25; font-size: 2.1cqh;

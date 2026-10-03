@@ -149,16 +149,24 @@ const refreshHealth = () => get('/api/health').then((h) => { health = h; }).catc
   .finally(paintHealth);
 refreshHealth();
 
-// Image engines live on the server: background batches draw with them too
+// Image engines and the image mode live on the server: background batches draw with them too
 async function bindImageEngines() {
   const boxes = { image_nvidia: $('#set-img-nvidia'), image_comfy: $('#set-img-comfy') };
+  const mode = $('#set-img-mode');
   let current;
   try { current = await get('/api/settings'); } catch {
-    Object.values(boxes).forEach((el) => { el.disabled = true; });
+    [...Object.values(boxes), mode].forEach((el) => { el.disabled = true; });
     return;
   }
-  const paint = () => Object.entries(boxes).forEach(([k, el]) => { el.checked = current[k]; });
+  const paint = () => {
+    Object.entries(boxes).forEach(([k, el]) => { el.checked = current[k]; });
+    mode.value = current.image_mode || 'all';
+  };
   paint();
+  mode.addEventListener('change', async () => {
+    try { current = await post('/api/settings', { image_mode: mode.value }); } catch (e) { toast(e.message, true); }
+    paint();
+  });
   for (const [k, el] of Object.entries(boxes)) {
     el.addEventListener('change', async () => {
       try {
