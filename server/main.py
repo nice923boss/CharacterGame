@@ -6,13 +6,14 @@ import asyncio
 import json
 import traceback
 from contextlib import asynccontextmanager
+from datetime import datetime
 
 import uvicorn
 from fastapi import Body, FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
-from . import comfy_client, config, nvidia_image
+from . import comfy_client, config, conn_check, nvidia_image
 from .asset_service import IMAGE_MODES, AssetService
 from .batch_service import BatchService
 from .jobs import Job, Jobs
@@ -104,8 +105,10 @@ def _game_or_404(gid: str) -> dict:
 
 @app.get("/api/health")
 async def health():
+    demo = (config.SAVES / "games" / config.DEMO_GAME / "game.json").exists()
     return {"comfy": await comfy_client.online(), "nvidia_image": nvidia_image.available(),
-            "engines": assets.engines(), "models": [c.label for c in turns.llm.candidates]}
+            "engines": assets.engines(), "models": [c.label for c in turns.llm.candidates],
+            "demo": config.DEMO_GAME if demo else None, **conn_check.key_info()}
 
 
 @app.get("/api/stats")
@@ -120,13 +123,31 @@ async def get_settings():
 
 @app.post("/api/settings/nvidia_key")
 async def save_nvidia_key(payload: dict = Body(...)):
-    """Write-only: the key goes into .env and never comes back; the page only learns whether one is set."""
+    """Write-only: the key goes into .env and never comes back; the page only gets a masked hint.
+    One tiny request tests it first (B01): a key NVIDIA rejects is not saved; busy or unreachable still saves."""
     key = payload.get("key")
     if not isinstance(key, str) or not key.strip() or len(key.strip()) > 200 or any(c.isspace() for c in key.strip()):
         raise HTTPException(422, "bad_key")
+    check = await conn_check.probe("text", key.strip())
+    if check["state"] == "key_rejected":
+        log.info("key from the settings page rejected by NVIDIA, not saved")
+        raise HTTPException(422, "key_rejected")
     config.set_env("NVIDIA_API_KEY", key.strip())
-    log.info("NVIDIA_API_KEY updated from the settings page")
-    return {"nvidia_key": True}
+    config.set_env(conn_check.SAVED_AT, datetime.now().isoformat(timespec="seconds"), secret=False)
+    conn_check.remember([check])
+    log.info("NVIDIA_API_KEY updated from the settings page (test: %s)", check["state"])
+    return {"nvidia_key": True, "check": check, **conn_check.key_info()}
+
+
+@app.post("/api/settings/check")
+async def check_connection():
+    """The settings page's test button (B02): the saved key on the text and the image path, side by side."""
+    key = config.ENV.get("NVIDIA_API_KEY", "")
+    if not key:
+        raise HTTPException(400, "no_key")
+    results = await asyncio.gather(conn_check.probe("text", key), conn_check.probe("image", key))
+    conn_check.remember(list(results))
+    return {"text": results[0], "image": results[1], **conn_check.key_info()}
 
 
 @app.post("/api/settings")

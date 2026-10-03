@@ -24,7 +24,7 @@ sys.path.insert(0, str(ROOT))
 from server import asset_service, config, novel_service, nvidia_image, prompts, turn_parser, turn_service  # noqa: E402
 
 OUT = ROOT / "dist" / "pages"
-DEMO_GAMES = ["g_20260925_145203"]
+DEMO_GAMES = [config.DEMO_GAME]
 SKIP_ASSET = re.compile(r"\.(raw|donor|face|eyes)\.|batch\.json$")
 CDN = ["https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js",
        "https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/esm/cn2t.js"]
@@ -39,6 +39,7 @@ def data_module() -> str:
     p, tp, a = prompts, turn_parser, asset_service
     data = {
         "relay": RELAY,
+        "demo": config.DEMO_GAME,
         "prompts": {k: getattr(p, k) for k in ("TURN_SYSTEM", "ENDING_RULE", "NO_ENDING_RULE", "SETUP_SYSTEM",
                                                "SETUP_USER", "TEXT", "RECENT_NODES", "SUMMARY_ITEMS",
                                                "LIVE_TURNS_PER_CHAPTER", "NOVEL_NOTES_SYSTEM", "NOVEL_NOTES_USER",

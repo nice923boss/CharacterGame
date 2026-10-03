@@ -25,6 +25,7 @@
         <button class="btn tiny" data-lang="en">English</button>
       </div>
       <div class="menu">
+        <button class="btn primary" id="title-demo" data-act="demo" data-i18n="menu.demo" hidden>先玩示範故事</button>
         <button class="btn" data-act="continue" data-i18n="menu.continue" disabled>繼續遊戲</button>
         <button class="btn" data-act="new" data-i18n="menu.new">新的故事</button>
         <button class="btn" data-act="load" data-i18n="menu.load">讀取存檔</button>
@@ -165,7 +166,9 @@
     <div class="panel settings-panel">
       <header class="panel-head"><h2 data-i18n="settings.title">設定</h2><button class="btn small ghost" data-close data-i18n="common.close">關閉</button></header>
       <h3 data-i18n="settings.sec.conn">連線</h3>
-      <label class="key"><span data-i18n="settings.key">輝達 API Key</span><input type="password" id="set-key" autocomplete="off" maxlength="200" data-i18n-ph="settings.keyPh"><button class="btn small" id="set-key-save" data-i18n="settings.keySave">儲存</button></label>
+      <label class="key"><span data-i18n="settings.key">輝達 API Key</span><input type="password" id="set-key" autocomplete="off" maxlength="200" data-i18n-ph="settings.keyPh"><button class="btn small" id="set-key-save" data-i18n="key.saveTest">儲存並測試</button></label>
+      <p class="hint field key-now"><span id="set-key-now"></span><button class="btn tiny" id="set-key-test" data-i18n="check.button">測試連線</button></p>
+      <p class="hint field key-result" id="set-key-result" aria-live="polite"></p>
       <p class="hint field" data-i18n="settings.keyHint"></p>
       <label class="key local-only"><span data-i18n="settings.relay">轉送網址</span><input type="url" id="set-relay" autocomplete="off" maxlength="300" data-i18n-ph="settings.relayPh"><button class="btn small" id="set-relay-save" data-i18n="settings.keySave">儲存</button></label>
       <p class="hint field local-only" data-i18n="settings.relayHint"></p>
@@ -213,6 +216,23 @@
       <p class="hint server-only" data-i18n="settings.serverHint"></p>
       <div class="menu row local-only"><button class="btn small ghost" id="set-demo" data-i18n="settings.restoreDemo">還原示範故事</button></div>
       <p class="hint field local-only" data-i18n="settings.demoHint"></p>
+    </div>
+  </section>
+
+  <!-- first-run guide: get a key, paste and test it, then play (B09) -->
+  <section id="mdl-onboard" class="modal" hidden>
+    <div class="panel onboard-panel">
+      <header class="panel-head"><h2 data-i18n="onboard.title">開始之前：準備輝達金鑰</h2><button class="btn small ghost" data-close data-i18n="common.close">關閉</button></header>
+      <p class="hint" data-i18n="onboard.intro">寫新故事和畫圖要用你自己的輝達 API Key（免費申請）。示範故事不需要金鑰。</p>
+      <ol class="onboard-steps">
+        <li><b data-i18n="onboard.s1">取得金鑰</b><p class="hint" data-i18n="onboard.s1Hint">在輝達網站登入後產生一把新的 API Key，複製 nvapi- 開頭的整串文字。</p>
+          <a class="btn small" href="https://build.nvidia.com/settings/api-keys" target="_blank" rel="noopener" data-i18n="onboard.s1Link">開啟 build.nvidia.com</a></li>
+        <li><b data-i18n="onboard.s2">貼上並測試</b>
+          <div class="ob-key"><input type="password" id="ob-key" autocomplete="off" maxlength="200" data-i18n-ph="settings.keyPh"><button class="btn small primary" id="ob-save" data-i18n="key.saveTest">儲存並測試</button></div>
+          <p class="hint key-result" id="ob-result" aria-live="polite"></p></li>
+        <li><b data-i18n="onboard.s3">開始玩</b>
+          <div class="menu row"><button class="btn small" id="ob-demo" data-i18n="onboard.demo">玩示範故事</button><button class="btn small primary" id="ob-new" data-i18n="onboard.new">開新故事</button></div></li>
+      </ol>
     </div>
   </section>
 

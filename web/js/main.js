@@ -8,6 +8,7 @@ import { initSetup, isBatchMode, resetSetup, startGame } from './setup.js';
 import { currentGameId, enterGame, initGame, leaveGame, openSlots, openTree } from './game.js';
 import { openStories } from './stories.js';
 import { batchActive, initBatches, refreshBatches, requestNotifyPermission } from './batch.js';
+import { demoGame, enable, initConnect, keyNowText, openOnboard } from './connect.js';
 
 document.documentElement.classList.toggle('local', LOCAL);
 const stage = createStage($('#canvas-host'));
@@ -24,6 +25,7 @@ async function toTitle() {
   sound.setMood('mysterious');
   showScreen('scr-title');
   refreshBatches();
+  refreshHealth();   // the key test result expires after 10 minutes (B05)
   await refreshContinue();
 }
 
@@ -38,12 +40,15 @@ async function play(gid, nodeId) {
   if (!(await enterGame(stage, gid, nodeId, toTitle))) toTitle();
 }
 
+function newStory() { resetSetup(); showScreen('scr-setup'); }
+
 const actions = {
   async continue() {
     const auto = await get('/api/autosave').catch(() => null);
     if (auto) play(auto.game_id, auto.node_id);
   },
-  new() { resetSetup(); showScreen('scr-setup'); },
+  new() { if (needsKey()) openOnboard(); else newStory(); },
+  demo() { if ($('#title-demo').dataset.gid) play($('#title-demo').dataset.gid, null); },
   load() { openSlots('load', play); },
   stories() { openStories(refreshContinue, play); },
   settings() { openModal('#mdl-settings'); },
@@ -121,16 +126,28 @@ bindSettings((s) => {
 });
 
 let health;   // undefined: not answered yet, false: server down
+// The browser build has nothing to write with until a key is saved; the server build may have a local model
+const needsKey = () => LOCAL && health && !health.key_hint;
+const KEY_STATE = { valid: 'health.keyValid', rejected: 'health.keyRejected' };
 function paintHealth() {
   if (health === undefined) return;
   if (!health) { $('#health').classList.add('error'); $('#health').textContent = t('health.down'); return; }
-  const ok = { nvidia: health.nvidia_image, comfy: health.comfy };
-  const state = { nvidia: ok.nvidia ? 'health.key' : 'health.noKey', comfy: ok.comfy ? 'health.on' : 'health.off' };
-  const usable = health.engines.some((e) => ok[e]);
-  $('#health').classList.toggle('error', !usable);
-  $('#health').textContent = t('health.images', {
-    list: health.engines.map((e) => t('health.engine', { name: t(`engine.${e}`), state: t(state[e]) })).join(' → '),
-  }) + (usable ? '' : t('health.noImage'));
+  $('#set-key-now').textContent = keyNowText(health);
+  if (needsKey()) {
+    // Nothing is wrong yet: the demo plays without a key, which is only asked for when writing (H06)
+    $('#health').classList.remove('error');
+    $('#health').textContent = t('health.firstRun');
+  } else {
+    // The key state comes from the last explicit test (save or test button), not from turns (B05)
+    const ok = { nvidia: health.nvidia_image && health.key_check !== 'rejected', comfy: health.comfy };
+    const key = health.key_hint ? KEY_STATE[health.key_check] || 'health.keyUntested' : 'health.noKey';
+    const state = { nvidia: key, comfy: ok.comfy ? 'health.on' : 'health.off' };
+    const usable = health.engines.some((e) => ok[e]);
+    $('#health').classList.toggle('error', !usable);
+    $('#health').textContent = t('health.images', {
+      list: health.engines.map((e) => t('health.engine', { name: t(`engine.${e}`), state: t(state[e]) })).join(' → '),
+    }) + (usable ? '' : t('health.noImage'));
+  }
   const list = health.models.map((m) => t(`model.${m}`)).join(' → ');
   $('#set-models').textContent = health.local
     ? t('health.localModels', { list, relay: t(health.relay_default ? 'health.relayDefault' : health.relay ? 'health.relay' : 'health.noRelay') }) : t('health.models', { list });
@@ -150,9 +167,20 @@ initBatches(async (gid) => {
   if (g?.root) play(gid, g.root);
 }, currentGameId);
 
-const refreshHealth = () => get('/api/health').then((h) => { health = h; }).catch(() => { health = false; })
-  .finally(paintHealth);
-refreshHealth();
+// Resolves with the new health (false: server down)
+function refreshHealth() {
+  return get('/api/health').then((h) => { health = h; }).catch(() => { health = false; })
+    .then(() => { paintHealth(); paintDemo(); return health; });
+}
+
+// First run in the browser build: the demo button leads the title menu (H06)
+async function paintDemo() {
+  const gid = needsKey() ? await demoGame(health) : null;
+  $('#title-demo').hidden = !gid;
+  $('#title-demo').dataset.gid = gid || '';
+}
+
+initConnect({ refreshHealth, play: (gid) => play(gid, null), newStory });
 
 // NVIDIA busy light from the last 5 minutes of requests: a line on the title screen, a dot in the game toolbar (A16)
 const BUSY_POLL_MS = 15000;
@@ -217,16 +245,6 @@ async function bindImageEngines() {
 }
 bindImageEngines();
 
-// Write-only key field: the server keeps the key and only reports "key set" through the health line
-$('#set-key-save').addEventListener('click', async () => {
-  try {
-    await post('/api/settings/nvidia_key', { key: $('#set-key').value });
-    $('#set-key').value = '';
-    toast(t('settings.keySaved'));
-    refreshHealth();
-  } catch (e) { toastError(e); }
-});
-
 // ---------- browser-only (GitHub Pages) build ----------
 
 if (LOCAL) {
@@ -234,13 +252,17 @@ if (LOCAL) {
     $('#set-relay').value = s.relay || s.relay_default || '';
     if (s.relay_default) $('#set-relay').placeholder = t('settings.relayBuiltin', { url: s.relay_default });
   }).catch(() => {});
+  // The relay is tried once before saving; one that does not answer or refuses this site is not saved (B07)
   $('#set-relay-save').addEventListener('click', async () => {
+    $('#set-relay-save').disabled = true;
+    toast(t('settings.relayTesting'), false, 30000, { id: 'relay' });
     try {
       const r = await post('/api/settings/relay', { relay: $('#set-relay').value });
       $('#set-relay').value = r.relay;
-      toast(t('settings.relaySaved'));
+      toast(t('settings.relaySaved'), false, 4000, { id: 'relay' });
       refreshHealth();
-    } catch (e) { toastError(e); }
+    } catch (e) { toast(e.message + t('settings.notSaved'), true, 0, { id: 'relay', code: e.code }); }
+    enable($('#set-relay-save'));
   });
   $('#set-demo').addEventListener('click', async () => {
     if (!(await confirmBox(t('settings.demoAsk'), t('common.ok')))) return;

@@ -288,3 +288,16 @@ html:not(.local) .local-only { display: none !important; }
 .settings-panel .menu.row + .hint.field { margin: 0.6cqh 0 0; text-align: center; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0);
   white-space: nowrap; border: 0; }
+
+/* ---------- key test and first-run guide (B02, B04, B09) ---------- */
+.health.error, .key-result.error { color: var(--danger); }
+.settings-panel .key-now { display: flex; align-items: center; gap: 1.2cqh; }
+.settings-panel .key-result:empty { display: none; }
+.onboard-panel { width: 58cqw; }
+.onboard-steps { margin: 1.4cqh 0 0; padding-left: 3.4cqh; font-size: 2.2cqh; }
+.onboard-steps li { margin: 0 0 2.2cqh; }
+.onboard-steps b { font-family: var(--serif); color: var(--gold); font-weight: 400; }
+.onboard-steps .hint { margin: 0.6cqh 0 1cqh; }
+.ob-key { display: flex; gap: 1.2cqh; margin-top: 1cqh; }
+.ob-key input { flex: 1; }
+.onboard-steps .menu.row { justify-content: flex-start; margin-top: 1cqh; }

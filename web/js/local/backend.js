@@ -6,12 +6,14 @@ import * as images from './images.js';
 import * as turns from './turns.js';
 import * as batch from './batch.js';
 import * as llm from './llm.js';
+import { hint, probe, relayState, remember, verdict } from './check.js';
 import { analyzeNovel } from './novel.js';
 import { loadOpenCC } from './story.js';
 
 const KEY = 'cg-nvidia-key';
 const RELAY = 'cg-relay';
 const MODE = 'cg-image-mode';
+const KEY_AT = 'cg-nvidia-key-at';
 
 function lsGet(k) { try { return localStorage.getItem(k) || ''; } catch { return ''; } }
 function lsSet(k, v) {
@@ -84,10 +86,16 @@ function validRelay(url) {
   return u;
 }
 
+// What the page may know about the saved key: a masked hint, the saved date and the last test result
+const keyInfo = () => {
+  const key = lsGet(KEY);
+  return { key_hint: hint(key), key_saved_at: lsGet(KEY_AT) || null, key_check: key ? verdict() : null };
+};
+
 const health = () => ({
   comfy: false, nvidia_image: !!conn().key, engines: ['nvidia'], local: true, relay: !!conn().relay,
   relay_default: !lsGet(RELAY) && !!DATA.relay,
-  models: DATA.llm.candidates.map((c) => c.label),
+  models: DATA.llm.candidates.map((c) => c.label), demo: DATA.demo, ...keyInfo(),
 });
 
 export async function request(method, url, body) {
@@ -106,12 +114,34 @@ export async function request(method, url, body) {
     return { image_nvidia: true, image_comfy: false, image_mode: lsGet(MODE) || 'all', relay: lsGet(RELAY),
              relay_default: DATA.relay || '' };
   }
-  if (a === 'settings' && gid === 'nvidia_key') { lsSet(KEY, validKey(body?.key)); return { nvidia_key: true }; }
+  if (a === 'settings' && gid === 'nvidia_key') {
+    // One tiny request first (B01): a key NVIDIA rejects is not saved; busy or unreachable still saves
+    const key = validKey(body?.key);
+    const check = await probe('text', { ...conn(), key });
+    if (check.state === 'key_rejected') throw { code: 'key_rejected' };
+    lsSet(KEY, key);
+    lsSet(KEY_AT, new Date().toISOString());
+    remember([check]);
+    return { nvidia_key: true, check, ...keyInfo() };
+  }
+  if (a === 'settings' && gid === 'check') {
+    const c = conn();
+    if (!c.key) throw { code: 'no_key' };
+    const [text, image] = await Promise.all([probe('text', c), probe('image', c)]);
+    remember([text, image]);
+    return { text, image, ...keyInfo() };
+  }
   if (a === 'settings' && gid === 'relay') {
-    // Saving the built-in address (or an empty field) keeps following the built-in relay
+    // Saving the built-in address (or an empty field) keeps following the built-in relay, always allowed.
+    // A relay of the player's own that does not answer, or refuses this site, is not saved (B07)
     const r = validRelay(body?.relay);
+    const relay = r || DATA.relay || '';
+    if (r && r !== DATA.relay) {
+      const state = await relayState(r);
+      if (state !== 'ok') throw { code: state === 'relay_origin' ? 'relay_origin' : 'relay_unreachable' };
+    }
     lsSet(RELAY, r === DATA.relay ? '' : r);
-    return { relay: r || DATA.relay || '' };
+    return { relay };
   }
   if (a === 'batches') return batch.list();
   if (a === 'games' && sub === 'batch' && method === 'POST' && act === 'cancel') {

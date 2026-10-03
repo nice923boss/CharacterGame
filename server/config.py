@@ -24,14 +24,14 @@ ENV = _read_env()
 SECRETS = [v for k, v in ENV.items() if k.endswith("_API_KEY") and v]
 
 
-def set_env(name: str, value: str, path: pathlib.Path = ROOT / ".env") -> None:
+def set_env(name: str, value: str, path: pathlib.Path = ROOT / ".env", secret: bool = True) -> None:
     """Save one secret typed in the settings page: replace its .env line (or append one), keep every other line,
-    and use it from now on without a restart."""
+    and use it from now on without a restart. secret=False for plain values such as the key's saved date."""
     lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
     rest = [ln for ln in lines if ln.split("=", 1)[0].strip() != name]
     path.write_bytes(("\n".join(rest + [f"{name}={value}"]) + "\n").encode("utf-8"))
     ENV[name] = value
-    if value not in SECRETS:
+    if secret and value not in SECRETS:
         SECRETS.append(value)
 
 
@@ -108,6 +108,9 @@ COMFY_OUTPUT = pathlib.Path(r"C:\Users\Clare\Documents\ComfyUI\output")
 COMFY_INPUT = pathlib.Path(r"C:\Users\Clare\Documents\ComfyUI\input")
 
 HOST, PORT = "127.0.0.1", 8765
+
+# The bundled demo story: the first-run guide offers it, and tools/build_pages.py ships it with the Pages build
+DEMO_GAME = "g_20260925_145203"
 
 
 def setup_logging() -> logging.Logger:

@@ -92,6 +92,9 @@ const HELP = {
 };
 // A settings field this build does not show (the relay in the server build)
 const shown = (el) => !el.closest('html:not(.local) .local-only, html.local .server-only');
+// A missing key opens the first-run guide instead of the settings field (H06); connect.js registers it
+let noKeyHelp = null;
+export function setNoKeyHelp(fn) { noKeyHelp = fn; }
 
 export function openSettings(field) {
   openModal('#mdl-settings');
@@ -111,8 +114,9 @@ export function helpNode(code) {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'btn tiny';
-    btn.textContent = t('help.openSettings');
-    btn.onclick = () => openSettings(field);
+    const guide = code === 'no_key' && noKeyHelp;
+    btn.textContent = t(guide ? 'onboard.open' : 'help.openSettings');
+    btn.onclick = () => (guide ? noKeyHelp() : openSettings(field));
     box.append(btn);
   }
   const a = document.createElement('a');
