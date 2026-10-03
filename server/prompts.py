@@ -5,7 +5,8 @@ from . import config
 from .turn_parser import EXPRESSIONS, MOODS, NARRATOR, WEATHERS, game_lang
 
 RECENT_NODES = 6
-SUMMARY_ITEMS = 16
+MEMORY_EVERY = 8                       # every 8 summary items, the older ones fold into one long-term memory paragraph
+MEMORY_CHARS = {"zh": 600, "en": 1200}   # the memory paragraph keeps its newest items within this length
 LIVE_TURNS_PER_CHAPTER = 3     # write-as-you-play novel games move on one chapter about every 3 turns
 
 TURN_SYSTEM = {"zh": """你是一款視覺小說 RPG 的劇情引擎。依照世界設定、角色設定、前情摘要與最近對話，寫出「這一輪」的劇情，並給玩家下一步選項。
@@ -203,6 +204,7 @@ TEXT = {
            "hero": "- 主角：{name}，{profile}（由玩家扮演）", "action": "（{name}的行動）{text}",
            "h_world": "## 世界設定", "h_chars": "## 角色", "h_known": "## 已知場景", "h_scene": "## 目前場景",
            "h_state": "## 目前狀態", "h_summary": "## 前情摘要", "h_recent": "## 最近對話", "none": "（無）",
+           "h_memory": "## 長期記憶（較早的劇情）", "memory_sep": "；", "memory_end": "。",
            "opening": "## 本輪任務\n這是故事的第一輪。用旁白交代{name}的處境與目前場景的氣氛，"
                       "讓至少一位角色登場並對主角說話。scene_change 填 false，ending 填 null。",
            "player": "## 玩家本輪行動\n{text}", "go": "請寫出本輪劇情。", "sep": "、", "colon": "：",
@@ -231,6 +233,7 @@ TEXT = {
            "h_world": "## World", "h_chars": "## Characters", "h_known": "## Known scenes",
            "h_scene": "## Current scene", "h_state": "## Current state", "h_summary": "## Story so far",
            "h_recent": "## Recent dialogue", "none": "(none)",
+           "h_memory": "## Long-term memory (earlier story)", "memory_sep": "; ", "memory_end": ".",
            "opening": "## This turn\nThis is the first turn of the story. Use the Narrator to set up {name}'s situation "
                       "and the mood of the current scene, and bring in at least one character who speaks to the "
                       "protagonist. scene_change is false, ending is null.",
@@ -363,6 +366,22 @@ def _node_transcript(node: dict, protagonist: str, lang: str) -> list[str]:
     return rows
 
 
+def split_summary(summary: list[str], lang: str) -> tuple[str, list[str]]:
+    """Long-term memory paragraph and the recent summary items (G13).
+
+    Every MEMORY_EVERY items, the older ones fold into one paragraph, so the recent list holds 8 to 15 items;
+    the paragraph drops its oldest items past MEMORY_CHARS and then starts with an ellipsis.
+    """
+    T = TEXT[lang]
+    folded = max(0, (len(summary) - MEMORY_EVERY) // MEMORY_EVERY * MEMORY_EVERY)
+    old = [s.rstrip("。.") for s in summary[:folded]]
+    keep = old
+    while keep and len(T["memory_sep"].join(keep)) > MEMORY_CHARS[lang]:
+        keep = keep[1:]
+    memory = (("…" if len(keep) < len(old) else "") + T["memory_sep"].join(keep) + T["memory_end"]) if keep else ""
+    return memory, summary[folded:]
+
+
 def turn_messages(game: dict, path: list[dict], player_input: dict, scene: dict) -> list[dict]:
     """path: nodes from root to the parent of the new turn (may be empty for the opening)."""
     lang = game_lang(game)
@@ -380,8 +399,10 @@ def turn_messages(game: dict, path: list[dict], player_input: dict, scene: dict)
              f"{T['h_known']}\n{known}",
              f"{T['h_scene']}\n{scene['id']}{T['colon']}{scene['name']}",
              f"{T['h_state']}\n" + json.dumps(state, ensure_ascii=False)]
-    if summary:
-        items = summary[-SUMMARY_ITEMS:]
+    memory, items = split_summary(summary, lang)
+    if memory:
+        parts.append(f"{T['h_memory']}\n{memory}")
+    if items:
         parts.append(f"{T['h_summary']}\n" + "\n".join(f"{i + 1}. {s}" for i, s in enumerate(items)))
     if recent:
         parts.append(f"{T['h_recent']}\n" + "\n".join(recent))

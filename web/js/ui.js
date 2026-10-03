@@ -49,9 +49,25 @@ document.addEventListener('click', (e) => {
   if (btn) closeModal(btn.closest('.modal'));
 });
 
+// Esc presses the top dialog's cancel or close button; Enter confirms the confirm box (G05).
+// Stopped here so the game underneath does not also take the key once the dialog is gone.
+function modalKey(el, e) {
+  if (e.key === 'Escape') {
+    const btn = el.id === 'mdl-confirm' ? $('#confirm-cancel') : el.id === 'mdl-progress' ? $('#progress-cancel') : el.querySelector('[data-close]');
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    if (btn && !btn.hidden && !btn.disabled) btn.click();
+  } else if (el.id === 'mdl-confirm' && !e.target.closest?.('button, a, summary, textarea')) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    $('#confirm-ok').click();
+  }
+}
+
 document.addEventListener('keydown', (e) => {
   while (modalStack.length && modalStack.at(-1).el.hidden) modalStack.pop();   // hidden without closeModal
   const top = modalStack.at(-1);
+  if (top && (e.key === 'Escape' || e.key === 'Enter')) { modalKey(top.el, e); return; }
   if (!top || e.key !== 'Tab') return;
   const list = focusables(top.el);
   const first = list[0];
@@ -238,8 +254,9 @@ window.addEventListener('online', paintOffline);
 window.addEventListener('offline', paintOffline);
 paintOffline();
 
-// patience: seconds to keep queueing when every model is busy; prefer: quality (retry the first model) or speed
-const DEFAULTS = { speed: 45, bgm: 55, sfx: 70, weather: true, patience: 300, prefer: 'quality' };
+// patience: seconds to keep queueing when every model is busy; prefer: quality (retry the first model) or speed.
+// auto: seconds before the next line plays by itself (0 off); font: s, m or l; contrast: solid boxes
+const DEFAULTS = { speed: 45, bgm: 55, sfx: 70, weather: true, patience: 300, prefer: 'quality', auto: 0, font: 'm', contrast: false };
 const KEY = 'chienzhi.settings';
 
 function readSettings() {
@@ -269,6 +286,13 @@ export function bindSettings(onChange) {
   $('#set-patience').addEventListener('change', () => { settings.patience = Number($('#set-patience').value); save(); });
   $('#set-prefer').value = settings.prefer;
   $('#set-prefer').addEventListener('change', () => { settings.prefer = $('#set-prefer').value; save(); });
+  // G03, I06
+  $('#set-auto').value = String(settings.auto);
+  $('#set-auto').addEventListener('change', () => { settings.auto = Number($('#set-auto').value); save(); });
+  $('#set-font').value = settings.font;
+  $('#set-font').addEventListener('change', () => { settings.font = $('#set-font').value; save(); });
+  $('#set-contrast').checked = settings.contrast;
+  $('#set-contrast').addEventListener('change', () => { settings.contrast = $('#set-contrast').checked; save(); });
   function save() {
     try { localStorage.setItem(KEY, JSON.stringify(settings)); } catch { /* private mode: keep in memory */ }
     paint();

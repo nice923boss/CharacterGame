@@ -7,6 +7,7 @@ import { $, bindSettings, confirmBox, openModal, progress, toast, toastError } f
 import { initSetup, isBatchMode, resetSetup, startGame } from './setup.js';
 import { currentGameId, enterGame, initGame, leaveGame, openSlots, openTree } from './game.js';
 import { openStories } from './stories.js';
+import { openLog } from './playaids.js';
 import { batchActive, initBatches, refreshBatches, requestNotifyPermission } from './batch.js';
 import { demoGame, enable, initConnect, keyNowText, openOnboard } from './connect.js';
 import { paintBackup, paintStorage, watchStore, watchUpdate } from './upkeep.js';
@@ -60,6 +61,7 @@ const actions = {
   back() { toTitle(); },
   save() { openSlots('save'); },
   tree() { openTree(); },
+  log() { openLog(); },
   async title() {
     if (await confirmBox(t('game.toTitle'), t('game.toTitleOk'))) toTitle();
   },
@@ -129,6 +131,10 @@ window.addEventListener('beforeunload', (e) => {
 bindSettings((s) => {
   sound.setVolumes(s.bgm / 100, s.sfx / 100);
   stage.setWeatherOn(s.weather);
+  const root = document.documentElement;
+  root.classList.toggle('font-s', s.font === 's');
+  root.classList.toggle('font-l', s.font === 'l');
+  root.classList.toggle('hc', s.contrast);
 });
 
 let health;   // undefined: not answered yet, false: server down

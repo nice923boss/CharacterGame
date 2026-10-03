@@ -128,7 +128,7 @@ html[lang="en"] .subtitle { letter-spacing: 0.06em; }
 /* ---------- game ---------- */
 #toolbar { position: absolute; top: 1.6cqh; right: 1.6cqw; display: flex; gap: 0.8cqh; z-index: 5; }
 #dialog { position: absolute; left: 6cqw; right: 6cqw; bottom: 3cqh; height: 25cqh; padding: 1.2cqh 2.4cqh; cursor: pointer; }
-#dialog-text { margin: 0; font-family: var(--serif); font-size: 3cqh; line-height: 1.65; white-space: pre-wrap; }
+#dialog-text { margin: 0; font-family: var(--serif); font-size: calc(3cqh * var(--fs, 1)); line-height: 1.65; white-space: pre-wrap; }
 #dialog.narration #dialog-text { color: #e4dccb; font-style: normal; }
 #dialog.player #dialog-text { color: #cfe0ff; }
 #nameplate { position: absolute; top: -6cqh; left: 1cqh; font-family: var(--serif); font-weight: 700; font-size: 2.8cqh;
@@ -145,9 +145,9 @@ html[lang="en"] .subtitle { letter-spacing: 0.06em; }
 #choices { position: absolute; left: 50%; transform: translateX(-50%); bottom: 31cqh; width: 64cqw;
   display: flex; flex-direction: column; gap: 1.2cqh; z-index: 4; }
 #options { display: flex; flex-direction: column; gap: 1.1cqh; }
-#options .btn { font-size: 2.5cqh; text-align: center; }
+#options .btn { font-size: calc(2.5cqh * var(--fs, 1)); text-align: center; }
 #free-form { display: flex; gap: 1cqh; }
-#free-form input { flex: 1; min-width: 0; font-size: 2.2cqh; background: rgba(6, 9, 20, 0.85); }
+#free-form input { flex: 1; min-width: 0; font-size: calc(2.2cqh * var(--fs, 1)); background: rgba(6, 9, 20, 0.85); }
 #free-form .btn { white-space: nowrap; flex: none; }
 #options .btn small { margin-left: 0.8em; font-size: 0.8em; color: var(--muted); }
 #failed { display: flex; align-items: center; gap: 1.2cqh; padding: 1cqh 1.6cqh; font-size: 2.1cqh;
@@ -228,6 +228,7 @@ html[lang="en"] .subtitle { letter-spacing: 0.06em; }
 #tree-view .node:hover circle { fill: #3b4a78; stroke: var(--gold); }
 #tree-view .node.onpath circle { fill: #6b5530; }
 #tree-view .node.current circle { fill: var(--gold); stroke: #fff; stroke-width: 3; }
+#tree-view .node.current { filter: drop-shadow(0 0 6px rgba(255, 222, 150, 0.95)); }
 #tree-view .node text { fill: var(--ink); font-size: 12px; pointer-events: none; }
 #tree-view .node.ending circle { stroke: #8fd3a8; stroke-width: 3; stroke-dasharray: 4 2; }
 #tree-view .node.ending.bad circle { stroke: var(--danger); }
@@ -237,6 +238,10 @@ html[lang="en"] .subtitle { letter-spacing: 0.06em; }
 #tree-view .edge.failed { stroke: var(--danger); stroke-dasharray: 3 4; opacity: .8; }
 #tree-view .node.failed circle { fill: rgba(120, 30, 40, 0.55); stroke: var(--danger); stroke-dasharray: 3 2; }
 #tree-view .node.failed:hover circle { fill: rgba(170, 40, 50, 0.8); stroke: var(--danger); }
+#tree-view .edge.untaken { stroke-dasharray: 3 4; opacity: .6; }
+#tree-view .node.untaken circle { fill: rgba(12, 16, 30, 0.6); stroke: var(--muted); stroke-dasharray: 3 2; }
+#tree-view .node.untaken:hover circle { fill: #3b4a78; stroke: var(--gold); }
+#tree-view .node.untaken text { fill: var(--muted); }
 #tree-view .scene-box { fill: rgba(127, 158, 216, 0.08); stroke: rgba(127, 158, 216, 0.4); stroke-dasharray: 4 3; rx: 8; }
 #tree-view .scene-label { fill: var(--accent); font-size: 12px; font-family: var(--serif); }
 #tree-tip { position: absolute; max-width: 40cqw; background: var(--panel-solid); border: 0.2cqh solid var(--gold-dim);
@@ -318,3 +323,72 @@ html:not(.local) .local-only { display: none !important; }
 .ob-key { display: flex; gap: 1.2cqh; margin-top: 1cqh; }
 .ob-key input { flex: 1; }
 .onboard-steps .menu.row { justify-content: flex-start; margin-top: 1cqh; }
+
+/* ---------- play aids: log, skip, input counter, way back, long-press menu (G02, G04, G09, G10, I02) ---------- */
+#scr-game { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+#scr-game input { -webkit-user-select: text; user-select: text; }
+#dialog-skip { position: absolute; top: -6cqh; right: 1cqh; }
+#free-count { align-self: center; flex: none; font-size: 1.7cqh; color: var(--muted); white-space: nowrap; }
+#free-count.over { color: var(--danger); }
+#ending-back { margin: -0.6cqh 0 1.6cqh; }
+#ending-back .hint { margin: 0; }
+#ending-back .list { display: flex; flex-direction: column; gap: 0.8cqh; margin-top: 0.8cqh; }
+#ending-back .btn { font-family: var(--sans); font-weight: 400; font-size: 1.9cqh; }
+#press-menu { position: absolute; z-index: 8; display: flex; flex-direction: column; gap: 0.8cqh; padding: 0.8cqh 1cqh;
+  border-width: 2cqh; border-image-width: 2cqh; }
+.log-panel { width: 70cqw; height: 86cqh; display: flex; flex-direction: column; }
+#log-list { flex: 1; overflow-y: auto; padding-right: 1cqh; font-family: var(--serif); font-size: calc(2.3cqh * var(--fs, 1));
+  line-height: 1.6; user-select: text; }
+#log-list p { margin: 0 0 0.8cqh; }
+#log-list b { color: var(--gold); margin-right: 0.8em; }
+#log-list .log-narration { color: #e4dccb; }
+#log-list .log-player { color: #cfe0ff; }
+#log-list hr { border: 0; border-top: 0.15cqh dashed var(--gold-dim); margin: 1.2cqh 0; }
+
+/* ---------- text size and high contrast (I06) ---------- */
+html.font-s { --fs: 0.85; }
+html.font-l { --fs: 1.2; }
+html.font-l #dialog { height: 30cqh; }
+html.font-l #choices, html.font-l #ending { bottom: 36cqh; }
+html.hc { --box: #03050c; --panel: #03050c; --panel-solid: #03050c; --ink: #fff; --muted: #e8e2d6; }
+html.hc .box, html.hc .panel { border-image: none; border: 0.4cqh solid #fff; }
+html.hc .btn { border-image: none; border: 0.3cqh solid #fff; background-color: #000; }
+html.hc .btn:focus-visible { outline: 0.4cqh solid var(--gold); }
+html.hc #dialog.narration #dialog-text { color: #fff; }
+html.hc #nameplate { border-image: none; border: 0.3cqh solid #fff; }
+html.hc #free-form input { border: 0.3cqh solid #fff; background: #000; color: #fff; }
+
+/* ---------- portrait phones (I01) ---------- */
+@media (max-aspect-ratio: 3/4) {
+  #stage { width: 100vw; height: 100vh; height: 100dvh; aspect-ratio: auto; font-size: 2cqh; }
+  .panel { border-width: 2cqh; border-image-width: 2cqh; padding: 1cqh 1.4cqh; }
+  .btn { font-size: 2.2cqh; min-width: 0; }
+  .title-cover::after { background: linear-gradient(180deg, rgba(6, 8, 18, 0.1) 25%, rgba(6, 8, 18, 0.82) 60%); }
+  .title-box { left: 6cqw; right: 6cqw; width: auto; top: auto; bottom: 5cqh; transform: none; }
+  .game-title { font-size: 7cqh; }
+  #toolbar { top: 1cqh; left: 2cqw; right: 2cqw; flex-wrap: wrap; justify-content: flex-end; }
+  #asset-chip { top: 6.4cqh; left: 2cqw; }
+  #dialog { left: 3cqw; right: 3cqw; bottom: 2cqh; height: 25cqh; padding: 1cqh 1.6cqh; }
+  #dialog-text { font-size: calc(2.4cqh * var(--fs, 1)); line-height: 1.6; }
+  #nameplate { top: -5cqh; font-size: 2.2cqh; }
+  #dialog-skip { top: -5cqh; }
+  #choices, #ending { width: 94cqw; bottom: 29cqh; }
+  #options .btn { font-size: calc(2.1cqh * var(--fs, 1)); }
+  #free-form { flex-wrap: wrap; }
+  #free-count { order: 3; flex-basis: 100%; text-align: right; }
+  html.font-l #dialog { height: 30cqh; }
+  html.font-l #choices, html.font-l #ending { bottom: 34cqh; }
+  #retry { max-width: 94cqw; top: 6.4cqh; }
+  #stage-loading { width: 80cqw; }
+  #toast { left: 4cqw; max-width: 92cqw; }
+  .setup-panel, .slots-panel, .tree-panel, .settings-panel, .onboard-panel, .confirm-panel, .log-panel { width: 96cqw; }
+  .slots-panel, .tree-panel, .log-panel { height: 92cqh; }
+  .setup-panel { height: 94cqh; }
+  .setup-body { grid-template-columns: 1fr; overflow-y: auto; }
+  .setup-body .col { overflow: visible; padding-right: 0; }
+  #slot-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: none; grid-auto-rows: 20cqh; overflow-y: auto; }
+  #autosave-row { grid-template-columns: repeat(2, 1fr); }
+  .settings-panel label, .settings-panel label.key { grid-template-columns: 1fr; gap: 0.6cqh; }
+  .settings-panel .hint.field { margin-left: 0; }
+  #tree-tip { max-width: 80cqw; }
+}

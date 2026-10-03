@@ -7,13 +7,16 @@ import {
   $, closeModal, confirmBox, esc, helpNode, loadThumbs, openModal, paintWait, progress, settings, statusText, thumbAttr, toast,
   toastError,
 } from './ui.js';
-import { renderTree } from './tree.js';
+import { renderTree, untakenOptions } from './tree.js';
+import {
+  loadDraft, logLine, logTurn, openLog, openPressMenu, paintCount, paintEndingBack, recordTurnTime, saveDraft, seedLog, typicalTurn,
+} from './playaids.js';
 
 const G = {
   stage: null, game: null, tree: null, assets: null, currentId: null,
   queue: [], typing: null, waitingClick: false, final: null, running: null, turnStart: 0,
   sceneId: null, pendingScene: null, castExpr: {}, onExit: null, pollTimer: null, loadTimer: null, lastInput: null,
-  paintClock: null, hiddenAt: 0,
+  paintClock: null, hiddenAt: 0, skip: false, readyAt: 0, maxInput: 120,
 };
 
 // ---------- asset urls ----------
@@ -188,6 +191,7 @@ function pages(text) {
 }
 
 function showLine(line) {
+  if (!line.of) logLine(line);   // later pages of a long line, and a line shown again, are logged already
   // A line too long for the box shows its first page; the rest waits at the front of the queue
   const [first, ...more] = pages(line.text);
   if (more.length) G.queue.unshift(...more.map((text) => ({ ...line, text, of: line.of || line })));
@@ -209,18 +213,26 @@ function showLine(line) {
   $('#dialog-wait').hidden = true;
 }
 
+const SKIP_MS = 80;   // one line every 80 ms while Ctrl is held
+
 function typeStep() {
   if (G.stage) G.stage.refreshScene();
   const T = G.typing;
   if (T) {
+    if (G.skip) T.t0 = -1e9;
     const n = Math.min(T.text.length, Math.floor((performance.now() - T.t0) / 1000 * settings.speed));
     if (n !== T.n) { T.n = n; $('#dialog-text').textContent = T.text.slice(0, n); }
     if (n >= T.text.length) { G.typing = null; afterLine(); }
+  } else if (G.waitingClick && G.queue.length && !document.querySelector('.modal:not([hidden])')) {
+    // Auto-advance (G03) and Ctrl fast-forward (G04); both stop where the player has to choose
+    const wait = G.skip ? SKIP_MS : settings.auto * 1000;
+    if (wait && performance.now() - G.readyAt >= wait) advance();
   }
   requestAnimationFrame(typeStep);
 }
 
 function afterLine() {
+  G.readyAt = performance.now();
   if (G.queue.length) { G.waitingClick = true; $('#dialog-next').hidden = false; return; }
   if (G.failAfter) { const fail = G.failAfter; G.failAfter = null; fail(); return; }
   if (G.final) { finishTurn(); return; }
@@ -231,7 +243,7 @@ function afterLine() {
 function advance() {
   if (!$('#choices').hidden) return;
   if (G.typing) { G.typing.t0 = -1e9; return; }
-  if (G.queue.length) { G.waitingClick = false; sound.play('click'); showLine(G.queue.shift()); }
+  if (G.queue.length) { G.waitingClick = false; if (!G.skip) sound.play('click'); showLine(G.queue.shift()); }
 }
 
 function pushLine(line) {
@@ -242,6 +254,7 @@ function pushLine(line) {
 
 // All lines of the turn are read and the node is known: scene change, then choices
 function finishTurn() {
+  $('#dialog-skip').hidden = true;
   const node = G.final;
   G.final = null;
   G.waitingClick = false;
@@ -274,24 +287,28 @@ function sceneCard(sid) {
 }
 
 function showChoices(node) {
-  if (node.result.ending) { showEnding(node.result.ending); return; }
+  if (node.result.ending) { showEnding(node); return; }
   const taken = new Set(node.children.map((c) => G.tree.nodes[c]?.player_input?.text).filter(Boolean));
   $('#options').innerHTML = node.result.options.map((o, i) =>
     `<button class="btn" data-i="${i}">${esc(o)}${taken.has(o) && !G.game.batch ? `<small>${esc(t('game.taken'))}</small>` : ''}</button>`).join('');
   $('#options').querySelectorAll('.btn').forEach((b) => {
     b.onclick = () => sendInput('option', node.result.options[Number(b.dataset.i)]);
   });
-  $('#free-input').value = G.lastInput?.kind === 'free' && G.lastInput.failed ? G.lastInput.text : '';
+  // A failed send comes back as it was; otherwise what was typed at this turn earlier in the session (G08)
+  $('#free-input').value = G.lastInput?.kind === 'free' && G.lastInput.failed ? G.lastInput.text : loadDraft(G.game.id, node.id);
+  paintCount(G.maxInput);
   $('#choices').hidden = false;
   $('#dialog-wait').hidden = true;
   setBusy(false);
 }
 
 // The branch ended: an ending card instead of choices
-function showEnding(ending) {
+function showEnding(node) {
+  const { ending } = node.result;
   $('#ending-kind').textContent = t(ending.type === 'good' ? 'ending.good' : 'ending.bad');
   $('#ending').classList.toggle('bad', ending.type !== 'good');
   $('#ending-title').textContent = ending.title;
+  paintEndingBack(G.tree, G.game, node.id, (id) => enterGame(G.stage, G.game.id, id, G.onExit));
   $('#ending').hidden = false;
   $('#dialog-wait').hidden = true;
   setBusy(false);
@@ -299,9 +316,11 @@ function showEnding(ending) {
 
 // ---------- turns ----------
 
+// While a turn is written only leaving the turn is blocked; the log, settings and saving stay open (G06)
 function setBusy(busy) {
-  document.querySelectorAll('#toolbar [data-act="save"], #toolbar [data-act="tree"], #toolbar [data-act="load"]')
-    .forEach((b) => { b.disabled = busy; });
+  document.querySelectorAll('#toolbar [data-act="tree"], #toolbar [data-act="load"]').forEach((b) => { b.disabled = busy; });
+  // A save made meanwhile keeps the turn the input was sent from
+  document.querySelectorAll('#scr-game [data-act="save"]').forEach((b) => { b.disabled = !G.currentId; });
 }
 
 function paintRetry(text) {
@@ -361,7 +380,7 @@ async function sendInput(kind, text) {
   setBusy(true);
   const gid = G.game.id;
   const parentId = G.currentId;
-  if (kind !== 'opening') pushLine({ kind: 'player', speaker: G.game.protagonist.name, char_id: null, text });
+  if (kind !== 'opening') { logTurn(); pushLine({ kind: 'player', speaker: G.game.protagonist.name, char_id: null, text }); }
   const turnLines = [];
   let rewriting = false;   // after a reset: the lines on screen stay until the rewritten ones arrive
   let shownGone = false;   // a reset dropped a line the player already saw: mark where the rewrite starts
@@ -369,7 +388,11 @@ async function sendInput(kind, text) {
   let lastStatus = '';
   G.paintClock = () => {
     const s = Math.round((Date.now() - G.turnStart) / 1000);
-    const parts = [rewriting && t('game.rewriting'), lastStatus || (s >= 10 && t('game.writing', { s }))];
+    const avg = typicalTurn();
+    const writing = s >= 10 && (avg ? t('game.writingAvg', { s, avg }) : t('game.writing', { s }));
+    // Much longer than the last few turns took: most likely a crowded server rather than a stuck page (G07)
+    const crowded = avg && s > 2 * avg && s > avg + 20 && t('game.crowded');
+    const parts = [rewriting && t('game.rewriting'), lastStatus || writing, crowded];
     paintRetry(parts.filter(Boolean).join(' ・ '));
   };
   const clock = setInterval(() => G.paintClock?.(), 500);
@@ -416,6 +439,8 @@ async function sendInput(kind, text) {
     G.stage.setWeather(node.weather);
     G.final = node;
     G.lastInput = null;
+    if (!final.replayed) recordTurnTime(Date.now() - G.turnStart);
+    if (kind === 'free') saveDraft(gid, parentId, '');
     pollAssets();
     if (!G.typing && !G.queue.length) finishTurn();
     else if (!G.typing && !G.waitingClick) advance();
@@ -446,7 +471,28 @@ async function sendInput(kind, text) {
 // Show a node's last line and its choices without replaying (after errors)
 function showStatic(node) {
   const last = node.lines[node.lines.length - 1];
-  if (last) { showLine({ ...last, text: pages(last.text).at(-1) }); G.typing.t0 = -1e9; }
+  if (last) { showLine({ ...last, text: pages(last.text).at(-1), of: last }); G.typing.t0 = -1e9; }
+}
+
+// Replaying a turn already read: straight to its choices, the skipped lines still go to the log (G04)
+function skipToChoices() {
+  $('#dialog-skip').hidden = true;
+  if (!G.final || G.running) return;
+  G.queue.forEach((l) => { if (!l.of) logLine(l); });
+  G.queue = [];
+  G.waitingClick = false;
+  showStatic(G.final);
+}
+
+// A jump starts on an empty dialog box, so the old line never shows over the new scene (G12)
+function clearDialog() {
+  $('#dialog-text').textContent = '';
+  $('#nameplate').hidden = true;
+  $('#dialog').classList.remove('narration', 'player');
+  $('#dialog-next').hidden = true;
+  $('#dialog-wait').hidden = true;
+  $('#dialog-skip').hidden = true;
+  G.stage.setSpeaker(null);
 }
 
 // ---------- entering a node ----------
@@ -457,7 +503,8 @@ function castFor(node) {
   return seen.slice(-3);
 }
 
-export async function enterGame(stage, gid, nodeId, onExit) {
+// replay: false shows the turn's end and skips its lines (the untaken-option start)
+export async function enterGame(stage, gid, nodeId, onExit, replay = true) {
   G.stage = stage;
   G.onExit = onExit;
   $('#choices').hidden = true;   // hide the previous node's options at once, so they cannot be clicked while loading
@@ -475,9 +522,11 @@ export async function enterGame(stage, gid, nodeId, onExit) {
   box.close();
   // Free input length follows the story's language, not the UI language
   const max = 120 * (LIMIT_SCALE[G.game.lang] || 1);
-  $('#free-input').maxLength = max;
+  G.maxInput = max;
   $('#free-input').placeholder = t('game.freePh', { n: max });
   Object.assign(G, { queue: [], typing: null, waitingClick: false, final: null, failAfter: null, castExpr: {}, lastInput: null });
+  seedLog(G.tree, G.game.protagonist.name, nodeId);
+  clearDialog();
   $('#scr-game').hidden = false;
   clearInterval(G.pollTimer);
   G.pollTimer = setInterval(pollAssets, 3000);
@@ -492,30 +541,31 @@ export async function enterGame(stage, gid, nodeId, onExit) {
     stage.setCast([]);
     stage.setPending(!sceneUrl(G.sceneId));
     sound.setMood('mysterious');
-    $('#dialog-text').textContent = '';
-    $('#nameplate').hidden = true;
     paintAssetChip();
     sendInput('opening', '');
     return true;
   }
   const node = G.tree.nodes[nodeId];
   G.currentId = nodeId;
-  G.sceneId = node.scene_id;
+  // A turn that changed scenes replays its lines where it started; finishTurn then changes the scene as in play (G12)
+  const sid = replay ? G.tree.nodes[node.parent]?.scene_id || node.scene_id : node.scene_id;
+  G.sceneId = sid;
   if (!sceneUrl(node.scene_id)) get(`/api/games/${gid}?scene=${node.scene_id}`).catch(() => {});
   const cast = castFor(node);
-  stage.setScene(sceneUrl(node.scene_id), { transition: true, onSwap: () => {
-    sceneCard(node.scene_id);
+  stage.setScene(sceneUrl(sid), { transition: true, onSwap: () => {
+    sceneCard(sid);
     stage.setCast(cast.map((cid) => ({ cid, url: spriteUrl(cid, G.castExpr[cid]) })));
   } });
-  stage.setPending(!sceneUrl(node.scene_id));
+  stage.setPending(!sceneUrl(sid));
   stage.setWeather(node.weather);
   sound.setMood(node.bgm_mood);
   sound.setWeather(node.weather);
   paintAssetChip();
+  if (!replay) return true;
   // Re-read the node's lines, then its choices
-  $('#dialog-text').textContent = '';
   G.final = node;
   node.lines.forEach((l) => G.queue.push(l));
+  $('#dialog-skip').hidden = !node.lines.length;
   setTimeout(advance, 1100);
   return true;
 }
@@ -607,13 +657,23 @@ export async function openTree() {
     if (!(await confirmBox(t('tree.jump', { n: turn, scene: sc }), t('tree.jumpOk')))) return;
     closeModal('#mdl-tree');
     enterGame(G.stage, G.game.id, id, G.onExit);
-  }, failed, rewriteBranch);
+  }, failed, rewriteBranch, G.game.batch ? [] : untakenOptions(G.tree), startUntaken);
   draw([]);
   if (!G.game.batch) return;
   // Branches the batch gave up on show as red stubs (D09)
   const gid = G.game.id;
   const b = (await get('/api/batches').catch(() => [])).find((x) => x.id === gid);
   if (b?.failed_list?.length && G.game?.id === gid && !$('#mdl-tree').hidden) draw(b.failed_list);
+}
+
+// An option nobody picked yet, clicked on the tree (G11): back to that turn and the option goes out at once, without replaying the turn first
+async function startUntaken(u) {
+  if (!(await confirmBox(t('tree.untakenAsk', { option: u.option }), t('tree.untakenOk')))) return;
+  closeModal('#mdl-tree');
+  const gid = G.game.id;
+  if (!(await enterGame(G.stage, gid, u.parent, G.onExit, false))) return;
+  G.tree.nodes[u.parent].lines.forEach(logLine);
+  setTimeout(() => { if (G.game?.id === gid && G.currentId === u.parent && !G.running) sendInput('option', u.option); }, 1100);
 }
 
 // The tree's retry button on a branch the batch could not write: writes it now, then redraws the tree
@@ -641,21 +701,38 @@ async function rewriteBranch(f) {
 // ---------- wiring ----------
 
 const LONG_PRESS_MS = 600;
+const SWIPE_PX = 50;
 const NOT_STAGE = 'button, input, select, form, #choices, #retry, #dialog, #ending, #toolbar';
+const NO_MENU = 'button, input, select, form, #choices, #retry, #ending, #toolbar, #press-menu';
 
 export function initGame() {
   requestAnimationFrame(typeStep);
   const scr = $('#scr-game');
   let press = null;         // touch or pen held on the stage: { x, y, timer, fired }
   let pointer = 'mouse';
+  let swipe = null;         // where a touch started, for a swipe up to the log (I02)
   scr.addEventListener('pointerdown', (e) => {
     pointer = e.pointerType;
     press = null;
-    if (e.pointerType === 'mouse' || e.target.closest(NOT_STAGE)) return;
-    const p = { x: e.clientX, y: e.clientY, fired: false };
-    p.timer = setTimeout(() => { p.fired = true; askRedraw(p.x, p.y); }, LONG_PRESS_MS);
+    swipe = e.pointerType === 'mouse' || e.target.closest('input, select') ? null : { x: e.clientX, y: e.clientY };
+    if (e.pointerType === 'mouse' || e.target.closest(NO_MENU)) return;
+    // Touch has no right click: a long press opens a small menu; redrawing is in it when the press is on the picture
+    const p = { x: e.clientX, y: e.clientY, fired: false, picture: !e.target.closest(NOT_STAGE) };
+    p.timer = setTimeout(() => {
+      p.fired = true;
+      openPressMenu(p.x, p.y, p.picture && G.game && G.stage.hit(p.x, p.y) ? () => askRedraw(p.x, p.y) : null);
+    }, LONG_PRESS_MS);
     press = p;
   });
+  scr.addEventListener('pointerup', (e) => {
+    const dy = swipe ? e.clientY - swipe.y : 0;
+    if (dy < -SWIPE_PX && Math.abs(dy) > Math.abs(e.clientX - swipe.x) && !document.querySelector('.modal:not([hidden])')) openLog();
+    swipe = null;
+  });
+  // Scrolling up on the story opens the log (G02)
+  scr.addEventListener('wheel', (e) => {
+    if (e.deltaY < 0 && !document.querySelector('.modal:not([hidden])')) openLog();
+  }, { passive: true });
   scr.addEventListener('pointermove', (e) => {
     if (press && !press.fired && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 12) clearTimeout(press.timer);
   });
@@ -686,10 +763,24 @@ export function initGame() {
   $('#failed-retry').onclick = retryLast;
   $('#failed-exit').onclick = () => G.onExit?.();
   document.addEventListener('keydown', (e) => {
+    if (e.key === 'Control') G.skip = true;   // held: fast-forward (G04)
     // Keys belong to an open dialog, a form field, or a button the keyboard moved to (I04)
     if ($('#scr-game').hidden || document.querySelector('.modal:not([hidden])')) return;
-    if (e.target.closest?.('input, textarea, select, button:focus-visible, a:focus-visible, summary:focus-visible')) return;
+    if (e.target.closest?.('input, textarea, select')) return;
+    if (!e.ctrlKey && !e.altKey && !e.metaKey) {
+      // 1 to 4 pick that option (G01); L opens the log (G02)
+      if (/^[1-4]$/.test(e.key) && !$('#choices').hidden) { $(`#options .btn[data-i="${e.key - 1}"]`)?.click(); return; }
+      if (e.key === 'l' || e.key === 'L') { openLog(); return; }
+    }
+    if (e.target.closest?.('button:focus-visible, a:focus-visible, summary:focus-visible')) return;
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); advance(); }
+  });
+  document.addEventListener('keyup', (e) => { if (e.key === 'Control') G.skip = false; });
+  window.addEventListener('blur', () => { G.skip = false; });
+  $('#dialog-skip').onclick = skipToChoices;
+  $('#free-input').addEventListener('input', () => {
+    paintCount(G.maxInput);
+    if (G.game && G.currentId) saveDraft(G.game.id, G.currentId, $('#free-input').value);
   });
   $('#free-form').addEventListener('submit', (e) => { e.preventDefault(); sendInput('free', $('#free-input').value); });
   $('#retry-cancel').onclick = () => G.running && G.running.cancel();

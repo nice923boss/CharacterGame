@@ -104,6 +104,7 @@
       <button class="btn tiny" data-act="save" data-i18n="game.save">存檔</button>
       <button class="btn tiny" data-act="load" data-i18n="game.load">讀檔</button>
       <button class="btn tiny" data-act="tree" data-i18n="game.tree">節點樹</button>
+      <button class="btn tiny" data-act="log" data-i18n="game.log">紀錄</button>
       <button class="btn tiny" data-act="settings" data-i18n="game.settings">設定</button>
       <button class="btn tiny" data-act="title" data-i18n="game.title">標題</button>
     </div>
@@ -121,7 +122,8 @@
       </div>
       <div id="options"></div>
       <form id="free-form" autocomplete="off">
-        <input id="free-input" maxlength="120">
+        <input id="free-input">
+        <span id="free-count" aria-live="polite"></span>
         <button class="btn small" type="submit" data-i18n="common.send">送出</button>
       </form>
     </div>
@@ -129,6 +131,7 @@
       <p id="ending-kind"></p>
       <h2 id="ending-title"></h2>
       <p class="hint" data-i18n="ending.hint">可以從節點樹回到任一輪，改走別的結局。</p>
+      <div id="ending-back" hidden><p class="hint" data-i18n="ending.backTitle">回到最近的選擇</p><div class="list"></div></div>
       <div class="menu row">
         <button class="btn small" data-act="tree" data-i18n="game.tree">節點樹</button>
         <button class="btn small ghost" data-act="title" data-i18n="ending.toTitle">回到標題</button>
@@ -139,6 +142,13 @@
       <p id="dialog-text"></p>
       <span id="dialog-next" hidden>▼</span>
       <span id="dialog-wait" hidden><i></i><i></i><i></i></span>
+      <button class="btn tiny" id="dialog-skip" type="button" data-i18n="game.skip" hidden>跳到選項</button>
+    </div>
+    <div id="press-menu" class="panel" hidden>
+      <button class="btn small ghost" type="button" data-act="log" data-i18n="game.log">紀錄</button>
+      <button class="btn small ghost" type="button" data-act="save" data-i18n="game.save">存檔</button>
+      <button class="btn small ghost" type="button" data-act="settings" data-i18n="game.settings">設定</button>
+      <button class="btn small ghost" type="button" id="press-redraw" data-i18n="press.redraw">重新繪製這裡</button>
     </div>
   </section>
 
@@ -159,6 +169,16 @@
         <button class="btn small ghost" data-close data-i18n="common.close">關閉</button></header>
       <div id="tree-view"></div>
       <div id="tree-tip" hidden></div>
+    </div>
+  </section>
+
+  <!-- story log -->
+  <section id="mdl-log" class="modal" hidden>
+    <div class="panel log-panel">
+      <header class="panel-head"><h2 data-i18n="log.title">對話紀錄</h2>
+        <p class="hint" data-i18n="log.hint"></p>
+        <button class="btn small ghost" data-close data-i18n="common.close">關閉</button></header>
+      <div id="log-list"></div>
     </div>
   </section>
 
@@ -203,6 +223,18 @@
       <p class="hint field" data-i18n="settings.volumeHint"></p>
       <label class="check"><input type="checkbox" id="set-weather"><span data-i18n="settings.weather">顯示天氣粒子</span></label>
       <p class="hint field" data-i18n="settings.weatherHint"></p>
+      <label><span data-i18n="settings.auto">自動播放（每句停幾秒）</span><select id="set-auto">
+        <option value="0" data-i18n="settings.autoOff">關閉</option>
+        <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="5">5</option><option value="8">8</option>
+      </select></label>
+      <p class="hint field" data-i18n="settings.autoHint"></p>
+      <label><span data-i18n="settings.font">字體大小</span><select id="set-font">
+        <option value="s" data-i18n="settings.fontS">小</option>
+        <option value="m" data-i18n="settings.fontM">中</option>
+        <option value="l" data-i18n="settings.fontL">大</option>
+      </select></label>
+      <label class="check"><input type="checkbox" id="set-contrast"><span data-i18n="settings.contrast">高對比</span></label>
+      <p class="hint field" data-i18n="settings.contrastHint"></p>
       <label><span data-i18n="settings.imageMode">圖片產生</span><select id="set-img-mode">
         <option value="all" data-i18n="settings.imgMode.all">全部（場景、立繪與所有表情）</option>
         <option value="basic" data-i18n="settings.imgMode.basic">精簡（只畫場景與平靜立繪，省額度）</option>

@@ -1,6 +1,7 @@
 // Node tree map: one circle per turn laid out left to right, branches stacked downward,
 // consecutive turns in the same scene wrapped in a labelled box. Hover shows the turn, click jumps there.
 // Branches a batch could not write hang off their parent as red stubs; clicking one writes it again.
+// Options nobody picked yet hang off their turn as dashed stubs; clicking one starts writing from there.
 import { errorText, t } from './i18n.js';
 import { $, esc } from './ui.js';
 
@@ -27,6 +28,20 @@ function layout(tree, stubs) {
   return { pos, width: PAD * 2 + maxDepth * DX + 40, height: PAD * 2 + row * DY };
 }
 
+// Options of every turn that no child was written for: [{parent, option}]
+export function untakenOptions(tree) {
+  const out = [];
+  for (const n of Object.values(tree.nodes)) {
+    if (n.result?.ending) continue;
+    const taken = new Set(n.children.map((c) => tree.nodes[c]?.player_input?.text?.trim()));
+    for (const option of n.result?.options || []) if (!taken.has(option.trim())) out.push({ parent: n.id, option });
+  }
+  return out;
+}
+
+const curve = (a, b) => (a.y === b.y ? `M${a.x},${a.y}L${b.x},${b.y}`
+  : `M${a.x},${a.y}C${a.x + DX / 2},${a.y} ${b.x - DX / 2},${b.y} ${b.x},${b.y}`);
+
 // Runs of consecutive nodes that share a scene: [{scene_id, ids}]
 function segments(tree) {
   const segs = [];
@@ -41,13 +56,15 @@ function segments(tree) {
   return segs;
 }
 
-// failed: [{parent, option, error}] branches the batch gave up on; onRewrite(entry) writes one of them again
-export function renderTree(tree, game, currentId, onPick, failed = [], onRewrite = null) {
+// failed: [{parent, option, error}] branches the batch gave up on; onRewrite(entry) writes one of them again.
+// untaken: [{parent, option}] options not written yet; onUntaken(entry) starts writing one
+export function renderTree(tree, game, currentId, onPick, failed = [], onRewrite = null, untaken = [], onUntaken = null) {
   const view = $('#tree-view');
   const tip = $('#tree-tip');
   if (!tree.root) { view.innerHTML = `<p class="hint" style="padding:2cqh">${esc(t('tree.empty'))}</p>`; return; }
   const stubs = {};
   failed.forEach((f, i) => { if (tree.nodes[f.parent]) (stubs[f.parent] ||= []).push(`fail:${i}`); });
+  untaken.forEach((u, i) => { if (tree.nodes[u.parent]) (stubs[u.parent] ||= []).push(`opt:${i}`); });
   const { pos, width, height } = layout(tree, stubs);
   const onPath = new Set();
   for (let id = currentId; id; id = tree.nodes[id]?.parent) onPath.add(id);
@@ -79,6 +96,10 @@ export function renderTree(tree, game, currentId, onPick, failed = [], onRewrite
     if (!a || !b) return '';
     const d = a.y === b.y ? `M${a.x},${a.y}L${b.x},${b.y}` : `M${a.x},${a.y}C${a.x + DX / 2},${a.y} ${b.x - DX / 2},${b.y} ${b.x},${b.y}`;
     return `<path class="edge failed" d="${d}"/>`;
+  }).join('') + untaken.map((u, i) => {
+    const a = pos[u.parent];
+    const b = pos[`opt:${i}`];
+    return a && b ? `<path class="edge untaken" d="${curve(a, b)}"/>` : '';
   }).join('');
 
   const nodes = Object.values(tree.nodes).filter((n) => pos[n.id]).map((n) => {
@@ -92,6 +113,10 @@ export function renderTree(tree, game, currentId, onPick, failed = [], onRewrite
     const p = pos[`fail:${i}`];
     return p ? `<g class="node failed" data-fail="${i}" transform="translate(${p.x},${p.y})">` +
       `<circle r="10"/><text text-anchor="middle" dy="4">!</text></g>` : '';
+  }).join('') + untaken.map((u, i) => {
+    const p = pos[`opt:${i}`];
+    return p ? `<g class="node untaken" data-opt="${i}" transform="translate(${p.x},${p.y})">` +
+      `<circle r="10"/><text text-anchor="middle" dy="4">+</text></g>` : '';
   }).join('');
 
   view.innerHTML = `<svg width="${width}" height="${height}">${boxes}${edges}${nodes}</svg>`;
@@ -119,6 +144,15 @@ export function renderTree(tree, game, currentId, onPick, failed = [], onRewrite
     });
     g.addEventListener('mouseleave', () => { tip.hidden = true; });
     g.addEventListener('click', () => { tip.hidden = true; onRewrite?.(f); });
+  });
+  view.querySelectorAll('.node[data-opt]').forEach((g) => {
+    const u = untaken[g.dataset.opt];
+    g.addEventListener('mouseenter', () => {
+      tip.innerHTML = `<b>${esc(t('tree.untaken'))}</b><div>${esc(u.option)}</div><div>${esc(t('tree.untakenHint'))}</div>`;
+      place(g);
+    });
+    g.addEventListener('mouseleave', () => { tip.hidden = true; });
+    g.addEventListener('click', () => { tip.hidden = true; onUntaken?.(u); });
   });
   view.querySelectorAll('.node[data-id]').forEach((g) => {
     const n = tree.nodes[g.dataset.id];

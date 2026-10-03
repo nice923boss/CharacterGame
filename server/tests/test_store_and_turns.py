@@ -185,6 +185,27 @@ async def test_english_game_prompt_and_turn(store):
     assert [ln["speaker"] for ln in node["lines"]] == ["Narrator", "Mira"]
 
 
+def test_summary_folds_into_long_term_memory():
+    from server import prompts
+    items = [f"事件{i}。" for i in range(1, 25)]
+    for n, folded in ((7, 0), (8, 0), (15, 0), (16, 8), (23, 8), (24, 16)):
+        memory, recent = prompts.split_summary(items[:n], "zh")
+        assert recent == items[folded:n] and bool(memory) == bool(folded)
+    memory, _ = prompts.split_summary(items[:16], "zh")
+    assert memory == "事件1；事件2；事件3；事件4；事件5；事件6；事件7；事件8。"
+    long = [f"{i:02d}" + "長" * 98 for i in range(16)]           # 100 chars each: 5 fit in 600 with separators
+    memory, _ = prompts.split_summary(long + ["x"] * 8, "zh")
+    assert memory.startswith("…11") and memory.count("；") == 4 and "10" not in memory
+    game = {**GAME, "scenes": GAME["scenes"]}
+    parent = {"state": {"affection": {}, "flags": [], "items": []}, "summary": items[:16], "lines": [],
+              "player_input": {"kind": "opening"}}
+    text = prompts.turn_messages(game, [parent], {"kind": "option", "text": "走"}, {"id": "archive", "name": "檔案室"})[1]["content"]
+    assert "## 長期記憶（較早的劇情）\n事件1；" in text and "## 前情摘要\n1. 事件9。" in text
+    short = prompts.turn_messages(game, [{**parent, "summary": items[:15]}], {"kind": "option", "text": "走"},
+                                  {"id": "archive", "name": "檔案室"})[1]["content"]
+    assert "長期記憶" not in short and "15. 事件15。" in short
+
+
 async def test_setup_errors_are_codes(store):
     svc = TurnService(store, ScriptedLLM([]), NullAssets())
     _, emit = await _events()

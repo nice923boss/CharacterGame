@@ -1,9 +1,12 @@
 // p5 stage: background with crossfade and fade-through-black transitions, up to 3 sprites with speaker
 // highlight, weather particles and a vignette. Text and buttons are DOM layers above the canvas.
+// A phone held upright gets a tall canvas (720 wide) instead of a letterboxed 16:9 strip.
 
-const W = 1280;
-const H = 720;
 const SPRITE_H = 680;
+let W = 1280;
+let H = 720;
+let spriteH = SPRITE_H;
+let floor = H;   // where the sprites' feet stand
 const SLOTS = { 1: [0.5], 2: [0.3, 0.7], 3: [0.2, 0.5, 0.8] };
 
 export function createStage(host) {
@@ -74,17 +77,40 @@ export function createStage(host) {
     P = p;
     let vignette;
     let blob;
-    p.setup = () => {
-      p.createCanvas(W, H).parent(host);
-      p.pixelDensity(1);
-      p.frameRate(60);
+    function paintVignette() {
+      vignette?.remove();
       vignette = p.createGraphics(W, H);
       const ctx = vignette.drawingContext;
-      const g = ctx.createRadialGradient(W / 2, H / 2, H * 0.35, W / 2, H / 2, W * 0.72);
+      const g = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.72);
       g.addColorStop(0, 'rgba(0,0,0,0)');
       g.addColorStop(1, 'rgba(0,0,10,0.55)');
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, W, H);
+    }
+    // Canvas size follows the stage's shape: 1280x720, or 720 wide and as tall as the upright screen (I01)
+    function fit(force = false) {
+      const r = host.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      const tall = r.height > r.width;
+      const w = tall ? 720 : 1280;
+      const h = tall ? Math.round(720 * r.height / r.width) : 720;
+      if (!force && w === W && h === H) return;
+      W = w;
+      H = h;
+      spriteH = tall ? Math.round(H * 0.42) : SPRITE_H;
+      floor = tall ? Math.round(H * 0.74) : H;
+      p.resizeCanvas(W, H);
+      paintVignette();
+      S.parts = makeParts(S.weather);
+      layout();
+      S.cast.forEach((c) => { c.x = c.tx; });
+    }
+    p.windowResized = () => fit();
+    p.setup = () => {
+      p.createCanvas(W, H).parent(host);
+      p.pixelDensity(1);
+      p.frameRate(60);
+      fit(true);
       blob = p.createGraphics(400, 400);
       const b = blob.drawingContext;
       const bg = b.createRadialGradient(200, 200, 0, 200, 200, 200);
@@ -187,12 +213,12 @@ export function createStage(host) {
         const focus = S.speaker === null || S.speaker === c.cid ? 1 : 0;
         c.focus += (focus - c.focus) * Math.min(1, dt * 6);
         if (!c.img) continue;
-        const k = SPRITE_H / c.img.height * (0.97 + 0.03 * c.focus);
+        const k = spriteH / c.img.height * (0.97 + 0.03 * c.focus);
         const w = c.img.width * k;
         const h = c.img.height * k;
         const shade = 150 + 105 * c.focus;
         p.tint(shade * (1 - S.dim * 0.3), shade * (1 - S.dim * 0.3), shade * (1 - S.dim * 0.25), 255 * c.alpha);
-        p.image(c.img, c.x - w / 2, H - h + 10 * (1 - c.focus), w, h);
+        p.image(c.img, c.x - w / 2, floor - h + 10 * (1 - c.focus), w, h);
         p.noTint();
       }
       S.cast = S.cast.filter((c) => !(c.leaving && c.alpha < 0.02));
@@ -264,9 +290,9 @@ export function createStage(host) {
       if (x < 0 || y < 0 || x > W || y > H) return null;
       for (const c of [...S.cast].reverse()) {
         if (c.leaving || !c.img) continue;
-        const k = SPRITE_H / c.img.height * (0.97 + 0.03 * c.focus);
+        const k = spriteH / c.img.height * (0.97 + 0.03 * c.focus);
         const px = Math.floor((x - (c.x - c.img.width * k / 2)) / k);
-        const py = Math.floor((y - (H - c.img.height * k + 10 * (1 - c.focus))) / k);
+        const py = Math.floor((y - (floor - c.img.height * k + 10 * (1 - c.focus))) / k);
         if (px >= 0 && py >= 0 && px < c.img.width && py < c.img.height && c.img.get(px, py)[3] > 16) {
           return { kind: 'sprite', cid: c.cid };
         }

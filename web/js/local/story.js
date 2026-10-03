@@ -340,6 +340,18 @@ function nodeTranscript(node, protagonist, lang) {
   return rows;
 }
 
+// Long-term memory paragraph and the recent summary items; mirrors prompts.split_summary (G13)
+function splitSummary(summary, lang) {
+  const t = T(lang);
+  const every = PR.MEMORY_EVERY;
+  const folded = Math.max(0, Math.floor((summary.length - every) / every) * every);
+  const old = summary.slice(0, folded).map((s) => s.replace(/[。.]+$/, ''));
+  let keep = old;
+  while (keep.length && [...keep.join(t.memory_sep)].length > PR.MEMORY_CHARS[lang]) keep = keep.slice(1);
+  const memory = keep.length ? (keep.length < old.length ? '…' : '') + keep.join(t.memory_sep) + t.memory_end : '';
+  return [memory, summary.slice(folded)];
+}
+
 export function turnMessages(game, path, playerInput, scene) {
   const lang = gameLang(game);
   const t = T(lang);
@@ -357,9 +369,9 @@ export function turnMessages(game, path, playerInput, scene) {
     `${t.h_scene}\n${scene.id}${t.colon}${scene.name}`,
     `${t.h_state}\n${pyDumps(state)}`,
   ];
-  if (summary.length) {
-    parts.push(`${t.h_summary}\n` + summary.slice(-PR.SUMMARY_ITEMS).map((s, i) => `${i + 1}. ${s}`).join('\n'));
-  }
+  const [memory, items] = splitSummary(summary, lang);
+  if (memory) parts.push(`${t.h_memory}\n${memory}`);
+  if (items.length) parts.push(`${t.h_summary}\n` + items.map((s, i) => `${i + 1}. ${s}`).join('\n'));
   if (recent.length) parts.push(`${t.h_recent}\n${recent.join('\n')}`);
   if (game.novel) parts.push(chapterText(game, path.length + 1, lang));
   if (game.batch) parts.push(batchTurnText(game, path.length + 1));
