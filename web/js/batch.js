@@ -59,9 +59,14 @@ async function announce(b) {
   if (go) onPlay(b.id);
 }
 
+let anyActive = false;
+// A batch was writing or drawing at the last poll (the browser build pauses it when the page closes)
+export const batchActive = () => anyActive;
+
 async function poll() {
   let list;
   try { list = await get('/api/batches'); } catch { return; }   // server down: the title screen health line says so
+  anyActive = list.some((b) => ACTIVE.includes(b.state));
   paintPanel(list);
   const done = acked();
   for (const b of list) {

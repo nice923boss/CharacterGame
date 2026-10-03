@@ -79,9 +79,15 @@ export function statusText(ev) {
   const p = { ...ev, reason: t(`reason.${ev.reason}`) };
   for (const k of ['model', 'from', 'to']) if (ev[k]) p[k] = t(`model.${ev[k]}`);
   if (ev.state === 'retry' && ev.max == null) return t('status.queue', p);   // past the backoff table, queueing
-  if (['retry', 'switch', 'rpm'].includes(ev.state)) return t(`status.${ev.state}`, p);
+  if (['retry', 'switch', 'rpm', 'reconnect'].includes(ev.state)) return t(`status.${ev.state}`, p);
   return '';
 }
+
+// Banner while the browser has no network; turns sent meanwhile wait for it to come back (game.js)
+function paintOffline() { $('#offline').hidden = navigator.onLine; }
+window.addEventListener('online', paintOffline);
+window.addEventListener('offline', paintOffline);
+paintOffline();
 
 // patience: seconds to keep queueing when every model is busy; prefer: quality (retry the first model) or speed
 const DEFAULTS = { speed: 45, bgm: 55, sfx: 70, weather: true, patience: 300, prefer: 'quality' };

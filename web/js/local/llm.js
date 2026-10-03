@@ -49,9 +49,15 @@ export function retryAfter(value) {
   return Number.isNaN(at) ? null : Math.max((at - Date.now()) / 1000, 0);
 }
 
+// A hidden tab may run timers only once a minute; coming back wakes every sleeper, and the waits below
+// count down to a deadline, so they catch up at once instead of resuming where the timer stalled
+const wakers = new Set();
+document.addEventListener('visibilitychange', () => { if (!document.hidden) for (const w of [...wakers]) w(); });
 const sleep = (s, signal) => new Promise((resolve, reject) => {
-  const t = setTimeout(resolve, s * 1000);
-  signal?.addEventListener('abort', () => { clearTimeout(t); reject({ code: 'cancelled' }); }, { once: true });
+  const wake = () => { clearTimeout(t); wakers.delete(wake); resolve(); };
+  const t = setTimeout(wake, s * 1000);
+  wakers.add(wake);
+  signal?.addEventListener('abort', () => { clearTimeout(t); wakers.delete(wake); reject({ code: 'cancelled' }); }, { once: true });
 });
 
 class ContentFilter {
@@ -129,14 +135,16 @@ function retryPlan(f, idx, isLast, retryN, emptyN, waits, started) {
 
 // skip: { on } set by the "retry now" button
 async function countdown(seconds, emit, info, signal, skip) {
-  let waited = 0;
-  for (let remaining = seconds; remaining > 0; remaining -= 1) {
+  const start = Date.now();
+  const end = start + seconds * 1000;
+  for (;;) {
+    const left = (end - Date.now()) / 1000;
+    if (left <= 0) break;
     if (skip?.on) { skip.on = false; break; }
-    emit({ type: 'status', state: 'retry', remaining, total: seconds, ...info });
-    await sleep(1, signal);
-    waited += 1;
+    emit({ type: 'status', state: 'retry', remaining: Math.ceil(left), total: seconds, ...info });
+    await sleep(Math.min(1, left), signal);
   }
-  note(info.model, 'wait', waited);
+  note(info.model, 'wait', Math.round((Date.now() - start) / 1000));
 }
 
 async function rpmWait(label, emit, signal) {

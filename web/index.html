@@ -109,6 +109,11 @@
       <button class="btn tiny" id="retry-cancel" data-i18n="common.cancel">取消</button>
     </div>
     <div id="choices" hidden>
+      <div id="failed" class="panel" hidden>
+        <span id="failed-text"></span>
+        <button class="btn small" id="failed-retry" type="button" data-i18n="game.retry">重試</button>
+        <button class="btn small ghost" id="failed-exit" type="button" data-i18n="game.toTitleOk">回到標題</button>
+      </div>
       <div id="options"></div>
       <form id="free-form" autocomplete="off">
         <input id="free-input" maxlength="120">
@@ -218,6 +223,7 @@
   </section>
 
   <div id="toast" hidden></div>
+  <div id="offline" hidden data-i18n="net.offline">網路已中斷，送出會暫停，恢復連線後自動重試</div>
   <footer class="credit" data-i18n="app.credit">製作者：黃政文</footer>
 </div>
 <script type="module" src="js/main.js"></script>

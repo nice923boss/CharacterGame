@@ -1,5 +1,5 @@
 // Entry point: screen switching, title menu, toolbar and settings wiring.
-import { LOCAL, get, post } from './api.js';
+import { LOCAL, activeJobs, get, post } from './api.js';
 import { applyStatic, setLang, t } from './i18n.js';
 import { sound } from './sound.js';
 import { createStage } from './stage.js';
@@ -7,7 +7,7 @@ import { $, bindSettings, confirmBox, openModal, progress, toast } from './ui.js
 import { initSetup, isBatchMode, resetSetup, startGame } from './setup.js';
 import { currentGameId, enterGame, initGame, leaveGame, openSlots, openTree } from './game.js';
 import { openStories } from './stories.js';
-import { initBatches, refreshBatches, requestNotifyPermission } from './batch.js';
+import { batchActive, initBatches, refreshBatches, requestNotifyPermission } from './batch.js';
 
 document.documentElement.classList.toggle('local', LOCAL);
 const stage = createStage($('#canvas-host'));
@@ -109,6 +109,11 @@ async function waitOpening(gid) {
     box.close();
   }
 }
+
+// Reloading or closing now would cut off a turn; the browser build's batch would pause too (the server's goes on)
+window.addEventListener('beforeunload', (e) => {
+  if (activeJobs() > 0 || (LOCAL && batchActive())) { e.preventDefault(); e.returnValue = ''; }
+});
 
 bindSettings((s) => {
   sound.setVolumes(s.bgm / 100, s.sfx / 100);

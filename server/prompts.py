@@ -207,6 +207,8 @@ TEXT = {
                       "讓至少一位角色登場並對主角說話。scene_change 填 false，ending 填 null。",
            "player": "## 玩家本輪行動\n{text}", "go": "請寫出本輪劇情。", "sep": "、", "colon": "：",
            "repair": "你的回應缺少 ```json 區塊。台詞不要重寫，只輸出本輪的 ```json 區塊，欄位照系統訊息。",
+           "continue": "你上一則回應在這裡中斷了。從中斷處直接接著寫，不要重複已寫出的台詞，格式照系統訊息，"
+                       "最後一樣附上本輪的 ```json 區塊。",
            "opt_any": "3 或 4 個", "opt_n": "剛好 {n} 個", "opt_rule": "3 到 4 個選項", "opt_rule_n": "{n} 個選項",
            "h_turn": "## 回合進度", "turn_k": "這是第 {k} 輪，全篇最多 {d} 輪。",
            "turn_last": "本輪是最後一輪：必須在本輪寫出結局，依主角至今的選擇判定 good 或 bad，ending 不可為 null。",
@@ -235,6 +237,9 @@ TEXT = {
            "player": "## Player's action this turn\n{text}", "go": "Write this turn.", "sep": ", ", "colon": ": ",
            "repair": "Your reply is missing the ```json block. Do not rewrite the dialogue; output only this "
                      "turn's ```json block with the fields from the system message.",
+           "continue": "Your previous reply was cut off here. Continue straight from where it stopped without repeating "
+                       "any line already written, keep the format from the system message, and end with this turn's "
+                       "```json block as usual.",
            "opt_any": "3 or 4", "opt_n": "exactly {n}", "opt_rule": "the 3 or 4 options", "opt_rule_n": "the {n} options",
            "h_turn": "## Turn count", "turn_k": "This is turn {k} of at most {d}.",
            "turn_last": "This is the last turn: the story must end in this turn. Decide good or bad from the "
@@ -411,6 +416,7 @@ def novel_messages(title: str, notes: list[str], lang: str, max_chars: int, min_
 
 
 def repair_messages(turn_msgs: list[dict], reply_text: str, lang: str, key: str = "repair") -> list[dict]:
-    """key "force_ending": the last turn of a batch game came back without an ending."""
+    """key "force_ending": the last turn of a batch game came back without an ending.
+    key "continue": the reply broke off after `reply_text` (whole lines); ask for the rest only."""
     return [*turn_msgs, {"role": "assistant", "content": reply_text},
             {"role": "user", "content": TEXT[lang][key]}]

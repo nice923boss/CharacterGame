@@ -10,6 +10,7 @@ const G = {
   stage: null, game: null, tree: null, assets: null, currentId: null,
   queue: [], typing: null, waitingClick: false, final: null, running: null, turnStart: 0,
   sceneId: null, pendingScene: null, castExpr: {}, onExit: null, pollTimer: null, loadTimer: null, lastInput: null,
+  paintClock: null, hiddenAt: 0,
 };
 
 // ---------- asset urls ----------
@@ -305,27 +306,84 @@ function paintRetry(text) {
   if (!text) $('#retry-now').hidden = true;
 }
 
+// Errors from the network rather than the story: worth sending again once it is back
+const NET_CODES = ['offline', 'dropped', 'relay_unreachable'];
+const NET_REASONS = ['network', 'connect'];
+const isNetwork = (e) => NET_CODES.includes(e.code) || (e.code === 'all_failed' && !!e.params?.errors?.length
+  && e.params.errors.every((x) => NET_REASONS.includes(x.reason)));
+
+function paintFailed(msg) {
+  const opening = G.lastInput?.kind === 'opening';
+  $('#failed').hidden = !msg;
+  $('#failed-text').textContent = msg || '';
+  $('#failed-retry').textContent = t(opening ? 'game.retryOpening' : 'game.retry');
+  $('#failed-exit').hidden = !opening;
+  $('#free-form').hidden = !!msg && opening;
+}
+
+// The turn did not go through: the screen stays where it was, with the same input one click away.
+// msg null (the player cancelled): no failure row
+function failTurn(msg, network = false) {
+  const hidden = document.hidden || G.hiddenAt >= G.turnStart;   // the page was in the background meanwhile
+  G.lastInput = { ...G.lastInput, failed: true, network, hidden };
+  const cur = G.tree.nodes[G.currentId];
+  if (cur) showChoices(cur);
+  else {   // the opening: no choices yet, only the failure row
+    $('#options').innerHTML = '';
+    $('#choices').hidden = false;
+    $('#dialog-wait').hidden = true;
+    setBusy(false);
+  }
+  paintFailed(msg && G.lastInput.kind === 'opening' ? t('game.openingFailed', { msg }) : msg);
+  // A phone cut the turn off in the background and the page is back: send it again once by itself
+  if (network && hidden && !document.hidden && navigator.onLine) setTimeout(retryLast, 0);
+}
+
+function retryLast() {
+  const li = G.lastInput;
+  if (G.game && li?.failed && !G.running) sendInput(li.kind, li.text);
+}
+
 async function sendInput(kind, text) {
   text = (text || '').trim();
   if (kind !== 'opening' && !text) return;
   sound.play('select');
-  $('#choices').hidden = true;
-  setBusy(true);
   G.lastInput = { kind, text };
+  if (!navigator.onLine) { failTurn(t('net.held'), true); return; }   // the online listener sends it
+  $('#choices').hidden = true;
+  paintFailed(null);
+  setBusy(true);
+  const gid = G.game.id;
   const parentId = G.currentId;
   if (kind !== 'opening') pushLine({ kind: 'player', speaker: G.game.protagonist.name, char_id: null, text });
   const turnLines = [];
+  let rewriting = false;   // after a reset: the lines on screen stay until the rewritten ones arrive
+  let shownGone = false;   // a reset dropped a line the player already saw: mark where the rewrite starts
   G.turnStart = Date.now();
   let lastStatus = '';
-  const clock = setInterval(() => {
+  G.paintClock = () => {
     const s = Math.round((Date.now() - G.turnStart) / 1000);
-    if (lastStatus) paintRetry(lastStatus);
-    else if (s >= 10) paintRetry(t('game.writing', { s }));
-  }, 500);
-  G.running = job(`/api/games/${G.game.id}/turn`, { parent_id: parentId, input: { kind, text } }, (ev) => {
-    if (ev.type === 'line') { turnLines.push(ev.line); pushLine(ev.line); } else if (ev.type === 'reset') {
-      G.queue = G.queue.filter((l) => !turnLines.includes(l.of || l));
-      toast(t('game.reset'));
+    const parts = [rewriting && t('game.rewriting'), lastStatus || (s >= 10 && t('game.writing', { s }))];
+    paintRetry(parts.filter(Boolean).join(' ・ '));
+  };
+  const clock = setInterval(() => G.paintClock?.(), 500);
+  G.running = job(`/api/games/${gid}/turn`, { parent_id: parentId, input: { kind, text } }, (ev) => {
+    if (ev.type === 'line') {
+      if (shownGone) {
+        shownGone = false;
+        pushLine({ kind: 'narration', speaker: '', char_id: null, text: t('game.rewritten') });
+      }
+      rewriting = false;
+      turnLines.push(ev.line);
+      pushLine(ev.line);
+    } else if (ev.type === 'reset') {
+      // keep: lines resumed from an earlier break that the rewrite continues from
+      const gone = new Set(turnLines.splice(ev.keep || 0));
+      const unseen = new Set(G.queue.filter((l) => !l.of));
+      shownGone ||= [...gone].some((l) => !unseen.has(l));
+      G.queue = G.queue.filter((l) => !gone.has(l.of || l));
+      if (!G.typing && !G.queue.length && G.waitingClick) { $('#dialog-next').hidden = true; $('#dialog-wait').hidden = false; }
+      rewriting = true;
     } else if (ev.type === 'status') {
       lastStatus = ev.state === 'waiting' ? '' : statusText(ev);
       $('#retry-now').hidden = ev.state !== 'retry';
@@ -354,14 +412,18 @@ async function sendInput(kind, text) {
     if (!G.typing && !G.queue.length) finishTurn();
     else if (!G.typing && !G.waitingClick) advance();
   } catch (e) {
+    if (G.game?.id !== gid) return;   // left the game, which cancelled the turn
     G.queue = [];
     G.typing = null;
-    G.lastInput = { kind, text, failed: true };
-    toast(e.code === 'cancelled' ? t('game.cancelled') : e.message, e.code !== 'cancelled');
+    G.waitingClick = false;   // else the retried turn's first line would wait for a click
     const cur = G.tree.nodes[G.currentId];
-    if (cur) { showStatic(cur); showChoices(cur); } else if (G.onExit) G.onExit();
+    if (cur) showStatic(cur);
+    else { $('#dialog-text').textContent = ''; $('#nameplate').hidden = true; }
+    if (e.code === 'cancelled' && cur) { toast(t('game.cancelled')); failTurn(null); }
+    else failTurn(e.code === 'cancelled' ? t('game.cancelled') : e.message, isNetwork(e));
   } finally {
     clearInterval(clock);
+    G.paintClock = null;
     paintRetry('');
     G.running = null;
   }
@@ -386,6 +448,7 @@ export async function enterGame(stage, gid, nodeId, onExit) {
   G.onExit = onExit;
   $('#choices').hidden = true;   // hide the previous node's options at once, so they cannot be clicked while loading
   $('#ending').hidden = true;
+  paintFailed(null);
   const box = progress(t('game.loading'), '');
   try {
     const data = await get(`/api/games/${gid}`);
@@ -561,7 +624,19 @@ export function initGame() {
   $('#asset-chip').addEventListener('click', showAssetProblems);
   // Coming back to this window moves its images first right away instead of at the next poll
   window.addEventListener('focus', pollAssets);
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') pollAssets(); });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { G.hiddenAt = Date.now(); return; }
+    pollAssets();
+    G.paintClock?.();   // timers were throttled in the background: show the current state at once
+    const li = G.lastInput;
+    if (li?.failed && li.network && li.hidden && navigator.onLine) retryLast();   // failed while in the background
+  });
+  window.addEventListener('online', () => {
+    const li = G.lastInput;
+    if (G.game && li?.failed && li.network && !G.running) { toast(t('net.back')); retryLast(); }
+  });
+  $('#failed-retry').onclick = retryLast;
+  $('#failed-exit').onclick = () => G.onExit?.();
   document.addEventListener('keydown', (e) => {
     if ($('#scr-game').hidden || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); advance(); }

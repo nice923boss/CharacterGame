@@ -5,7 +5,6 @@ Run: python -m server.main   (from the project root) -> http://127.0.0.1:8765
 import asyncio
 import json
 import traceback
-import uuid
 from contextlib import asynccontextmanager
 
 import uvicorn
@@ -16,6 +15,7 @@ from fastapi.staticfiles import StaticFiles
 from . import comfy_client, config, nvidia_image
 from .asset_service import IMAGE_MODES, AssetService
 from .batch_service import BatchService
+from .jobs import Job, Jobs
 from .llm_client import LLMClient, LLMError, Waits
 from .novel_service import NovelService
 from .story_store import Store
@@ -28,8 +28,7 @@ assets = AssetService(store, rpm_gate=llm.image_slot)
 turns = TurnService(store, llm, assets)
 batches = BatchService(store, turns, assets)
 novels = NovelService(turns.llm)
-TASKS: dict[str, asyncio.Task] = {}
-SKIPS: dict[str, asyncio.Event] = {}    # "retry now" button of each running job
+JOBS = Jobs()
 
 
 @asynccontextmanager
@@ -51,47 +50,44 @@ def _event(ev: dict) -> str:
 
 
 def sse_job(work, payload: dict | None = None) -> StreamingResponse:
-    """Run `work(emit, waits)` as a task and stream its events. Closing the stream cancels the task.
+    """Run `work(emit, waits)` as a job and stream its events. Closing the stream does not cancel the job:
+    the client may follow it again with /api/tasks/{tid}/events (see jobs.py).
     waits: how long the player agreed to queue for a busy model (payload["waits"]) and the retry-now switch."""
-    q: asyncio.Queue = asyncio.Queue()
-    tid = uuid.uuid4().hex[:12]
-    skip = asyncio.Event()
-    waits = Waits.from_payload((payload or {}).get("waits"), skip)
+    job = Job()
+    waits = Waits.from_payload((payload or {}).get("waits"), job.skip)
 
     async def emit(ev: dict) -> None:
-        await q.put(ev)
+        job.push(ev)
 
     async def runner():
         try:
             await work(emit, waits)
         except (TurnError, LLMError) as e:
-            await q.put({"type": "error", "code": e.code, "params": e.params})
+            job.push({"type": "error", "code": e.code, "params": e.params})
         except asyncio.CancelledError:
-            await q.put({"type": "cancelled"})
+            job.push({"type": "cancelled"})
             raise
         except Exception:
-            log.error("job %s crashed\n%s", tid, config.mask(traceback.format_exc()))
-            await q.put({"type": "error", "code": "internal", "params": {}})
+            log.error("job %s crashed\n%s", job.id, config.mask(traceback.format_exc()))
+            job.push({"type": "error", "code": "internal", "params": {}})
         finally:
-            await q.put(None)
+            JOBS.ended(job)
 
-    task = asyncio.create_task(runner())
-    TASKS[tid] = task
-    SKIPS[tid] = skip
+    JOBS.add(job)
+    job.task = asyncio.create_task(runner())
+    return follow_job(job, 0)
+
+
+def follow_job(job: Job, after: int) -> StreamingResponse:
+    JOBS.attach(job)
 
     async def stream():
-        yield _event({"type": "task", "id": tid})
         try:
-            while True:
-                ev = await q.get()
-                if ev is None:
-                    break
-                yield _event(ev)
+            yield _event({"type": "task", "id": job.id})
+            async for ev in job.follow(after):
+                yield ": ping\n\n" if ev is None else _event(ev)
         finally:
-            if not task.done():
-                task.cancel()
-            TASKS.pop(tid, None)
-            SKIPS.pop(tid, None)
+            JOBS.detach(job)
 
     return StreamingResponse(stream(), media_type="text/event-stream",
                              headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
@@ -252,11 +248,20 @@ async def turn(gid: str, payload: dict = Body(...)):
     return sse_job(work, payload)
 
 
+@app.get("/api/tasks/{tid}/events")
+async def task_events(tid: str, after: int = 0):
+    """Follow a job again after the stream dropped; `after` is how many events the client already has."""
+    job = JOBS.get(tid)
+    if not job:
+        raise HTTPException(404, "task_gone")
+    return follow_job(job, after)
+
+
 @app.post("/api/tasks/{tid}/cancel")
 async def cancel(tid: str):
-    task = TASKS.get(tid)
-    if task and not task.done():
-        task.cancel()
+    job = JOBS.get(tid)
+    if job and job.task and not job.task.done():
+        job.task.cancel()
         return {"ok": True}
     return {"ok": False}
 
@@ -264,10 +269,10 @@ async def cancel(tid: str):
 @app.post("/api/tasks/{tid}/retry_now")
 async def retry_now(tid: str):
     """Cut the current countdown short: the next attempt starts at once."""
-    skip = SKIPS.get(tid)
-    if skip:
-        skip.set()
-    return {"ok": bool(skip)}
+    job = JOBS.get(tid)
+    if job and not job.ended:
+        job.skip.set()
+    return {"ok": bool(job and not job.ended)}
 
 
 def _with_thumb(save: dict | None) -> dict | None:
