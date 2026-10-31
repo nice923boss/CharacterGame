@@ -25,9 +25,22 @@ const modalStack = [];
 const FOCUSABLE = 'button, [href], input, select, textarea, summary, [tabindex]:not([tabindex="-1"])';
 const focusables = (root) => [...root.querySelectorAll(FOCUSABLE)].filter((el) => !el.disabled && el.getClientRects().length);
 
+// Screen readers announce what was entered: a dialog named by its heading (the confirm box by its question)
+let labelSeq = 0;
+function labelModal(el) {
+  if (el.hasAttribute('role')) return;
+  el.setAttribute('role', el.id === 'mdl-confirm' ? 'alertdialog' : 'dialog');
+  el.setAttribute('aria-modal', 'true');
+  const label = el.id === 'mdl-confirm' ? $('#confirm-text') : el.id === 'mdl-progress' ? $('#progress-text') : el.querySelector('h2');
+  if (!label) return;
+  if (!label.id) { labelSeq += 1; label.id = `mdl-label-${labelSeq}`; }
+  el.setAttribute('aria-labelledby', label.id);
+}
+
 export function openModal(id) {
   const el = $(id);
   if (!el.hidden) return;
+  labelModal(el);
   el.hidden = false;
   modalStack.push({ el, back: document.activeElement });
   const first = focusables(el)[0];
@@ -35,18 +48,37 @@ export function openModal(id) {
   else { el.tabIndex = -1; el.focus(); }   // nothing to press yet (progress without cancel)
 }
 
+// modal-close lets a module forget what was typed in a dialog closed without saving (connect.js)
 export function closeModal(id) {
   const el = typeof id === 'string' ? $(id) : id;
   el.hidden = true;
+  el.dispatchEvent(new CustomEvent('modal-close'));
   const i = modalStack.findIndex((m) => m.el === el);
   if (i < 0) return;
   const [{ back }] = modalStack.splice(i, 1);
-  if (i === modalStack.length && back?.isConnected) back.focus();
+  if (i !== modalStack.length) return;   // a dialog under the top one closed: focus stays where it is
+  // The button that opened it may be gone, disabled or hidden by now: then the dialog underneath gets focus
+  if (back?.isConnected && !back.disabled && back.getClientRects().length) back.focus();
+  else focusables(modalStack.at(-1)?.el || document.createElement('div'))[0]?.focus();
 }
 
+// The open dialog on top; one hidden without closeModal is dropped
+function topModal() {
+  while (modalStack.length && modalStack.at(-1).el.hidden) modalStack.pop();
+  return modalStack.at(-1)?.el || null;
+}
+
+// A press that starts and ends on the dim backdrop closes the top dialog like its close button. Confirm and
+// progress have none (they wait for an answer); a drag from inside the panel out to the backdrop does not count
+let downOn = null;
+document.addEventListener('pointerdown', (e) => { downOn = e.target; }, true);
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-close]');
-  if (btn) closeModal(btn.closest('.modal'));
+  if (btn) { closeModal(btn.closest('.modal')); return; }
+  const top = topModal();
+  if (!top || e.target !== top || downOn !== top) return;
+  const close = top.querySelector('[data-close]');
+  if (close && !close.disabled) close.click();
 });
 
 // Esc presses the top dialog's cancel or close button; Enter confirms the confirm box (G05).
@@ -65,22 +97,30 @@ function modalKey(el, e) {
 }
 
 document.addEventListener('keydown', (e) => {
-  while (modalStack.length && modalStack.at(-1).el.hidden) modalStack.pop();   // hidden without closeModal
-  const top = modalStack.at(-1);
-  if (top && (e.key === 'Escape' || e.key === 'Enter')) { modalKey(top.el, e); return; }
+  const top = topModal();
+  // Enter held down from before the dialog opened repeats: it must not press the button that got focus
+  if (top && e.key === 'Enter' && e.repeat && !e.target.closest?.('textarea')) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    return;
+  }
+  if (top && (e.key === 'Escape' || e.key === 'Enter')) { modalKey(top, e); return; }
   if (!top || e.key !== 'Tab') return;
-  const list = focusables(top.el);
+  const list = focusables(top);
   const first = list[0];
   const last = list.at(-1);
   const at = document.activeElement;
   if (!list.length) e.preventDefault();
-  else if (!top.el.contains(at)) { e.preventDefault(); first.focus(); }
+  else if (!top.contains(at)) { e.preventDefault(); first.focus(); }
   else if (e.shiftKey && at === first) { e.preventDefault(); last.focus(); }
   else if (!e.shiftKey && at === last) { e.preventDefault(); first.focus(); }
 });
 
-// checkLabel: also show a checkbox (ticked); OK then resolves { checked } instead of true
+// checkLabel: also show a checkbox (ticked); OK then resolves { checked } instead of true.
+// A newer question replaces one still open, which then resolves as cancelled instead of never
+let answerOpen = null;
 export function confirmBox(text, okText = t('common.ok'), checkLabel = '') {
+  answerOpen?.(false);
   return new Promise((resolve) => {
     $('#confirm-text').textContent = text;
     $('#confirm-ok').textContent = okText;
@@ -90,10 +130,12 @@ export function confirmBox(text, okText = t('common.ok'), checkLabel = '') {
     for (const el of document.querySelectorAll('#toast .toast:not(.error)')) el.remove();   // notices would sit on the panel
     openModal('#mdl-confirm');
     const done = (v) => {
+      answerOpen = null;
       closeModal('#mdl-confirm');
       $('#confirm-ok').onclick = $('#confirm-cancel').onclick = null;
       resolve(v);
     };
+    answerOpen = done;
     $('#confirm-ok').onclick = () => done(checkLabel ? { checked: $('#confirm-check input').checked } : true);
     $('#confirm-cancel').onclick = () => done(false);
   });
@@ -105,6 +147,8 @@ const HELP = {
   no_relay: ['relay', '#set-relay'], relay_unreachable: ['relay', '#set-relay'],
   relay_origin: ['relay', '#set-relay'], bad_relay: ['relay', '#set-relay'], relay_quota: ['relay', '#set-relay'],
   all_failed: ['busy', '#set-patience'], offline: ['network'], dropped: ['network'], storage_full: ['storage'],
+  // A third entry replaces the help.<anchor> line: no browser storage needs a normal window, not freed space
+  db_unavailable: ['storage', null, 'help.dbUnavailable'],
 };
 // A settings field this build does not show (the relay in the server build)
 const shown = (el) => !el.closest('html:not(.local) .local-only, html.local .server-only');
@@ -121,11 +165,11 @@ export function openSettings(field) {
 
 // "What to do" after an error message: one line, a button to the field that fixes it, a link to help.html
 export function helpNode(code) {
-  const [anchor, field] = HELP[code] || [];
+  const [anchor, field, text] = HELP[code] || [];
   if (!anchor) return null;
   const box = document.createElement('span');
   box.className = 'err-help';
-  box.append(t(`help.${anchor}`));
+  box.append(t(text || `help.${anchor}`));
   if (field && shown($(field))) {
     const btn = document.createElement('button');
     btn.type = 'button';
@@ -147,6 +191,29 @@ export function helpNode(code) {
 // Notices stack, newest at the bottom, at most TOAST_MAX; errors and ms=0 notices stay until closed (C09).
 // id: replaces the earlier notice with the same id (progress updates); code: error code that gets help (C10)
 const TOAST_MAX = 4;
+const TOAST_REST_MS = 1500;   // least time left once the pointer or focus moves off a paused notice
+
+// The countdown stops while the pointer or keyboard focus is on a notice, so it can be read and its button pressed
+function holdOnHover(el) {
+  const stop = () => {
+    if (!el.ends) return;   // sticky, or already stopped
+    clearTimeout(el.timer);
+    el.rest = Math.max(TOAST_REST_MS, el.ends - Date.now());
+    el.ends = 0;
+  };
+  const go = (e) => {
+    if (!el.rest || el.contains(e.relatedTarget)) return;
+    if (e.type === 'mouseleave' ? el.contains(document.activeElement) : el.matches(':hover')) return;
+    el.ends = Date.now() + el.rest;
+    el.timer = setTimeout(() => el.remove(), el.rest);
+    el.rest = 0;
+  };
+  el.addEventListener('mouseenter', stop);
+  el.addEventListener('focusin', stop);
+  el.addEventListener('mouseleave', go);
+  el.addEventListener('focusout', go);
+}
+
 export function toast(msg, error = false, ms = 4000, { id = '', code = '' } = {}) {
   const host = $('#toast');
   let el = id && host.querySelector(`.toast[data-id="${id}"]`);
@@ -154,8 +221,10 @@ export function toast(msg, error = false, ms = 4000, { id = '', code = '' } = {}
     el = document.createElement('div');
     el.className = 'toast';
     if (id) el.dataset.id = id;
+    holdOnHover(el);
   }
   clearTimeout(el.timer);
+  el.ends = el.rest = 0;
   const sticky = error || !ms;
   el.classList.toggle('error', error);
   el.classList.toggle('sticky', sticky);
@@ -174,10 +243,14 @@ export function toast(msg, error = false, ms = 4000, { id = '', code = '' } = {}
     x.onclick = () => el.remove();
     el.append(x);
   } else {
+    el.ends = Date.now() + ms;
     el.timer = setTimeout(() => el.remove(), ms);
   }
   host.append(el);
-  while (host.children.length > TOAST_MAX) host.firstElementChild.remove();
+  // Over the limit the oldest passing notice goes first: an error the player has not closed stays
+  while (host.children.length > TOAST_MAX) {
+    ([...host.children].find((x) => x !== el && !x.classList.contains('sticky')) || host.firstElementChild).remove();
+  }
 }
 
 export const toastError = (e) => toast(e.message, true, 0, { code: e.code });
@@ -258,9 +331,28 @@ paintOffline();
 // auto: seconds before the next line plays by itself (0 off); font: s, m or l; contrast: solid boxes
 const DEFAULTS = { speed: 45, bgm: 55, sfx: 70, weather: true, patience: 300, prefer: 'quality', auto: 0, font: 'm', contrast: false };
 const KEY = 'chienzhi.settings';
+// What the settings controls can hold (index.html); anything else falls back to the default
+const RANGES = { speed: [10, 120], bgm: [0, 100], sfx: [0, 100] };
+const CHOICES = { patience: [60, 300, 600, 86400], prefer: ['quality', 'speed'], auto: [0, 1, 2, 3, 5, 8], font: ['s', 'm', 'l'] };
+
+// A hand-edited store or a restored backup (H07) may hold any value: speed 0 would freeze the text, an unknown
+// choice would leave a menu blank. Numbers are clamped, choices and types checked, unknown keys dropped.
+export function sanitizeSettings(raw) {
+  const src = raw && typeof raw === 'object' ? raw : {};
+  const out = { ...DEFAULTS };
+  for (const [k, def] of Object.entries(DEFAULTS)) {
+    const v = src[k];
+    if (RANGES[k]) {
+      if (typeof v === 'number' && Number.isFinite(v)) out[k] = Math.min(RANGES[k][1], Math.max(RANGES[k][0], v));
+    } else if (CHOICES[k]) {
+      if (CHOICES[k].includes(v)) out[k] = v;
+    } else if (typeof v === typeof def) out[k] = v;
+  }
+  return out;
+}
 
 function readSettings() {
-  try { return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch { return { ...DEFAULTS }; }
+  try { return sanitizeSettings(JSON.parse(localStorage.getItem(KEY) || '{}')); } catch { return { ...DEFAULTS }; }
 }
 
 export const settings = readSettings();

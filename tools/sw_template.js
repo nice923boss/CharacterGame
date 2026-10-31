@@ -39,7 +39,8 @@ self.addEventListener('fetch', (event) => {
     const hit = await cache.match(req, { ignoreSearch: url.origin === self.location.origin });
     if (hit) return hit;
     const res = await fetch(req);
-    if (res.ok || res.type === 'opaque') cache.put(req, res.clone()).catch(() => {});
+    // waitUntil keeps the worker alive until the copy is stored, so a file used once is there when offline
+    if (res.ok || res.type === 'opaque') event.waitUntil(cache.put(req, res.clone()).catch(() => {}));
     return res;
   })());
 });

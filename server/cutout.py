@@ -118,8 +118,11 @@ def face_box(rgba: Image.Image) -> tuple[int, int, int, int]:
     """Tall box over the head: top of hair, width of the head row, height = width x TALL (D6t)."""
     a = np.asarray(rgba.getchannel("A")) > 128
     rows = np.flatnonzero(a.sum(1) > 3)
+    if not rows.size:
+        raise ValueError("去背結果是空的，整個角色都被去掉了")
     y0, y1 = rows[0], rows[-1]
-    probe = y0 + int(0.10 * (y1 - y0))
+    # the first solid row at or below the 10% mark: a gap there (a hat brim, floating hair) left no columns
+    probe = rows[np.searchsorted(rows, y0 + int(0.10 * (y1 - y0)))]
     cols = np.flatnonzero(a[probe])
     cx = (cols[0] + cols[-1]) // 2
     size = int(1.35 * (cols[-1] - cols[0]))
@@ -166,5 +169,8 @@ def eye_paste(calm: Image.Image, face_big: Image.Image, face, eyes) -> Image.Ima
 
 
 def padded_bbox(rgba: Image.Image, pad: int = 6) -> tuple[int, int, int, int]:
-    l, t, r, b = rgba.getchannel("A").getbbox()
+    box = rgba.getchannel("A").getbbox()
+    if box is None:     # getbbox gives None for a fully transparent image
+        raise ValueError("去背結果是空的，整個角色都被去掉了")
+    l, t, r, b = box
     return max(0, l - pad), max(0, t - pad), min(rgba.width, r + pad), min(rgba.height, b + pad)

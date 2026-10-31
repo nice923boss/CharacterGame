@@ -21,7 +21,9 @@ function db() {
   if (dbClosed) return Promise.reject({ code: 'db_reload' });
   if (!dbPromise) {
     dbPromise = new Promise((resolve, reject) => {
-      const req = indexedDB.open(DB_NAME, 1);
+      // Private windows and blocked site data: no IndexedDB, or opening it throws or fails
+      let req;
+      try { req = indexedDB.open(DB_NAME, 1); } catch (e) { console.error('IndexedDB open failed', e); reject({ code: 'db_unavailable' }); return; }
       req.onupgradeneeded = () => {
         for (const name of ['games', 'trees', 'files', 'kv']) req.result.createObjectStore(name);
       };
@@ -29,11 +31,13 @@ function db() {
         const d = req.result;
         // A newer version in another tab needs the database: let go of it instead of blocking that tab
         d.onversionchange = () => { d.close(); dbClosed = true; notice('versionchange'); };
+        // Closed by the browser (site data cleared): open it again on the next call
+        d.onclose = () => { dbPromise = null; };
         resolve(d);
       };
-      req.onerror = () => reject(req.error);
+      req.onerror = () => { console.error('IndexedDB open failed', req.error); reject({ code: 'db_unavailable' }); };
       req.onblocked = () => notice('blocked');
-    });
+    }).catch((e) => { dbPromise = null; throw e; });   // a later call tries again
   }
   return dbPromise;
 }
@@ -51,7 +55,8 @@ async function tx(store, mode, fn) {
     const t = d.transaction(store, mode);
     const req = fn(t.objectStore(store));
     t.oncomplete = () => resolve(req?.result);
-    t.onerror = () => reject(t.error);
+    // t.error is still null while a request error bubbles up; the request carries the cause (QuotaExceededError)
+    t.onerror = (ev) => reject(t.error || ev?.target?.error);
     t.onabort = () => reject(t.error || new Error('IndexedDB transaction aborted'));
   });
 }
@@ -176,7 +181,10 @@ export async function restoreGame(gid) {
 
 export async function purgeGame(gid) {
   if (!trash.has(gid)) throw { code: 'game_not_found' };
-  for (const path of [...files.keys()]) if (path.startsWith(`${gid}/`)) await deleteFile(path);
+  // All of the story's files in one transaction instead of one each
+  const paths = [...files.keys()].filter((path) => path.startsWith(`${gid}/`));
+  if (paths.length) await tx('files', 'readwrite', (s) => { for (const path of paths) s.delete(path); });
+  for (const path of paths) { dropUrl(path); files.delete(path); }
   await idbDel('kv', `batch:${gid}`);
   await idbDel('trees', gid);
   await idbDel('games', gid);
@@ -186,7 +194,11 @@ export async function purgeGame(gid) {
 
 export async function purgeExpired() {
   const cutoff = Date.now() - TRASH_DAYS * 864e5;
-  for (const [gid, t] of [...trash]) if (Date.parse(t.deleted_at) < cutoff) await purgeGame(gid);
+  for (const [gid, t] of [...trash]) {
+    if (!(Date.parse(t.deleted_at) < cutoff)) continue;
+    // One story that cannot be purged must not keep the others, or the trash list, from working
+    try { await purgeGame(gid); } catch (e) { console.error('purge failed', gid, e); }
+  }
 }
 
 // An imported copy of a deleted story replaces it: drop the deleted mark without restoring its slots
@@ -204,7 +216,9 @@ export async function addNode(gid, node) {
     if (tree.root !== null) throw new Error('tree already has a root');
     tree.root = nid;
   } else {
-    tree.nodes[full.parent].children.push(nid);
+    const parent = tree.nodes[full.parent];
+    if (!parent) throw { code: 'node_not_found' };
+    parent.children.push(nid);
   }
   tree.nodes[nid] = full;
   tree.next += 1;
@@ -214,8 +228,12 @@ export async function addNode(gid, node) {
 
 export function pathTo(tree, nodeId) {
   const path = [];
+  const seen = new Set();
   while (nodeId) {
     const node = tree.nodes[nodeId];
+    // A damaged tree (missing node or a parent loop) must not hang or crash the page
+    if (!node || seen.has(nodeId)) throw { code: 'node_not_found' };
+    seen.add(nodeId);
     path.push(node);
     nodeId = node.parent;
   }
@@ -287,12 +305,17 @@ export async function thumb(gid, sid) {
 // ---------- slots ----------
 
 export async function loadSlots() {
-  const slots = (await idbGet('kv', 'slots')) || [];
+  const stored = await idbGet('kv', 'slots');
+  const slots = Array.isArray(stored) ? stored : [];   // a damaged record reads as no slots
   return [...slots, ...Array(SLOT_COUNT).fill(null)].slice(0, SLOT_COUNT);
 }
 
+const validSlot = (slot) => Number.isInteger(slot) && slot >= 0 && slot < SLOT_COUNT;
+
 export async function saveSlot(slot, gid, nodeId, label) {
-  if (!(slot >= 0 && slot < SLOT_COUNT)) throw { code: 'save_failed' };
+  if (!validSlot(slot)) throw { code: 'save_failed' };
+  // A slot must not point at a deleted story (it would come back empty)
+  if (!safeId(gid) || trash.has(gid)) throw { code: 'save_failed' };
   askPersist();
   const tree = await loadTree(gid);
   if (!tree.nodes[nodeId]) throw { code: 'save_failed' };
@@ -303,6 +326,7 @@ export async function saveSlot(slot, gid, nodeId, label) {
 }
 
 export async function deleteSlot(slot) {
+  if (!validSlot(slot)) throw { code: 'bad_slot' };
   const slots = await loadSlots();
   slots[slot] = null;
   await idbPut('kv', 'slots', slots);

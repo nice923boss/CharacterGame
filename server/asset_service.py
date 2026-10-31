@@ -10,6 +10,7 @@ Image mode (settings): "all", "basic" (backgrounds and calm sprites, no expressi
 import asyncio
 import contextlib
 import json
+import os
 import pathlib
 import random
 import re
@@ -101,6 +102,21 @@ def flux_scene_prompt(style_en: str, image_prompt: str) -> str:
     for pattern, blank in FLUX_BLANK:
         image_prompt = re.sub(pattern, blank, image_prompt, flags=re.I)
     return f"{BG_STYLE}, {style_en}, {image_prompt}, {FLUX_BG_TAIL}"
+
+
+def _save(img: Image.Image, dest: pathlib.Path) -> None:
+    """Save as PNG beside the final name, then swap it in: an interrupted save must not leave half a picture
+    that _done takes as finished."""
+    tmp = dest.with_name(dest.name + ".tmp")
+    img.save(tmp, format="PNG")
+    os.replace(tmp, dest)
+
+
+def _write_json(path: pathlib.Path, data) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(json.dumps(data), encoding="utf-8")
+    os.replace(tmp, path)
 
 
 @dataclass(order=True)
@@ -299,12 +315,23 @@ class AssetService:
     def _seeds_path(self, gid: str) -> pathlib.Path:
         return self.store.game_dir(gid) / "assets" / "seeds.json"
 
+    def _saved_seeds(self, gid: str) -> dict:
+        """assets/seeds.json; a damaged file counts as no redraws instead of failing every image of the story."""
+        path = self._seeds_path(gid)
+        try:
+            saved = json.loads(path.read_text(encoding="utf-8"))
+        except FileNotFoundError:
+            return {}
+        except (OSError, ValueError) as e:
+            log.warning("seeds file unreadable, ignored: %s (%s)", path, e)
+            return {}
+        return saved if isinstance(saved, dict) else {}
+
     def _seed(self, game: dict, kind: str, target: str) -> int:
         """A redrawn image keeps its new seed in assets/seeds.json; otherwise the seed comes from the game."""
-        path = self._seeds_path(game["id"])
-        saved = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
-        if f"{kind}:{target}" in saved:
-            return saved[f"{kind}:{target}"]
+        saved = self._saved_seeds(game["id"]).get(f"{kind}:{target}")
+        if type(saved) is int:
+            return saved
         if kind == "scene":
             return game["seed"] + sum(map(ord, target))
         return self._char(game, target)["seed"]
@@ -322,10 +349,8 @@ class AssetService:
         if self.running in keys:
             return False
         if new_seed:
-            path = self._seeds_path(gid)
-            saved = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(json.dumps({**saved, f"{kind}:{target}": random.randrange(2**31)}), encoding="utf-8")
+            _write_json(self._seeds_path(gid),
+                        {**self._saved_seeds(gid), f"{kind}:{target}": random.randrange(2**31)})
         for p in files:
             p.unlink(missing_ok=True)
         for key in keys:
@@ -403,8 +428,8 @@ class AssetService:
         full = cutout.cutout_full(base, key=engine == "nvidia")
         box = cutout.padded_bbox(full)
         meta = {"crop": list(box), "face": list(cutout.face_box(full)), "engine": engine}
-        self._meta_path(gid, cid).write_text(json.dumps(meta), encoding="utf-8")
-        full.crop(box).save(self.sprite_path(gid, cid, "calm"))
+        _write_json(self._meta_path(gid, cid), meta)
+        _save(full.crop(box), self.sprite_path(gid, cid, "calm"))
 
     async def _expression(self, game: dict, cid: str, expr: str) -> None:
         gid = game["id"]
@@ -458,21 +483,21 @@ class AssetService:
         meta = json.loads(self._meta_path(gid, cid).read_text(encoding="utf-8"))
         full = cutout.cutout_full(Image.open(self.sprite_path(gid, cid, expr, raw=True)).convert("RGB"),
                                   key=meta.get("engine") == "nvidia")
-        full.crop(tuple(meta["crop"])).save(self.sprite_path(gid, cid, expr))
+        _save(full.crop(tuple(meta["crop"])), self.sprite_path(gid, cid, expr))
 
     def _cut_eyes(self, gid: str, cid: str, expr: str, donor_path: pathlib.Path, face, eyes) -> None:
         meta = json.loads(self._meta_path(gid, cid).read_text(encoding="utf-8"))
         base = Image.open(self.sprite_path(gid, cid, "calm", raw=True)).convert("RGB")
         merged = cutout.eye_paste(base, Image.open(donor_path).convert("RGB"), face, eyes)
-        merged.save(self.sprite_path(gid, cid, expr, raw=True))
-        cutout.cutout_full(merged, key=meta.get("engine") == "nvidia").crop(tuple(meta["crop"])).save(
-            self.sprite_path(gid, cid, expr))
+        _save(merged, self.sprite_path(gid, cid, expr, raw=True))
+        _save(cutout.cutout_full(merged, key=meta.get("engine") == "nvidia").crop(tuple(meta["crop"])),
+              self.sprite_path(gid, cid, expr))
 
     def _cut_expression(self, gid: str, cid: str, expr: str, donor_path: pathlib.Path) -> None:
         meta = json.loads(self._meta_path(gid, cid).read_text(encoding="utf-8"))
         base = Image.open(self.sprite_path(gid, cid, "calm", raw=True)).convert("RGB")
         donor = Image.open(donor_path).convert("RGB")
         merged = cutout.region_paste(base, donor, tuple(meta["face"]))
-        merged.save(self.sprite_path(gid, cid, expr, raw=True))
-        cutout.cutout_full(merged, key=meta.get("engine") == "nvidia").crop(tuple(meta["crop"])).save(
-            self.sprite_path(gid, cid, expr))
+        _save(merged, self.sprite_path(gid, cid, expr, raw=True))
+        _save(cutout.cutout_full(merged, key=meta.get("engine") == "nvidia").crop(tuple(meta["crop"])),
+              self.sprite_path(gid, cid, expr))

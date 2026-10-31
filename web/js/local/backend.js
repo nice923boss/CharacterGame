@@ -9,7 +9,7 @@ import * as llm from './llm.js';
 import { hint, probe, relayState, remember, verdict } from './check.js';
 import { analyzeNovel } from './novel.js';
 import { loadOpenCC } from './story.js';
-import { diag, watchErrors } from './diag.js';
+import { diag, scrubKeys, watchErrors } from './diag.js';
 
 const KEY = 'cg-nvidia-key';
 const RELAY = 'cg-relay';
@@ -17,6 +17,9 @@ const MODE = 'cg-image-mode';
 const KEY_AT = 'cg-nvidia-key-at';
 const UI = 'chienzhi.settings';
 const LANG = 'chienzhi.lang';
+const UI_MAX_KEYS = 50;        // limits on page settings an imported folder may write
+const UI_KEY_CHARS = 40;
+const UI_VALUE_CHARS = 200;
 
 function lsGet(k) { try { return localStorage.getItem(k) || ''; } catch { return ''; } }
 function lsSet(k, v) {
@@ -29,6 +32,7 @@ export const conn = () => ({ key: lsGet(KEY), relay: lsGet(RELAY) || DATA.relay 
 // ---------- start-up and the bundled demo ----------
 
 async function importDemo(force) {
+  if (!force && await store.kvGet('demoVersion')) return 0;   // imported before: never overwrite player progress
   let index;
   try {
     index = await (await fetch('demo/index.json', { cache: 'no-cache' })).json();
@@ -36,10 +40,24 @@ async function importDemo(force) {
     console.error('demo index unavailable', e);
     return 0;
   }
-  if (!force && await store.kvGet('demoVersion')) return 0;   // imported before: never overwrite player progress
+  const getJson = async (url) => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status} ${url}`);
+    return res.json();
+  };
+  let missing = 0;
   for (const gid of index.games) {
-    const game = await (await fetch(`demo/${gid}/game.json`)).json();
-    const tree = await (await fetch(`demo/${gid}/tree.json`)).json();
+    // After a partial first import, stories that already came in keep the player's progress
+    if (!force && (store.isTrashed(gid) || await store.loadGame(gid).then(() => true, () => false))) continue;
+    let game; let tree;
+    // One demo story that cannot be fetched (offline, a stale cache) must not stop the backend from starting
+    try {
+      [game, tree] = await Promise.all([getJson(`demo/${gid}/game.json`), getJson(`demo/${gid}/tree.json`)]);
+    } catch (e) {
+      console.error('demo story unavailable', gid, e);
+      missing += 1;
+      continue;
+    }
     for (const path of store.filePaths()) if (path.startsWith(`${gid}/`)) await store.deleteFile(path);
     for (const rel of index.files) {
       if (rel.startsWith(`${gid}/`) && rel !== `${gid}/game.json` && rel !== `${gid}/tree.json`) {
@@ -51,8 +69,9 @@ async function importDemo(force) {
     await store.untrash(gid);
     images.forget(gid);
   }
-  await store.kvPut('demoVersion', index.version);
-  return index.games.length;
+  // Marked done only when every story came in, so a missing one is fetched again on the next load
+  if (!missing) await store.kvPut('demoVersion', index.version);
+  return index.games.length - missing;
 }
 
 watchErrors();
@@ -84,13 +103,24 @@ function validKey(key) {
 }
 
 function validRelay(url) {
-  const u = typeof url === 'string' ? url.trim().replace(/\/+$/, '') : '';
+  // A pasted ".../v1" would double up with the "/v1/chat/completions" the requests add
+  const u = typeof url === 'string' ? url.trim().replace(/\/+$/, '').replace(/\/v1$/i, '') : '';
   if (!u) return '';
   let parsed;
   try { parsed = new URL(u); } catch { throw { code: 'bad_relay' }; }
   const local = ['127.0.0.1', 'localhost'].includes(parsed.hostname);
   if (parsed.protocol !== 'https:' && !(local && parsed.protocol === 'http:')) throw { code: 'bad_relay' };
+  // Paths are appended to it: a user name, password, query or fragment would end up in every request URL
+  if (parsed.username || parsed.password || parsed.search || parsed.hash || u.includes('?') || u.includes('#')) {
+    throw { code: 'bad_relay' };
+  }
   return u;
+}
+
+// Slot numbers in URLs are plain digits ("1e0", "0x1" or " 1" are not slot 1)
+function slotNumber(text) {
+  if (!/^\d{1,3}$/.test(String(text))) throw { code: 'bad_slot' };
+  return Number(text);
 }
 
 // What the page may know about the saved key: a masked hint, the saved date and the last test result
@@ -107,7 +137,8 @@ const health = () => ({
 
 // Error codes go to the diagnostic log (J01); only all_failed keeps its params (model and reason, no text)
 const failure = (e) => ({
-  code: e?.code || 'crash', ...(e?.code ? {} : { message: String(e?.message || e).slice(0, 200) }),
+  code: typeof e?.code === 'string' ? e.code : 'crash',
+  ...(typeof e?.code === 'string' ? {} : { message: String(e?.message || e).slice(0, 200) }),
   ...(e?.code === 'all_failed' ? { errors: e.params?.errors } : {}),
 });
 
@@ -186,16 +217,16 @@ async function route(method, url, body) {
   if (a === 'autosaves') return Promise.all((await store.loadAutosaves()).map(withThumb));
   if (a === 'slots' && !gid) return slotsOut(await store.loadSlots());
   if (a === 'slots' && method === 'POST') {
-    return slotsOut(await store.saveSlot(Number(gid), body?.game_id, body?.node_id, String(body?.label ?? '').slice(0, 80)));
+    return slotsOut(await store.saveSlot(slotNumber(gid), body?.game_id, body?.node_id, String(body?.label ?? '').slice(0, 80)));
   }
-  if (a === 'slots' && method === 'DELETE') return slotsOut(await store.deleteSlot(Number(gid)));
+  if (a === 'slots' && method === 'DELETE') return slotsOut(await store.deleteSlot(slotNumber(gid)));
   if (a === 'games' && !gid) return store.listGames();
   if (a === 'trash' && !gid) return store.listTrash();
   if (a === 'trash' && method === 'POST' && sub === 'restore') { await store.restoreGame(gid); return { ok: true }; }
   if (a === 'trash' && method === 'DELETE') {
     images.forget(gid);
     try { await store.purgeGame(gid); } catch (e) {
-      if (e?.code) throw e;
+      if (typeof e?.code === 'string') throw e;
       console.error('purge game failed', e);
       throw { code: 'delete_failed' };
     }
@@ -207,7 +238,7 @@ async function route(method, url, body) {
     await batch.stop(gid);
     images.forget(gid);
     try { await store.deleteGame(gid); } catch (e) {
-      if (e?.code) throw e;
+      if (typeof e?.code === 'string') throw e;
       console.error('delete game failed', e);
       throw { code: 'delete_failed' };
     }
@@ -311,7 +342,7 @@ export async function diagReport() {
   };
   delete report.settings.relay;   // shown above as its origin only
   const text = JSON.stringify(report, null, 1);
-  return key ? text.split(key).join('***') : text;
+  return scrubKeys(key ? text.split(key).join('***') : text);
 }
 
 // ---------- settings carried in the progress zip (H07); the key never leaves this browser ----------
@@ -327,7 +358,11 @@ export function applyBrowserSettings(s) {
   if (!s || typeof s !== 'object') return null;
   const applied = {};
   if (s.ui && typeof s.ui === 'object' && !Array.isArray(s.ui)) {
-    const ui = Object.fromEntries(Object.entries(s.ui).filter(([, v]) => ['number', 'boolean', 'string'].includes(typeof v)));
+    // Small values only: an imported folder must not fill localStorage
+    const ui = Object.fromEntries(Object.entries(s.ui)
+      .filter(([k, v]) => k.length <= UI_KEY_CHARS && (['number', 'boolean'].includes(typeof v) ||
+        (typeof v === 'string' && v.length <= UI_VALUE_CHARS)))
+      .slice(0, UI_MAX_KEYS));
     let current = {};
     try { current = JSON.parse(lsGet(UI) || '{}'); } catch { /* replaced below */ }
     lsSet(UI, JSON.stringify({ ...current, ...ui }));

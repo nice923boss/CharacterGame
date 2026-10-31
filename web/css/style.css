@@ -392,3 +392,51 @@ html.hc #free-form input { border: 0.3cqh solid #fff; background: #000; color: #
   .settings-panel .hint.field { margin-left: 0; }
   #tree-tip { max-width: 80cqw; }
 }
+
+/* -- phase10:game -- */
+/* Containers that take focus as a starting point (G07, G08): a light ring for the keyboard only */
+#dialog:focus, #options:focus, #ending:focus { outline: none; }
+#dialog:focus-visible, #options:focus-visible, #ending:focus-visible { outline: 0.2cqh dashed var(--gold-dim); outline-offset: 0.4cqh; }
+/* Tree nodes reached with Tab (G27, G28) */
+#tree-view .node:focus { outline: none; }
+#tree-view .node:focus-visible circle { stroke: var(--accent); stroke-width: 4; }
+/* Log search and copy (G37, G38) */
+.log-tools { display: flex; align-items: center; gap: 1.2cqh; margin-bottom: 1cqh; }
+.log-tools label { flex: 1; margin: 0; }
+/* Reduced motion (G26): the scene card still shows and hides, only without the fade */
+@media (prefers-reduced-motion: reduce) {
+  #dialog-next, #dialog-wait i, #stage-loading .batch-bar.indet i, #scene-card, #asset-chip::before { animation: none; }
+}
+
+/* -- phase10:menus -- */
+/* Story list on portrait phones (M40): the row grows to fit, the thumbnail shrinks, the buttons wrap to a line below */
+@media (max-aspect-ratio: 3/4) {
+  .story-row { flex: 0 0 auto; flex-wrap: wrap; row-gap: 1cqh; padding: 0 1.4cqh 1.2cqh 0; }
+  .story-row .thumb { flex-basis: 12cqh; min-height: 9cqh; }
+  .story-row .meta { flex: 1 1 calc(100% - 16cqh); min-width: 0; padding-top: 1cqh; }
+  .story-row.trashed { padding-left: 1.4cqh; }
+  .story-row.trashed .meta { flex-basis: 100%; }
+  .story-row > .btn { flex: 1 1 auto; }
+  .story-row:not(.trashed) > .btn:first-of-type { margin-left: 1.4cqh; }
+}
+/* Reduced motion: the "loading picture" text on story and slot thumbnails stays still, fully visible */
+@media (prefers-reduced-motion: reduce) {
+  .thumb[data-thumb]::after { animation: none; }
+}
+
+/* -- phase10:platform -- */
+/* Native controls, scrollbars and autofill follow the dark theme (P40) */
+:root { color-scheme: dark; }
+/* No pull-to-refresh or scroll chaining out of a list on phones (P37) */
+html, body { overscroll-behavior: none; }
+/* iOS must not enlarge text in landscape: the layout is sized by the stage, not the font (P38) */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+/* Taps on controls act at once (no double-tap zoom wait) and without the grey flash (P39) */
+.btn, button, a, summary { touch-action: manipulation; }
+#stage { -webkit-tap-highlight-color: transparent; }
+/* Shown only when JavaScript is off; px units because the stage container does not exist yet (P32) */
+.noscript {
+  position: fixed; inset: 0 0 auto; z-index: 100; margin: 0; padding: 16px 20px;
+  background: var(--panel-solid); border-bottom: 1px solid var(--gold-dim); color: var(--ink);
+  font: 16px/1.6 var(--sans); text-align: center;
+}

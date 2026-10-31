@@ -63,7 +63,8 @@ def retry_after(value: str | None) -> float | None:
     if not value:
         return None
     try:
-        return max(float(value), 0.0)
+        seconds = float(value)
+        return None if math.isnan(seconds) else max(seconds, 0.0)   # NaN would crash math.ceil in _wait
     except ValueError:
         pass
     try:
@@ -361,18 +362,24 @@ class LLMClient:
         raw_non_sse: list[str] = []
         first_s = 0.0
         client = self._http()
-        req = client.build_request("POST", f"{cand.base_url}/chat/completions", json=body, headers=headers,
-                                   timeout=timeout)
+        try:
+            req = client.build_request("POST", f"{cand.base_url}/chat/completions", json=body, headers=headers,
+                                       timeout=timeout)
+        except UnicodeEncodeError:   # a key pasted with a full-width or zero-width character
+            raise AttemptFailure("fatal", "API key has non-ASCII characters")
         try:
             resp = await asyncio.wait_for(client.send(req, stream=True), config.FIRST_DATA_TIMEOUT_S)
         except asyncio.TimeoutError:
             raise AttemptFailure("timeout", f"no headers in {config.FIRST_DATA_TIMEOUT_S}s")
-        except (httpx.ConnectError, httpx.ConnectTimeout, httpx.RemoteProtocolError, httpx.ReadError) as e:
+        except httpx.TransportError as e:
             raise AttemptFailure("connect", f"{type(e).__name__}: {e}")
         try:
             if resp.status_code != 200:
                 status = resp.status_code
-                text = (await asyncio.wait_for(resp.aread(), 15)).decode("utf-8", "replace")[:300]
+                try:
+                    text = (await asyncio.wait_for(resp.aread(), 15)).decode("utf-8", "replace")[:300]
+                except (asyncio.TimeoutError, httpx.TransportError, httpx.DecodingError):
+                    text = ""   # the status alone still decides retry or not
                 if status == 410 or (status == 404 and MODEL_GONE.search(text)):
                     log.warning("llm %s: model not found or retired, check config.CANDIDATES", cand.model)
                     raise AttemptFailure("gone", f"HTTP {status}: {text}", status=status)
@@ -393,7 +400,7 @@ class LLMClient:
                 except asyncio.TimeoutError:
                     what = "idle" if diag["data_lines"] else "first data"
                     raise AttemptFailure("timeout", f"{what} watchdog after {wait:.0f}s", bool(filt.sent))
-                except (httpx.ReadError, httpx.RemoteProtocolError) as e:
+                except (httpx.TransportError, httpx.DecodingError) as e:
                     raise AttemptFailure("truncated", f"{type(e).__name__}: {e}", bool(filt.sent))
                 if not line.startswith("data:"):
                     if line.strip() and len(raw_non_sse) < 50:
@@ -407,6 +414,8 @@ class LLMClient:
                     chunk = json.loads(payload)
                 except json.JSONDecodeError:
                     continue
+                if not isinstance(chunk, dict):   # a stray list or string between the real chunks
+                    continue
                 if not diag["data_lines"]:
                     first_s = self._clock() - t0
                 diag["data_lines"] += 1
@@ -416,10 +425,13 @@ class LLMClient:
                                          bool(filt.sent), status=err[1])
                 if chunk.get("usage"):
                     diag["usage"] = chunk["usage"]
-                for ch in chunk.get("choices") or []:
-                    delta = ch.get("delta") or {}
+                choices = chunk.get("choices")
+                for ch in choices if isinstance(choices, list) else []:
+                    if not isinstance(ch, dict):
+                        continue
+                    delta = ch.get("delta") if isinstance(ch.get("delta"), dict) else {}
                     diag["delta_keys"].update(k for k, v in delta.items() if v)
-                    if delta.get("content"):
+                    if isinstance(delta.get("content"), str) and delta["content"]:
                         out = filt.feed(delta["content"])
                         if out:
                             await emit({"type": "delta", "text": out})

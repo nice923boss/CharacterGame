@@ -5,6 +5,7 @@ cfg 1.0 means there is no negative prompt, so every "no text" rule lives in the 
 import asyncio
 import copy
 import json
+import os
 import pathlib
 import shutil
 import time
@@ -55,14 +56,17 @@ async def _run(graph: dict, dest: pathlib.Path) -> float:
             raise ComfyError(f"連不上 ComfyUI（{type(e).__name__}）") from e
         if r.status_code != 200:
             raise ComfyError(f"ComfyUI 拒絕工作：HTTP {r.status_code} {r.text[:300]}")
-        pid = r.json()["prompt_id"]
+        try:
+            pid = r.json()["prompt_id"]
+        except (ValueError, KeyError, TypeError) as e:
+            raise ComfyError(f"ComfyUI 回應看不懂：{r.text[:200]}") from e
         while time.monotonic() - t0 < JOB_TIMEOUT_S:
             await asyncio.sleep(1)
             try:
                 h = (await c.get(f"{config.COMFY_URL}/history/{pid}")).json().get(pid)
-            except httpx.HTTPError:
+            except (httpx.HTTPError, ValueError, AttributeError):   # a busy or restarting server: poll again
                 continue
-            if not h:
+            if not isinstance(h, dict) or not h:
                 continue
             status = h.get("status", {})
             if status.get("status_str") == "error":
@@ -71,7 +75,9 @@ async def _run(graph: dict, dest: pathlib.Path) -> float:
                 for img in out.get("images", []):
                     src = config.COMFY_OUTPUT / img.get("subfolder", "") / img["filename"]
                     dest.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copy(src, dest)
+                    tmp = dest.with_name(dest.name + ".tmp")
+                    shutil.copyfile(src, tmp)
+                    os.replace(tmp, dest)   # an interrupted copy must not leave half a picture that counts as drawn
                     return time.monotonic() - t0
     raise ComfyError(f"ComfyUI 工作 {JOB_TIMEOUT_S} 秒未完成")
 
@@ -91,7 +97,10 @@ async def _upload(path: pathlib.Path) -> str:
                          data={"overwrite": "true"})
     if r.status_code != 200:
         raise ComfyError(f"上傳圖片到 ComfyUI 失敗：HTTP {r.status_code}")
-    return r.json()["name"]
+    try:
+        return r.json()["name"]
+    except (ValueError, KeyError, TypeError) as e:
+        raise ComfyError(f"ComfyUI 上傳回應看不懂：{r.text[:200]}") from e
 
 
 async def img2img(prompt: str, src: pathlib.Path, seed: int, denoise: float, dest: pathlib.Path) -> float:

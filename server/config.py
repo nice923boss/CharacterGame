@@ -1,7 +1,9 @@
 """Paths, secrets and tuning constants. Secrets are read here only and never leave the backend."""
 import logging
 import logging.handlers
+import os
 import pathlib
+import re
 from dataclasses import dataclass, field
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -10,27 +12,33 @@ SAVES = ROOT / "saves"
 LOGS = ROOT / "logs"
 
 
-def _read_env() -> dict:
+def _read_env(path: pathlib.Path = ROOT / ".env") -> dict:
     out = {}
-    path = ROOT / ".env"
     if path.exists():
-        for line in path.read_text(encoding="utf-8").splitlines():
+        # utf-8-sig: Notepad may save a BOM, which would otherwise stick to the first name
+        for line in path.read_text(encoding="utf-8-sig").splitlines():
             if "=" in line and not line.lstrip().startswith("#"):
                 k, v = line.split("=", 1)
-                out[k.strip()] = v.strip()
+                v = v.strip()
+                if len(v) >= 2 and v[0] == v[-1] and v[0] in "\"'":
+                    v = v[1:-1]
+                out[k.strip()] = v
     return out
 
 
 ENV = _read_env()
 SECRETS = [v for k, v in ENV.items() if k.endswith("_API_KEY") and v]
+NV_KEY_RE = re.compile(r"nvapi-[A-Za-z0-9_-]{8,}")
 
 
 def set_env(name: str, value: str, path: pathlib.Path = ROOT / ".env", secret: bool = True) -> None:
     """Save one secret typed in the settings page: replace its .env line (or append one), keep every other line,
     and use it from now on without a restart. secret=False for plain values such as the key's saved date."""
-    lines = path.read_text(encoding="utf-8").splitlines() if path.exists() else []
+    lines = path.read_text(encoding="utf-8-sig").splitlines() if path.exists() else []
     rest = [ln for ln in lines if ln.split("=", 1)[0].strip() != name]
-    path.write_bytes(("\n".join(rest + [f"{name}={value}"]) + "\n").encode("utf-8"))
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_bytes(("\n".join(rest + [f"{name}={value}"]) + "\n").encode("utf-8"))
+    os.replace(tmp, path)   # a crash mid-write must not leave half a .env behind
     ENV[name] = value
     if secret and value not in SECRETS:
         SECRETS.append(value)
@@ -40,7 +48,8 @@ def mask(text: str) -> str:
     """Remove every known secret from a string before it reaches a log, an error or the browser."""
     for s in SECRETS:
         text = text.replace(s, "***")
-    return text
+    # also any NVIDIA-looking key that is not the saved one (an old or mistyped key quoted back by an error)
+    return NV_KEY_RE.sub("***", text)
 
 
 @dataclass(frozen=True)

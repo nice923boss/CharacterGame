@@ -1,7 +1,7 @@
 // Browser story-text client (web/js/local/llm.js): retries, Retry-After, model switch, watchdogs, relay errors
 import assert from 'node:assert/strict';
 import { beforeEach, test } from 'node:test';
-import { calls, hang, http, load, offline, serve, sse, unused } from './harness.mjs';
+import { calls, clock, hang, http, load, offline, serve, sse, unused } from './harness.mjs';
 
 const llm = await load('local/llm.js');
 const { DATA } = await load('local/data.js');
@@ -144,14 +144,13 @@ test('an unreachable relay is tried again, then reported without switching model
   assert.deepEqual(attempts, ['network 1/3', 'network 2/3', 'network 3/3']);
 });
 
-test('every model busy ends in all_failed with the last reasons', async () => {
+test('every model busy ends in all_failed with the last reasons, each listed once', async () => {
   const tries = 1 + L.PRIMARY_RETRY_S.length + 1 + L.TRANSIENT_BACKOFF_S.length;
   serve(...Array.from({ length: tries }, () => http(500)));
   await assert.rejects(run(), (e) => {
     assert.equal(e.code, 'all_failed');
     assert.deepEqual(e.params.errors, [
-      { model: 'lightning', reason: 'transient' }, { model: 'lightning', reason: 'transient' },
-      { model: 'lightning', reason: 'transient' }]);
+      { model: 'ultra', reason: 'transient' }, { model: 'lightning', reason: 'transient' }]);
     return true;
   });
   assert.equal(calls.length, tries);
@@ -167,4 +166,31 @@ test('patience keeps the last model trying after the backoff table', async () =>
   assert.equal(calls.length, quick + 4);
   const [lo, hi] = jitterRange(L.PATIENCE_STEP_S);
   assert.ok(gap(quick + 2) >= lo && gap(quick + 2) <= hi, `waited ${gap(quick + 2)} s`);
+});
+
+test('a request record of the wrong shape starts over instead of breaking every turn', async () => {
+  for (const broken of ['{"rpm":1}', '{"cooldown":[],"streak":null,"history":"x","rpm":["a",5]}', '[1,2]', 'null']) {
+    localStorage.setItem('cg-llm-state', broken);
+    serve(sse(TEXT));
+    const { res } = await run();
+    assert.equal(res.content, TEXT, broken);
+    assert.equal(calls.length, 1, broken);
+  }
+});
+
+test('a 200 answer without a body is retried like a cut-off answer', async () => {
+  serve(() => new Response(null, { status: 200 }), sse(TEXT));
+  const { res, events } = await run();
+  assert.equal(res.content, TEXT);
+  assert.equal(events.find((e) => e.state === 'retry').reason, 'truncated');
+  assert.equal(calls.length, 2);
+});
+
+test('cancelling while an answer comes back ends the turn at once, not after the retry wait', async () => {
+  const ctrl = new AbortController();
+  serve((url, opts) => { ctrl.abort(); return http(503)(url, opts); });
+  const before = clock();
+  await assert.rejects(llm.stream(MESSAGES, () => {}, 0.8, CONN, ctrl.signal), (e) => e.code === 'cancelled');
+  assert.equal(calls.length, 1);
+  assert.equal(clock(), before);
 });

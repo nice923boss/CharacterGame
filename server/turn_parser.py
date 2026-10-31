@@ -139,21 +139,36 @@ class LineStream:
         return []
 
 
+def _loose(text: str) -> str:
+    """Drop the // comments and trailing commas models put in JSON."""
+    text = re.sub(r"(?m)//[^\n\"]*$", "", text)
+    return re.sub(r",\s*([}\]])", r"\1", text)
+
+
 def last_json(text: str) -> dict | None:
     """Last parsable JSON object: fenced blocks first (from the end), then the last bare {...}."""
-    candidates = re.findall(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.S)[::-1]
+    candidates = re.findall(r"```(?:json)?\s*(\{.*?\})\s*```", text, re.S | re.I)[::-1]
     if "{" in text:
         candidates.append(text[text.find("{"): text.rfind("}") + 1])
     for c in candidates:
-        c = re.sub(r"(?m)//[^\n\"]*$", "", c)
-        c = re.sub(r",\s*([}\]])", r"\1", c)
         try:
-            d = json.loads(c)
+            d = json.loads(_loose(c))
         except json.JSONDecodeError:
             continue
         if isinstance(d, dict):
             return d
-    return None
+    # a brace in the dialogue breaks the first-to-last span: decode each top-level {...} on its own
+    text, found, dec = _loose(text), None, json.JSONDecoder()
+    i = text.find("{")
+    while i != -1:
+        try:
+            d, end = dec.raw_decode(text, i)
+        except json.JSONDecodeError:
+            i = text.find("{", i + 1)
+            continue
+        found = d if isinstance(d, dict) else found
+        i = text.find("{", end)
+    return found
 
 
 def slug(text: str) -> str:
@@ -176,13 +191,17 @@ def mostly_ascii(text: str) -> bool:
 
 
 def _str_list(v) -> list[str]:
-    return [str(x).strip() for x in v if str(x).strip()] if isinstance(v, list) else []
+    """Strings of a list: null entries are dropped (not "None"), an object entry gives its text or label."""
+    if not isinstance(v, list):
+        return []
+    v = [(x.get("text") or x.get("label") or x.get("option")) if isinstance(x, dict) else x for x in v]
+    return [str(x).strip() for x in v if isinstance(x, (str, int, float)) and str(x).strip()]
 
 
 def _ending(v, cast: Cast) -> dict | None:
     """{"type": "good"|"bad", "title"} or None for anything else."""
     labels = ENDING_TYPES[cast.lang]
-    if not isinstance(v, dict) or v.get("type") not in labels:
+    if not isinstance(v, dict) or not isinstance(v.get("type"), str) or v.get("type") not in labels:
         return None
     title = clip(EMPH_RE.sub(r"\1", cast.conv(str(v.get("title") or "").strip())), MAX_ENDING_TITLE[cast.lang])
     return {"type": v["type"], "title": title or labels[v["type"]]}
@@ -210,9 +229,10 @@ def repair(d: dict | None, cast: Cast, known_scenes: dict, current: dict,
     sc = d.get("scene") if isinstance(d.get("scene"), dict) else {}
     scene = None
     if scene_change:
-        sid = slug(sc.get("id", ""))
-        name = conv(str(sc.get("name", "")).strip())
-        prompt = str(sc.get("image_prompt", "")).strip()
+        # "or": a null field must not become "none"/"None" (which even passes as an English prompt)
+        sid = slug(sc.get("id") or "")
+        name = conv(str(sc.get("name") or "").strip())
+        prompt = str(sc.get("image_prompt") or "").strip()
         by_name = next((k for k, v in known_scenes.items() if name and v.get("name") == name), None)
         if sid in known_scenes or by_name:
             sid = sid if sid in known_scenes else by_name
@@ -263,7 +283,7 @@ def repair(d: dict | None, cast: Cast, known_scenes: dict, current: dict,
             kind, name, _ = cast.resolve(str(k))
             try:
                 n = max(-3, min(3, int(v)))
-            except (TypeError, ValueError):
+            except (TypeError, ValueError, OverflowError):   # OverflowError: Infinity
                 continue
             if kind == "character" and n:
                 aff[name] = n

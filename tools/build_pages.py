@@ -12,6 +12,7 @@
 
 Run from the project root: python tools/build_pages.py
 """
+import collections
 import hashlib
 import json
 import pathlib
@@ -22,7 +23,8 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from server import asset_service, config, novel_service, nvidia_image, prompts, turn_parser, turn_service  # noqa: E402
+from server import (asset_service, config, cutout, novel_service, nvidia_image, prompts, turn_parser,  # noqa: E402
+                    turn_service)
 
 OUT = ROOT / "dist" / "pages"
 DEMO_GAMES = [config.DEMO_GAME]
@@ -30,9 +32,14 @@ SKIP_ASSET = re.compile(r"\.(raw|donor|face|eyes)\.|batch\.json$")
 CDN = ["https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js"]
 # Public CORS relay: the Cloudflare Worker in relay/worker.js on the owner's account (holds no key of its own)
 RELAY = "https://chienzhi-relay.cattravelworld.com"
-# Hosted models only (same ids and order as config.CANDIDATES without the local endpoint)
-CANDIDATES = [{"label": "ultra", "provider": "nvidia", "model": "nvidia/nemotron-3-ultra-550b-a55b"},
-              {"label": "lightning", "provider": "nvidia", "model": "nvidia/nemotron-3.5-lightning-30b-a3b"}]
+# Hosted models only: config.CANDIDATES without the local endpoint, same ids and order
+CANDIDATES = [{"label": c.label, "provider": c.provider, "model": c.model}
+              for c in config.CANDIDATES if c.provider == "nvidia"]
+# .env names whose values must never reach the output
+SECRET_NAME = re.compile(r"(KEY|TOKEN|SECRET|PASSWORD)$|^LOCAL_LLM")
+# An NVIDIA key that is not in .env (pasted into a save or a page) is caught by its shape
+NVIDIA_KEY = re.compile(rb"nvapi-[A-Za-z0-9_-]{20,}")
+CHARSET = '<meta charset="utf-8">'
 
 
 def data_module() -> str:
@@ -66,7 +73,7 @@ def data_module() -> str:
         "art": {**{k: getattr(a, k) for k in ("BG_W", "BG_H", "SP_W", "SP_H", "STYLE", "FRAMING", "EXPR_PROMPT",
                                               "BG_STYLE", "FLUX_BLANK", "FLUX_BG_TAIL", "AUTO_RETRY_S",
                                               "AUTO_RETRY_ROUNDS", "IMAGE_MODES")},
-                "TALL": 1.35, "SOFTEN": nvidia_image.SOFTEN, "FLUX_PATH": nvidia_image.URL.split(".com", 1)[1],
+                "TALL": cutout.TALL, "SOFTEN": nvidia_image.SOFTEN, "FLUX_PATH": nvidia_image.URL.split(".com", 1)[1],
                 "SIZE": nvidia_image.SIZE, "STEPS": nvidia_image.STEPS, "TIMEOUT_S": nvidia_image.TIMEOUT_S,
                 "RETRY_STATUS": sorted(nvidia_image.RETRY_STATUS), "RETRY_BACKOFF_S": nvidia_image.RETRY_BACKOFF_S},
     }
@@ -79,6 +86,10 @@ def copy_demo() -> list[str]:
     files = []
     for gid in DEMO_GAMES:
         src = ROOT / "saves" / "games" / gid
+        # Without these the title screen offers a demo that cannot open
+        missing = [n for n in ("game.json", "tree.json") if not (src / n).is_file()]
+        if missing:
+            raise SystemExit(f"demo story {gid} has no {', '.join(missing)} in {src}; build stopped")
         for f in sorted(src.rglob("*")):
             rel = f.relative_to(src).as_posix()
             if f.is_dir() or SKIP_ASSET.search(rel):
@@ -130,15 +141,16 @@ def stamp_modules(version: str) -> None:
     index = OUT / "index.html"
     html = index.read_text(encoding="utf-8")
     for ref in ('src="js/main.js"', 'href="css/style.css"'):
-        assert html.count(ref) == 1, ref
+        if html.count(ref) != 1:
+            raise SystemExit(f"index.html must contain {ref} exactly once to stamp the version; build stopped")
         html = html.replace(ref, f'{ref[:-1]}?v={version}"')
     index.write_text(html, encoding="utf-8")
 
 
 def secret_scan() -> None:
-    """Every .env value that could identify a private endpoint or key must be absent from the output."""
-    needles = [v for k, v in config.ENV.items() if v and len(v) >= 6 and
-               (k.endswith("_API_KEY") or k.startswith("LOCAL_LLM"))]
+    """Every .env value that could identify a private endpoint or key must be absent from the output.
+    A failed scan removes the output, so a leaking build can never be copied to gh-pages by mistake."""
+    needles = [v for k, v in config.ENV.items() if v and len(v) >= 6 and SECRET_NAME.search(k)]
     for k, v in config.ENV.items():
         if k == "LOCAL_LLM_BASE_URL" and v:
             host = re.sub(r"^https?://", "", v).split("/")[0].split(":")[0]
@@ -146,9 +158,27 @@ def secret_scan() -> None:
     for f in OUT.rglob("*"):
         if f.is_file():
             data = f.read_bytes()
-            for n in needles:
-                if n.encode() in data:
-                    raise SystemExit(f"secret found in {f.relative_to(OUT)}; build stopped")
+            if any(n.encode() in data for n in needles) or NVIDIA_KEY.search(data):
+                rel = f.relative_to(OUT)
+                shutil.rmtree(OUT, ignore_errors=True)
+                raise SystemExit(f"secret found in {rel}; build stopped and {OUT} removed")
+
+
+def mark_local(html: str) -> str:
+    """The Pages build runs the browser backend: <meta name="cg-local"> right after the charset line.
+    Without it the page would look for a game server that does not exist, so a changed charset line stops the build."""
+    if html.count(CHARSET) != 1:
+        raise SystemExit(f"web/index.html must contain {CHARSET} exactly once; build stopped")
+    return html.replace(CHARSET, f'{CHARSET}\n<meta name="cg-local" content="1">')
+
+
+def summary(version: str, demo_version: str, demo_files: int) -> str:
+    """Total and per-folder file counts, to compare with the gh-pages commit (CLAUDE.md step 4)."""
+    out = [f.relative_to(OUT).parts for f in OUT.rglob("*") if f.is_file()]
+    size = sum((OUT.joinpath(*p)).stat().st_size for p in out) / 1e6
+    tops = collections.Counter(p[0] if len(p) > 1 else "." for p in out)
+    return (f"built {OUT} ({len(out)} files, {size:.1f} MB, version {version}, demo {demo_version}, "
+            f"{demo_files} demo files)\n  " + ", ".join(f"{k}: {n}" for k, n in sorted(tops.items())))
 
 
 def main() -> None:
@@ -156,9 +186,7 @@ def main() -> None:
         shutil.rmtree(OUT)
     shutil.copytree(ROOT / "web", OUT)
     index = OUT / "index.html"
-    html = index.read_text(encoding="utf-8")
-    index.write_text(html.replace('<meta charset="utf-8">',
-                                  '<meta charset="utf-8">\n<meta name="cg-local" content="1">', 1), encoding="utf-8")
+    index.write_text(mark_local(index.read_text(encoding="utf-8")), encoding="utf-8")
     (OUT / "js" / "local" / "data.js").write_text(data_module(), encoding="utf-8")
     shutil.copy2(ROOT / "relay" / "worker.js", OUT / "relay-worker.js")
     files = copy_demo()
@@ -180,8 +208,7 @@ def main() -> None:
     stamp_modules(version)
     (OUT / ".nojekyll").write_text("", encoding="utf-8")
     secret_scan()
-    size = sum(f.stat().st_size for f in OUT.rglob("*") if f.is_file()) / 1e6
-    print(f"built {OUT} ({size:.1f} MB, demo {demo_version}, {len(files)} demo files)")
+    print(summary(version, demo_version, len(files)))
 
 
 if __name__ == "__main__":

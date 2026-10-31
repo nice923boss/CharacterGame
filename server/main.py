@@ -19,7 +19,7 @@ from .batch_service import ACTIVE, BatchService
 from .jobs import Job, Jobs
 from .llm_client import LLMClient, LLMError, Waits
 from .novel_service import NovelService
-from .story_store import Store
+from .story_store import SLOT_COUNT, Store
 from .turn_service import TurnError, TurnService
 
 log = config.setup_logging()
@@ -84,9 +84,9 @@ def sse_job(work, payload: dict | None = None) -> StreamingResponse:
 
 
 def follow_job(job: Job, after: int) -> StreamingResponse:
-    JOBS.attach(job)
-
     async def stream():
+        # attach here, not before: a response whose body never starts would never run the detach below
+        JOBS.attach(job)
         try:
             yield _event({"type": "task", "id": job.id})
             async for ev in job.follow(after):
@@ -130,7 +130,9 @@ async def save_nvidia_key(payload: dict = Body(...)):
     """Write-only: the key goes into .env and never comes back; the page only gets a masked hint.
     One tiny request tests it first (B01): a key NVIDIA rejects is not saved; busy or unreachable still saves."""
     key = payload.get("key")
-    if not isinstance(key, str) or not key.strip() or len(key.strip()) > 200 or any(c.isspace() for c in key.strip()):
+    # printable ASCII only: a pasted zero-width or full-width character cannot go into an HTTP header
+    if not isinstance(key, str) or not key.strip() or len(key.strip()) > 200 or \
+            not all(33 <= ord(c) < 127 for c in key.strip()):
         raise HTTPException(422, "bad_key")
     check = await conn_check.probe("text", key.strip())
     if check["state"] == "key_rejected":
@@ -157,7 +159,7 @@ async def check_connection():
 @app.post("/api/settings")
 async def save_settings(payload: dict = Body(...)):
     settings = {**store.load_settings(),
-                **{k: bool(v) for k, v in payload.items() if k in ("image_nvidia", "image_comfy")}}
+                **{k: v for k, v in payload.items() if k in ("image_nvidia", "image_comfy") and isinstance(v, bool)}}   # bool("false") is True
     if payload.get("image_mode") in IMAGE_MODES:
         settings["image_mode"] = payload["image_mode"]
     if not (settings["image_nvidia"] or settings["image_comfy"]):
@@ -274,6 +276,8 @@ async def asset_retry(gid: str, scene: str | None = None):
 async def asset_redraw(gid: str, payload: dict = Body(...)):
     game = _game_or_404(gid)
     kind, target = payload.get("kind"), payload.get("target")
+    if not isinstance(target, str):   # a list target made `in game["scenes"]` raise, a 500 instead of a 400
+        raise HTTPException(400, "bad_target")
     if not ((kind == "scene" and target in game["scenes"]) or
             (kind == "sprite" and any(c["id"] == target for c in game["characters"]))):
         raise HTTPException(400, "bad_target")
@@ -363,8 +367,12 @@ async def slots():
 
 @app.post("/api/slots/{slot}")
 async def save_slot(slot: int, payload: dict = Body(...)):
+    if not 0 <= slot < SLOT_COUNT:
+        raise HTTPException(400, "bad_slot")
     try:
-        saved = store.save_slot(slot, payload["game_id"], payload["node_id"], str(payload.get("label", ""))[:80])   # English labels run about twice as long as Chinese ones
+        if not (isinstance(payload.get("game_id"), str) and isinstance(payload.get("node_id"), str)):
+            raise ValueError("game_id and node_id must be text")   # a list node_id used to fail as a 500
+        saved = store.save_slot(slot, payload["game_id"], payload["node_id"], str(payload.get("label") or "")[:80])   # English labels run about twice as long as Chinese ones
     except (KeyError, ValueError) as e:
         log.warning("save slot %s failed: %s", slot, e)
         raise HTTPException(400, "save_failed")
@@ -373,7 +381,11 @@ async def save_slot(slot: int, payload: dict = Body(...)):
 
 @app.delete("/api/slots/{slot}")
 async def delete_slot(slot: int):
-    return [_with_thumb(s) for s in store.delete_slot(slot)]
+    try:
+        saved = store.delete_slot(slot)
+    except ValueError:
+        raise HTTPException(400, "bad_slot")
+    return [_with_thumb(s) for s in saved]
 
 
 @app.get("/api/autosave")

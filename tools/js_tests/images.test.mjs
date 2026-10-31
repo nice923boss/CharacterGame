@@ -55,3 +55,36 @@ test('busy every time gives up after the backoff table, still retryable later', 
   await assert.rejects(images._test.draw('a quiet street at night', 1), (e) => e.retryable === true);
   assert.equal(calls.length, A.RETRY_BACKOFF_S.length + 1);
 });
+
+// A cutout as ImageData: opaque pixels where solid(x, y) is true
+function cutout(w, h, solid) {
+  const data = new Uint8ClampedArray(w * h * 4);
+  for (let y = 0; y < h; y += 1) for (let x = 0; x < w; x += 1) if (solid(x, y)) data[(y * w + x) * 4 + 3] = 255;
+  return { width: w, height: h, data };
+}
+
+test('the face box of an empty or hairline cutout is the top of the picture, never NaN', () => {
+  const empty = images._test.faceBox(cutout(40, 60, () => false));
+  assert.deepEqual(empty, [0, 0, 40, Math.min(60, Math.trunc(40 * A.TALL))]);
+  const thin = images._test.faceBox(cutout(40, 60, (x) => x === 7));
+  assert.ok(thin.every(Number.isFinite), `got ${thin}`);
+  const body = images._test.faceBox(cutout(40, 60, (x, y) => x >= 10 && x < 30 && y >= 5));
+  assert.ok(body.every(Number.isFinite) && body[2] > body[0] && body[3] > body[1], `got ${body}`);
+});
+
+test('a saved queue entry of the wrong shape is not accepted', () => {
+  const { validKey } = images._test;
+  assert.equal(validKey(['scene', 'g1', 'opening']), true);
+  assert.equal(validKey(['sprite', 'g1', 'c1', DATA.parser.EXPRESSIONS[0]]), true);
+  for (const bad of [null, 'scene|g1|opening', ['scene', 'g1'], ['scene', 'g1', 3], ['sprite', 'g1', 'c1', 'shouting'],
+    ['sprite', 'g1', 'c1'], ['other', 'g1', 'x'], ['scene', '', 'opening']]) {
+    assert.equal(validKey(bad), false, JSON.stringify(bad));
+  }
+});
+
+test('the drawn bitmap is closed once it is cropped, also when cropping fails', async () => {
+  let closed = 0;
+  const bitmap = { width: 8, height: 8, close: () => { closed += 1; } };
+  await images._test.fitDrawn(Promise.resolve(bitmap), 4, 6).catch(() => {});
+  assert.equal(closed, 1);
+});

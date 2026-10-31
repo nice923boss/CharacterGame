@@ -18,9 +18,31 @@ const FIELDS = [
   ['relationship', 'input', 200],
 ];
 
+const NARRATOR = { zh: '旁白', en: 'Narrator' };   // server/turn_parser.py NARRATOR: no one may take this name
+// server/novel_service.py NOVEL_PART_CHARS x NOVEL_MAX_PARTS: the longest novel text the analysis accepts
+const NOVEL_MAX_TEXT = 240000;
+const NOVEL_MAX_BYTES = NOVEL_MAX_TEXT * 4;   // UTF-8 needs at most 4 bytes a character: bigger files cannot fit
+
 let allPresets = null;
 let novelTitle = '';   // title of the imported novel; its chapters are the cards in #chapter-list
+let snapshot = '';     // the form right after resetSetup: anything else is the player's own work
 const presets = () => allPresets[lang];
+
+// Loads presets.json once; a load that failed at startup is tried again by the next "new story"
+export async function loadPresets() {
+  allPresets ||= await get('presets.json');
+}
+
+// A removed card hands focus to its neighbour, else to the button that adds one (M23)
+function removeCard(card, fallback, after) {
+  const list = [...card.parentElement.querySelectorAll('.char-card')];
+  const i = list.indexOf(card);
+  const next = list[i - 1] || list[i + 1];
+  card.remove();
+  after();
+  const target = next ? next.querySelector('header button') : fallback();
+  if (target && !target.disabled) target.focus();
+}
 
 function charCard(c = {}) {
   const card = document.createElement('div');
@@ -29,14 +51,17 @@ function charCard(c = {}) {
     FIELDS.map(([k, tag, max]) => tag === 'textarea'
       ? `<label>${esc(t(`char.${k}`))}<textarea data-k="${k}" maxlength="${max}" rows="2">${esc(c[k])}</textarea></label>`
       : `<label>${esc(t(`char.${k}`))}<input data-k="${k}" maxlength="${max}" value="${esc(c[k])}"></label>`).join('');
-  card.querySelector('button').onclick = () => { card.remove(); renumber(); };
+  card.querySelector('button').onclick = () => removeCard(card, () => $('#char-add'), renumber);
   scaleMaxLength(card, lang);
   return card;
 }
 
 function renumber() {
   const cards = [...document.querySelectorAll('#char-list .char-card')];
-  cards.forEach((c, i) => { c.querySelector('.idx').textContent = t('setup.charN', { n: i + 1 }); });
+  cards.forEach((c, i) => {
+    c.querySelector('.idx').textContent = t('setup.charN', { n: i + 1 });
+    c.querySelector('header button').setAttribute('aria-label', t('setup.removeN', { n: i + 1 }));
+  });
   paintEstimate();
   $('#char-count').textContent = `${cards.length} / ${MAX_CHARS}`;
   $('#char-add').disabled = cards.length >= MAX_CHARS;
@@ -47,7 +72,8 @@ const treeSize = (n, turns) => Array.from({ length: turns }, (_, k) => n ** k).r
 const batchMode = () => document.querySelector('input[name="gen-mode"]:checked').value === 'batch';
 const batchPlan = () => ({ options: Number($('#b-options').value), turns: Number($('#b-turns').value) });
 
-function paintEstimate() {
+// Also decides whether the start button is on (a batch tree over the size limit cannot start)
+export function paintEstimate() {
   $('#mode-bar').classList.toggle('batch', batchMode());
   const { options, turns } = batchPlan();
   const nodes = treeSize(options, turns);
@@ -73,14 +99,17 @@ function chapterCard(c) {
   card.innerHTML = `<header><span class="idx"></span><button class="btn tiny ghost" type="button">${esc(t('setup.remove'))}</button></header>` +
     `<label>${esc(t('setup.novel.chTitle'))}<input data-k="title" maxlength="20" value="${esc(c.title)}"></label>` +
     `<label>${esc(t('setup.novel.chSummary'))}<textarea data-k="summary" maxlength="200" rows="3">${esc(c.summary)}</textarea></label>`;
-  card.querySelector('button').onclick = () => { card.remove(); renumberChapters(); };
+  card.querySelector('button').onclick = () => removeCard(card, () => $('#novel-import'), renumberChapters);
   scaleMaxLength(card, lang);
   return card;
 }
 
 function renumberChapters() {
   const cards = [...document.querySelectorAll('#chapter-list .char-card')];
-  cards.forEach((c, i) => { c.querySelector('.idx').textContent = t('setup.novel.chN', { n: i + 1 }); });
+  cards.forEach((c, i) => {
+    c.querySelector('.idx').textContent = t('setup.novel.chN', { n: i + 1 });
+    c.querySelector('header button').setAttribute('aria-label', t('setup.novel.removeN', { n: i + 1 }));
+  });
   $('#novel-box').hidden = !cards.length;
   if (!cards.length) novelTitle = '';
 }
@@ -115,6 +144,11 @@ function decodeText(buf) {
 
 // The AI reads the novel in parts and fills the form with its world, cast and chapter outline; the player can edit all of it
 async function importNovel(file) {
+  // A file this big is refused after the analysis reads it anyway: say so before loading it into memory
+  if (file.size > NOVEL_MAX_BYTES) {
+    setMsg(t('setup.novel.tooBig', { mb: (file.size / 1e6).toFixed(1), limit: NOVEL_MAX_TEXT }), true);
+    return;
+  }
   const text = decodeText(await file.arrayBuffer());
   if (text === null) { setMsg(t('setup.novel.decodeFail'), true); return; }
   const title = file.name.replace(/\.[^.]*$/, '').replace(/[《》]/g, '').trim();
@@ -138,19 +172,24 @@ async function importNovel(file) {
     fitTurns(draft.novel.chapters.length);
     setMsg(t('setup.novel.done', { n: draft.novel.chapters.length }));
   } catch (e) {
-    setError(e);
+    if (e.code === 'cancelled') setMsg(e.message); else setError(e);   // the player's own cancel is not an error
   } finally {
     box.close();
   }
 }
 
+// The controls are wired first, so the screen works once a failed preset load succeeds on a later try
 export async function initSetup() {
-  allPresets = await get('presets.json');
   $('#world-preset').onchange = () => {
     const v = $('#world-preset').value;
     fillWorld(v === 'custom' ? {} : presets().worlds[Number(v)]);
   };
-  $('#char-add').onclick = () => { $('#char-list').append(charCard()); renumber(); };
+  $('#char-add').onclick = () => {
+    const card = charCard();
+    $('#char-list').append(card);
+    renumber();
+    card.querySelector('[data-k="name"]').focus();
+  };
   document.querySelectorAll('#mode-bar input, #mode-bar select').forEach((el) => { el.onchange = paintEstimate; });
   $('#novel-import').onclick = () => $('#novel-file').click();
   $('#novel-file').onchange = () => {
@@ -158,7 +197,8 @@ export async function initSetup() {
     $('#novel-file').value = '';
     if (file) importNovel(file);
   };
-  $('#novel-clear').onclick = () => { $('#chapter-list').innerHTML = ''; renumberChapters(); };
+  $('#novel-clear').onclick = () => { $('#chapter-list').innerHTML = ''; renumberChapters(); $('#novel-import').focus(); };
+  await loadPresets();
 }
 
 // Called every time the setup screen opens, so a language switch on the title screen is picked up
@@ -177,7 +217,12 @@ export function resetSetup() {
   scaleMaxLength($('#scr-setup'), lang);
   renumber();
   setMsg(t('setup.hint'));
+  snapshot = formState();
 }
+
+const formState = () => JSON.stringify([payload(), $('#world-preset').value]);
+// The player changed something since the screen opened: leaving would lose it
+export const setupDirty = () => !!snapshot && formState() !== snapshot;
 
 function setMsg(text, error = false) {
   $('#setup-msg').textContent = text;
@@ -209,11 +254,43 @@ function payload() {
 // Runs the setup job; resolves with the created game, or null when cancelled or failed (message shown)
 export const isBatchMode = batchMode;
 
+// The first thing create_game in server/turn_service.py would refuse, in its order, so the cursor can go to that
+// field instead of the player hunting for it: [message, field] or null
+function formProblem(body) {
+  if (!body.world.era) return [t('setup.needWorld'), $('#w-era')];
+  if (!body.world.place) return [t('setup.needWorld'), $('#w-place')];
+  if (!body.protagonist.name) return [errorText('required', { field: 'hero_name' }), $('#p-name')];
+  const cards = [...document.querySelectorAll('#char-list .char-card')];
+  if (!cards.length) return [t('setup.needChar'), $('#char-add')];
+  for (const [i, c] of body.characters.entries()) {
+    const k = FIELDS.map(([f]) => f).find((f) => !c[f]);
+    if (k) return [errorText('required', { field: `char_${k}`, i: i + 1 }), cards[i].querySelector(`[data-k="${k}"]`)];
+  }
+  const names = [...body.characters.map((c) => c.name), body.protagonist.name];
+  const clash = names.findIndex((n, i) => names.indexOf(n) !== i || Object.values(NARRATOR).includes(n));
+  if (clash >= 0) {
+    return [errorText('dup_names', { narrator: NARRATOR[lang] }),
+      clash < cards.length ? cards[clash].querySelector('[data-k="name"]') : $('#p-name')];
+  }
+  if (body.batch && !body.world.goal) return [errorText('batch_goal'), $('#w-goal')];
+  const chapters = [...document.querySelectorAll('#chapter-list .char-card')];
+  for (const [i, c] of (body.novel?.chapters || []).entries()) {
+    const k = !c.title ? 'title' : !c.summary ? 'summary' : '';
+    if (k) return [errorText('required', { field: `chapter_${k}`, i: i + 1 }), chapters[i].querySelector(`[data-k="${k}"]`)];
+  }
+  return null;
+}
+
 export async function startGame() {
   const body = payload();
-  if (!body.world.era || !body.world.place) { setMsg(t('setup.needWorld'), true); return null; }
-  if (!body.characters.length) { setMsg(t('setup.needChar'), true); return null; }
-  if (body.batch && !body.world.goal) { setMsg(errorText('batch_goal'), true); return null; }
+  const problem = formProblem(body);
+  if (problem) {
+    const [msg, field] = problem;
+    setMsg(msg, true);
+    field.focus();
+    field.scrollIntoView?.({ block: 'nearest' });
+    return null;
+  }
   const t0 = Date.now();
   let running = null;
   const box = progress(t('setup.building'), t('setup.buildingSub'), () => running && running.cancel());
@@ -226,7 +303,7 @@ export async function startGame() {
     setMsg(t('setup.done', { s: Math.round((Date.now() - t0) / 1000) }));
     return final.game;
   } catch (e) {
-    setError(e);
+    if (e.code === 'cancelled') setMsg(e.message); else setError(e);
     return null;
   } finally {
     box.close();

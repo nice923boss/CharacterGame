@@ -111,6 +111,8 @@ const imageStates = (a) => [...Object.values(a.scenes).map((s) => s.state),
   ...Object.values(a.sprites).flatMap((sp) => Object.values(sp).map((s) => s.state))].filter((s) => s !== 'off');
 
 const sleep = (ms, signal) => new Promise((resolve, reject) => {
+  // Already stopped: the abort event will not fire again
+  if (signal.aborted) { reject({ code: 'cancelled' }); return; }
   const stop = () => { clearTimeout(t); reject({ code: 'cancelled' }); };
   const t = setTimeout(() => { signal.removeEventListener('abort', stop); resolve(); }, ms);
   signal.addEventListener('abort', stop, { once: true });
@@ -145,8 +147,9 @@ async function attempt(gid, parentId, input, signal) {
   } catch (e) {
     if (signal.aborted) throw { code: 'cancelled' };
     if (isBusy(e)) limiter.busy();
-    if (!e?.code) console.error(`batch turn crashed ${gid}`, e);
-    return { error: e?.code || 'internal' };
+    const coded = typeof e?.code === 'string';
+    if (!coded) console.error(`batch turn crashed ${gid}`, e);
+    return { error: coded ? e.code : 'internal' };
   } finally {
     limiter.release();
   }
@@ -283,7 +286,7 @@ async function run(gid, task) {
       console.info(`batch ${state} ${gid}`);
     } else {
       console.error(`batch crashed ${gid}`, e);
-      await save(gid, { state: 'error', error: e?.code || 'internal', finished_at: store.nowIso() });
+      await save(gid, { state: 'error', error: typeof e?.code === 'string' ? e.code : 'internal', finished_at: store.nowIso() });
     }
   }
 }
@@ -330,6 +333,9 @@ channel?.addEventListener('message', async ({ data }) => {
 });
 
 export function init(getConn) { conn = getConn; }
+
+// This page is writing a batch of this story right now
+export const writingHere = (gid) => here.has(gid);
 
 // Starts the batch in this page and resolves once it is marked running. With several tabs open only one of them
 // runs a given game (Web Locks); the others just show its progress.
@@ -392,11 +398,20 @@ export async function rewrite(gid, parentId, option) {
 export async function resumeAll() {
   for (const key of await store.kvKeys()) {
     if (typeof key !== 'string' || !key.startsWith(PREFIX)) continue;
-    const b = await store.kvGet(key);
     const gid = key.slice(PREFIX.length);
-    if (ACTIVE.includes(b?.state)) {
+    // One story that cannot resume must not keep the others from it
+    try {
+      const b = await store.kvGet(key);
+      if (!ACTIVE.includes(b?.state)) continue;
+      // A story in recently deleted (or gone) waits: restoring it lets the player resume it from its page
+      if (!(await store.loadGame(gid).then(() => true, () => false))) {
+        console.info(`batch not resumed ${gid}: story deleted`);
+        continue;
+      }
       console.info(`batch resumed ${gid}`);
       await start(gid);
+    } catch (e) {
+      console.error(`batch resume failed ${gid}`, e);
     }
   }
 }

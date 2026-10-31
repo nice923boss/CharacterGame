@@ -20,6 +20,8 @@ function classify(status, text) {
 }
 
 async function send(url, init) {
+  // No relay set: "/v1/..." would go to this site itself and read as a working relay
+  if (!/^https?:\/\//.test(url)) return { status: null, failure: 'unreachable', ms: 0 };
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_S * 1000);
   const t0 = Date.now();

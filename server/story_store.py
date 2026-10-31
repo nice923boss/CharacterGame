@@ -3,31 +3,64 @@ writes (PLAN sections 3 and 4)."""
 import json
 import os
 import pathlib
+import re
 import shutil
 import time
 from datetime import datetime, timedelta
 
 from . import config
 
+log = config.setup_logging()
+
 SLOT_COUNT = 10
 AUTOSAVE_KEEP = 5   # autosave points kept, newest first
 TRASH_DAYS = 7      # days a deleted story stays in saves/trash
 # Image engines: NVIDIA only by default; with both on, ComfyUI is the fallback when NVIDIA fails
 DEFAULT_SETTINGS = {"image_nvidia": True, "image_comfy": False, "image_mode": "all"}
+GAME_ID_RE = re.compile(r"[A-Za-z0-9_]{1,64}")
+WIN_RESERVED_RE = re.compile(r"(?i)(con|prn|aux|nul|com\d|lpt\d)")   # Windows device names, not folders
+REPLACE_RETRY_S = (0.05, 0.1, 0.2)   # an antivirus scan or the indexer may hold the target for a moment
 
 
 def _write(path: pathlib.Path, data) -> None:
     """Write to a temp file then rename, so a crash never leaves half a file."""
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")
-    tmp.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
-    os.replace(tmp, path)
+    text = json.dumps(data, ensure_ascii=False, indent=1)
+    try:
+        with open(tmp, "w", encoding="utf-8") as f:
+            f.write(text)
+            f.flush()
+            os.fsync(f.fileno())   # the data is on disk before the rename makes it the real file
+        for wait in REPLACE_RETRY_S:
+            try:
+                os.replace(tmp, path)
+                return
+            except PermissionError:
+                time.sleep(wait)
+        os.replace(tmp, path)
+    finally:
+        tmp.unlink(missing_ok=True)   # only left over when writing or renaming failed
 
 
 def _read(path: pathlib.Path, default=None):
     if not path.exists():
         return default
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _read_safe(path: pathlib.Path, default, kind: type):
+    """_read for index files (settings, slots, autosaves, trash records): a corrupt file or one of the wrong
+    shape gives `default` and a log line instead of breaking every page that lists it."""
+    try:
+        data = _read(path, default)
+    except (OSError, ValueError) as e:
+        log.warning("unreadable %s: %s", path, e)
+        return default
+    if not isinstance(data, kind):
+        log.warning("unexpected content in %s", path)
+        return default
+    return data
 
 
 def now_iso() -> str:
@@ -41,7 +74,8 @@ class Store:
     # ---------- games ----------
 
     def game_dir(self, game_id: str) -> pathlib.Path:
-        if not game_id.replace("_", "").isalnum():
+        # ASCII only: isalnum() also passes full-width and CJK characters
+        if not isinstance(game_id, str) or not GAME_ID_RE.fullmatch(game_id) or WIN_RESERVED_RE.fullmatch(game_id):
             raise ValueError(f"bad game id {game_id!r}")
         return self.root / "games" / game_id
 
@@ -66,7 +100,7 @@ class Store:
     # ---------- settings ----------
 
     def load_settings(self) -> dict:
-        return {**DEFAULT_SETTINGS, **_read(self.root / "settings.json", {})}
+        return {**DEFAULT_SETTINGS, **_read_safe(self.root / "settings.json", {}, dict)}
 
     def save_settings(self, settings: dict) -> None:
         _write(self.root / "settings.json", settings)
@@ -74,18 +108,26 @@ class Store:
     def list_games(self) -> list[dict]:
         out = []
         for p in sorted((self.root / "games").glob("*/game.json"), reverse=True):
-            g = _read(p)
-            tree = self.load_tree(g["id"])
-            out.append({"id": g["id"], "title": g.get("title", ""), "created_at": g.get("created_at"),
-                        "nodes": len(tree["nodes"]), "thumb": self.thumb(g["id"], g.get("first_scene")),
-                        "characters": [c["name"] for c in g.get("characters", [])],
-                        "lang": g.get("lang", "zh"), "latest": max(tree["nodes"], default=None),
-                        "root": tree["root"], "batch": g.get("batch")})
+            try:
+                g = _read(p)
+                tree = self.load_tree(g["id"])
+                out.append({"id": g["id"], "title": g.get("title", ""), "created_at": g.get("created_at"),
+                            "nodes": len(tree["nodes"]), "thumb": self.thumb(g["id"], g.get("first_scene")),
+                            "characters": [c["name"] for c in g.get("characters", [])],
+                            "lang": g.get("lang", "zh"), "latest": max(tree["nodes"], default=None),
+                            "root": tree["root"], "batch": g.get("batch")})
+            except (OSError, ValueError, KeyError, TypeError, AttributeError) as e:
+                # one damaged story must not hide all the others
+                log.warning("story list skips %s: %s", p.parent.name, e)
         return out
 
     def thumb(self, game_id: str, scene_id: str | None) -> str | None:
         """Media URL of a scene image, or None while it is not drawn yet (so lists never request a missing file)."""
-        if scene_id and (self.game_dir(game_id) / "assets" / "scenes" / f"{scene_id}.png").exists():
+        try:
+            folder = self.game_dir(game_id)
+        except ValueError:   # a slot or autosave record with a damaged id
+            return None
+        if scene_id and (folder / "assets" / "scenes" / f"{scene_id}.png").exists():
             return f"/media/{game_id}/assets/scenes/{scene_id}.png"
         return None
 
@@ -115,19 +157,33 @@ class Store:
         self.purge_expired()
         out = []
         for p in (self.root / "trash").glob("*/deleted.json"):
-            deleted_at = _read(p)["deleted_at"]
-            expires = datetime.fromisoformat(deleted_at) + timedelta(days=TRASH_DAYS)
-            out.append({"id": p.parent.name, "title": _read(p.parent / "game.json", {}).get("title", ""),
-                        "deleted_at": deleted_at, "expires_at": expires.isoformat(timespec="seconds"),
-                        "nodes": len(_read(p.parent / "tree.json", {"nodes": {}})["nodes"])})
+            deleted_at = self._deleted_at(p)
+            expires = deleted_at + timedelta(days=TRASH_DAYS)
+            game = _read_safe(p.parent / "game.json", {}, dict)
+            tree = _read_safe(p.parent / "tree.json", {}, dict)
+            out.append({"id": p.parent.name, "title": game.get("title", ""),
+                        "deleted_at": deleted_at.isoformat(timespec="seconds"),
+                        "expires_at": expires.isoformat(timespec="seconds"),
+                        "nodes": len(tree.get("nodes") or {})})
         return sorted(out, key=lambda x: x["deleted_at"], reverse=True)
+
+    @staticmethod
+    def _deleted_at(record: pathlib.Path) -> datetime:
+        """When a story went to the trash; a damaged deleted.json falls back to the file's own time, so the story
+        is still listed, restorable and purged on schedule instead of breaking the trash page and the start."""
+        try:
+            at = datetime.fromisoformat(_read_safe(record, {}, dict)["deleted_at"])
+            return at if at.tzinfo else at.astimezone()
+        except (KeyError, TypeError, ValueError):
+            log.warning("trash record without a readable date: %s", record)
+            return datetime.fromtimestamp(record.stat().st_mtime).astimezone()
 
     def restore_game(self, game_id: str) -> None:
         """Move a story back from the trash; its slots return only where the slot is still empty."""
         src = self.trash_dir(game_id)
-        info = _read(src / "deleted.json")
-        if info is None:
+        if not (src / "deleted.json").exists():
             raise FileNotFoundError(f"最近刪除裡沒有 {game_id}")
+        info = _read_safe(src / "deleted.json", {}, dict)
         folder = self.game_dir(game_id)
         if folder.exists():
             raise FileExistsError(f"遊戲資料夾已存在 {game_id}")
@@ -135,8 +191,10 @@ class Store:
         (folder / "deleted.json").unlink()
         slots = self.load_slots()
         for s in info.get("slots") or []:
-            if slots[s["slot"]] is None:
-                slots[s["slot"]] = s
+            n = s.get("slot") if isinstance(s, dict) else None
+            # a record from a hand-edited or damaged file must not stop the restore halfway (folder already back)
+            if type(n) is int and 0 <= n < SLOT_COUNT and slots[n] is None:
+                slots[n] = s
         _write(self.root / "slots.json", slots)
 
     def purge_game(self, game_id: str) -> None:
@@ -148,7 +206,7 @@ class Store:
     def purge_expired(self) -> None:
         cutoff = datetime.now().astimezone() - timedelta(days=TRASH_DAYS)
         for p in (self.root / "trash").glob("*/deleted.json"):
-            if datetime.fromisoformat(_read(p)["deleted_at"]) < cutoff:
+            if self._deleted_at(p) < cutoff:
                 shutil.rmtree(p.parent)
 
     # ---------- tree ----------
@@ -196,7 +254,9 @@ class Store:
     # ---------- slots ----------
 
     def load_slots(self) -> list[dict | None]:
-        slots = _read(self.root / "slots.json", [])
+        slots = _read_safe(self.root / "slots.json", [], list)
+        # an entry that is not a save record shows as an empty slot instead of failing the whole save page
+        slots = [s if isinstance(s, dict) and isinstance(s.get("game_id"), str) else None for s in slots]
         return (slots + [None] * SLOT_COUNT)[:SLOT_COUNT]
 
     def save_slot(self, slot: int, game_id: str, node_id: str, label: str) -> list:
@@ -212,6 +272,8 @@ class Store:
         return slots
 
     def delete_slot(self, slot: int) -> list:
+        if not 0 <= slot < SLOT_COUNT:   # -1 would clear the last slot
+            raise ValueError("slot out of range")
         slots = self.load_slots()
         slots[slot] = None
         _write(self.root / "slots.json", slots)
@@ -220,11 +282,13 @@ class Store:
     def load_autosaves(self) -> list[dict]:
         """Newest first, one per game and node, at most AUTOSAVE_KEEP. The autosave.json of older versions
         counts as the list until the next autosave writes autosaves.json."""
-        saves = _read(self.root / "autosaves.json")
-        if saves is None:
-            old = _read(self.root / "autosave.json")
+        path = self.root / "autosaves.json"
+        if path.exists():
+            saves = _read_safe(path, [], list)
+        else:
+            old = _read_safe(self.root / "autosave.json", None, dict)
             saves = [old] if old else []
-        return saves
+        return [a for a in saves if isinstance(a, dict) and isinstance(a.get("game_id"), str) and "node_id" in a]
 
     def set_autosave(self, game_id: str, node_id: str, scene_id: str) -> None:
         entry = {"game_id": game_id, "node_id": node_id, "scene_id": scene_id, "saved_at": now_iso()}

@@ -53,8 +53,9 @@ export async function paintBackup() {
   }
   const exportBtn = $('#scr-title [data-act="exportZip"]');
   if (!info.games) { line.hidden = true; exportBtn.classList.remove('remind'); return; }   // only the demo: nothing to lose yet
-  const b = info.backup;
-  const days = b ? Math.floor((Date.now() - Date.parse(b.at)) / 864e5) : 0;
+  // A backup date that cannot be read counts as none (the reminder shows); one ahead of this clock as today
+  const b = info.backup && Number.isFinite(Date.parse(info.backup.at)) ? info.backup : null;
+  const days = b ? Math.max(0, Math.floor((Date.now() - Date.parse(b.at)) / 864e5)) : 0;
   const added = b ? Math.max(0, info.turns - b.turns) : 0;
   let text = !b ? t('upkeep.backupNever') : days ? t('upkeep.backupDays', { days }) : t('upkeep.backupToday');
   if (added) text += t('upkeep.backupNew', { n: added });

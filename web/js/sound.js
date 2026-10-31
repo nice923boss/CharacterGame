@@ -148,6 +148,12 @@ const MOODS = {
             scale: [76, 79, 81, 83, 86], density: 0.25, pulse: true, arp: true },
 };
 
+const MUTE_KEY = 'chienzhi.muted';
+
+function readMuted() {
+  try { return localStorage.getItem(MUTE_KEY) === '1'; } catch { return false; }
+}
+
 class SoundSystem {
   constructor() {
     this.ctx = null;
@@ -157,14 +163,19 @@ class SoundSystem {
     this.sfxVol = 0.7;
     this.wantMood = null;
     this.wantWeather = 'none';
+    this.muted = readMuted();
   }
 
   // Must run inside a user gesture (browser autoplay rule)
   unlock() {
-    if (this.ctx) { if (this.ctx.state === 'suspended') this.ctx.resume(); return; }
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (this.ctx) { this.wake(); return; }
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;   // no Web Audio: the game plays silently instead of breaking the click that called this
+    let ctx;
+    try { ctx = new AC(); } catch (e) { console.warn('audio unavailable', e); return; }
     this.ctx = ctx;
     this.master = ctx.createGain();
+    this.master.gain.value = this.muted ? 0 : 1;
     this.master.connect(ctx.destination);
     const reverb = makeReverb(ctx);
     const wet = ctx.createGain();
@@ -180,6 +191,23 @@ class SoundSystem {
     setInterval(() => this.tick(), 200);
     if (this.wantMood) this.setMood(this.wantMood, true);
     this.setWeather(this.wantWeather);
+  }
+
+  // Resume after the autoplay block, a background tab, or an iOS interruption (state 'interrupted')
+  wake() {
+    const ctx = this.ctx;
+    if (ctx && ctx.state !== 'running' && ctx.state !== 'closed' && !document.hidden) ctx.resume().catch(() => {});
+  }
+
+  // M on the game screen: silences music and effects, remembered across visits
+  toggleMute() {
+    this.muted = !this.muted;
+    try {
+      if (this.muted) localStorage.setItem(MUTE_KEY, '1');
+      else localStorage.removeItem(MUTE_KEY);
+    } catch { /* storage blocked: muted for this visit only */ }
+    if (this.ctx) this.master.gain.setTargetAtTime(this.muted ? 0 : 1, this.ctx.currentTime, 0.05);
+    return this.muted;
   }
 
   setVolumes(bgm, sfx) {
@@ -219,6 +247,13 @@ class SoundSystem {
     if (!L) return;
     const ctx = this.ctx;
     const beatLen = 60 / L.spec.bpm;
+    // Timers in a background tab run late: skip the missed beats instead of playing them all at once
+    if (L.next < ctx.currentTime) {
+      const missed = Math.ceil((ctx.currentTime - L.next) / beatLen);
+      L.next += missed * beatLen;
+      L.beat += missed;
+    }
+    if (this.muted || this.bgmVol <= 0) return;   // nobody hears it: build no notes
     while (L.next < ctx.currentTime + 1.2) {
       const t = L.next;
       const bar = Math.floor(L.beat / 4) % L.spec.prog.length;
@@ -261,7 +296,7 @@ class SoundSystem {
   }
 
   play(name) {
-    if (!this.ctx) return;
+    if (!this.ctx || this.muted || this.sfxVol <= 0) return;
     const t = this.ctx.currentTime + 0.01;
     if (name === 'select') chime(this.ctx, this.sfx, t, 0.07);
     else if (name === 'click') popSfx(this.ctx, this.sfx, t, 0.1);
@@ -270,3 +305,12 @@ class SoundSystem {
 }
 
 export const sound = new SoundSystem();
+
+// Keyboard-only players never click: a key press is also a gesture that may start audio
+document.addEventListener('keydown', () => sound.unlock(), true);
+// A background tab stops the music instead of playing to nobody
+document.addEventListener('visibilitychange', () => {
+  if (!sound.ctx) return;
+  if (document.hidden) sound.ctx.suspend().catch(() => {});
+  else sound.wake();
+});

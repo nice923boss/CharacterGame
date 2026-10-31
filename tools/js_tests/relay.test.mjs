@@ -136,3 +136,38 @@ test('without the USAGE binding nothing is counted or refused', async () => {
   const usage = await (await worker.default.fetch(new Request('https://relay.test/usage'), env, {})).json();
   assert.deepEqual(usage, { limit: 1, days: null });
 });
+
+// ---------- phase 10 (P13-P15) ----------
+
+const plain = (worker, env, init, path = '/v1/chat/completions') => worker.default.fetch(
+  new Request(`https://relay.test${path}`, init), env, { waitUntil: () => {} });
+
+test('a request body over 4 MB is refused with 413 and CORS headers, unsent', async () => {
+  const worker = await loadWorker();
+  const env = { ALLOWED_ORIGINS: ORIGIN };
+  const big = await plain(worker, env, { method: 'POST', headers: { Origin: ORIGIN }, body: 'x'.repeat(4 * 1024 * 1024 + 1) });
+  assert.equal(big.status, 413);
+  assert.deepEqual(await big.json(), { error: 'body_too_large' });
+  assert.equal(big.headers.get('access-control-allow-origin'), ORIGIN);
+  const ok = await plain(worker, env, { method: 'POST', headers: { Origin: ORIGIN }, body: 'x'.repeat(1024 * 1024) });
+  assert.equal(ok.status, 200);
+  assert.equal(upstream, 1);
+});
+
+test('405 names the allowed methods', async () => {
+  const worker = await loadWorker();
+  const res = await plain(worker, { ALLOWED_ORIGINS: ORIGIN }, { method: 'GET', headers: { Origin: ORIGIN } });
+  assert.equal(res.status, 405);
+  assert.equal(res.headers.get('allow'), 'POST, OPTIONS');
+  assert.equal(res.headers.get('access-control-allow-origin'), ORIGIN);
+});
+
+test('ALLOWED_ORIGINS written with a trailing slash or capitals still matches', async () => {
+  const worker = await loadWorker();
+  const env = { ALLOWED_ORIGINS: ' https://Nice923Boss.github.io/ , http://127.0.0.1:8766' };
+  const res = await plain(worker, env, { method: 'POST', headers: { Origin: ORIGIN }, body: '{}' });
+  assert.equal(res.status, 200);
+  assert.equal(res.headers.get('access-control-allow-origin'), ORIGIN);
+  const other = await plain(worker, env, { method: 'POST', headers: { Origin: 'https://evil.example' }, body: '{}' });
+  assert.equal(other.status, 403);
+});

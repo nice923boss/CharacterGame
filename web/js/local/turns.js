@@ -30,8 +30,11 @@ export async function createGame(payload, emit, conn, signal) {
   const p = payload.protagonist || {};
   const protagonist = { name: checkText(p.name, 'hero_name', 12 * x), profile: checkText(p.profile, 'hero_profile', 200 * x, false) };
   const rawChars = payload.characters || [];
-  if (!(rawChars.length >= 1 && rawChars.length <= MAX_CHARACTERS)) throw { code: 'char_count', params: { max: MAX_CHARACTERS } };
-  const chars = rawChars.map((c, idx) => ({
+  // Same as the server: not a list is char_count, a row that is not an object reads as empty (a "required" error)
+  if (!Array.isArray(rawChars) || !(rawChars.length >= 1 && rawChars.length <= MAX_CHARACTERS)) {
+    throw { code: 'char_count', params: { max: MAX_CHARACTERS } };
+  }
+  const chars = rawChars.map((raw) => (raw && typeof raw === 'object' ? raw : {})).map((c, idx) => ({
     id: `c${idx + 1}`,
     ...Object.fromEntries([['name', 12], ['appearance', 300], ['personality', 200], ['speech', 200], ['relationship', 200]]
       .map(([k, limit]) => [k, checkText(c[k], `char_${k}`, limit * x, true, { i: idx + 1 })])),

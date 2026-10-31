@@ -20,9 +20,20 @@ let mem = fresh();
 let stored = true;   // false once storage fails: from then on the copy in memory is the only one
 function state() {
   if (stored) {
-    try { mem = { ...fresh(), ...JSON.parse(localStorage.getItem(STATE) || '{}') }; } catch { stored = false; }
+    try { mem = wellFormed(JSON.parse(localStorage.getItem(STATE) || '{}')); } catch { stored = false; }
   }
   return mem;
+}
+// A record of the wrong shape (another version, a hand edit) starts that part over instead of breaking every request
+function wellFormed(raw) {
+  const s = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+  const obj = (v) => (v && typeof v === 'object' && !Array.isArray(v) ? v : {});
+  return {
+    ...fresh(), ...s,
+    cooldown: obj(s.cooldown), streak: obj(s.streak),
+    rpm: Array.isArray(s.rpm) ? s.rpm.filter(Number.isFinite) : [],
+    history: Array.isArray(s.history) ? s.history.filter((h) => h && typeof h === 'object') : [],
+  };
 }
 function change(fn) {
   const s = state();
@@ -60,10 +71,14 @@ export function relayNotice(resp) {
 const wakers = new Set();
 document.addEventListener('visibilitychange', () => { if (!document.hidden) for (const w of [...wakers]) w(); });
 const sleep = (s, signal) => new Promise((resolve, reject) => {
-  const wake = () => { clearTimeout(t); wakers.delete(wake); resolve(); };
+  // Already cancelled: the abort event will not fire again, so do not wait at all
+  if (signal?.aborted) { reject({ code: 'cancelled' }); return; }
+  const abort = () => { clearTimeout(t); wakers.delete(wake); reject({ code: 'cancelled' }); };
+  // A finished sleep drops its abort listener, so a long patience loop does not pile them up on one signal
+  const wake = () => { clearTimeout(t); wakers.delete(wake); signal?.removeEventListener('abort', abort); resolve(); };
   const t = setTimeout(wake, s * 1000);
   wakers.add(wake);
-  signal?.addEventListener('abort', () => { clearTimeout(t); wakers.delete(wake); reject({ code: 'cancelled' }); }, { once: true });
+  signal?.addEventListener('abort', abort, { once: true });
 });
 
 class ContentFilter {
@@ -229,6 +244,8 @@ async function attempt(cand, messages, emit, temperature, conn, signal) {
       throw new AttemptFailure(L.TRANSIENT_STATUS.includes(status) ? 'transient' : 'fatal', `HTTP ${status}`, false,
         retryAfter(resp.headers.get('retry-after')), status);
     }
+    // A 200 without a body stream is a cut-off answer, retried like one
+    if (!resp.body) throw new AttemptFailure('truncated', 'no response body');
     const reader = resp.body.pipeThrough(new TextDecoderStream()).getReader();
     let buf = '';
     let ended = false;
@@ -365,7 +382,10 @@ export async function stream(messages, emit, temperature, conn, signal) {
       return res;
     }
   }
-  throw { code: 'all_failed', params: { errors: errors.slice(-3) } };
+  // The same model and reason three times says less than three different ones: repeats are listed once
+  const seen = new Set();
+  const distinct = errors.reverse().filter((e) => !seen.has(`${e.model}|${e.reason}`) && seen.add(`${e.model}|${e.reason}`)).reverse();
+  throw { code: 'all_failed', params: { errors: distinct.slice(-3) } };
 }
 
 export const complete = (messages, temperature, conn, signal) => stream(messages, () => {}, temperature, conn, signal);

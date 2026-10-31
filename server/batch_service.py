@@ -167,12 +167,18 @@ class BatchService:
         """Cancel a running batch and wait until it has let go of the game's files. state="paused" when the
         player means to go on later; either way the tree is the progress, so resuming continues from it."""
         task = self.tasks.get(gid)
-        if not task:
-            return False
-        self._stop_as[gid] = state
-        task.cancel()
-        await asyncio.wait([task], timeout=10)
-        return True
+        if task:
+            self._stop_as[gid] = state
+            task.cancel()
+            await asyncio.wait([task], timeout=10)
+        if task is None or task.done():
+            self._stop_as.pop(gid, None)
+            # A task cancelled before its first step never ran its own save, and a batch left "running" with no
+            # task (a resume that failed) could not be paused, so its story could not be deleted either
+            if (self.load(gid) or {}).get("state") in ACTIVE:
+                self._save(gid, state=state, finished_at=now_iso())
+                return True
+        return task is not None
 
     async def rewrite(self, gid: str, parent_id: str, option: str) -> dict:
         """Write one branch now, outside the walker (the tree view's retry button). Errors go to the caller."""
@@ -186,9 +192,13 @@ class BatchService:
     def resume_all(self) -> None:
         """After a server restart, pick up every batch that was still working."""
         for p in (self.store.root / "games").glob("*/batch.json"):
-            if (_read(p) or {}).get("state") in ACTIVE:
-                log.info("batch resumed %s", p.parent.name)
-                self.start(p.parent.name)
+            try:    # one damaged batch.json or odd folder name must not stop the server from starting
+                b = _read(p)
+                if isinstance(b, dict) and b.get("state") in ACTIVE:
+                    log.info("batch resumed %s", p.parent.name)
+                    self.start(p.parent.name)
+            except (OSError, ValueError) as e:
+                log.warning("batch not resumed %s: %s", p.parent.name, e)
 
     def status(self, gid: str) -> dict | None:
         b = self.load(gid)
@@ -217,7 +227,10 @@ class BatchService:
         out = []
         for p in sorted((self.store.root / "games").glob("*/batch.json"), reverse=True):
             if (p.parent / "game.json").exists():
-                out.append(self.status(p.parent.name))
+                try:    # one damaged story must not empty the whole batch page
+                    out.append(self.status(p.parent.name))
+                except (OSError, ValueError, KeyError, TypeError, AttributeError) as e:
+                    log.warning("batch list skips %s: %s", p.parent.name, e)
         return out
 
     # ---------- walker ----------

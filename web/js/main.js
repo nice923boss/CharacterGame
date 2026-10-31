@@ -1,10 +1,10 @@
 // Entry point: screen switching, title menu, toolbar and settings wiring.
 import { LOCAL, activeJobs, get, post } from './api.js';
-import { applyStatic, setLang, t } from './i18n.js';
+import { applyStatic, errorText, lang, setLang, t } from './i18n.js';
 import { sound } from './sound.js';
 import { createStage } from './stage.js';
 import { $, bindSettings, confirmBox, openModal, progress, reloadSettings, toast, toastError } from './ui.js';
-import { initSetup, isBatchMode, resetSetup, startGame } from './setup.js';
+import { initSetup, isBatchMode, loadPresets, paintEstimate, resetSetup, setupDirty, startGame } from './setup.js';
 import { currentGameId, enterGame, initGame, leaveGame, openSlots, openTree } from './game.js';
 import { openStories } from './stories.js';
 import { openLog } from './playaids.js';
@@ -15,8 +15,17 @@ import { paintBackup, paintStorage, watchStore, watchUpdate } from './upkeep.js'
 document.documentElement.classList.toggle('local', LOCAL);
 const stage = createStage($('#canvas-host'));
 
+// Where keyboard focus goes when a screen opens and the focused control stayed behind on the old one
+// (the game screen places its own focus)
+const FIRST_CONTROL = {
+  'scr-title': '#scr-title .menu [data-act]:not([disabled]):not([hidden])',
+  'scr-setup': '#world-preset',
+};
+
 function showScreen(id) {
   for (const s of document.querySelectorAll('.screen')) s.hidden = s.id !== id;
+  const at = document.activeElement;
+  if (FIRST_CONTROL[id] && (!at || at === document.body || at.closest('.screen[hidden]'))) $(FIRST_CONTROL[id])?.focus();
 }
 
 async function toTitle() {
@@ -43,13 +52,38 @@ async function play(gid, nodeId) {
   if (!(await enterGame(stage, gid, nodeId, toTitle))) toTitle();
 }
 
-function newStory() { resetSetup(); showScreen('scr-setup'); }
+// The preset worlds fill the form: if they did not load at startup, try again before opening it
+async function newStory() {
+  try { await loadPresets(); } catch (e) { toast(t('setup.presetFail', { msg: e.message }), true); return; }
+  resetSetup();
+  showScreen('scr-setup');
+}
+
+// An action still running ignores a second click: no second game load, export, download or import
+const running = new Set();
+const once = (name, fn) => async (...args) => {
+  if (running.has(name)) return;
+  running.add(name);
+  try { await fn(...args); } finally { running.delete(name); }
+};
+
+// Download or folder import failed: a code with its own text (no browser storage, storage full) keeps that text
+// and its help; anything else is an internal error
+function archiveFail(e) {
+  console.error(e);
+  const text = e?.code ? errorText(e.code) : '';
+  const known = !!text && text !== String(e.code);
+  toast(known ? text : t('err.local_internal'), true, 0, { id: 'archive', code: known ? e.code : '' });
+}
+
+// Story folders in what the player picked (every game.json); those not loaded were damaged, too large or being written
+const storyFolders = (files) => [...files].filter((f) => /(^|\/)game\.json$/.test(f.webkitRelativePath || f.name)).length;
 
 const actions = {
-  async continue() {
+  continue: once('continue', async () => {
     const auto = await get('/api/autosave').catch(() => null);
-    if (auto) play(auto.game_id, auto.node_id);
-  },
+    if (auto) play(auto.game_id, auto.node_id);   // switches screens at once, before its own loading
+  }),
   new() { if (needsKey()) openOnboard(); else newStory(); },
   demo() { if ($('#title-demo').dataset.gid) play($('#title-demo').dataset.gid, null); },
   load() { openSlots('load', play); },
@@ -58,23 +92,29 @@ const actions = {
     if (LOCAL) paintStorage();
     openModal('#mdl-settings');
   },
-  back() { toTitle(); },
+  async back() {
+    // Half a new story typed in is not thrown away without asking
+    if (!$('#scr-setup').hidden && setupDirty() && !(await confirmBox(t('setup.leaveAsk'), t('setup.leaveOk')))) return;
+    toTitle();
+  },
   save() { openSlots('save'); },
   tree() { openTree(); },
   log() { openLog(); },
   async title() {
     if (await confirmBox(t('game.toTitle'), t('game.toTitleOk'))) toTitle();
   },
-  importDir() { $('#import-dir').click(); },
-  async exportZip() {
+  importDir() { if (!running.has('import')) $('#import-dir').click(); },
+  exportZip: once('exportZip', async () => {
     const show = (pct) => toast(t('archive.exporting', { pct }), false, 60000, { id: 'archive' });
     show(0);
     try {
       const r = await (await import('./local/archive.js')).exportProgress(show);
-      toast(t('archive.exported', r), false, 4000, { id: 'archive' });
+      // Files that could not be read (a demo picture while offline) are left out: say so
+      if (r.skipped) toast(t('archive.exportedSkipped', r), false, 10000, { id: 'archive' });
+      else toast(t('archive.exported', r), false, 4000, { id: 'archive' });
       paintBackup();
-    } catch (e) { console.error(e); toast(t('err.local_internal'), true, 0, { id: 'archive' }); }
-  },
+    } catch (e) { archiveFail(e); }
+  }),
 };
 
 document.addEventListener('click', (e) => {
@@ -89,7 +129,7 @@ $('#setup-start').onclick = async () => {
   if (isBatchMode()) requestNotifyPermission();
   $('#setup-start').disabled = true;
   const game = await startGame();
-  $('#setup-start').disabled = false;
+  paintEstimate();   // back on, unless the batch tree is over the size limit
   if (!game) return;
   if (!game.batch) { play(game.id, null); return; }
   // Batch: the tree is written in the background, the player's branch first; play starts once the opening is written
@@ -168,10 +208,26 @@ function paintHealth() {
     ? t('health.localModels', { list, relay: t(health.relay_default ? 'health.relayDefault' : health.relay ? 'health.relay' : 'health.noRelay') }) : t('health.models', { list });
 }
 
-function switchLang(code) { setLang(code); paintHealth(); paintBusy(); refreshBatches(); if (LOCAL) paintBackup(); }
+// The language buttons say which one is on to screen readers too
+function paintLangButtons() {
+  document.querySelectorAll('[data-lang]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+}
+
+let relayDefault = '';   // the browser build's built-in relay, named in the relay field's placeholder
+function paintRelayHint() {
+  if (relayDefault) $('#set-relay').placeholder = t('settings.relayBuiltin', { url: relayDefault });
+}
+
+function switchLang(code) {
+  setLang(code);
+  paintLangButtons();
+  paintRelayHint();   // setLang put back the generic placeholder
+  paintHealth(); paintBusy(); refreshBatches(); if (LOCAL) paintBackup();
+}
 document.querySelectorAll('[data-lang]').forEach((b) => { b.onclick = () => switchLang(b.dataset.lang); });
 
 applyStatic();
+paintLangButtons();
 initGame();
 initSetup().catch((e) => toast(t('setup.presetFail', { msg: e.message }), true));
 toTitle();
@@ -211,7 +267,8 @@ function paintBusy() {
   const text = busyText();
   $('#busy').hidden = false;
   $('#busy').dataset.level = busy.level;
-  $('#busy span').textContent = text;
+  // #busy is a live region: writing the same text again every poll would read it out again
+  if ($('#busy span').textContent !== text) $('#busy span').textContent = text;
   $('#busy-dot').hidden = false;
   $('#busy-dot').dataset.level = busy.level;
   $('#busy-dot').title = text;
@@ -266,7 +323,8 @@ if (LOCAL) {
   paintStorage();
   get('/api/settings').then((s) => {
     $('#set-relay').value = s.relay || s.relay_default || '';
-    if (s.relay_default) $('#set-relay').placeholder = t('settings.relayBuiltin', { url: s.relay_default });
+    relayDefault = s.relay_default || '';
+    paintRelayHint();
   }).catch(() => {});
   // The relay is tried once before saving; one that does not answer or refuses this site is not saved (B07)
   $('#set-relay-save').addEventListener('click', async () => {
@@ -288,13 +346,13 @@ if (LOCAL) {
       refreshContinue();
     } catch (e) { console.error(e); toast(t('err.local_internal'), true); }
   });
-  $('#set-diag').addEventListener('click', async () => {
+  $('#set-diag').addEventListener('click', once('diag', async () => {
     try {
       await (await import('./local/archive.js')).downloadDiag();
       toast(t('settings.diagDone'), false, 6000);
     } catch (e) { console.error(e); toast(t('err.local_internal'), true); }
-  });
-  $('#import-dir').addEventListener('change', async (e) => {
+  }));
+  $('#import-dir').addEventListener('change', once('import', async (e) => {
     const files = e.target.files;
     if (!files?.length) return;
     toast(t('archive.importing'), false, 60000, { id: 'archive' });
@@ -309,11 +367,14 @@ if (LOCAL) {
         refreshHealth();
       }
       const done = r.settings ? 'archive.importedAll' : 'archive.imported';
-      toast(r.games ? t(done, r) : t('archive.none'), !r.games, 8000, { id: 'archive' });
+      const skipped = Math.max(0, storyFolders(files) - r.games);
+      let msg = r.games ? t(done, r) : t(skipped ? 'archive.noneSkipped' : 'archive.none', { skipped });
+      if (r.games && skipped) msg += t('archive.importSkipped', { skipped });
+      toast(msg, !r.games, skipped ? 12000 : 8000, { id: 'archive' });
       refreshContinue();
-    } catch (err) { console.error(err); toast(t('err.local_internal'), true, 0, { id: 'archive' }); }
+    } catch (err) { archiveFail(err); }
     e.target.value = '';
-  });
+  }));
   // Offline cache for the app shell and CDN libraries (sw.js is generated by tools/build_pages.py)
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').then((reg) => watchUpdate(reg, () => activeJobs() > 0))

@@ -40,16 +40,22 @@ function paintPanel(list) {
   const panel = $('#batch-panel');
   panel.hidden = !active.length;
   panel.innerHTML = active.length ? `<h4>${esc(t('batch.panel'))}</h4>` + active.map((b) => {
-    const pct = b.state === 'running' ? b.nodes / Math.max(1, b.planned) : b.images / Math.max(1, b.images_total);
-    return `<div><b>${esc(b.title)}</b>・${esc(t(`batch.state.${b.state}`))}<br>${esc(batchRow(b))}</div>` +
-      `<div class="batch-bar"><i style="width:${Math.round(pct * 100)}%"></i></div>`;
+    const share = b.state === 'running' ? b.nodes / Math.max(1, b.planned) : b.images / Math.max(1, b.images_total);
+    // A retried node or image can count past the plan: the bar stops at full
+    const pct = Math.round(Math.min(1, Math.max(0, share || 0)) * 100);
+    return `<div><b>${esc(b.title)}</b>${esc(t('detail.sep'))}${esc(t(`batch.state.${b.state}`))}<br>${esc(batchRow(b))}</div>` +
+      `<div class="batch-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" ` +
+      `aria-label="${esc(b.title)}"><i style="width:${pct}%"></i></div>`;
   }).join('') + (LOCAL ? `<p class="hint">${esc(t('batch.keepOpen'))}</p>` : '') : '';
 }
 
 function systemNotice(b) {
   try {
     if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification(t('batch.doneTitle'), { body: t('batch.doneBody', { title: b.title, nodes: b.nodes }) });
+      // One notice per story (a repeat replaces it); clicking it brings this tab forward
+      const n = new Notification(t('batch.doneTitle'),
+        { body: t('batch.doneBody', { title: b.title, nodes: b.nodes }), tag: `cg-batch-${b.id}` });
+      n.onclick = () => { window.focus(); n.close(); };
     }
   } catch { /* some browsers only allow notifications from a service worker; the popup still shows */ }
 }
@@ -72,7 +78,18 @@ let anyActive = false;
 // A batch was writing or drawing at the last poll (the browser build pauses it when the page closes)
 export const batchActive = () => anyActive;
 
-async function poll() {
+// A slow answer must not stack polls: a timer tick while one is out is skipped, a refresh runs once after it
+let polling = false;
+let again = false;
+async function poll(refresh = false) {
+  if (polling) { again ||= refresh; return; }
+  polling = true;
+  try {
+    do { again = false; await pollOnce(); } while (again);
+  } finally { polling = false; }
+}
+
+async function pollOnce() {
   let list;
   try { list = await get('/api/batches'); } catch { return; }   // server down: the title screen health line says so
   anyActive = list.some((b) => ACTIVE.includes(b.state));
@@ -101,7 +118,7 @@ export const rearm = (gid) => ack(gid, false);
 
 // A batch just started or changed: repaint without waiting for the next tick
 export function refreshBatches() {
-  if (timer) poll();
+  if (timer) poll(true);
 }
 
 // Must run inside the click that starts a batch: browsers only show the permission prompt for a user gesture

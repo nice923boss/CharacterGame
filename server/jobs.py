@@ -60,6 +60,7 @@ class Jobs:
 
     def add(self, job: Job) -> None:
         self.all[job.id] = job
+        self._schedule(job)     # a job whose stream never started has no detach to schedule its reap
 
     def attach(self, job: Job) -> None:
         job.followers += 1

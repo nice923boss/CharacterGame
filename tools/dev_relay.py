@@ -21,9 +21,30 @@ sys.path.insert(0, str(ROOT))
 ROUTES = [("/v1/chat/completions", "https://integrate.api.nvidia.com"),
           ("/v1/genai/", "https://ai.api.nvidia.com")]
 DEFAULT_ORIGINS = ["http://127.0.0.1:8766", "http://localhost:8766", "https://nice923boss.github.io"]
+MAX_BODY = 4 * 1024 * 1024   # same limit as relay/worker.js
+
+
+def same_origin(s: str) -> str:
+    """Origins compare without trailing slash or case, so --allow-origin http://localhost:8766/ still matches."""
+    return s.strip().rstrip("/").lower()
+
+
+class RelayServer(ThreadingHTTPServer):
+    # On Windows SO_REUSEADDR lets a second relay share a port that is in use, and requests go to either one
+    allow_reuse_address = sys.platform != "win32"
+
+
+def bind(port: int, handler) -> RelayServer:
+    try:
+        return RelayServer(("127.0.0.1", port), handler)
+    except OSError:
+        raise SystemExit(f"port {port} is in use or not allowed (another relay running?); "
+                         "choose another with --port") from None
 
 
 def make_handler(origins: set[str], env_key: str | None):
+    origins = {same_origin(o) for o in origins}
+
     class Relay(BaseHTTPRequestHandler):
         def log_message(self, fmt, *args):   # path and status only, never headers
             sys.stderr.write(f"relay {self.command} {self.path.split('?')[0]} {args[1] if len(args) > 1 else ''}\n")
@@ -33,23 +54,53 @@ def make_handler(origins: set[str], env_key: str | None):
             self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
             self.send_header("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept")
             self.send_header("Access-Control-Allow-Private-Network", "true")
+            self.send_header("Access-Control-Max-Age", "86400")
             self.send_header("Vary", "Origin")
 
-        def reply(self, status: int, body: dict, origin: str) -> None:
+        def reply(self, status: int, body: dict, origin: str, extra: dict | None = None) -> None:
             data = json.dumps(body).encode()
             self.send_response(status)
             self.cors(origin)
+            for k, v in (extra or {}).items():
+                self.send_header(k, v)
             self.send_header("Content-Type", "application/json")
             self.send_header("Content-Length", str(len(data)))
             self.end_headers()
-            self.wfile.write(data)
+            if self.command != "HEAD":
+                self.wfile.write(data)
 
         def allowed(self) -> str | None:
             origin = self.headers.get("Origin", "")
-            if origin in origins:
+            if same_origin(origin) in origins:
                 return origin
             self.reply(403, {"error": "origin_not_allowed"}, origin)
             return None
+
+        def not_allowed(self) -> None:
+            """JSON 405 with CORS headers, like the Worker, instead of the default 501 page the browser cannot read."""
+            origin = self.allowed()
+            if origin is not None:
+                self.reply(405, {"error": "method_not_allowed"}, origin, {"Allow": "POST, OPTIONS"})
+
+        do_GET = do_HEAD = do_PUT = do_PATCH = do_DELETE = not_allowed
+
+        def read_body(self, origin: str) -> bytes | None:
+            """The request body, or None after answering 411, 400 or 413."""
+            length = self.headers.get("Content-Length")
+            if length is None:
+                self.reply(411, {"error": "length_required"}, origin)
+                return None
+            if not length.isdigit():
+                self.reply(400, {"error": "bad_length"}, origin)
+                return None
+            size = int(length)
+            if size > MAX_BODY:
+                # Read and drop the body, or closing the socket with unread data resets it and the page sees no answer
+                while size > 0:
+                    size -= len(self.rfile.read(min(size, 65536))) or size
+                self.reply(413, {"error": "body_too_large"}, origin)
+                return None
+            return self.rfile.read(size)
 
         def do_OPTIONS(self):
             origin = self.allowed()
@@ -69,7 +120,9 @@ def make_handler(origins: set[str], env_key: str | None):
             if upstream is None:
                 self.reply(404, {"error": "path_not_allowed"}, origin)
                 return
-            body = self.rfile.read(int(self.headers.get("Content-Length", 0)))
+            body = self.read_body(origin)
+            if body is None:
+                return
             headers = {"Content-Type": self.headers.get("Content-Type", "application/json"),
                        "Accept": self.headers.get("Accept", "*/*")}
             auth = f"Bearer {env_key}" if env_key else self.headers.get("Authorization")
@@ -98,6 +151,10 @@ def make_handler(origins: set[str], env_key: str | None):
                 if not started:
                     self.reply(502, {"error": "upstream_unreachable"}, origin)
                 self.close_connection = True
+            except ConnectionError:
+                # The page stopped reading (timeout or reload); leaving the block also closes the NVIDIA stream
+                sys.stderr.write("relay page closed the connection\n")
+                self.close_connection = True
 
     return Relay
 
@@ -115,7 +172,7 @@ def main() -> None:
         if not env_key:
             raise SystemExit("NVIDIA_API_KEY missing in .env")
     origins = set(DEFAULT_ORIGINS + args.allow_origin)
-    server = ThreadingHTTPServer(("127.0.0.1", args.port), make_handler(origins, env_key))
+    server = bind(args.port, make_handler(origins, env_key))
     print(f"dev relay on http://127.0.0.1:{args.port} (origins: {', '.join(sorted(origins))}; "
           f"env key {'injected' if env_key else 'not used'})", flush=True)
     server.serve_forever()

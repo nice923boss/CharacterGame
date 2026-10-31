@@ -18,6 +18,11 @@ const WARN_AT = 0.8;
 const STOP_AT = 0.95;
 const FLUSH_MS = 30000;   // each isolate reports its count at most this often
 const KEEP_DAYS = 7;
+// Requests are prompt text, far below 1 MB; a larger body is refused instead of held in the isolate's memory
+const MAX_BODY = 4 * 1024 * 1024;
+
+// "https://x.github.io/" in ALLOWED_ORIGINS still matches the browser's "https://x.github.io"
+const sameOrigin = (s) => s.trim().replace(/\/+$/, '').toLowerCase();
 
 function corsHeaders(origin) {
   return {
@@ -91,12 +96,12 @@ export default {
     }
 
     const origin = request.headers.get('Origin') || '';
-    const allowed = (env.ALLOWED_ORIGINS || '').split(',').map((s) => s.trim()).filter(Boolean);
+    const allowed = (env.ALLOWED_ORIGINS || '').split(',').map(sameOrigin).filter(Boolean);
     const cors = corsHeaders(origin);
     // The error still carries CORS headers so the page can tell the player what is wrong
-    if (!allowed.includes(origin)) return json(403, { error: 'origin_not_allowed' }, cors);
+    if (!allowed.includes(sameOrigin(origin))) return json(403, { error: 'origin_not_allowed' }, cors);
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
-    if (request.method !== 'POST') return json(405, { error: 'method_not_allowed' }, cors);
+    if (request.method !== 'POST') return json(405, { error: 'method_not_allowed' }, { ...cors, Allow: 'POST, OPTIONS' });
 
     const route = ROUTES.find((r) => url.pathname === r.prefix || (r.prefix.endsWith('/') && url.pathname.startsWith(r.prefix)));
     if (!route) return json(404, { error: 'path_not_allowed' }, cors);
@@ -105,7 +110,9 @@ export default {
     const headers = { 'Content-Type': request.headers.get('Content-Type') || 'application/json' };
     for (const h of ['Authorization', 'Accept']) if (request.headers.get(h)) headers[h] = request.headers.get(h);
     // Request bodies are small JSON, so read them whole (streaming a request body needs duplex support)
+    if (Number(request.headers.get('Content-Length')) > MAX_BODY) return json(413, { error: 'body_too_large' }, cors);
     const body = await request.arrayBuffer();
+    if (body.byteLength > MAX_BODY) return json(413, { error: 'body_too_large' }, cors);
     let upstream;
     try {
       upstream = await fetch(route.upstream + url.pathname, { method: 'POST', headers, body });

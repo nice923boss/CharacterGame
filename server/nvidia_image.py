@@ -8,6 +8,7 @@ header replaces the table step); one connection pool is shared by every call.
 import asyncio
 import base64
 import io
+import os
 import pathlib
 import re
 from collections.abc import Awaitable, Callable
@@ -99,7 +100,9 @@ async def _draw(prompt: str, seed: int, gate: Gate | None = None) -> Image.Image
     key = config.ENV.get("NVIDIA_API_KEY", "")
     if not key:
         raise NvidiaImageError("未設定 NVIDIA_API_KEY", retryable=False)
-    body = {"prompt": soften(prompt), "width": SIZE, "height": SIZE, "seed": seed % 2**31, "steps": STEPS}
+    if not key.isascii():   # httpx would raise UnicodeEncodeError building the header, on every attempt
+        raise NvidiaImageError("NVIDIA_API_KEY 含非 ASCII 字元", retryable=False)
+    body ={"prompt": soften(prompt), "width": SIZE, "height": SIZE, "seed": seed % 2**31, "steps": STEPS}
     headers = {"Authorization": f"Bearer {key}", "Accept": "application/json"}
     for backoff in [*RETRY_BACKOFF_S, None]:
         if gate:
@@ -121,17 +124,27 @@ async def _draw(prompt: str, seed: int, gate: Gate | None = None) -> Image.Image
                                    retryable=r.status_code in RETRY_STATUS or r.status_code == 404)
         hint = retry_after(r.headers.get("retry-after"))
         await asyncio.sleep(backoff if hint is None else min(hint, config.RETRY_AFTER_MAX_S))
-    art = (r.json().get("artifacts") or [{}])[0]
-    if art.get("finishReason") != "SUCCESS" or not art.get("base64"):
+    try:
+        data = r.json()
+    except ValueError as e:     # a proxy or gateway page instead of the API answer
+        raise NvidiaImageError("輝達生圖回應不是 JSON") from e
+    arts = data.get("artifacts") if isinstance(data, dict) else None
+    art = arts[0] if isinstance(arts, list) and arts and isinstance(arts[0], dict) else {}
+    if art.get("finishReason") != "SUCCESS" or not isinstance(art.get("base64"), str) or not art["base64"]:
         reason = _safe(str(art.get("finishReason")))
         if reason == "CONTENT_FILTERED":
             raise NvidiaImageError("輝達內容過濾擋下這段提示詞（CONTENT_FILTERED）", retryable=False)
         raise NvidiaImageError(f"輝達生圖沒有回傳圖片（{reason}）")
-    return Image.open(io.BytesIO(base64.b64decode(art["base64"]))).convert("RGB")
+    try:
+        return Image.open(io.BytesIO(base64.b64decode(art["base64"]))).convert("RGB")
+    except (ValueError, OSError) as e:      # bad base64 (binascii.Error) or a truncated or unknown image
+        raise NvidiaImageError(f"輝達生圖回傳的圖片解不開（{type(e).__name__}）") from e
 
 
 async def txt2img(prompt: str, width: int, height: int, seed: int, dest: pathlib.Path,
                   gate: Gate | None = None) -> None:
     img = fit(await _draw(prompt, seed, gate), width, height)
     dest.parent.mkdir(parents=True, exist_ok=True)
-    img.save(dest)
+    tmp = dest.with_name(dest.name + ".tmp")
+    img.save(tmp, format="PNG")
+    os.replace(tmp, dest)   # an interrupted save must not leave half a picture that counts as drawn

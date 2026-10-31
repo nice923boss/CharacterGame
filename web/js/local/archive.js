@@ -3,6 +3,8 @@
 import * as store from './store.js';
 import * as images from './images.js';
 import { applyBrowserSettings, browserSettings, diagReport, ready } from './backend.js';
+import { turnBusy } from './turns.js';
+import { writingHere } from './batch.js';
 import { DATA } from './data.js';
 
 // Turns in the player's own stories (the bundled demo left out), for the backup reminder on the title screen
@@ -106,7 +108,8 @@ export async function downloadDiag() {
   saveFile(new Blob([await diagReport()], { type: 'application/json' }), `chienzhi-diag-${fileStamp()}.json`);
 }
 
-// Builds the zip and starts the browser download; resolves with { games, files }.
+// Builds the zip and starts the browser download; resolves with { games, files, skipped } (skipped: files that
+// could not be read, such as a demo picture while offline).
 // onProgress(pct) runs after each file (by file count; demo images may still come over the network)
 export async function exportProgress(onProgress = () => {}) {
   await ready;
@@ -118,11 +121,19 @@ export async function exportProgress(onProgress = () => {}) {
     entries.push({ name, bytes, crc: crc32(bytes) });
     onProgress(Math.min(99, Math.floor((entries.length * 100) / total)));
   };
+  let skipped = 0;
   for (const g of games) {
     add(`saves/games/${g.id}/game.json`, jsonBytes(await store.loadGame(g.id)));
     add(`saves/games/${g.id}/tree.json`, jsonBytes(await store.loadTree(g.id)));
     for (const path of pathsOf.get(g.id)) {
-      const blob = await store.fileBlob(path);
+      // A bundled demo picture the network cannot bring (offline) is left out instead of failing the download;
+      // a story missing a picture draws it again after import
+      let blob;
+      try { blob = await store.fileBlob(path); } catch (e) {
+        console.warn('export: file left out', path, e);
+        skipped += 1;
+        continue;
+      }
       add(`saves/games/${path}`, new Uint8Array(await blob.arrayBuffer()));
     }
   }
@@ -133,13 +144,39 @@ export async function exportProgress(onProgress = () => {}) {
   add('saves/browser-settings.json', jsonBytes(browserSettings()));
   saveFile(zip(entries), `chienzhi-saves-${fileStamp()}.zip`);
   await store.kvPut('backup', { at: new Date().toISOString(), turns: ownTurns(games) });
-  return { games: games.length, files: entries.length };
+  return { games: games.length, files: entries.length, skipped };
 }
 
 // ---------- folder import ----------
 
 // Only finished images and sprite metadata; .raw intermediates and anything else are left out
 const KEEP = /^assets\/(scenes\/[^/.]+\.png|sprites\/[^/]+\/([^/.]+\.png|meta\.json))$/;
+const JSON_MAX_BYTES = 32 * 1024 * 1024;   // a game.json or tree.json larger than this is not read
+const PNG_SIGNATURE = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+const isObj = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
+
+// game.json and tree.json with the shape the game reads: anything else would break the story when it is opened
+export function validStory(game, tree, gid) {
+  if (!isObj(game) || game.id !== gid) return false;
+  if (!Array.isArray(game.characters) || !game.characters.every(isObj)) return false;
+  if (!isObj(game.scenes) || !Object.values(game.scenes).every(isObj)) return false;
+  if (!isObj(tree) || !isObj(tree.nodes) || !Number.isInteger(tree.next)) return false;
+  const ids = Object.keys(tree.nodes);
+  // Own keys only: "constructor" or "toString" must not pass as a node id
+  const has = (id) => typeof id === 'string' && Object.hasOwn(tree.nodes, id);
+  if (tree.root === null || tree.root === undefined) return ids.length === 0;
+  if (!has(tree.root)) return false;
+  return ids.every((id) => {
+    const n = tree.nodes[id];
+    if (!isObj(n) || !Array.isArray(n.children) || !n.children.every(has)) return false;
+    return id === tree.root ? n.parent == null : has(n.parent);
+  });
+}
+
+async function isPng(file) {
+  const head = new Uint8Array(await file.slice(0, 8).arrayBuffer());
+  return PNG_SIGNATURE.every((b, i) => head[i] === b);
+}
 
 // files: the FileList of an <input webkitdirectory>. Resolves with { games, slots, autosave, settings }
 // (settings: what browser-settings.json changed, or null).
@@ -154,6 +191,12 @@ export async function importFolder(files) {
     const base = `${m[1]}${m[2]}/`;
     const gid = m[2];
     const treeFile = byPath.get(`${base}tree.json`);
+    // A story this page is writing right now would be overwritten again by the turn in progress
+    if (turnBusy(gid) || writingHere(gid)) { console.warn('skip story folder being written now', base); continue; }
+    if (byPath.get(path).size > JSON_MAX_BYTES || treeFile?.size > JSON_MAX_BYTES) {
+      console.warn('skip story folder with an oversized file', base);
+      continue;
+    }
     let game; let tree;
     try {
       game = JSON.parse(await byPath.get(path).text());
@@ -162,12 +205,15 @@ export async function importFolder(files) {
       console.warn('skip unreadable story folder', base, e);
       continue;
     }
-    if (game?.id !== gid || !tree?.nodes) { console.warn('skip story folder without a matching game/tree', base); continue; }
+    if (!validStory(game, tree, gid)) { console.warn('skip story folder without a matching game/tree', base); continue; }
     images.forget(gid);
     for (const p of store.filePaths()) if (p.startsWith(`${gid}/`)) await store.deleteFile(p);
     for (const x of all) {
       const rel = x.path.startsWith(base) ? x.path.slice(base.length) : null;
-      if (rel && KEEP.test(rel)) await store.putFile(`${gid}/${rel}`, x.f);
+      if (!rel || !KEEP.test(rel)) continue;
+      // Pictures must really be PNG: anything else would only fail later, on screen
+      if (rel.endsWith('.png') && !(await isPng(x.f))) { console.warn('skip file that is not a PNG', x.path); continue; }
+      await store.putFile(`${gid}/${rel}`, x.f);
     }
     await store.saveTree(gid, tree);
     await store.saveGame(game);
@@ -181,13 +227,23 @@ export async function importFolder(files) {
   let settings = null;
   for (const root of roots) {
     const known = new Set((await store.listGames()).map((g) => g.id));
+    // A slot or autosave must point at a node that exists in its story, or loading it fails later
+    const trees = new Map();
+    const hasNode = async (gid, nid) => {
+      if (!known.has(gid) || typeof nid !== 'string') return false;
+      if (!trees.has(gid)) trees.set(gid, await store.loadTree(gid));
+      return Object.hasOwn(trees.get(gid).nodes, nid);
+    };
     const slotFile = byPath.get(`${root}slots.json`);
     if (slotFile) {
       try {
         const incoming = JSON.parse(await slotFile.text());
         const slots = await store.loadSlots();
         for (const s of Array.isArray(incoming) ? incoming : []) {
-          if (s && known.has(s.game_id) && s.slot >= 0 && s.slot < store.SLOT_COUNT) { slots[s.slot] = s; slotCount += 1; }
+          if (s && Number.isInteger(s.slot) && s.slot >= 0 && s.slot < store.SLOT_COUNT && await hasNode(s.game_id, s.node_id)) {
+            slots[s.slot] = s;
+            slotCount += 1;
+          }
         }
         await store.putSlots(slots);
       } catch (e) { console.warn('slots.json unreadable', e); }
@@ -198,7 +254,7 @@ export async function importFolder(files) {
         const data = JSON.parse(await autoFile.text());
         // Oldest first, so the newest ends up on top of the list
         for (const a of (Array.isArray(data) ? data : [data]).reverse()) {
-          if (a && known.has(a.game_id)) {
+          if (a && await hasNode(a.game_id, a.node_id)) {
             await store.setAutosave(a.game_id, a.node_id, a.scene_id);
             autosave = true;
           }

@@ -66,16 +66,19 @@ class TurnService:
     async def create_game(self, payload: dict, emit, waits: Waits | None = None) -> dict:
         lang = payload.get("lang") if payload.get("lang") in LANGS else "zh"
         x = LIMIT_SCALE[lang]
-        world = {k: _check_text((payload.get("world") or {}).get(k), k, 200 * x, k in ("era", "place"))
+        # a field of the wrong type counts as not filled in, so the player gets "required", not a crash
+        world_in = payload.get("world") if isinstance(payload.get("world"), dict) else {}
+        world = {k: _check_text(world_in.get(k), k, 200 * x, k in ("era", "place"))
                  for k in ("era", "place", "genre", "tone", "extra", "goal")}
-        p = payload.get("protagonist") or {}
+        p = payload.get("protagonist") if isinstance(payload.get("protagonist"), dict) else {}
         protagonist = {"name": _check_text(p.get("name"), "hero_name", 12 * x),
                        "profile": _check_text(p.get("profile"), "hero_profile", 200 * x, False)}
         raw_chars = payload.get("characters") or []
-        if not 1 <= len(raw_chars) <= MAX_CHARACTERS:
+        if not isinstance(raw_chars, list) or not 1 <= len(raw_chars) <= MAX_CHARACTERS:
             raise TurnError("char_count", max=MAX_CHARACTERS)
         chars = []
         for i, c in enumerate(raw_chars, 1):
+            c = c if isinstance(c, dict) else {}
             chars.append({"id": f"c{i}", **{k: _check_text(c.get(k), f"char_{k}", limit * x, i=i) for k, limit in (
                 ("name", 12), ("appearance", 300), ("personality", 200), ("speech", 200), ("relationship", 200))}})
         names = [c["name"] for c in chars] + [protagonist["name"]]
@@ -112,11 +115,12 @@ class TurnService:
         res = await self.llm.stream(prompts.setup_messages(world, chars, lang), status_only, temperature=0.5,
                                    waits=waits)
         d = last_json(res.content) or {}
-        looks = {str(x.get("name", "")).strip(): str(x.get("appearance_en", "")).strip()
+        # "or" rather than a get() default: a null field must not become the text "None" (and pass as English)
+        looks = {str(x.get("name") or "").strip(): str(x.get("appearance_en") or "").strip()
                  for x in d.get("characters") or [] if isinstance(x, dict)}
         fs = d.get("first_scene") if isinstance(d.get("first_scene"), dict) else {}
-        sid = slug(fs.get("id", "")) or "opening"
-        if not mostly_ascii(str(fs.get("image_prompt", ""))) or not all(mostly_ascii(looks.get(c["name"], ""))
+        sid = slug(fs.get("id") or "") or "opening"
+        if not mostly_ascii(str(fs.get("image_prompt") or "")) or not all(mostly_ascii(looks.get(c["name"], ""))
                                                                           for c in chars):
             log.warning("setup json unusable: %s", config.mask(res.content[:800]))
             raise TurnError("setup_unusable")
@@ -126,12 +130,12 @@ class TurnService:
         game = {
             "id": self.store.new_game_id(), "created_at": now_iso(), "seed": seed, "lang": lang,
             "title": cast.conv(clip(str(d.get("title") or world["place"]).strip(), MAX_GAME_TITLE[lang])),
-            "style_en": str(d.get("style_en", "")).strip()[:200],
+            "style_en": str(d.get("style_en") or "").strip()[:200],
             "world": world, "protagonist": protagonist,
             "characters": [{**c, "appearance_en": looks[c["name"]], "seed": seed + 17 * i}
                            for i, c in enumerate(chars, 1)],
             "scenes": {sid: {"name": cast.conv(str(fs.get("name") or ("序章" if lang == "zh" else "Prologue"))),
-                             "image_prompt": str(fs["image_prompt"]).strip()}},
+                             "image_prompt": str(fs.get("image_prompt") or "").strip()}},
             "first_scene": sid,
             "setup_model": res.candidate.model,
             **({"batch": batch} if batch else {}),
@@ -159,6 +163,10 @@ class TurnService:
                        waits: Waits | None = None) -> dict:
         """batch=True: written ahead by the batch walker, so no autosave, no sprite requests, and the
         scene waits behind the images of the game on screen."""
+        if parent_id is not None and not isinstance(parent_id, str):
+            raise TurnError("node_not_found")      # also keeps an unhashable id out of the key below
+        if not isinstance(player_input, dict):
+            raise TurnError("bad_input_kind")
         key = (gid, parent_id, "".join(str(player_input.get("text") or "").split()))
         writing = self._writing.get(key)
         if writing and not batch:

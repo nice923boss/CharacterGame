@@ -3,14 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="千枝物語：AI 即時寫出的分支視覺小說，每一次選擇都長出新的故事枝枒，可以回到任一輪改走別的結局。Thousand Branches: a branching visual novel written by AI as you play, where every choice grows a new branch.">
+<meta name="theme-color" content="#0c1020">
 <title>千枝物語</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230c1020'/%3E%3Cpath d='M16 29V11M16 20l-7-7M16 15l7-7' stroke='%23d2ae68' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+<!-- crossorigin: the font CSS and p5 load with CORS, so the service worker stores real (not opaque) copies and p5 errors keep their message -->
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap" rel="stylesheet" crossorigin="anonymous">
 <link rel="stylesheet" href="css/style.css">
-<script src="https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
+<noscript><p class="noscript">千枝物語需要 JavaScript 才能執行，請在瀏覽器設定中開啟 JavaScript 後重新整理頁面。<br><span lang="en">Thousand Branches needs JavaScript. Turn it on in your browser settings and reload the page.</span></p></noscript>
 <div id="stage">
   <div id="canvas-host"></div>
 
@@ -21,8 +26,8 @@
       <h1 class="game-title" data-i18n="app.title">千枝物語</h1>
       <p class="subtitle" data-i18n="app.subtitle">每一次選擇，都長出新的枝枒</p>
       <div class="lang-switch">
-        <button class="btn tiny" data-lang="zh">繁中</button>
-        <button class="btn tiny" data-lang="en">English</button>
+        <button class="btn tiny" type="button" data-lang="zh" lang="zh-Hant" aria-pressed="false">繁中</button>
+        <button class="btn tiny" type="button" data-lang="en" lang="en" aria-pressed="false">English</button>
       </div>
       <div class="menu">
         <button class="btn primary" id="title-demo" data-act="demo" data-i18n="menu.demo" hidden>先玩示範故事</button>
@@ -87,7 +92,7 @@
       <footer class="panel-foot">
         <div>
           <p class="hint" id="setup-lang" data-i18n="setup.lang"></p>
-          <p class="hint" id="setup-msg"></p>
+          <p class="hint" id="setup-msg" role="status" aria-live="polite"></p>
         </div>
         <button class="btn primary" id="setup-start" data-i18n="setup.start">開始故事</button>
       </footer>
@@ -96,6 +101,7 @@
 
   <!-- 3. main game (dialog box, 4. options live here) -->
   <section id="scr-game" class="screen" hidden>
+    <div id="game-live" class="sr-only" aria-live="polite"></div>
     <div id="scene-card" hidden></div>
     <button id="asset-chip" type="button" hidden></button>
     <div id="stage-loading" hidden><p></p><div class="batch-bar"><i></i></div></div>
@@ -120,14 +126,14 @@
         <button class="btn small" id="failed-retry" type="button" data-i18n="game.retry">重試</button>
         <button class="btn small ghost" id="failed-exit" type="button" data-i18n="game.toTitleOk">回到標題</button>
       </div>
-      <div id="options"></div>
+      <div id="options" role="group" tabindex="-1"></div>
       <form id="free-form" autocomplete="off">
         <input id="free-input">
         <span id="free-count" aria-live="polite"></span>
         <button class="btn small" type="submit" data-i18n="common.send">送出</button>
       </form>
     </div>
-    <div id="ending" class="panel" hidden>
+    <div id="ending" class="panel" tabindex="-1" hidden>
       <p id="ending-kind"></p>
       <h2 id="ending-title"></h2>
       <p class="hint" data-i18n="ending.hint">可以從節點樹回到任一輪，改走別的結局。</p>
@@ -137,11 +143,11 @@
         <button class="btn small ghost" data-act="title" data-i18n="ending.toTitle">回到標題</button>
       </div>
     </div>
-    <div id="dialog" class="box">
+    <div id="dialog" class="box" tabindex="-1">
       <div id="nameplate" hidden></div>
       <p id="dialog-text"></p>
-      <span id="dialog-next" hidden>▼</span>
-      <span id="dialog-wait" hidden><i></i><i></i><i></i></span>
+      <span id="dialog-next" aria-hidden="true" hidden>▼</span>
+      <span id="dialog-wait" aria-hidden="true" hidden><i></i><i></i><i></i></span>
       <button class="btn tiny" id="dialog-skip" type="button" data-i18n="game.skip" hidden>跳到選項</button>
     </div>
     <div id="press-menu" class="panel" hidden>
@@ -178,6 +184,10 @@
       <header class="panel-head"><h2 data-i18n="log.title">對話紀錄</h2>
         <p class="hint" data-i18n="log.hint"></p>
         <button class="btn small ghost" data-close data-i18n="common.close">關閉</button></header>
+      <div class="log-tools">
+        <label><span class="sr-only" data-i18n="log.search">搜尋紀錄</span><input id="log-search" type="search" autocomplete="off" data-i18n-ph="log.search"></label>
+        <button class="btn small ghost" id="log-copy" type="button" data-i18n="log.copy">複製</button>
+      </div>
       <div id="log-list"></div>
     </div>
   </section>

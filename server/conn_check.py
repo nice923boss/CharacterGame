@@ -42,6 +42,8 @@ def _request(kind: str) -> tuple[str, dict]:
 
 async def probe(kind: str, key: str) -> dict:
     """kind: "text" or "image". Returns state (see classify), HTTP status (None without an answer) and latency."""
+    if not key.isascii():   # httpx cannot put it in a header (UnicodeEncodeError), and no server can accept it
+        return {"kind": kind, "state": "key_rejected", "status": None, "ms": 0}
     url, body = _request(kind)
     status, failure = None, ""
     t0 = time.monotonic()
