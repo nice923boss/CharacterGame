@@ -6,7 +6,7 @@
 <title>千枝物語｜常見問題</title>
 <!-- Common errors and what to do (H05). Error messages in the game link here by anchor: #busy #key #relay #network #storage -->
 <style>
-  :root { --bg: #0c1020; --panel: #141b31; --gold: #d2ae68; --gold-dim: #8f7443; --ink: #f4ecdc; --muted: #b3ab9c;
+  :root { color-scheme: dark; --bg: #0c1020; --panel: #141b31; --gold: #d2ae68; --gold-dim: #8f7443; --ink: #f4ecdc; --muted: #b3ab9c;
     --accent: #7f9ed8; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.75 'Noto Sans TC', system-ui, sans-serif; }
@@ -30,7 +30,7 @@
 <body>
 
 <main lang="zh-Hant" data-lang="zh">
-  <a class="lang" href="#" data-switch="en">English</a>
+  <a class="lang" href="#" data-switch="en" lang="en">English</a>
   <h1>常見問題</h1>
   <p class="lead">遊戲裡的錯誤訊息旁有「說明」連結，會帶你到對應的段落。</p>
   <nav>
@@ -77,14 +77,15 @@
     <h2>連不上轉送服務（網頁版）</h2>
     <dl>
       <dt>看到什麼</dt>
-      <dd>「請先到設定填寫轉送網址」、「連不上轉送網址」、「轉送服務不接受這個網站來源」或「轉送網址格式不對」。</dd>
+      <dd>「請先到設定填寫轉送網址」、「連不上轉送網址」、「轉送服務不接受這個網站來源」、「轉送網址格式不對」，或「轉送服務今天的 Cloudflare 免費額度快用完，暫停轉送」。</dd>
       <dt>為什麼</dt>
-      <dd>瀏覽器不能直接呼叫輝達 API，網頁版要經過轉送服務。網址填錯、轉送服務停了，或轉送服務沒有允許這個網站，都會連不上。伺服器版沒有這一欄，不會遇到。</dd>
+      <dd>瀏覽器不能直接呼叫輝達 API，網頁版要經過轉送服務。網址填錯、轉送服務停了，或轉送服務沒有允許這個網站，都會連不上。內建轉送服務由所有玩家共用 Cloudflare 每天的免費請求數，快用完時會先暫停轉送。伺服器版沒有這一欄，不會遇到。</dd>
       <dt>怎麼做</dt>
       <dd><ol>
         <li>打開設定的「連線」區，看「轉送網址」。不確定時清空後按「儲存」，會改用內建網址。</li>
         <li>用自己部署的轉送服務時，確認網址以 https:// 開頭，而且服務還在執行。</li>
         <li>出現「不接受這個網站來源」時，把目前這個網站的網址加進轉送服務的 ALLOWED_ORIGINS 允許清單。</li>
+        <li>出現「免費額度快用完」時，等到台灣時間早上 8 點（UTC 0 點）額度重置後再玩；急用時照設定頁「轉送網址是什麼？怎麼填？」的步驟架設自己的轉送，再把網址填進「轉送網址」。已經寫好的分支不用轉送，照樣可以從節點樹玩。</li>
         <li>修好後回到遊戲按「重試」。</li>
       </ol></dd>
     </dl>
@@ -126,7 +127,7 @@
 </main>
 
 <main lang="en" data-lang="en" hidden>
-  <a class="lang" href="#" data-switch="zh">中文</a>
+  <a class="lang" href="#" data-switch="zh" lang="zh-Hant">中文</a>
   <h1>Common problems</h1>
   <p class="lead">Error messages in the game have a "Help" link that brings you to the matching section.</p>
   <nav>
@@ -173,14 +174,15 @@
     <h2>Relay unreachable (web version)</h2>
     <dl>
       <dt>What you see</dt>
-      <dd>"Enter a relay URL in Settings first", "Cannot reach the relay URL", a message that the relay does not accept this site, or "Invalid relay URL".</dd>
+      <dd>"Enter a relay URL in Settings first", "Cannot reach the relay URL", a message that the relay does not accept this site, "Invalid relay URL", or a message that the relay has nearly used up today's free Cloudflare allowance and is paused.</dd>
       <dt>Why</dt>
-      <dd>Browsers cannot call the NVIDIA API directly, so the web version goes through a relay. A wrong URL, a stopped relay, or a relay that does not allow this site all end here. The server version has no relay and never shows this.</dd>
+      <dd>Browsers cannot call the NVIDIA API directly, so the web version goes through a relay. A wrong URL, a stopped relay, or a relay that does not allow this site all end here. All players share the built-in relay's daily free Cloudflare requests, and it pauses when they are nearly used up. The server version has no relay and never shows this.</dd>
       <dt>What to do</dt>
       <dd><ol>
         <li>Open the Connection part of Settings and check "Relay URL". If unsure, clear it and press Save to use the built-in relay.</li>
         <li>With your own relay, check that the URL starts with https:// and that the relay is running.</li>
         <li>If the relay does not accept this site, add this site's address to the relay's ALLOWED_ORIGINS list.</li>
+        <li>If the free allowance is used up, play again after it resets at 08:00 Taiwan time (00:00 UTC). To play now, set up your own relay with the steps under "What is the relay URL and how do I fill it in?" in Settings and enter its address as the relay URL. Branches that are already written need no relay and still play from the tree.</li>
         <li>Go back to the game and press "Retry".</li>
       </ol></dd>
     </dl>
@@ -227,23 +229,35 @@
   // Opens in the game's language (localStorage chienzhi.lang); the switch links change this page only.
   // English sections use "-en" ids
   const KEY = 'chienzhi.lang';
+  let current = 'zh';
   function pick() {
     try { const v = localStorage.getItem(KEY); if (v === 'zh' || v === 'en') return v; } catch { /* storage blocked */ }
-    return navigator.language?.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+    // Same rule as the game (i18n.js): the first of Chinese or English in the browser's list
+    const prefs = navigator.languages?.length ? navigator.languages : [navigator.language || ''];
+    const first = prefs.map((l) => l.toLowerCase()).find((l) => l.startsWith('zh') || l.startsWith('en'));
+    return first?.startsWith('zh') ? 'zh' : 'en';
   }
   function show(lang) {
+    current = lang;
     for (const m of document.querySelectorAll('main')) m.hidden = m.dataset.lang !== lang;
     document.documentElement.lang = lang === 'zh' ? 'zh-Hant' : 'en';
     document.title = lang === 'zh' ? '千枝物語｜常見問題' : 'Thousand Branches: common problems';
     const id = location.hash.slice(1).replace(/-en$/, '');
     if (!id) return;
     const target = document.getElementById(lang === 'en' ? `${id}-en` : id);
-    if (target) { history.replaceState(null, '', `#${target.id}`); target.scrollIntoView(); }
+    if (!target) return;
+    // A fragment navigation (unlike history.replaceState) also moves :target, so the section is highlighted
+    if (location.hash !== `#${target.id}`) location.replace(`#${target.id}`);
+    else target.scrollIntoView();
   }
+  // Back or forward to an anchor of the other language shows this language's section
+  addEventListener('hashchange', () => show(current));
   for (const a of document.querySelectorAll('[data-switch]')) {
     a.onclick = (e) => {
       e.preventDefault();
       show(a.dataset.switch);
+      // The clicked link is hidden now; keyboard focus moves to the switch link of the shown language
+      document.querySelector(`main[data-lang="${a.dataset.switch}"] [data-switch]`).focus({ preventScroll: true });
     };
   }
   for (const a of document.querySelectorAll('main[data-lang="en"] nav a')) a.href += '-en';

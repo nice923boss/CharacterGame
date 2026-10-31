@@ -1,7 +1,7 @@
 // UI language (zh / en). New stories are written in the UI language; a loaded story keeps its own language.
 // Static text in index.html carries data-i18n (textContent) or data-i18n-ph (placeholder) keys.
 
-const DICT = {
+export const DICT = {
   zh: {
     'app.title': '千枝物語', 'app.subtitle': '每一次選擇，都長出新的枝枒', 'app.credit': '製作者：黃政文',
     'menu.continue': '繼續遊戲', 'menu.new': '新的故事', 'menu.load': '讀取存檔', 'menu.stories': '管理故事', 'menu.settings': '設定',
@@ -241,9 +241,29 @@ const DICT = {
     'tree.untaken': '還沒走過的選項', 'tree.untakenHint': '點一下從這裡開始寫',
     'tree.untakenAsk': '回到那一輪並選「{option}」？\n會從那裡寫出新的一輪，原本的分支保留在樹上。', 'tree.untakenOk': '選這個',
     'settings.auto': '自動播放（每句停幾秒）', 'settings.autoOff': '關閉',
-    'settings.autoHint': '一句播完後自動下一句，出現選項時停下。按住 Ctrl 快轉；鍵盤 1 到 4 選選項、L 看紀錄、Esc 關閉視窗。',
+    'settings.autoHint': '一句播完後自動下一句，出現選項時停下。按住 Ctrl 快轉；鍵盤 1 到 4 選選項、L 看紀錄、M 靜音或恢復聲音、Esc 關閉視窗。',
     'settings.font': '字體大小', 'settings.fontS': '小', 'settings.fontM': '中', 'settings.fontL': '大',
     'settings.contrast': '高對比', 'settings.contrastHint': '對話框與選項改成不透明深底白字，邊框加粗',
+    // -- phase10:local --
+    'err.db_unavailable': '這個瀏覽器無法使用本機儲存（可能是無痕模式或已封鎖網站資料），故事無法存檔',
+    'err.bad_slot': '存檔欄位編號不對',
+    // -- phase10:game --
+    'game.statusSep': ' ・ ', 'game.optionsLabel': '選項', 'game.choicesReady': '有 {n} 個選項，按 1 到 {n} 選擇',
+    'game.muted': '已靜音（按 M 恢復）', 'game.unmuted': '已恢復聲音',
+    'log.search': '搜尋紀錄', 'log.noMatch': '沒有符合的台詞', 'log.copy': '複製', 'log.copied': '已複製紀錄',
+    'log.copyFail': '無法複製：瀏覽器不允許使用剪貼簿', 'tree.nodeLabel': '{turn}，{said}',
+    // -- phase10:menus --
+    'err.request_timeout': '伺服器超過 1 分鐘沒有回應，請稍後再試',
+    'setup.removeN': '移除角色 {n}', 'setup.novel.removeN': '移除第 {n} 章',
+    'setup.leaveAsk': '離開後，這個畫面填寫的內容不會保留。確定要返回嗎？', 'setup.leaveOk': '返回標題',
+    'setup.novel.tooBig': '這個檔案有 {mb} MB，超過小說匯入上限（約 {limit} 字），請只匯入想改編的部分',
+    'stories.undo': '復原',
+    'help.dbUnavailable': '改用一般視窗（不要用無痕視窗）開啟，並在瀏覽器設定允許這個網站儲存資料，再重新整理頁面。',
+    'archive.exportedSkipped': '已下載：{games} 個故事，共 {files} 個檔案；另有 {skipped} 個檔案讀不到，沒有放進備份（離線時示範故事的圖片常會這樣）',
+    'archive.importSkipped': '；{skipped} 個故事資料夾沒有讀入（檔案損壞、太大，或這個故事正在寫）',
+    'archive.noneSkipped': '沒有讀入任何故事：{skipped} 個故事資料夾讀不進來（檔案損壞、太大，或這個故事正在寫）',
+    // -- phase10:platform --
+    // -- phase10:server --
   },
   en: {
     'app.title': 'Thousand Branches', 'app.subtitle': 'Every choice grows a new branch', 'app.credit': 'Made by 黃政文',
@@ -500,9 +520,29 @@ const DICT = {
     'tree.untaken': 'Option not taken yet', 'tree.untakenHint': 'Click to start writing from here',
     'tree.untakenAsk': 'Go back to that turn and choose "{option}"?\nA new turn is written from there; the old branch stays on the tree.', 'tree.untakenOk': 'Choose it',
     'settings.auto': 'Auto play (seconds per line)', 'settings.autoOff': 'Off',
-    'settings.autoHint': 'Plays the next line by itself and stops at the choices. Hold Ctrl to fast-forward; keys 1 to 4 pick an option, L opens the log, Esc closes a window.',
+    'settings.autoHint': 'Plays the next line by itself and stops at the choices. Hold Ctrl to fast-forward; keys 1 to 4 pick an option, L opens the log, M mutes or unmutes, Esc closes a window.',
     'settings.font': 'Text size', 'settings.fontS': 'Small', 'settings.fontM': 'Medium', 'settings.fontL': 'Large',
     'settings.contrast': 'High contrast', 'settings.contrastHint': 'Solid dark boxes with white text and thicker borders for the dialog and choices',
+    // -- phase10:local --
+    'err.db_unavailable': 'This browser cannot use local storage (private mode or blocked site data?), so stories cannot be saved',
+    'err.bad_slot': 'Invalid save slot number',
+    // -- phase10:game --
+    'game.statusSep': ' · ', 'game.optionsLabel': 'Choices', 'game.choicesReady': '{n} choices; press 1 to {n} to pick one',
+    'game.muted': 'Sound off (press M to turn it back on)', 'game.unmuted': 'Sound on',
+    'log.search': 'Search the log', 'log.noMatch': 'No matching lines', 'log.copy': 'Copy', 'log.copied': 'Log copied',
+    'log.copyFail': 'Could not copy: the browser does not allow clipboard access', 'tree.nodeLabel': '{turn}, {said}',
+    // -- phase10:menus --
+    'err.request_timeout': 'The server did not answer for over a minute; please try again later',
+    'setup.removeN': 'Remove character {n}', 'setup.novel.removeN': 'Remove chapter {n}',
+    'setup.leaveAsk': 'What you filled in on this screen will not be kept. Go back anyway?', 'setup.leaveOk': 'Back to title',
+    'setup.novel.tooBig': 'This file is {mb} MB, more than a novel import can take (about {limit} characters); import only the part to adapt',
+    'stories.undo': 'Undo',
+    'help.dbUnavailable': 'Open the game in a normal (not private) window, allow this site to store data in the browser settings, then reload the page.',
+    'archive.exportedSkipped': 'Downloaded: {games} stories, {files} files; {skipped} files could not be read and were left out (demo pictures do this while offline)',
+    'archive.importSkipped': '; {skipped} story folders were not loaded (damaged, too large, or being written right now)',
+    'archive.noneSkipped': 'No story loaded: {skipped} story folders could not be read (damaged, too large, or being written right now)',
+    // -- phase10:platform --
+    // -- phase10:server --
   },
 };
 
@@ -513,12 +553,23 @@ const KEY = 'chienzhi.lang';
 
 function initial() {
   try { const v = localStorage.getItem(KEY); if (LANGS.includes(v)) return v; } catch { /* storage blocked */ }
-  return navigator.language?.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+  // The first of Chinese or English in the browser's list, so "ja, zh-TW" still gets Chinese
+  const prefs = navigator.languages?.length ? navigator.languages : [navigator.language || ''];
+  const first = prefs.map((l) => l.toLowerCase()).find((l) => l.startsWith('zh') || l.startsWith('en'));
+  return first?.startsWith('zh') ? 'zh' : 'en';
 }
 
 export let lang = initial();
 
+// A missing string shows its key; on a local dev server each one is reported once in the console
+const DEV = ['localhost', '127.0.0.1'].includes(globalThis.location?.hostname);
+const warned = new Set();
+
 export function t(key, params = {}) {
+  if (DEV && DICT[lang][key] === undefined && !warned.has(`${lang}:${key}`)) {
+    warned.add(`${lang}:${key}`);
+    console.warn(`i18n: no ${lang} text for "${key}"`);
+  }
   const s = DICT[lang][key] ?? DICT.zh[key] ?? key;
   return s.replace(/\{(\w+)\}/g, (m, k) => (k in params ? params[k] : m));
 }
@@ -532,7 +583,8 @@ export function errorText(code, params = {}) {
     p.list =(p.errors || []).map((e) => `${t(`model.${e.model}`)}${t('common.colon')}${t(`reason.${e.reason}`)}`)
       .join(lang === 'zh' ? '；' : '; ');
   }
-  return DICT[lang][`err.${code}`] ? t(`err.${code}`, p) : String(code);
+  // Like t(): a code with no text in this language falls back to the Chinese text before the bare code
+  return DICT[lang][`err.${code}`] || DICT.zh[`err.${code}`] ? t(`err.${code}`, p) : String(code);
 }
 
 // maxlength follows the story language: English needs about twice the characters

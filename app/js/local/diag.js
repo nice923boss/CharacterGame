@@ -1,12 +1,20 @@
 // Diagnostic log of the browser build (J01): retries, model switches, error codes and timings, kept in IndexedDB
 // so a player can download them with a problem report. Events never carry the key or story text.
-import { addDiag } from './store.js?v=35d64fef8e0b';
+import { addDiag } from './store.js?v=c8dcf291776f';
 
 const clip = (v) => String(v ?? '').slice(0, 200);
+const FIELD_CHARS = 500;   // longest string field kept in one event
+
+// Anything that looks like an NVIDIA key, the current one or an old one, never reaches the log or the report
+export const scrubKeys = (text) => String(text).replace(/nvapi-[A-Za-z0-9_-]+/g, 'nvapi-***');
+
+// Top-level string fields are scrubbed and clipped before the event is stored
+export const cleanEvent = (event) => Object.fromEntries(Object.entries(event).map(([k, v]) =>
+  [k, typeof v === 'string' ? scrubKeys(v).slice(0, FIELD_CHARS) : v]));
 
 export function diag(kind, data = {}) {
   if (typeof indexedDB === 'undefined') return;   // Node tests
-  addDiag({ t: new Date().toISOString(), kind, ...data }).catch((e) => console.warn('diagnostic log write failed', e));
+  addDiag(cleanEvent({ t: new Date().toISOString(), kind, ...data })).catch((e) => console.warn('diagnostic log write failed', e));
 }
 
 // Errors nothing else caught: an uncaught exception or a promise nobody waited for

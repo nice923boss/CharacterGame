@@ -1,9 +1,9 @@
 // Browser port of server/novel_service.py: turn a .txt novel into a new-game draft (world, protagonist, characters,
 // chapters) for the setup form. Parts of the book become notes (NOVEL_PARALLEL calls at a time), then one call adapts
 // all the notes into the draft. Nothing is saved: the player edits the draft and starts the game.
-import { DATA } from './data.js?v=35d64fef8e0b';
-import * as llm from './llm.js?v=35d64fef8e0b';
-import { clip, lastJson, novelMessages, novelNotesMessages, toTrad } from './story.js?v=35d64fef8e0b';
+import { DATA } from './data.js?v=c8dcf291776f';
+import * as llm from './llm.js?v=c8dcf291776f';
+import { clip, lastJson, novelMessages, novelNotesMessages, toTrad } from './story.js?v=c8dcf291776f';
 
 const { MAX_CHARACTERS, LIMIT_SCALE, NOVEL_MAX_CHAPTERS, NOVEL_PART_CHARS, NOVEL_MAX_PARTS, NOVEL_PARALLEL,
   NOVEL_MIN_CHAPTERS } = DATA.limits;
@@ -70,18 +70,33 @@ export async function analyzeNovel(payload, emit, conn, signal) {
   let next = 0;
   let done = 0;
   emit({ type: 'progress', done: 0, total: parts.length });
+  // The first part that fails stops the others: their notes would be thrown away, and they use up requests
+  const ctrl = new AbortController();
+  const stop = () => ctrl.abort();
+  if (signal?.aborted) stop();
+  signal?.addEventListener('abort', stop);
   const worker = async () => {
-    while (next < parts.length) {
-      const i = next;
-      next += 1;
-      const res = await llm.stream(novelNotesMessages(titlePart(title, lang), i + 1, parts.length, parts[i], lang),
-        statusOnly, 0.3, conn, signal);
-      notes[i] = res.content.trim();
-      done += 1;
-      emit({ type: 'progress', done, total: parts.length });
+    try {
+      while (next < parts.length && !ctrl.signal.aborted) {
+        const i = next;
+        next += 1;
+        const res = await llm.stream(novelNotesMessages(titlePart(title, lang), i + 1, parts.length, parts[i], lang),
+          statusOnly, 0.3, conn, ctrl.signal);
+        notes[i] = res.content.trim();
+        done += 1;
+        emit({ type: 'progress', done, total: parts.length });
+      }
+    } catch (e) {
+      stop();
+      throw e;
     }
   };
-  await Promise.all(Array.from({ length: Math.min(NOVEL_PARALLEL, parts.length) }, worker));
+  try {
+    await Promise.all(Array.from({ length: Math.min(NOVEL_PARALLEL, parts.length) }, worker));
+  } finally {
+    signal?.removeEventListener('abort', stop);
+  }
+  if (signal?.aborted) throw { code: 'cancelled' };
   emit({ type: 'phase', code: 'novel_outline' });
   const res = await llm.stream(novelMessages(titlePart(title, lang), notes, lang, MAX_CHARACTERS, NOVEL_MIN_CHAPTERS,
     NOVEL_MAX_CHAPTERS), statusOnly, 0.4, conn, signal);

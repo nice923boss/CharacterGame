@@ -2,7 +2,7 @@
 // (B01, B02, B05), plus a relay check that needs no key (B07).
 // Spike 2026-10-03: NVIDIA checks the key before anything else, so a 503 (overloaded) on the text path and a 422
 // (empty body) on the image path still prove the key works; nothing is generated.
-import { DATA } from './data.js?v=35d64fef8e0b';
+import { DATA } from './data.js?v=c8dcf291776f';
 
 const TIMEOUT_S = 20;
 const CACHE_S = 600;                   // the title line shows the last result this long (B05)
@@ -20,6 +20,8 @@ function classify(status, text) {
 }
 
 async function send(url, init) {
+  // No relay set: "/v1/..." would go to this site itself and read as a working relay
+  if (!/^https?:\/\//.test(url)) return { status: null, failure: 'unreachable', ms: 0 };
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), TIMEOUT_S * 1000);
   const t0 = Date.now();

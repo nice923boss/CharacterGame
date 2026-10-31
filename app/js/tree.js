@@ -2,8 +2,8 @@
 // consecutive turns in the same scene wrapped in a labelled box. Hover shows the turn, click jumps there.
 // Branches a batch could not write hang off their parent as red stubs; clicking one writes it again.
 // Options nobody picked yet hang off their turn as dashed stubs; clicking one starts writing from there.
-import { errorText, t } from './i18n.js?v=35d64fef8e0b';
-import { $, esc } from './ui.js?v=35d64fef8e0b';
+import { errorText, t } from './i18n.js?v=c8dcf291776f';
+import { $, esc } from './ui.js?v=c8dcf291776f';
 
 const DX = 58;
 const DY = 46;
@@ -39,6 +39,19 @@ export function untakenOptions(tree) {
   return out;
 }
 
+// Longest start of text, cut at whole characters and ended with '…', that fits(s) accepts; the whole text when it fits
+export function fitText(text, fits) {
+  const chars = [...text];   // code points, so a cut never splits a surrogate pair
+  if (chars.length <= 1 || fits(text)) return text;
+  let lo = 1;
+  let hi = chars.length - 1;
+  while (lo < hi) {
+    const mid = Math.ceil((lo + hi) / 2);
+    if (fits(`${chars.slice(0, mid).join('')}…`)) lo = mid; else hi = mid - 1;
+  }
+  return `${chars.slice(0, lo).join('')}…`;
+}
+
 const curve = (a, b) => (a.y === b.y ? `M${a.x},${a.y}L${b.x},${b.y}`
   : `M${a.x},${a.y}C${a.x + DX / 2},${a.y} ${b.x - DX / 2},${b.y} ${b.x},${b.y}`);
 
@@ -61,6 +74,8 @@ function segments(tree) {
 export function renderTree(tree, game, currentId, onPick, failed = [], onRewrite = null, untaken = [], onUntaken = null) {
   const view = $('#tree-view');
   const tip = $('#tree-tip');
+  tip.hidden = true;   // its node is about to be replaced
+  view.onscroll = () => { tip.hidden = true; };   // the tip would stay put while its node scrolls away
   if (!tree.root) { view.innerHTML = `<p class="hint" style="padding:2cqh">${esc(t('tree.empty'))}</p>`; return; }
   const stubs = {};
   failed.forEach((f, i) => { if (tree.nodes[f.parent]) (stubs[f.parent] ||= []).push(`fail:${i}`); });
@@ -102,28 +117,36 @@ export function renderTree(tree, game, currentId, onPick, failed = [], onRewrite
     return a && b ? `<path class="edge untaken" d="${curve(a, b)}"/>` : '';
   }).join('');
 
+  // Every node is a keyboard stop with a spoken name (the tip shows on focus as on hover)
+  const turnName = (n) => t('tree.turn', { n: pos[n.id].depth + 1, scene: game.scenes[n.scene_id]?.name || '' });
+  const said = (n) => (n.player_input?.text ? t('tree.you', { text: n.player_input.text }) : t('tree.opening'));
+  const key = (label) => `tabindex="0" role="button" aria-label="${esc(label)}"`;
   const nodes = Object.values(tree.nodes).filter((n) => pos[n.id]).map((n) => {
     const p = pos[n.id];
     const end = n.result?.ending;
     const cls = (n.id === currentId ? 'current' : onPath.has(n.id) ? 'onpath' : '') +
       (end ? ` ending${end.type === 'good' ? '' : ' bad'}` : '');
-    return `<g class="node ${cls}" data-id="${n.id}" transform="translate(${p.x},${p.y})">` +
+    return `<g class="node ${cls}" data-id="${n.id}" transform="translate(${p.x},${p.y})" ` +
+      `${key(t('tree.nodeLabel', { turn: turnName(n), said: said(n) }))}${n.id === currentId ? ' aria-current="true"' : ''}>` +
       `<circle r="13"/><text text-anchor="middle" dy="4">${p.depth + 1}</text></g>`;
   }).join('') + failed.map((f, i) => {
     const p = pos[`fail:${i}`];
-    return p ? `<g class="node failed" data-fail="${i}" transform="translate(${p.x},${p.y})">` +
+    return p ? `<g class="node failed" data-fail="${i}" transform="translate(${p.x},${p.y})" ` +
+      `${key(`${t('tree.failed')}${t('common.colon')}${f.option}`)}>` +
       `<circle r="10"/><text text-anchor="middle" dy="4">!</text></g>` : '';
   }).join('') + untaken.map((u, i) => {
     const p = pos[`opt:${i}`];
-    return p ? `<g class="node untaken" data-opt="${i}" transform="translate(${p.x},${p.y})">` +
+    return p ? `<g class="node untaken" data-opt="${i}" transform="translate(${p.x},${p.y})" ` +
+      `${key(`${t('tree.untaken')}${t('common.colon')}${u.option}`)}>` +
       `<circle r="10"/><text text-anchor="middle" dy="4">+</text></g>` : '';
   }).join('');
 
   view.innerHTML = `<svg width="${width}" height="${height}">${boxes}${edges}${nodes}</svg>`;
   // Long scene names would run into the next box: cut each label to its box width (full name stays in <title>)
+  // (a halving search: a deep tree has many boxes and every length check is a layout read)
   view.querySelectorAll('.scene-label').forEach((el) => {
     const label = el.lastChild;
-    while (label.data.length > 1 && el.getComputedTextLength() > +el.dataset.w) label.data = `${label.data.slice(0, -2)}…`;
+    label.data = fitText(label.data, (s) => { label.data = s; return el.getComputedTextLength() <= +el.dataset.w; });
   });
 
   const place = (g) => {
@@ -135,38 +158,48 @@ export function renderTree(tree, game, currentId, onPick, failed = [], onRewrite
     const below = r.bottom - host.top + 6;
     tip.style.top = `${below + tip.offsetHeight > host.height ? Math.max(0, r.top - host.top - 6 - tip.offsetHeight) : below}px`;
   };
+  // Hover or keyboard focus shows the tip; click, Enter or Space acts
+  const bind = (g, html, act) => {
+    const show = () => { tip.innerHTML = html(); place(g); };
+    const hide = () => { tip.hidden = true; };
+    g.addEventListener('mouseenter', show);
+    g.addEventListener('focus', show);
+    g.addEventListener('mouseleave', hide);
+    g.addEventListener('blur', hide);
+    g.addEventListener('click', () => { hide(); act(); });
+    g.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      e.stopPropagation();   // the confirm box this opens would otherwise take the same Enter as its OK
+      hide();
+      act();
+    });
+  };
   view.querySelectorAll('.node[data-fail]').forEach((g) => {
     const f = failed[g.dataset.fail];
-    g.addEventListener('mouseenter', () => {
-      tip.innerHTML = `<b>${esc(t('tree.failed'))}</b><div>${esc(t('tree.you', { text: f.option }))}</div>` +
-        `<div>${esc(errorText(f.error || 'internal'))}</div>${onRewrite ? `<div>${esc(t('tree.rewriteHint'))}</div>` : ''}`;
-      place(g);
-    });
-    g.addEventListener('mouseleave', () => { tip.hidden = true; });
-    g.addEventListener('click', () => { tip.hidden = true; onRewrite?.(f); });
+    bind(g, () => `<b>${esc(t('tree.failed'))}</b><div>${esc(t('tree.you', { text: f.option }))}</div>` +
+      `<div>${esc(errorText(f.error || 'internal'))}</div>${onRewrite ? `<div>${esc(t('tree.rewriteHint'))}</div>` : ''}`,
+    () => onRewrite?.(f));
   });
   view.querySelectorAll('.node[data-opt]').forEach((g) => {
     const u = untaken[g.dataset.opt];
-    g.addEventListener('mouseenter', () => {
-      tip.innerHTML = `<b>${esc(t('tree.untaken'))}</b><div>${esc(u.option)}</div><div>${esc(t('tree.untakenHint'))}</div>`;
-      place(g);
-    });
-    g.addEventListener('mouseleave', () => { tip.hidden = true; });
-    g.addEventListener('click', () => { tip.hidden = true; onUntaken?.(u); });
+    bind(g, () => `<b>${esc(t('tree.untaken'))}</b><div>${esc(u.option)}</div><div>${esc(t('tree.untakenHint'))}</div>`,
+      () => onUntaken?.(u));
   });
   view.querySelectorAll('.node[data-id]').forEach((g) => {
     const n = tree.nodes[g.dataset.id];
-    g.addEventListener('mouseenter', () => {
+    bind(g, () => {
       const first = n.lines.find((l) => l.kind !== 'narration') || n.lines[0];
-      const said = `<div>${esc(n.player_input?.text ? t('tree.you', { text: n.player_input.text }) : t('tree.opening'))}</div>`;
-      tip.innerHTML = `<b>${esc(t('tree.turn', { n: pos[n.id].depth + 1, scene: game.scenes[n.scene_id]?.name || '' }))}</b>${said}` +
-        `<div>${esc(first ? `${first.speaker}${game.lang === 'en' ? ': ' : '：'}${first.text}` : '')}</div>` +
+      // Narration has no speaker: show its text alone instead of after a stray colon
+      const line = !first ? '' : first.kind === 'narration' || !first.speaker ? first.text
+        : `${first.speaker}${game.lang === 'en' ? ': ' : '：'}${first.text}`;
+      return `<b>${esc(turnName(n))}</b><div>${esc(said(n))}</div><div>${esc(line)}</div>` +
         (n.result?.ending ? `<div>${esc(`${t(n.result.ending.type === 'good' ? 'ending.good' : 'ending.bad')}${t('common.colon')}${n.result.ending.title}`)}</div>` : '');
-      place(g);
-    });
-    g.addEventListener('mouseleave', () => { tip.hidden = true; });
-    g.addEventListener('click', () => { tip.hidden = true; onPick(n.id, pos[n.id].depth + 1); });
+    }, () => onPick(n.id, pos[n.id].depth + 1));
   });
   const cur = pos[currentId];
   if (cur) { view.scrollLeft = Math.max(0, cur.x - view.clientWidth / 2); view.scrollTop = Math.max(0, cur.y - view.clientHeight / 2); }
+  // Keyboard players start on the turn they are at; the tip stays closed until they move
+  const here = view.querySelector('.node.current');
+  if (here) { here.focus({ preventScroll: true }); tip.hidden = true; }
 }

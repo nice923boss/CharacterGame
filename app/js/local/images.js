@@ -2,11 +2,11 @@
 // same priorities, automatic re-queues, image modes and redraws, scenes and sprites drawn through the player's
 // relay, sprites cut out with the chroma key. The queue is kept in IndexedDB, so a reload carries on with it.
 // Skipped against the server: ComfyUI, rembg, the iso residue pass and the .raw intermediates.
-import { DATA } from './data.js?v=35d64fef8e0b';
-import * as store from './store.js?v=35d64fef8e0b';
-import * as llm from './llm.js?v=35d64fef8e0b';
-import { diag } from './diag.js?v=35d64fef8e0b';
-import { t } from '../i18n.js?v=35d64fef8e0b';
+import { DATA } from './data.js?v=c8dcf291776f';
+import * as store from './store.js?v=c8dcf291776f';
+import * as llm from './llm.js?v=c8dcf291776f';
+import { diag } from './diag.js?v=c8dcf291776f';
+import { t } from '../i18n.js?v=c8dcf291776f';
 
 const A = DATA.art;
 const EXPRESSIONS = DATA.parser.EXPRESSIONS;
@@ -148,21 +148,39 @@ export function status(game) {
 // ---------- the queue between page loads ----------
 
 let saveTimer = null;
+function save() {
+  saveTimer = null;
+  const all = [...jobs.values(), ...(current ? [current] : [])];
+  store.kvPut(QUEUE, { jobs: all.map((j) => [j.key, j.priority]), later: [...later.values()], rounds: [...rounds] })
+    .catch((e) => console.error('image queue save failed', e));
+}
+
 function persist() {
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    const all = [...jobs.values(), ...(current ? [current] : [])];
-    store.kvPut(QUEUE, { jobs: all.map((j) => [j.key, j.priority]), later: [...later.values()], rounds: [...rounds] })
-      .catch((e) => console.error('image queue save failed', e));
-  }, 500);
+  saveTimer = setTimeout(save, 500);
 }
+
+// Closing the tab inside the half second would lose the last change: start the write now
+if (typeof window !== 'undefined') {
+  window.addEventListener('pagehide', () => { if (saveTimer) { clearTimeout(saveTimer); save(); } });
+}
+
+// ['scene', gid, sid] or ['sprite', gid, cid, expression]; a damaged record is dropped, not drawn
+const validKey = (key) => Array.isArray(key) && key.every((part) => typeof part === 'string' && part)
+  && ((key[0] === 'scene' && key.length === 3) || (key[0] === 'sprite' && key.length === 4 && EXPRESSIONS.includes(key[3])));
+const listOf = (value) => (Array.isArray(value) ? value : []);
 
 async function restore() {
   const saved = await store.kvGet(QUEUE);
   if (!saved) return;
-  for (const [key, priority] of saved.jobs || []) request(key, priority);
-  for (const l of saved.later || []) if (wanted(l.key) && !store.hasFile(pathOf(l.key))) later.set(ks(l.key), l);
-  for (const [k, n] of saved.rounds || []) rounds.set(k, n);
+  for (const job of listOf(saved.jobs)) {
+    if (Array.isArray(job) && validKey(job[0]) && Number.isFinite(job[1])) request(job[0], job[1]);
+  }
+  for (const l of listOf(saved.later)) {
+    if (!l || !validKey(l.key) || !Number.isFinite(l.due) || !Number.isFinite(l.priority)) continue;
+    if (wanted(l.key) && !store.hasFile(pathOf(l.key))) later.set(ks(l.key), l);
+  }
+  for (const r of listOf(saved.rounds)) if (Array.isArray(r) && typeof r[0] === 'string' && Number.isInteger(r[1])) rounds.set(r[0], r[1]);
 }
 
 // ---------- tabs: the one the player used last draws first ----------
@@ -378,7 +396,16 @@ async function draw(prompt, seed) {
 }
 
 // For tools/js_tests: draw one image with a given connection, without starting the queue (it needs IndexedDB)
-export const _test = { draw, useConn: (getConn) => { conn = getConn; } };
+export const _test = { draw, useConn: (getConn) => { conn = getConn; }, faceBox, validKey, fitDrawn };
+
+// The bitmap is let go as soon as it is cropped, instead of holding its memory until garbage collection
+async function fitDrawn(drawn, width, height) {
+  const img = await drawn;
+  try { return fit(img, width, height); } finally { img.close?.(); }
+}
+
+// A story deleted while its picture was being drawn gets no files (they would be left behind)
+const gone = async (gid) => store.isTrashed(gid) || store.loadGame(gid).then(() => false, () => true);
 
 // Center-crop the square to the target aspect ratio, then resize; returns ImageData
 function fit(img, width, height) {
@@ -583,10 +610,14 @@ function faceBox(img) {
     for (let x = 0; x < w; x += 1) if (on(x, y)) n += 1;
     if (n > 3) rows.push(y);
   }
+  // A faint or tiny cutout has no solid rows: the top of the picture stands in, never NaN in meta.json
+  const fallback = () => { const size = Math.min(w, h); return [0, 0, size, Math.min(h, Math.trunc(size * A.TALL))]; };
+  if (!rows.length) return fallback();
   const y0 = rows[0]; const y1 = rows[rows.length - 1];
   const probe = y0 + Math.trunc(0.10 * (y1 - y0));
   const cols = [];
   for (let x = 0; x < w; x += 1) if (on(x, probe)) cols.push(x);
+  if (!cols.length) return fallback();
   const cx = (cols[0] + cols[cols.length - 1]) >> 1;
   const size = Math.trunc(1.35 * (cols[cols.length - 1] - cols[0]));
   const top = Math.max(0, y0 - Math.floor(size / 10));
@@ -600,18 +631,22 @@ const charOf = (game, cid) => game.characters.find((c) => c.id === cid);
 
 async function scene(game, sid) {
   const seed = await seedOf(game, 'scene', sid);
-  const img = fit(await draw(fluxScenePrompt(game.style_en || '', game.scenes[sid].image_prompt), seed), A.BG_W, A.BG_H);
-  await store.putFile(store.scenePath(game.id, sid), await toPng(img));
+  const img = await fitDrawn(draw(fluxScenePrompt(game.style_en || '', game.scenes[sid].image_prompt), seed), A.BG_W, A.BG_H);
+  const png = await toPng(img);
+  if (await gone(game.id)) return;
+  await store.putFile(store.scenePath(game.id, sid), png);
 }
 
 async function calm(game, cid) {
   const c = charOf(game, cid);
   const seed = await seedOf(game, 'sprite', cid);
-  const full = cutoutFull(fit(await draw(fluxSpritePrompt(c.appearance_en, 'calm'), seed), A.SP_W, A.SP_H));
+  const full = cutoutFull(await fitDrawn(draw(fluxSpritePrompt(c.appearance_en, 'calm'), seed), A.SP_W, A.SP_H));
   const crop = paddedBbox(full);
   const meta = { crop, face: faceBox(full), engine: 'nvidia' };
+  const png = await toPng(full, crop);
+  if (await gone(game.id)) return;
   await store.putFile(store.metaPath(game.id, cid), new Blob([JSON.stringify(meta)], { type: 'application/json' }));
-  await store.putFile(store.spritePath(game.id, cid, 'calm'), await toPng(full, crop));
+  await store.putFile(store.spritePath(game.id, cid, 'calm'), png);
 }
 
 // No image input on the hosted endpoint: the whole sprite is redrawn with the calm seed, cropped like calm
@@ -621,6 +656,8 @@ async function expression(game, cid, expr) {
   if (!meta || meta.engine !== 'nvidia') throw new ImageFailed(t('img.webOnlyNvidia'), false);
   const c = charOf(game, cid);
   const seed = await seedOf(game, 'sprite', cid);
-  const full = cutoutFull(fit(await draw(fluxSpritePrompt(c.appearance_en, expr), seed), A.SP_W, A.SP_H));
-  await store.putFile(store.spritePath(game.id, cid, expr), await toPng(full, meta.crop));
+  const full = cutoutFull(await fitDrawn(draw(fluxSpritePrompt(c.appearance_en, expr), seed), A.SP_W, A.SP_H));
+  const png = await toPng(full, meta.crop);
+  if (await gone(game.id)) return;
+  await store.putFile(store.spritePath(game.id, cid, expr), png);
 }

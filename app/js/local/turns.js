@@ -1,13 +1,13 @@
 // Browser port of server/turn_service.py: world setup and one story turn, reporting through emit(event).
 // A node is written only after the whole turn succeeded, so a cancelled or failed turn leaves the tree as it was.
-import { DATA } from './data.js?v=35d64fef8e0b';
-import * as store from './store.js?v=35d64fef8e0b';
-import * as images from './images.js?v=35d64fef8e0b';
-import * as llm from './llm.js?v=35d64fef8e0b';
+import { DATA } from './data.js?v=c8dcf291776f';
+import * as store from './store.js?v=c8dcf291776f';
+import * as images from './images.js?v=c8dcf291776f';
+import * as llm from './llm.js?v=c8dcf291776f';
 import {
   Cast, LineStream, applyState, clip, gameLang, lastJson, mostlyAscii, repair, repairMessages, setupMessages, slug,
   turnMessages,
-} from './story.js?v=35d64fef8e0b';
+} from './story.js?v=c8dcf291776f';
 
 const { MAX_CHARACTERS, MAX_FREE_INPUT, LIMIT_SCALE, BATCH_MAX_SCENES, BATCH_MAX_NODES, NOVEL_MAX_CHAPTERS } = DATA.limits;
 const { LANGS, NARRATOR, MAX_GAME_TITLE } = DATA.parser;
@@ -30,8 +30,11 @@ export async function createGame(payload, emit, conn, signal) {
   const p = payload.protagonist || {};
   const protagonist = { name: checkText(p.name, 'hero_name', 12 * x), profile: checkText(p.profile, 'hero_profile', 200 * x, false) };
   const rawChars = payload.characters || [];
-  if (!(rawChars.length >= 1 && rawChars.length <= MAX_CHARACTERS)) throw { code: 'char_count', params: { max: MAX_CHARACTERS } };
-  const chars = rawChars.map((c, idx) => ({
+  // Same as the server: not a list is char_count, a row that is not an object reads as empty (a "required" error)
+  if (!Array.isArray(rawChars) || !(rawChars.length >= 1 && rawChars.length <= MAX_CHARACTERS)) {
+    throw { code: 'char_count', params: { max: MAX_CHARACTERS } };
+  }
+  const chars = rawChars.map((raw) => (raw && typeof raw === 'object' ? raw : {})).map((c, idx) => ({
     id: `c${idx + 1}`,
     ...Object.fromEntries([['name', 12], ['appearance', 300], ['personality', 200], ['speech', 200], ['relationship', 200]]
       .map(([k, limit]) => [k, checkText(c[k], `char_${k}`, limit * x, true, { i: idx + 1 })])),

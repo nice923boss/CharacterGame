@@ -8,6 +8,21 @@ let H = 720;
 let spriteH = SPRITE_H;
 let floor = H;   // where the sprites' feet stand
 const SLOTS = { 1: [0.5], 2: [0.3, 0.7], 3: [0.2, 0.5, 0.8] };
+const CACHE_MAX = 40;      // decoded pictures kept (a 1280x720 scene is about 3.6 MB decoded)
+const RETRY_MS = 20000;    // a failed download is tried again after this, up to RETRY_MAX more times
+const RETRY_MAX = 3;
+
+// Urls to drop so that at most max decoded pictures stay. cache: url -> picture | state string, least recently
+// used first; keep: urls and pictures that are on stage or about to be
+export function evictable(cache, keep, max) {
+  const decoded = [...cache].filter(([, v]) => typeof v === 'object');
+  const drop = [];
+  for (const [url, v] of decoded) {
+    if (decoded.length - drop.length <= max) break;
+    if (!keep.has(url) && !keep.has(v)) drop.push(url);
+  }
+  return drop;
+}
 
 export function createStage(host) {
   const S = {
@@ -17,10 +32,25 @@ export function createStage(host) {
     cast: [],              // [{cid, url, img, x, alpha, focus, leaving}]
     speaker: null,
     weather: 'none', weatherOn: true, parts: [],
-    cache: new Map(),      // url -> p5.Image | 'loading' | 'error'
+    cache: new Map(),      // url -> p5.Image | 'loading' | 'error', least recently used first
     bytes: new Map(),      // url -> { loaded, total } while downloading (total 0 when the size is unknown)
+    fails: new Map(),      // url -> { n, at }: failed downloads, for the delayed retry
   };
   let P = null;
+  // Reduced motion: no falling weather, still clouds, sprites move without sliding (fades stay); read live
+  const still = window.matchMedia?.('(prefers-reduced-motion: reduce)') || { matches: false };
+
+  function fail(url) {
+    S.fails.set(url, { n: (S.fails.get(url)?.n || 0) + 1, at: Date.now() });
+    S.cache.set(url, 'error');
+    S.bytes.delete(url);
+  }
+
+  // Drop the least recently used pictures that are not on stage
+  function trim() {
+    const keep = new Set([S.bgUrl, S.bg, S.bgPrev, ...S.cast.flatMap((c) => [c.url, c.img])]);
+    for (const url of evictable(S.cache, keep, CACHE_MAX)) S.cache.delete(url);
+  }
 
   // Download with byte progress for the loading panel, then decode through p5
   async function download(url) {
@@ -28,36 +58,54 @@ export function createStage(host) {
       const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const total = Number(res.headers.get('content-length')) || 0;
-      const reader = res.body.getReader();
-      const chunks = [];
-      let loaded = 0;
-      for (;;) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        chunks.push(value);
-        loaded += value.length;
-        S.bytes.set(url, { loaded, total });
+      let blob;
+      if (!res.body) blob = await res.blob();   // no stream to read (older browsers, some synthesized responses)
+      else {
+        const reader = res.body.getReader();
+        const chunks = [];
+        let loaded = 0;
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          chunks.push(value);
+          loaded += value.length;
+          S.bytes.set(url, { loaded, total });
+        }
+        blob = new Blob(chunks, { type: res.headers.get('content-type') || 'image/png' });
       }
-      const obj = URL.createObjectURL(new Blob(chunks, { type: res.headers.get('content-type') || 'image/png' }));
-      const settle = (value) => { S.cache.set(url, value); URL.revokeObjectURL(obj); S.bytes.delete(url); };
-      P.loadImage(obj, settle, () => { console.warn('image decode failed', url); settle('error'); });
+      const obj = URL.createObjectURL(blob);
+      P.loadImage(obj, (img) => {
+        S.cache.set(url, img);
+        S.fails.delete(url);
+        URL.revokeObjectURL(obj);
+        S.bytes.delete(url);
+        trim();
+      }, () => { console.warn('image decode failed', url); URL.revokeObjectURL(obj); fail(url); });
     } catch (e) {
       console.warn('image load failed', url, e);
-      S.cache.set(url, 'error');
-      S.bytes.delete(url);
+      fail(url);
     }
   }
 
   function image(url) {
     if (!url || !P) return null;
-    const hit = S.cache.get(url);
+    let hit = S.cache.get(url);
+    if (hit === 'error') {
+      const f = S.fails.get(url);
+      if (!f || f.n > RETRY_MAX || Date.now() - f.at < RETRY_MS) return null;
+      S.cache.delete(url);   // a network blip should not hide the picture for the rest of the story
+      hit = undefined;
+    }
     if (hit === undefined) {
       S.cache.set(url, 'loading');
       S.bytes.set(url, { loaded: 0, total: 0 });
       download(url);
       return null;
     }
-    return typeof hit === 'object' ? hit : null;
+    if (typeof hit !== 'object') return null;
+    S.cache.delete(url);   // move to the most recently used end
+    S.cache.set(url, hit);
+    return hit;
   }
 
   function layout() {
@@ -143,7 +191,7 @@ export function createStage(host) {
     }
 
     function drawWeather(t, dt) {
-      if (!S.weatherOn) return;
+      if (!S.weatherOn || still.matches) return;
       const kind = S.weather;
       p.noStroke();
       if (kind === 'rain') {
@@ -204,12 +252,12 @@ export function createStage(host) {
       p.background(0);
       if (S.bgPrev && (!S.bg || S.bgFade < 1)) cover(S.bgPrev, 255);
       if (S.bg) cover(S.bg, 255 * S.bgFade);
-      else if (!S.bgPrev) emptySky(t);
+      else if (!S.bgPrev) emptySky(still.matches ? 0 : t);
 
       for (const c of S.cast) {
         const img = image(c.url) || c.img;
         if (img) c.img = img;
-        c.x += (c.tx - c.x) * Math.min(1, dt * 6);
+        c.x = still.matches ? c.tx : c.x + (c.tx - c.x) * Math.min(1, dt * 6);
         c.alpha += ((c.leaving ? 0 : 1) - c.alpha) * Math.min(1, dt * 5);
         const focus = S.speaker === null || S.speaker === c.cid ? 1 : 0;
         c.focus += (focus - c.focus) * Math.min(1, dt * 6);
@@ -227,13 +275,15 @@ export function createStage(host) {
       drawWeather(t, dt);
       p.image(vignette, 0, 0);
 
-      const before = S.black;
       S.black += Math.sign(S.blackTarget - S.black) * Math.min(Math.abs(S.blackTarget - S.black), dt / 0.5);
-      if (S.black >= 1 && before < 1 && S.onBlack) {
+      // Fire whenever the screen is fully black, not only on the frame it got there: a transition asked for while
+      // already black would otherwise never swap and leave the stage black. Lift the black first so the swap can
+      // ask for another transition.
+      if (S.black >= 1 && S.onBlack) {
         const fn = S.onBlack;
         S.onBlack = null;
-        fn();
         S.blackTarget = 0;
+        fn();
       }
       if (S.black > 0) { p.noStroke(); p.fill(0, 255 * S.black); p.rect(0, 0, W, H); }
     };

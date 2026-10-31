@@ -1,7 +1,7 @@
 // Browser build upkeep: storage persistence and usage in settings (F01, F02), the backup reminder on the title
 // screen (F04), the notice when another tab upgrades the database (F05) and the new-version notice (F06).
-import { t } from './i18n.js?v=35d64fef8e0b';
-import { $, toast } from './ui.js?v=35d64fef8e0b';
+import { t } from './i18n.js?v=c8dcf291776f';
+import { $, toast } from './ui.js?v=c8dcf291776f';
 
 const STORAGE_WARN = 0.8;    // share of the quota that triggers the "export or delete" hint
 const BACKUP_DAYS = 7;       // remind when the last download is this old...
@@ -46,15 +46,16 @@ export async function paintStorage() {
 export async function paintBackup() {
   const line = $('#backup-line');
   let info;
-  try { info = await (await import('./local/archive.js?v=35d64fef8e0b')).backupInfo(); } catch (e) {
+  try { info = await (await import('./local/archive.js?v=c8dcf291776f')).backupInfo(); } catch (e) {
     console.warn('backup info unavailable', e);
     line.hidden = true;
     return;
   }
   const exportBtn = $('#scr-title [data-act="exportZip"]');
   if (!info.games) { line.hidden = true; exportBtn.classList.remove('remind'); return; }   // only the demo: nothing to lose yet
-  const b = info.backup;
-  const days = b ? Math.floor((Date.now() - Date.parse(b.at)) / 864e5) : 0;
+  // A backup date that cannot be read counts as none (the reminder shows); one ahead of this clock as today
+  const b = info.backup && Number.isFinite(Date.parse(info.backup.at)) ? info.backup : null;
+  const days = b ? Math.max(0, Math.floor((Date.now() - Date.parse(b.at)) / 864e5)) : 0;
   const added = b ? Math.max(0, info.turns - b.turns) : 0;
   let text = !b ? t('upkeep.backupNever') : days ? t('upkeep.backupDays', { days }) : t('upkeep.backupToday');
   if (added) text += t('upkeep.backupNew', { n: added });

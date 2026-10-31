@@ -1,23 +1,36 @@
 // Game screen controller: plays a node's lines with a typewriter, runs turns over SSE, handles scene
 // changes, asset polling, save/load, the node tree and jumping back to an older node.
-import { del, get, job, post } from './api.js?v=35d64fef8e0b';
-import { sound } from './sound.js?v=35d64fef8e0b';
-import { LIMIT_SCALE, t } from './i18n.js?v=35d64fef8e0b';
+import { del, get, job, post } from './api.js?v=c8dcf291776f';
+import { sound } from './sound.js?v=c8dcf291776f';
+import { LIMIT_SCALE, t } from './i18n.js?v=c8dcf291776f';
 import {
   $, closeModal, confirmBox, esc, helpNode, loadThumbs, openModal, paintWait, progress, settings, statusText, thumbAttr, toast,
   toastError,
-} from './ui.js?v=35d64fef8e0b';
-import { renderTree, untakenOptions } from './tree.js?v=35d64fef8e0b';
+} from './ui.js?v=c8dcf291776f';
+import { renderTree, untakenOptions } from './tree.js?v=c8dcf291776f';
 import {
-  loadDraft, logLine, logTurn, openLog, openPressMenu, paintCount, paintEndingBack, recordTurnTime, saveDraft, seedLog, typicalTurn,
-} from './playaids.js?v=35d64fef8e0b';
+  loadDraft, logLine, logTurn, openLog, openPressMenu, paintCount, paintEndingBack, recordTurnTime, safeEnd, saveDraft, seedLog,
+  typicalTurn,
+} from './playaids.js?v=c8dcf291776f';
 
 const G = {
   stage: null, game: null, tree: null, assets: null, currentId: null,
   queue: [], typing: null, waitingClick: false, final: null, running: null, turnStart: 0,
   sceneId: null, pendingScene: null, castExpr: {}, onExit: null, pollTimer: null, loadTimer: null, lastInput: null,
   paintClock: null, hiddenAt: 0, skip: false, readyAt: 0, maxInput: 120,
+  choiceTimer: null, startTimer: null, cardTimer: null,   // one-shot delays that must not fire into another node
 };
+
+// One-shot delays cleared when a node is entered or the game is left
+function clearDelays() {
+  clearTimeout(G.choiceTimer);
+  clearTimeout(G.startTimer);
+  clearTimeout(G.cardTimer);
+  G.choiceTimer = G.startTimer = G.cardTimer = null;
+}
+
+// Screen readers hear new lines, choices and endings through a polite live region
+function announce(text) { $('#game-live').textContent = text; }
 
 // ---------- asset urls ----------
 
@@ -37,8 +50,22 @@ function sceneUrl(sid) {
 
 const sceneQuery = () => (G.sceneId ? `?scene=${encodeURIComponent(G.sceneId)}` : '');
 
+// One assets request at a time (the timer, window focus and a finished turn can all ask at once); a request made
+// while one is out runs once after it, so a new scene is not missed
+let polling = false;
+let pollAgain = false;
+
 async function pollAssets() {
   if (!G.game) return;
+  if (polling) { pollAgain = true; return; }
+  polling = true;
+  try { await pollOnce(); } finally {
+    polling = false;
+    if (pollAgain) { pollAgain = false; pollAssets(); }
+  }
+}
+
+async function pollOnce() {
   const gid = G.game.id;
   let assets;
   // Polling also re-queues missing images (after a server restart); only the window the player is looking at
@@ -182,7 +209,7 @@ function pages(text) {
     while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (fits(rest.slice(0, mid))) lo = mid; else hi = mid - 1; }
     const from = Math.floor(lo * 0.6);  // only look for punctuation in the last part, so pages stay full
     const cut = Math.max(...[...BREAK_AFTER].map((c) => rest.slice(from, lo).lastIndexOf(c)));
-    const n = cut >= 0 ? from + cut + 1 : lo;
+    const n = safeEnd(rest, cut >= 0 ? from + cut + 1 : lo);
     out.push(rest.slice(0, n));
     rest = rest.slice(n).trimStart();
   }
@@ -196,6 +223,9 @@ function showLine(line) {
   const [first, ...more] = pages(line.text);
   if (more.length) G.queue.unshift(...more.map((text) => ({ ...line, text, of: line.of || line })));
   line = { ...line, text: first };
+  // Read out whole pages; fast-forward would only pile up speech
+  const colon = G.game?.lang === 'en' ? ': ' : '：';
+  if (!G.skip) announce(line.kind === 'narration' || !line.speaker ? line.text : `${line.speaker}${colon}${line.text}`);
   const box = $('#dialog');
   box.classList.toggle('narration', line.kind === 'narration');
   box.classList.toggle('player', line.kind === 'protagonist' || line.kind === 'player');
@@ -219,9 +249,9 @@ function typeStep() {
   if (G.stage) G.stage.refreshScene();
   const T = G.typing;
   if (T) {
-    if (G.skip) T.t0 = -1e9;
+    if (G.skip && !document.querySelector('.modal:not([hidden])')) T.t0 = -1e9;   // a dialog on top pauses fast-forward
     const n = Math.min(T.text.length, Math.floor((performance.now() - T.t0) / 1000 * settings.speed));
-    if (n !== T.n) { T.n = n; $('#dialog-text').textContent = T.text.slice(0, n); }
+    if (n !== T.n) { T.n = n; $('#dialog-text').textContent = T.text.slice(0, safeEnd(T.text, n)); }
     if (n >= T.text.length) { G.typing = null; afterLine(); }
   } else if (G.waitingClick && G.queue.length && !document.querySelector('.modal:not([hidden])')) {
     // Auto-advance (G03) and Ctrl fast-forward (G04); both stop where the player has to choose
@@ -270,7 +300,7 @@ function finishTurn() {
     } });
     G.stage.setPending(!sceneUrl(node.scene_id));
     paintAssetChip();
-    setTimeout(() => showChoices(node), 1400);
+    G.choiceTimer = setTimeout(() => { G.choiceTimer = null; showChoices(node); }, 1400);
   } else {
     showChoices(node);
   }
@@ -283,14 +313,16 @@ function sceneCard(sid) {
   card.style.animation = 'none';
   void card.offsetWidth;
   card.style.animation = '';
-  setTimeout(() => { card.hidden = true; }, 3300);
+  announce(card.textContent);
+  clearTimeout(G.cardTimer);   // an earlier card's timer would hide this one early
+  G.cardTimer = setTimeout(() => { card.hidden = true; }, 3300);
 }
 
 function showChoices(node) {
   if (node.result.ending) { showEnding(node); return; }
-  const taken = new Set(node.children.map((c) => G.tree.nodes[c]?.player_input?.text).filter(Boolean));
+  const taken = new Set(node.children.map((c) => G.tree.nodes[c]?.player_input?.text?.trim()).filter(Boolean));
   $('#options').innerHTML = node.result.options.map((o, i) =>
-    `<button class="btn" data-i="${i}">${esc(o)}${taken.has(o) && !G.game.batch ? `<small>${esc(t('game.taken'))}</small>` : ''}</button>`).join('');
+    `<button class="btn" data-i="${i}">${esc(o)}${taken.has(o.trim()) && !G.game.batch ? `<small>${esc(t('game.taken'))}</small>` : ''}</button>`).join('');
   $('#options').querySelectorAll('.btn').forEach((b) => {
     b.onclick = () => sendInput('option', node.result.options[Number(b.dataset.i)]);
   });
@@ -300,6 +332,12 @@ function showChoices(node) {
   $('#choices').hidden = false;
   $('#dialog-wait').hidden = true;
   setBusy(false);
+  // The options group takes focus (not the first button, so a Space meant for the last line picks nothing); Tab
+  // reaches the buttons. Left alone while a dialog or a text field has the keyboard.
+  $('#options').setAttribute('aria-label', t('game.optionsLabel'));
+  const at = document.activeElement;
+  if (!document.querySelector('.modal:not([hidden])') && !at?.closest?.('input, textarea, select')) $('#options').focus({ preventScroll: true });
+  announce(t('game.choicesReady', { n: node.result.options.length }));
 }
 
 // The branch ended: an ending card instead of choices
@@ -312,6 +350,8 @@ function showEnding(node) {
   $('#ending').hidden = false;
   $('#dialog-wait').hidden = true;
   setBusy(false);
+  if (!document.querySelector('.modal:not([hidden])')) $('#ending').focus({ preventScroll: true });
+  announce(`${$('#ending-kind').textContent}${t('common.colon')}${ending.title}`);
 }
 
 // ---------- turns ----------
@@ -371,10 +411,12 @@ function retryLast() {
 
 async function sendInput(kind, text) {
   text = (text || '').trim();
-  if (kind !== 'opening' && !text) return;
+  if (kind !== 'opening' && (!text || G.running)) return;   // one turn at a time
   sound.play('select');
   G.lastInput = { kind, text };
   if (!navigator.onLine) { failTurn(t('net.held'), true); return; }   // the online listener sends it
+  // The focused option is about to be hidden: park the keyboard on the dialog box instead of losing it
+  if ($('#choices').contains(document.activeElement)) $('#dialog').focus({ preventScroll: true });
   $('#choices').hidden = true;
   paintFailed(null);
   setBusy(true);
@@ -393,7 +435,7 @@ async function sendInput(kind, text) {
     // Much longer than the last few turns took: most likely a crowded server rather than a stuck page (G07)
     const crowded = avg && s > 2 * avg && s > avg + 20 && t('game.crowded');
     const parts = [rewriting && t('game.rewriting'), lastStatus || writing, crowded];
-    paintRetry(parts.filter(Boolean).join(' ・ '));
+    paintRetry(parts.filter(Boolean).join(t('game.statusSep')));
   };
   const clock = setInterval(() => G.paintClock?.(), 500);
   G.running = job(`/api/games/${gid}/turn`, { parent_id: parentId, input: { kind, text } }, (ev) => {
@@ -422,6 +464,7 @@ async function sendInput(kind, text) {
       paintWait($('#retry'), null);
     }
   });
+  const run = G.running;   // a turn cancelled by leaving may settle after the next one started: it must not touch that one
   if (!G.typing && !G.queue.length) $('#dialog-wait').hidden = false;
   try {
     const final = await G.running.done;
@@ -439,13 +482,14 @@ async function sendInput(kind, text) {
     G.stage.setWeather(node.weather);
     G.final = node;
     G.lastInput = null;
-    if (!final.replayed) recordTurnTime(Date.now() - G.turnStart);
+    // A turn the page spent partly in the background (a phone may freeze it) would skew the typical time
+    if (!final.replayed && G.hiddenAt < G.turnStart && !document.hidden) recordTurnTime(Date.now() - G.turnStart);
     if (kind === 'free') saveDraft(gid, parentId, '');
     pollAssets();
     if (!G.typing && !G.queue.length) finishTurn();
     else if (!G.typing && !G.waitingClick) advance();
   } catch (e) {
-    if (G.game?.id !== gid) return;   // left the game, which cancelled the turn
+    if (G.game?.id !== gid || G.running !== run) return;   // left the game, which cancelled the turn
     // Storage full: the turn was written but not saved; its lines stay readable and the failure row comes after them (F03)
     if (e.code === 'storage_full' && turnLines.length) {
       G.failAfter = () => failTurn(e.message, false, e.code);
@@ -462,9 +506,11 @@ async function sendInput(kind, text) {
     else failTurn(e.code === 'cancelled' ? t('game.cancelled') : e.message, isNetwork(e), e.code);
   } finally {
     clearInterval(clock);
-    G.paintClock = null;
-    paintRetry('');
-    G.running = null;
+    if (G.running === run) {
+      G.paintClock = null;
+      paintRetry('');
+      G.running = null;
+    }
   }
 }
 
@@ -507,6 +553,7 @@ function castFor(node) {
 export async function enterGame(stage, gid, nodeId, onExit, replay = true) {
   G.stage = stage;
   G.onExit = onExit;
+  clearDelays();
   $('#choices').hidden = true;   // hide the previous node's options at once, so they cannot be clicked while loading
   $('#ending').hidden = true;
   paintFailed(null);
@@ -529,7 +576,7 @@ export async function enterGame(stage, gid, nodeId, onExit, replay = true) {
   clearDialog();
   $('#scr-game').hidden = false;
   clearInterval(G.pollTimer);
-  G.pollTimer = setInterval(pollAssets, 3000);
+  G.pollTimer = setInterval(() => { if (!document.hidden) pollAssets(); }, 3000);   // a hidden tab is polled on return
   clearInterval(G.loadTimer);
   loadingTicks = 0;
   G.loadTimer = setInterval(paintLoading, 250);
@@ -566,7 +613,7 @@ export async function enterGame(stage, gid, nodeId, onExit, replay = true) {
   G.final = node;
   node.lines.forEach((l) => G.queue.push(l));
   $('#dialog-skip').hidden = !node.lines.length;
-  setTimeout(advance, 1100);
+  G.startTimer = setTimeout(() => { G.startTimer = null; advance(); }, 1100);
   return true;
 }
 
@@ -574,15 +621,21 @@ export function leaveGame() {
   if (G.running) G.running.cancel();
   clearInterval(G.pollTimer);
   clearInterval(G.loadTimer);
+  clearDelays();
   G.game = null;
   G.queue = [];
   G.typing = null;
   G.final = null;
   G.failAfter = null;
+  G.skip = false;
   $('#scr-game').hidden = true;
   $('#asset-chip').hidden = true;
   $('#stage-loading').hidden = true;
   $('#ending').hidden = true;
+  $('#scene-card').hidden = true;
+  $('#press-menu').hidden = true;
+  $('#game-live').textContent = '';
+  G.stage?.setWeather('none');   // the title screen shares the stage: no rain left falling behind it
   sound.setWeather('none');
 }
 
@@ -613,7 +666,9 @@ export async function openSlots(mode, onLoad) {
   const pick = async (e, i) => {
     if (e.target.dataset.del) {
       e.stopPropagation();
-      if (await confirmBox(t('slots.delAsk', { n: i + 1 }), t('common.delete'))) { slots = await del(`/api/slots/${i}`); paint(); }
+      if (await confirmBox(t('slots.delAsk', { n: i + 1 }), t('common.delete'))) {
+        try { slots = await del(`/api/slots/${i}`); paint(); } catch (err) { toastError(err); }
+      }
       return;
     }
     if (mode === 'save') {
@@ -729,9 +784,13 @@ export function initGame() {
     if (dy < -SWIPE_PX && Math.abs(dy) > Math.abs(e.clientX - swipe.x) && !document.querySelector('.modal:not([hidden])')) openLog();
     swipe = null;
   });
-  // Scrolling up on the story opens the log (G02)
+  // Scrolling up on the story opens the log (G02); a list that can still scroll up keeps the wheel
+  const scrolled = (el) => {
+    for (; el && el !== scr; el = el.parentElement) if (el.scrollTop > 0) return true;
+    return false;
+  };
   scr.addEventListener('wheel', (e) => {
-    if (e.deltaY < 0 && !document.querySelector('.modal:not([hidden])')) openLog();
+    if (e.deltaY < 0 && !scrolled(e.target) && !document.querySelector('.modal:not([hidden])')) openLog();
   }, { passive: true });
   scr.addEventListener('pointermove', (e) => {
     if (press && !press.fired && Math.hypot(e.clientX - press.x, e.clientY - press.y) > 12) clearTimeout(press.timer);
@@ -763,14 +822,15 @@ export function initGame() {
   $('#failed-retry').onclick = retryLast;
   $('#failed-exit').onclick = () => G.onExit?.();
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Control') G.skip = true;   // held: fast-forward (G04)
     // Keys belong to an open dialog, a form field, or a button the keyboard moved to (I04)
     if ($('#scr-game').hidden || document.querySelector('.modal:not([hidden])')) return;
     if (e.target.closest?.('input, textarea, select')) return;
+    if (e.key === 'Control') { G.skip = true; return; }   // held: fast-forward (G04); not while copying in a dialog or a field
     if (!e.ctrlKey && !e.altKey && !e.metaKey) {
-      // 1 to 4 pick that option (G01); L opens the log (G02)
+      // 1 to 4 pick that option (G01); L opens the log (G02); M turns the sound off and on
       if (/^[1-4]$/.test(e.key) && !$('#choices').hidden) { $(`#options .btn[data-i="${e.key - 1}"]`)?.click(); return; }
       if (e.key === 'l' || e.key === 'L') { openLog(); return; }
+      if (e.key === 'm' || e.key === 'M') { toast(t(sound.toggleMute() ? 'game.muted' : 'game.unmuted'), false, 4000, { id: 'mute' }); return; }
     }
     if (e.target.closest?.('button:focus-visible, a:focus-visible, summary:focus-visible')) return;
     if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); advance(); }
@@ -782,6 +842,8 @@ export function initGame() {
     paintCount(G.maxInput);
     if (G.game && G.currentId) saveDraft(G.game.id, G.currentId, $('#free-input').value);
   });
+  // Esc leaves the field so 1 to 4, L and Space work again
+  $('#free-input').addEventListener('keydown', (e) => { if (e.key === 'Escape') e.target.blur(); });
   $('#free-form').addEventListener('submit', (e) => { e.preventDefault(); sendInput('free', $('#free-input').value); });
   $('#retry-cancel').onclick = () => G.running && G.running.cancel();
   $('#retry-now').onclick = () => { $('#retry-now').hidden = true; if (G.running) G.running.retryNow(); };

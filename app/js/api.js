@@ -1,7 +1,7 @@
 // Thin client for the FastAPI backend. SSE jobs are POST streams read with fetch.
 // Server errors arrive as codes; Error.message is the translated text and Error.code keeps the code.
-import { errorText } from './i18n.js?v=35d64fef8e0b';
-import { settings } from './ui.js?v=35d64fef8e0b';
+import { errorText } from './i18n.js?v=c8dcf291776f';
+import { settings } from './ui.js?v=c8dcf291776f';
 
 function fail(code, params = {}) {
   const e = new Error(errorText(code, params));
@@ -17,17 +17,37 @@ async function jsonOrThrow(res) {
     throw typeof detail === 'string' ? fail(detail)
       : detail?.code ? fail(detail.code, detail.params) : fail('http', { status: res.status });
   }
-  return res.json();
+  // An empty answer (204) is null; a proxy's HTML page is an HTTP error, not a JSON SyntaxError
+  const text = await res.text();
+  if (!text) return null;
+  try { return JSON.parse(text); } catch { throw fail('http', { status: res.status }); }
+}
+
+// Plain requests answer within seconds (the key check probes for at most 30 s); a hung server should not
+// leave a button disabled forever. Job streams are not limited: they run as long as the job does.
+const REQUEST_TIMEOUT_S = 60;
+async function request(path, init) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), REQUEST_TIMEOUT_S * 1000);
+  try {
+    return await jsonOrThrow(await fetch(path, { ...init, signal: ctrl.signal }));
+  } catch (e) {
+    // Already a player-facing error from jsonOrThrow; an abort's DOMException has a numeric code (20) too
+    if (typeof e.code === 'string') throw e;
+    throw fail(ctrl.signal.aborted ? 'request_timeout' : 'offline');
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 // GitHub Pages build: /api/* runs in this browser (js/local/backend.js) instead of on a server
 export const LOCAL = !!document.querySelector('meta[name="cg-local"]');
-const backend = LOCAL ? import('./local/backend.js?v=35d64fef8e0b') : null;
+const backend = LOCAL ? import('./local/backend.js?v=c8dcf291776f') : null;
 const isApi = (path) => path.startsWith('/api/');
 // Local modules throw { code, params } like the server's error events; anything else is a bug
 function asError(e) {
   if (e?.name === 'QuotaExceededError') return fail('storage_full');
-  if (e instanceof Error && e.code) return e;
+  if (e instanceof Error && typeof e.code === 'string') return e;   // a DOMException's code is a number
   if (e?.code && !(e instanceof Error)) return fail(e.code, e.params);
   console.error(e);
   return fail('local_internal');
@@ -37,11 +57,11 @@ async function local(method, path, body) {
   try { return await (await backend).request(method, path, body); } catch (e) { throw asError(e); }
 }
 
-export const get = (path) => (LOCAL && isApi(path) ? local('GET', path) : fetch(path).then(jsonOrThrow));
-export const post = (path, body) => (LOCAL && isApi(path) ? local('POST', path, body) : fetch(path, {
+export const get = (path) => (LOCAL && isApi(path) ? local('GET', path) : request(path, {}));
+export const post = (path, body) => (LOCAL && isApi(path) ? local('POST', path, body) : request(path, {
   method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-}).then(jsonOrThrow));
-export const del = (path) => (LOCAL && isApi(path) ? local('DELETE', path) : fetch(path, { method: 'DELETE' }).then(jsonOrThrow));
+}));
+export const del = (path) => (LOCAL && isApi(path) ? local('DELETE', path) : request(path, { method: 'DELETE' }));
 
 function localJob(path, body, onEvent) {
   let inner = null;
@@ -84,13 +104,15 @@ function serverJob(path, body, onEvent) {
       let chunk;
       try { chunk = await reader.read(); } catch { return null; }
       if (chunk.done) return null;
-      buf += dec.decode(chunk.value, { stream: true });
+      // A proxy may re-terminate lines with CRLF; a CR left at a chunk's end meets its LF in the next one
+      buf = (buf + dec.decode(chunk.value, { stream: true })).replace(/\r\n/g, '\n');
       let cut;
       while ((cut = buf.indexOf('\n\n')) >= 0) {
         const block = buf.slice(0, cut);
         buf = buf.slice(cut + 2);
         if (!block.startsWith('data:')) continue;   // ": ping" only keeps a quiet stream open
-        const ev = JSON.parse(block.slice(5));
+        let ev;
+        try { ev = JSON.parse(block.slice(5)); } catch { console.warn('unreadable job event skipped', block.slice(0, 200)); continue; }
         if (ev.type === 'task') { taskId = ev.id; continue; }
         seen += 1;
         if (ev.type === 'error') throw fail(ev.code, ev.params);

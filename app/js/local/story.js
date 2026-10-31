@@ -1,6 +1,6 @@
 // Browser port of server/turn_parser.py and server/prompts.py. The prompt text and constants come from
 // data.js, which tools/build_pages.py exports from the Python modules, so both versions send the same prompts.
-import { DATA } from './data.js?v=35d64fef8e0b';
+import { DATA } from './data.js?v=c8dcf291776f';
 
 const P = DATA.parser;
 const PR = DATA.prompts;
@@ -15,7 +15,7 @@ const EMPH_RE = /\*{1,2}([^*]+?)\*{1,2}/g;
 let convert = (s) => s;
 export async function loadOpenCC() {
   try {
-    const OpenCC = await import('../../vendor/cn2t.js?v=35d64fef8e0b');
+    const OpenCC = await import('../../vendor/cn2t.js?v=c8dcf291776f');
     convert = OpenCC.Converter({ from: 'cn', to: 'twp' });
     return true;
   } catch (e) {
@@ -128,25 +128,109 @@ export class LineStream {
   }
 }
 
-export function lastJson(text) {
-  const candidates = [...text.matchAll(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/g)].map((m) => m[1]).reverse();
-  if (text.includes('{')) candidates.push(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1));
-  for (let c of candidates) {
-    c = c.replace(/\/\/[^\n"]*$/gm, '').replace(/,\s*([}\]])/g, '$1');
-    try {
-      const d = JSON.parse(c);
-      if (d && typeof d === 'object' && !Array.isArray(d)) return d;
-    } catch { /* try the next candidate */ }
+const JSON_WS = ' \t\n\r';
+const TOKEN_RE = /[A-Za-z0-9.+-]+/y;
+const LITERAL_RE = /^(?:true|false|null|NaN|-?Infinity|-?\d[\d.eE+-]*)$/;
+
+// End of the JSON string that opens at s[pos], or -1 (a raw line break inside fails, as in Python's json)
+function stringEnd(s, pos) {
+  for (let j = pos + 1; j < s.length; j += 1) {
+    if (s[j] === '\\') j += 1;
+    else if (s[j] === '"') return j + 1;
+    else if (s[j] < ' ') return -1;
   }
-  return null;
+  return -1;
+}
+
+// One JSON value starting at s[i], like Python's json raw_decode: [value, end] or null. It stops at the first
+// misplaced character, so a "{" in the dialogue costs a few steps, not a scan to the end of the text.
+// NaN and Infinity (which Python's json reads) become null, since JSON.parse rejects them.
+function decodeAt(s, i) {
+  const closers = [];
+  const nonFinite = [];
+  let pos = i;
+  let want = 'value';   // value, first-key (after "{"), first-item (after "["), key (after ","), after
+  for (;;) {
+    while (pos < s.length && JSON_WS.includes(s[pos])) pos += 1;
+    const c = s[pos];
+    if (want === 'after') {
+      if (c === ',') { pos += 1; want = closers.at(-1) === '}' ? 'key' : 'value'; continue; }
+      if (c !== closers.at(-1)) return null;
+      closers.pop();
+      pos += 1;
+    } else if ((want === 'first-key' && c === '}') || (want === 'first-item' && c === ']')) {
+      closers.pop();
+      pos += 1;
+    } else if (want === 'first-key' || want === 'key') {
+      pos = c === '"' ? stringEnd(s, pos) : -1;
+      while (pos > 0 && pos < s.length && JSON_WS.includes(s[pos])) pos += 1;
+      if (pos < 0 || s[pos] !== ':') return null;
+      pos += 1;
+      want = 'value';
+      continue;
+    } else if (c === '{' || c === '[') {
+      closers.push(c === '{' ? '}' : ']');
+      pos += 1;
+      want = c === '{' ? 'first-key' : 'first-item';
+      continue;
+    } else if (c === '"') {
+      pos = stringEnd(s, pos);
+      if (pos < 0) return null;
+    } else {
+      TOKEN_RE.lastIndex = pos;
+      const tok = TOKEN_RE.exec(s)?.[0];
+      if (!tok || !LITERAL_RE.test(tok)) return null;
+      if (tok.endsWith('NaN') || tok.endsWith('Infinity')) nonFinite.push([pos, pos + tok.length]);
+      pos += tok.length;
+    }
+    if (!closers.length) break;
+    want = 'after';
+  }
+  let out = '';
+  let from = i;
+  for (const [a, b] of nonFinite) { out += `${s.slice(from, a)}null`; from = b; }
+  try {
+    return [JSON.parse(out + s.slice(from, pos)), pos];
+  } catch {
+    return null;
+  }
+}
+
+const isDict = (d) => d !== null && typeof d === 'object' && !Array.isArray(d);
+
+// Last parsable JSON object: fenced blocks first (from the end), then the last bare {...}
+export function lastJson(text) {
+  const loose = (s) => s.replace(/\/\/[^\n"]*$/gm, '').replace(/,\s*([}\]])/g, '$1');
+  const candidates = [...text.matchAll(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/gi)].map((m) => m[1]).reverse();
+  if (text.includes('{')) candidates.push(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1));
+  for (const c of candidates.map(loose)) {
+    const r = decodeAt(c, 0);
+    if (r && isDict(r[0]) && /^[ \t\n\r]*$/.test(c.slice(r[1]))) return r[0];
+  }
+  // a brace in the dialogue breaks the first-to-last span: decode each top-level {...} on its own
+  const s = loose(text);
+  let found = null;
+  let i = s.indexOf('{');
+  while (i !== -1) {
+    const r = decodeAt(s, i);
+    if (!r) {
+      i = s.indexOf('{', i + 1);
+      continue;
+    }
+    if (isDict(r[0])) [found] = r;
+    i = s.indexOf('{', r[1]);
+  }
+  return found;
 }
 
 export const slug = (text) => String(text).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 40);
 
+// Counts characters like Python's len (an emoji is one, not two), so a cut never splits a surrogate pair
 export function clip(text, limit) {
-  if (text.length <= limit) return text;
-  let cut = text.slice(0, limit);
-  if (text[limit] !== ' ' && cut.includes(' ')) cut = cut.slice(0, cut.lastIndexOf(' '));
+  const chars = [...text];
+  if (chars.length <= limit) return text;
+  let cut = chars.slice(0, limit).join('');
+  if (chars[limit] !== ' ' && cut.includes(' ')) cut = cut.slice(0, cut.lastIndexOf(' '));
   return cut.replace(/[ ,:;-]+$/, '');
 }
 
@@ -157,7 +241,11 @@ export function mostlyAscii(text) {
   return n / [...text].length > 0.9;
 }
 
-const strList = (v) => (Array.isArray(v) ? v.map((x) => String(x).trim()).filter(Boolean) : []);
+// Strings of a list like the server: null entries are dropped (not "null"), an object entry gives its text or label
+const strList = (v) => (Array.isArray(v) ? v
+  .map((x) => (isDict(x) ? x.text || x.label || x.option : x))
+  .filter((x) => ['string', 'number', 'boolean'].includes(typeof x))
+  .map((x) => String(x).trim()).filter(Boolean) : []);
 
 function toInt(v) {
   if (typeof v === 'number' && Number.isFinite(v)) return Math.trunc(v);
@@ -168,7 +256,7 @@ function toInt(v) {
 
 function ending(v, cast) {
   const labels = P.ENDING_TYPES[cast.lang];
-  if (!v || typeof v !== 'object' || !Object.hasOwn(labels, v.type)) return null;
+  if (!v || typeof v !== 'object' || typeof v.type !== 'string' || !Object.hasOwn(labels, v.type)) return null;
   const title = clip(cast.conv(String(v.title || '').trim()).replace(EMPH_RE, '$1'), P.MAX_ENDING_TITLE[cast.lang]);
   return { type: v.type, title: title || labels[v.type] };
 }
@@ -184,9 +272,10 @@ export function repair(d, cast, knownScenes, current, { allowEnding = false, nOp
   const sc = d.scene && typeof d.scene === 'object' ? d.scene : {};
   let scene = null;
   if (sceneChange) {
-    let sid = slug(sc.id ?? '');
-    const name = conv(String(sc.name ?? '').trim());
-    const prompt = String(sc.image_prompt ?? '').trim();
+    // "||" like the server's "or": false or 0 must not become "false" (which even passes as an English prompt)
+    let sid = slug(sc.id || '');
+    const name = conv(String(sc.name || '').trim());
+    const prompt = String(sc.image_prompt || '').trim();
     const byName = Object.keys(knownScenes).find((k) => name && knownScenes[k].name === name);
     if (Object.hasOwn(knownScenes, sid) || byName) {
       sid = Object.hasOwn(knownScenes, sid) ? sid : byName;
@@ -215,7 +304,7 @@ export function repair(d, cast, knownScenes, current, { allowEnding = false, nOp
   const limit = P.MAX_OPTION_CHARS[lang];
   for (let o of end ? [] : strList(d.options)) {
     o = conv(o.replace(/^\s*(\d+[.、)]|[-*•])\s*/, '')).replace(EMPH_RE, '$1');
-    if (o.length > limit) o = `${o.slice(0, limit - 1)}…`;
+    if ([...o].length > limit) o = `${[...o].slice(0, limit - 1).join('')}…`;
     if (!opts.includes(o)) opts.push(o);
   }
   const [lo, hi] = nOptions ? [nOptions, nOptions] : [3, 4];

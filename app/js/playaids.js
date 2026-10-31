@@ -1,7 +1,15 @@
 // Play aids on the game screen: the story log (G02), typical turn time (G07), the free-input draft (G08),
 // the input counter (G09), the ending's way back to recent choices (G10) and the long-press menu (I02).
-import { t } from './i18n.js?v=35d64fef8e0b';
-import { $, esc, openModal } from './ui.js?v=35d64fef8e0b';
+import { t } from './i18n.js?v=c8dcf291776f';
+import { $, esc, openModal, toast } from './ui.js?v=c8dcf291776f';
+
+// End index for text.slice(0, n) that does not cut a surrogate pair (an emoji or a rare CJK character) in half
+export function safeEnd(text, n) {
+  if (n <= 0 || n >= text.length) return n;
+  const c = text.charCodeAt(n - 1);
+  if (c < 0xd800 || c > 0xdbff) return n;
+  return n > 1 ? n - 1 : n + 1;
+}
 
 // ---------- story log ----------
 
@@ -28,13 +36,46 @@ export function seedLog(tree, protagonist, nodeId) {
   });
 }
 
-export function openLog() {
+// The log as plain text, one line each, a blank line between turns
+export function logText(entries, colon) {
+  return entries.map((e) => (e.kind === 'sep' ? '' : e.kind === 'narration' || !e.speaker ? e.text : `${e.speaker}${colon}${e.text}`))
+    .join('\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+
+// Lines whose speaker or text contains query (any case); all entries when the query is blank
+export function matchLog(entries, query) {
+  const q = query.trim().toLowerCase();
+  if (!q) return entries;
+  return entries.filter((e) => e.kind !== 'sep' && [e.speaker, e.text].some((s) => String(s || '').toLowerCase().includes(q)));
+}
+
+function paintLog(query) {
   const list = $('#log-list');
-  list.innerHTML = log.length ? log.map((e) => (e.kind === 'sep' ? '<hr>'
+  const shown = matchLog(log, query);
+  list.innerHTML = shown.length ? shown.map((e) => (e.kind === 'sep' ? '<hr>'
     : `<p class="log-${esc(e.kind)}">${e.kind === 'narration' ? '' : `<b>${esc(e.speaker)}</b>`}${esc(e.text)}</p>`)).join('')
-    : `<p class="hint">${esc(t('log.empty'))}</p>`;
-  openModal('#mdl-log');
+    : `<p class="hint">${esc(t(log.length ? 'log.noMatch' : 'log.empty'))}</p>`;
   list.scrollTop = list.scrollHeight;
+}
+
+// Copies the lines on show (all of them, or the search matches)
+async function copyLog() {
+  try {
+    await navigator.clipboard.writeText(logText(matchLog(log, $('#log-search').value), t('common.colon')));
+    toast(t('log.copied'));
+  } catch (e) {   // no clipboard outside https, or the browser said no
+    console.warn('log copy failed', e);
+    toast(t('log.copyFail'), true);
+  }
+}
+
+export function openLog() {
+  const search = $('#log-search');
+  search.value = '';
+  search.oninput = () => paintLog(search.value);
+  $('#log-copy').onclick = copyLog;
+  openModal('#mdl-log');
+  paintLog('');
 }
 
 // ---------- typical turn time ----------
@@ -71,10 +112,11 @@ export function saveDraft(gid, nodeId, text) {
 
 // Counts code points like the server does
 export function paintCount(max) {
-  const left = max - [...$('#free-input').value.trim()].length;
+  const used = [...$('#free-input').value.trim()].length;
+  const left = max - used;
   $('#free-count').textContent = left >= 0 ? t('game.left', { n: left }) : t('game.over', { n: -left });
   $('#free-count').classList.toggle('over', left < 0);
-  $('#free-form [type="submit"]').disabled = left < 0;
+  $('#free-form [type="submit"]').disabled = !used || left < 0;   // blank input would be ignored anyway
 }
 
 // ---------- ending: back to recent choices ----------
