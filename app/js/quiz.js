@@ -1,10 +1,10 @@
 // SDGs English quest: the list of quests, the editor (basic info, AI draft, five levels, ending) and file export.
 // Playing a quest is in quiz_play.js; the storage and the AI draft are in local/quiz.js (browser build only).
-import { del, get, job, post } from './api.js?v=de84f38ef71d';
-import { t } from './i18n.js?v=de84f38ef71d';
-import { $, confirmBox, esc, progress, toast, toastError } from './ui.js?v=de84f38ef71d';
-import { LIMITS, MAX_CHARS, PICTURES, SDGS, SDG_LOOK, normalize, problems } from './quest.js?v=de84f38ef71d';
-import { playQuest } from './quiz_play.js?v=de84f38ef71d';
+import { del, get, job, post } from './api.js?v=b9289d23998c';
+import { t } from './i18n.js?v=b9289d23998c';
+import { $, confirmBox, esc, progress, toast, toastError } from './ui.js?v=b9289d23998c';
+import { LIMITS, MAX_CHARS, PICTURES, SDGS, SDG_LOOK, normalize, problems } from './quest.js?v=b9289d23998c';
+import { playQuest } from './quiz_play.js?v=b9289d23998c';
 
 export const sdgName = (q) => (q.sdg === 'other' ? q.sdg_other || t('quiz.sdg.other') : t(`quiz.sdg.${q.sdg}`));
 

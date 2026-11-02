@@ -1,16 +1,16 @@
 // Browser-side stand-in for server/main.py on GitHub Pages: the same /api routes and job events, backed by
 // IndexedDB and the player's own NVIDIA key and relay (both kept in this browser's localStorage only).
-import { DATA } from './data.js?v=de84f38ef71d';
-import * as store from './store.js?v=de84f38ef71d';
-import * as images from './images.js?v=de84f38ef71d';
-import * as turns from './turns.js?v=de84f38ef71d';
-import * as batch from './batch.js?v=de84f38ef71d';
-import * as llm from './llm.js?v=de84f38ef71d';
-import * as quiz from './quiz.js?v=de84f38ef71d';
-import { hint, probe, relayState, remember, verdict } from './check.js?v=de84f38ef71d';
-import { analyzeNovel } from './novel.js?v=de84f38ef71d';
-import { loadOpenCC } from './story.js?v=de84f38ef71d';
-import { diag, scrubKeys, watchErrors } from './diag.js?v=de84f38ef71d';
+import { DATA } from './data.js?v=b9289d23998c';
+import * as store from './store.js?v=b9289d23998c';
+import * as images from './images.js?v=b9289d23998c';
+import * as turns from './turns.js?v=b9289d23998c';
+import * as batch from './batch.js?v=b9289d23998c';
+import * as llm from './llm.js?v=b9289d23998c';
+import * as quiz from './quiz.js?v=b9289d23998c';
+import { hint, probe, relayState, remember, verdict } from './check.js?v=b9289d23998c';
+import { analyzeNovel } from './novel.js?v=b9289d23998c';
+import { loadOpenCC } from './story.js?v=b9289d23998c';
+import { diag, scrubKeys, watchErrors } from './diag.js?v=b9289d23998c';
 
 const KEY = 'cg-nvidia-key';
 const RELAY = 'cg-relay';
@@ -301,7 +301,7 @@ export function job(url, body, onEvent) {
         await store.loadGame(parts[1]);
         await images.textTurn(() => turns.runTurn(parts[1], body.parent_id ?? null, body.input || {}, emit, jobConn(), ctrl.signal));
       }
-      else if (parts[0] === 'quiz' && parts[2] === 'pictures') await quiz.drawPictures(parts[1], body, emit, ctrl.signal);
+      else if (parts[0] === 'quiz' && parts[2] === 'pictures') await quiz.drawPictures(parts[1], body, emit, jobConn(), ctrl.signal);
       else if (parts[0] === 'quiz' && parts[1] === 'generate') await images.textTurn(() => quiz.generate(body, emit, jobConn(), ctrl.signal));
       else if (parts[0] === 'novel' && parts[1] === 'analyze') await analyzeNovel(body, emit, jobConn(), ctrl.signal);
       else throw { code: 'http', params: { status: 404 } };

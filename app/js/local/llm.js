@@ -1,7 +1,7 @@
 // Browser port of server/llm_client.py. Calls go to the player's CORS relay with the player's own NVIDIA key;
 // the same retry groups, cooldowns, RPM window, watchdogs and content filter as the server.
-import { DATA } from './data.js?v=de84f38ef71d';
-import { diag } from './diag.js?v=de84f38ef71d';
+import { DATA } from './data.js?v=b9289d23998c';
+import { diag } from './diag.js?v=b9289d23998c';
 
 const L = DATA.llm;
 // Failure kinds as in the server, plus network (this browser cannot reach the relay) and upstream (the relay

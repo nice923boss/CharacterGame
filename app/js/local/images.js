@@ -2,11 +2,11 @@
 // same priorities, automatic re-queues, image modes and redraws, scenes and sprites drawn through the player's
 // relay, sprites cut out with the chroma key. The queue is kept in IndexedDB, so a reload carries on with it.
 // Skipped against the server: ComfyUI, rembg, the iso residue pass and the .raw intermediates.
-import { DATA } from './data.js?v=de84f38ef71d';
-import * as store from './store.js?v=de84f38ef71d';
-import * as llm from './llm.js?v=de84f38ef71d';
-import { diag } from './diag.js?v=de84f38ef71d';
-import { t } from '../i18n.js?v=de84f38ef71d';
+import { DATA } from './data.js?v=b9289d23998c';
+import * as store from './store.js?v=b9289d23998c';
+import * as llm from './llm.js?v=b9289d23998c';
+import { diag } from './diag.js?v=b9289d23998c';
+import { t } from '../i18n.js?v=b9289d23998c';
 
 const A = DATA.art;
 const EXPRESSIONS = DATA.parser.EXPRESSIONS;
@@ -395,9 +395,16 @@ async function draw(prompt, seed) {
   return createImageBitmap(new Blob([bytes]));
 }
 
-// One picture for an SDGs quest (local/quiz.js), drawn outside the story queue: a JPEG of the given size
+// One picture for an SDGs quest (local/quiz.js), drawn outside the story queue: a JPEG of the given size.
+// A failed drawing throws { code, params } like the other jobs, its reason already in the player's language
 export async function picture(prompt, width, height) {
-  const img = await fitDrawn(draw(prompt, Math.floor(Math.random() * 2 ** 31)), width, height);
+  let img;
+  try {
+    img = await fitDrawn(draw(prompt, Math.floor(Math.random() * 2 ** 31)), width, height);
+  } catch (e) {
+    if (e instanceof ImageFailed) throw { code: 'picture_failed', params: { reason: e.message } };
+    throw e;
+  }
   const cv = new OffscreenCanvas(width, height);
   cv.getContext('2d').putImageData(img, 0, 0);
   return cv.convertToBlob({ type: 'image/jpeg', quality: 0.88 });

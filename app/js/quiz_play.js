@@ -1,8 +1,8 @@
 // Playing an SDGs English quest: the story background, then five levels (dialogue one line per click, one A/B
 // question; a wrong answer shows the hint and the same question again), then the ending and "Mission Complete!".
-import { t } from './i18n.js?v=de84f38ef71d';
-import { $, esc } from './ui.js?v=de84f38ef71d';
-import { SDG_LOOK } from './quest.js?v=de84f38ef71d';
+import { t } from './i18n.js?v=b9289d23998c';
+import { $, esc } from './ui.js?v=b9289d23998c';
+import { SDG_LOOK } from './quest.js?v=b9289d23998c';
 
 const SPEAKER_COLORS = ['#f2c46d', '#8fd0ff', '#ffa3b5', '#a6e3a1', '#d3b4ff', '#ffcf99'];
 

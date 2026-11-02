@@ -1,7 +1,7 @@
 // Play aids on the game screen: the story log (G02), typical turn time (G07), the free-input draft (G08),
 // the input counter (G09), the ending's way back to recent choices (G10) and the long-press menu (I02).
-import { t } from './i18n.js?v=de84f38ef71d';
-import { $, esc, openModal, toast } from './ui.js?v=de84f38ef71d';
+import { t } from './i18n.js?v=b9289d23998c';
+import { $, esc, openModal, toast } from './ui.js?v=b9289d23998c';
 
 // End index for text.slice(0, n) that does not cut a surrogate pair (an emoji or a rare CJK character) in half
 export function safeEnd(text, n) {

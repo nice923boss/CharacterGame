@@ -312,6 +312,7 @@ export const DICT = {
     'phase.quiz_draft': 'AI 正在寫五關的對話與題目', 'phase.quiz_repair': '補齊缺少的關卡',
     'err.quiz_input': '請先填遊戲名稱、至少一位角色、問題和目標', 'err.quiz_bad_reply': 'AI 這次沒有寫出完整的五關，請再按一次',
     'err.quiz_missing': '找不到這個闖關遊戲，可能已經刪除',
+    'err.picture_failed': '插圖沒畫成：{reason}',
     // -- phase10:platform --
     // -- phase10:server --
   },
@@ -641,6 +642,7 @@ export const DICT = {
     'phase.quiz_draft': 'The AI is writing the dialogue and questions for five levels', 'phase.quiz_repair': 'Filling in missing levels',
     'err.quiz_input': 'Fill in the title, at least one character, the problem and the goal first', 'err.quiz_bad_reply': 'The AI did not write all five levels this time; press the button again',
     'err.quiz_missing': 'This quest was not found; it may have been deleted',
+    'err.picture_failed': 'The picture was not drawn: {reason}',
     // -- phase10:platform --
     // -- phase10:server --
   },

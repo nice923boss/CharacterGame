@@ -1,10 +1,10 @@
 // SDGs English quest (browser build only): the AI writes a draft of the five levels and the ending; quests live in
 // IndexedDB. The quest shape and its rules are in ../quest.js.
-import * as store from './store.js?v=de84f38ef71d';
-import * as llm from './llm.js?v=de84f38ef71d';
-import * as images from './images.js?v=de84f38ef71d';
-import { lastJson } from './story.js?v=de84f38ef71d';
-import { LEVELS, LIMITS, PICTURES, level, lines, normalize, problems, sceneOf, shuffleSides } from '../quest.js?v=de84f38ef71d';
+import * as store from './store.js?v=b9289d23998c';
+import * as llm from './llm.js?v=b9289d23998c';
+import * as images from './images.js?v=b9289d23998c';
+import { lastJson } from './story.js?v=b9289d23998c';
+import { LEVELS, LIMITS, PICTURES, level, lines, normalize, problems, sceneOf, shuffleSides } from '../quest.js?v=b9289d23998c';
 
 const SDG_EN = {
   6: 'SDG 6 Clean Water and Sanitation', 11: 'SDG 11 Sustainable Cities and Communities',
@@ -109,7 +109,9 @@ export function pictures(id) {
 
 // Job: { slots } in (all missing pictures when empty); one "picture" event per drawn picture, then the final
 // event with every picture the quest has. The quest is read as saved, so the editor saves first.
-export async function drawPictures(id, body, emit, signal) {
+export async function drawPictures(id, body, emit, conn, signal) {
+  if (!conn.key) throw { code: 'no_key' };
+  if (!conn.relay) throw { code: 'no_relay' };
   const q = await load(id);
   const asked = (Array.isArray(body?.slots) ? body.slots : []).filter((s) => PICTURES.includes(s));
   const slots = asked.length ? asked : PICTURES.filter((s) => !store.hasFile(picPath(id, s)));
