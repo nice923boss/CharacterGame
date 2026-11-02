@@ -1,186 +1,339 @@
-// Playing an SDGs English quest: the story background, then five levels (dialogue one line per click, one A/B
-// question; a wrong answer shows the hint and the same question again), then the ending and "Mission Complete!".
-import { t } from './i18n.js?v=a2430d6da8c1';
-import { $, esc } from './ui.js?v=a2430d6da8c1';
-import { SDG_LOOK } from './quest.js?v=a2430d6da8c1';
+// Playing a quest (both kinds) in the upright frame: the picture on top and one page at a time below it, like the
+// story game's dialog box; the bag of items, keyword talk, hints, the result. The rules are quest_pages.js.
+import { t } from './i18n.js?v=6f163306a287';
+import { $, esc, setBackdrop } from './ui.js?v=6f163306a287';
+import { SDG_LOOK } from './quest.js?v=6f163306a287';
+import { playable, startState, page, visibleOptions, advance, pick, answer, hint, canGiveUp, giveUp, replyOf,
+  canRetry, retry, result } from './quest_pages.js?v=6f163306a287';
 
-const SPEAKER_COLORS = ['#f2c46d', '#8fd0ff', '#ffa3b5', '#a6e3a1', '#d3b4ff', '#ffcf99'];
+const KIND_ICON = { doc: '📄', image: '🖼️', person: '🧑' };
+const LETTERS = 'ABCDEFGH';
+// Pages with nothing to pick: a tap anywhere goes on. Chapter, notice and item cover the whole frame.
+const FULL = new Set(['chapter', 'notice', 'item']);
 
-// ---------- the rules (pure, tested in quiz.test.mjs) ----------
-
-export const startState = () => ({ stage: 'intro', level: 0, shown: 0, picked: null, mistakes: 0 });
-
-const linesOf = (q, s) => (s.stage === 'ending' ? q.ending : q.levels[s.level].lines);
-export const asking = (q, s) => s.stage === 'level' && s.shown >= linesOf(q, s).length;
-export const solved = (q, s) => asking(q, s) && s.picked === q.levels[s.level].answer;
-
-// One click: the next dialogue line, or the next level once this one is solved; the question itself waits for an answer
-export function advance(q, s) {
-  if (s.stage === 'intro') return { ...s, stage: 'level', level: 0, shown: 1, picked: null };
-  if (s.stage === 'level') {
-    if (!asking(q, s)) return { ...s, shown: s.shown + 1 };
-    if (!solved(q, s)) return s;
-    if (s.level + 1 < q.levels.length) return { ...s, level: s.level + 1, shown: 1, picked: null };
-    return { ...s, stage: 'ending', shown: 1, picked: null };
-  }
-  if (s.stage === 'ending') return s.shown < q.ending.length ? { ...s, shown: s.shown + 1 } : { ...s, stage: 'done' };
-  return s;
-}
-
-// Picking A or B: a wrong side counts one mistake and leaves the question open; after the right side nothing changes
-export function choose(q, s, side) {
-  if (!asking(q, s) || solved(q, s)) return s;
-  const right = side === q.levels[s.level].answer;
-  return { ...s, picked: side, mistakes: s.mistakes + (right ? 0 : 1) };
-}
-
-export const stars = (mistakes) => (mistakes === 0 ? 3 : mistakes <= 2 ? 2 : 1);
-
-// ---------- the screen ----------
-
-let Q = null;
-let S = null;
+let Q = null;          // the quest with its pictures
+let G = null;          // playable(Q)
+let S = null;          // the play state
+let from = 0;          // the page the play starts on (the editor can start from any page)
 let back = null;
-let colorOf = () => '';
+let bag = null;        // null: closed; '': the list; an item id: that item open
+let talks = new Map(); // person id -> [{ q, a }] asked during this play
+let typed = '';        // the last typed answer, kept in the box after a wrong try
 
-function bubble(l) {
-  const narrator = !l.speaker || /^narrator$/i.test(l.speaker);
-  if (narrator) return `<p class="qp-line qp-narr" lang="en">${esc(l.text)}</p>`;
-  return `<div class="qp-line" style="--who:${colorOf(l.speaker)}"><b lang="en">${esc(l.speaker)}</b><p lang="en">${esc(l.text)}</p></div>`;
-}
+const pic = (name) => Q.pictures?.[name] || '';
+const itemOf = (id) => G.items.find((it) => it.id === id);
+const go = (label) => `<button class="qp-btn primary" type="button" data-qp="next">${esc(label)} ▶</button>`;
+const more = '<i class="qp-more" aria-hidden="true">▼</i>';
 
-// The picture for the part being played: the opening, the level, or the ending (also on the last screen)
-function paintPicture() {
-  const slot = S.stage === 'intro' ? 'intro' : S.stage === 'level' ? `l${S.level + 1}` : 'ending';
-  const src = Q.pictures?.[slot];
-  $('#qp-pic').hidden = !src;
-  if (src && $('#qp-img').getAttribute('src') !== src) $('#qp-img').src = src;
-}
+// ---------- pages ----------
 
-function paint() {
-  paintPicture();
-  const body = $('#qp-body');
-  const foot = $('#qp-foot');
-  const total = Q.levels.length;
-  $('#qp-progress').textContent = S.stage === 'level' ? `Level ${S.level + 1} / ${total}`
-    : S.stage === 'intro' ? t('quiz.play.story') : t('quiz.play.end');
-  $('#qp-dots').innerHTML = Q.levels.map((_, i) => {
-    const done = S.stage === 'ending' || S.stage === 'done' || i < S.level || (i === S.level && solved(Q, S));
-    return `<i class="${done ? 'done' : i === S.level && S.stage === 'level' ? 'now' : ''}"></i>`;
-  }).join('');
-
-  if (S.stage === 'intro') {
-    body.innerHTML = `<h3 lang="en">${esc(Q.title)}</h3>
-      <p class="qp-bg" lang="en">${esc(Q.background)}</p>
-      <div class="qp-cast">${Q.characters.map((c) => `<span style="--who:${colorOf(c.name)}"><b lang="en">${esc(c.name)}</b>${c.who ? `<small>${esc(c.who)}</small>` : ''}</span>`).join('')}</div>`;
-    foot.innerHTML = `<button class="btn primary" data-qp="next">${esc(t('quiz.play.start'))}</button>`;
-  } else if (S.stage === 'done') {
-    const n = stars(S.mistakes);
-    body.innerHTML = `<div class="qp-done"><p class="qp-mission">Mission Complete!<br>任務完成！</p>
-      <p class="qp-stars" aria-label="${esc(t('quiz.play.starsLabel', { n }))}">${'★'.repeat(n)}<span>${'★'.repeat(3 - n)}</span></p>
-      <p class="hint">${esc(S.mistakes ? t('quiz.play.mistakes', { n: S.mistakes }) : t('quiz.play.perfect'))}</p></div>`;
-    foot.innerHTML = `<button class="btn" data-qp="again">${esc(t('quiz.play.again'))}</button>
-      <button class="btn primary" data-qp="exit">${esc(t('common.back'))}</button>`;
-  } else {
-    const rows = linesOf(Q, S).slice(0, S.shown);
-    const head = S.stage === 'ending' ? `<h3>Ending</h3>` : `<h3 lang="en">Level ${S.level + 1}: ${esc(Q.levels[S.level].title)}</h3>`;
-    let ask = '';
-    if (asking(Q, S)) {
-      const l = Q.levels[S.level];
-      const opt = (side, text) => {
-        const state = S.picked === side ? (side === l.answer ? ' right' : ' wrong') : '';
-        return `<button class="qp-opt${state}" data-qp="pick" data-side="${side}"${solved(Q, S) ? ' disabled' : ''}>
-          <b>${side}</b><span lang="en">${esc(text)}</span></button>`;
-      };
-      // The author's own words replace the default ones when the level has them
-      const feedback = !S.picked ? '' : solved(Q, S)
-        ? `<p class="qp-ok" role="status">✔ ${l.right ? `<span lang="en">${esc(l.right)}</span>` : `Correct! ${esc(t('quiz.play.correct'))}`}</p>`
-        : `<div class="qp-hint" role="status"><b lang="en">✘ ${esc(l.wrong || 'Not quite. Try again!')}</b><p lang="en">💡 Hint: ${esc(l.hint)}</p></div>`;
-      ask = `<div class="qp-ask"><p class="qp-q" lang="en">${esc(l.question)}</p>
-        <div class="qp-opts">${opt('A', l.a)}${opt('B', l.b)}</div>${feedback}</div>`;
-    }
-    body.innerHTML = head + rows.map(bubble).join('') + ask;
-    const waiting = asking(Q, S) && !solved(Q, S);
-    const label = solved(Q, S) ? (S.level + 1 < total ? t('quiz.play.nextLevel') : t('quiz.play.toEnding'))
-      : S.stage === 'ending' && S.shown >= Q.ending.length ? t('quiz.play.finish') : t('quiz.play.next');
-    foot.innerHTML = waiting ? `<p class="hint">${esc(t('quiz.play.pickHint'))}</p>`
-      : `<button class="btn primary" data-qp="next">${esc(label)} ▶</button>`;
+function puzzleHtml(p) {
+  const z = S.puzzle;
+  const over = z.solved || z.gaveUp;
+  const head = `${p.title ? `<h3>${esc(p.title)}</h3>` : ''}<p>${esc(p.text)}</p>`;
+  let ask = '';
+  if (p.kind === 'choice') {
+    // Blank options stay out; their index still counts so the answer index stays right
+    ask = `<div class="qp-opts">${p.options.map((label, i) => {
+      if (!label) return '';
+      const state = z.solved && i === p.answer ? ' right' : z.tried.includes(i) ? ' wrong' : '';
+      return `<button class="qp-opt${state}" type="button" data-qp="answer" data-i="${i}"${over || z.tried.includes(i) ? ' disabled' : ''}>
+        <b>${LETTERS[i]}</b><span>${esc(label)}</span></button>`;
+    }).join('')}</div>`;
+  } else if (!over) {
+    ask = `<form class="qp-type" data-qp="type"><input id="qp-input" autocomplete="off" maxlength="80"
+      placeholder="${esc(p.placeholder || t('quiz.play.typeHere'))}" value="${esc(typed)}">
+      <button class="qp-btn primary" type="submit">${esc(t('common.send'))}</button></form>`;
   }
-  body.scrollTop = body.scrollHeight;
-  foot.querySelector('button')?.focus({ preventScroll: true });
+  let say = '';
+  if (z.solved) say = `<p class="qp-ok" role="status">✔ ${esc(p.right || `Correct! ${t('quiz.play.correct')}`)}</p>`;
+  else if (z.gaveUp) say = `<p class="qp-reveal" role="status">${esc(p.reveal || t('quiz.play.answerIs', { a: p.accept[0] || '' }))}</p>`;
+  // data-n makes each new wrong answer a new message, so it fades in again (a hint alone leaves it still)
+  else if (z.wrong) say = `<p class="qp-no" role="status" data-n="${z.misses}">✘ ${esc(p.wrong || 'Not quite. Try again!')}</p>`;
+  const hints = p.hints.slice(0, z.hints).map((h) => `<p class="qp-hint">💡 ${esc(h)}</p>`).join('');
+  const tools = over ? go(t('quiz.play.go')) : [
+    z.hints < p.hints.length
+      ? `<button class="qp-btn" type="button" data-qp="hint">${esc(t('quiz.play.hint', { n: z.hints + 1, max: p.hints.length }))}</button>` : '',
+    canGiveUp(G, S) ? `<button class="qp-btn" type="button" data-qp="giveup">${esc(t('quiz.play.giveUp'))}</button>` : '',
+  ].join('');
+  return `<div class="qp-box">${head}</div>${ask}${say}${hints}${tools ? `<div class="qp-tools">${tools}</div>` : ''}`;
+}
+
+function choiceHtml(p) {
+  const opts = visibleOptions(G, S);
+  const head = p.title || p.text ? `<div class="qp-box">${p.title ? `<h3>${esc(p.title)}</h3>` : ''}${p.text ? `<p>${esc(p.text)}</p>` : ''}${opts.length ? '' : more}</div>` : '';
+  return head + (opts.length ? `<div class="qp-opts">${opts.map((o, i) => `<button class="qp-opt" type="button" data-qp="pick" data-id="${esc(o.id)}">
+    <b>${i + 1}</b><span>${esc(o.label)}</span></button>`).join('')}</div>` : '');
+}
+
+function itemHtml(p) {
+  const it = itemOf(p.item);
+  if (!it) return '';
+  const src = pic(it.pic);
+  return `<div class="qp-card qp-item"><small>${esc(t(p.action === 'update' ? 'quiz.play.updated' : 'quiz.play.got'))}</small>
+    ${src ? `<img src="${esc(src)}" alt="">` : `<span class="qp-ico" aria-hidden="true">${KIND_ICON[it.kind]}</span>`}
+    <h3>${esc(it.name)}</h3><p>${esc(p.text || it.text)}</p><p class="qp-tap">${esc(t('quiz.play.tap'))}</p></div>`;
+}
+
+function pageHtml(p) {
+  if (!p) return '';
+  if (p.type === 'narration') return `<div class="qp-box"><p>${esc(p.text)}</p>${more}</div>`;
+  if (p.type === 'talk') {
+    return `<div class="qp-box qp-talk"><b class="qp-name">${esc(p.speaker)}${p.label ? `<small>${esc(p.label)}</small>` : ''}</b>
+      <p>${esc(p.text)}</p>${more}</div>`;
+  }
+  if (p.type === 'caption') return `<p class="qp-caption">${esc(p.text)}</p>`;
+  if (p.type === 'chapter') {
+    return `<div class="qp-chapter">${p.heading ? `<small>${esc(p.heading)}</small>` : ''}<h2>${esc(p.title)}</h2>
+      <p class="qp-tap">${esc(t('quiz.play.tap'))}</p></div>`;
+  }
+  if (p.type === 'notice') {
+    return `<div class="qp-card qp-notice" role="dialog"><h3>📜 ${esc(p.title || t('quiz.play.notice'))}</h3><p>${esc(p.text)}</p>
+      ${go(t('common.ok'))}</div>`;
+  }
+  if (p.type === 'item') return itemHtml(p);
+  if (p.type === 'choice') return choiceHtml(p);
+  if (p.type === 'puzzle') return puzzleHtml(p);
+  // ending: the result comes after it
+  return `<div class="qp-card qp-end"><h2>${esc(p.title || t('quiz.play.end'))}</h2>${p.text ? `<p>${esc(p.text)}</p>` : ''}
+    ${go(t('quiz.play.toResult'))}</div>`;
+}
+
+function resultHtml() {
+  const r = result(G, S);
+  const n = r.stars;
+  const time = `${Math.floor(r.seconds / 60)}:${String(r.seconds % 60).padStart(2, '0')}`;
+  return `<div class="qp-card qp-result">
+    <p class="qp-mission">${esc(r.ending?.title || 'Mission Complete!')}</p>
+    ${r.ending?.text ? `<p>${esc(r.ending.text)}</p>` : ''}
+    <p class="qp-stars" aria-label="${esc(t('quiz.play.starsLabel', { n }))}">${'★'.repeat(n)}<span>${'★'.repeat(3 - n)}</span></p>
+    <p class="qp-stats">${esc(r.mistakes ? t('quiz.play.mistakes', { n: r.mistakes }) : t('quiz.play.perfect'))}<br>${esc(t('quiz.play.time', { time }))}</p>
+    ${r.endings.length > 1 ? `<p class="qp-stats">${esc(t('quiz.play.endings'))}</p>
+      <p class="qp-ends">${r.endings.map((e) => `<span>${esc(e.title || t('quiz.play.end'))}</span>`).join('')}</p>` : ''}
+    <div class="qp-acts">
+      ${canRetry(S) ? `<button class="qp-btn" type="button" data-qp="retry">${esc(t('quiz.play.retry'))}</button>` : ''}
+      <button class="qp-btn" type="button" data-qp="again">${esc(t('quiz.play.again'))}</button>
+      <button class="qp-btn primary" type="button" data-qp="exit">${esc(t('common.back'))}</button>
+    </div></div>`;
+}
+
+// ---------- the bag ----------
+
+function bagHtml() {
+  const head = (title, backTo) => `<header class="qp-sheet-head">
+    ${backTo ? `<button class="qp-btn" type="button" data-bag="list">← ${esc(t('quiz.play.bag'))}</button>` : `<h3>🎒 ${esc(t('quiz.play.bag'))}</h3>`}
+    ${backTo ? `<h3>${esc(title)}</h3>` : ''}
+    <button class="qp-icon" type="button" data-bag="close" aria-label="${esc(t('common.close'))}">✕</button></header>`;
+  const it = bag && itemOf(bag);
+  if (!it) {
+    const list = S.items.map(({ id }) => {
+      const x = itemOf(id);
+      const src = pic(x.pic);
+      return `<button type="button" data-bag="open" data-id="${esc(id)}">${src ? `<img src="${esc(src)}" alt="">`
+        : `<span class="qp-ico" aria-hidden="true">${KIND_ICON[x.kind]}</span>`}<span>${esc(x.name)}</span></button>`;
+    }).join('');
+    return head(t('quiz.play.bag'), false) + (list ? `<div class="qp-bag-list">${list}</div>` : `<p class="qp-stats">${esc(t('quiz.play.bagEmpty'))}</p>`);
+  }
+  const text = S.items.find((x) => x.id === it.id)?.text ?? it.text;
+  const src = pic(it.pic);
+  let talk = '';
+  if (it.kind === 'person') {
+    const log = (talks.get(it.id) || []).map((r) => `<p class="q">${esc(r.q)}</p><p class="a">${esc(r.a)}</p>`).join('');
+    talk = `<div class="qp-log" aria-live="polite">${log}</div>
+      <form class="qp-type" data-bag="ask"><input id="qp-ask" autocomplete="off" maxlength="80" placeholder="${esc(t('quiz.play.askPh'))}">
+      <button class="qp-btn primary" type="submit">${esc(t('quiz.play.ask'))}</button></form>`;
+  }
+  return `${head(it.name, true)}<div class="qp-detail">${src ? `<img src="${esc(src)}" alt="">` : ''}<p>${esc(text)}</p>${talk}</div>`;
+}
+
+function paintBag() {
+  const el = $('#qp-bag');
+  el.hidden = bag === null;
+  // The sheet itself stays between repaints, so it slides up only when the bag opens
+  const sheet = el.firstElementChild;
+  if (bag === null) el.innerHTML = '';
+  else if (sheet) { sheet.innerHTML = bagHtml(); sheet.scrollTop = 0; }
+  else el.innerHTML = `<div class="qp-sheet">${bagHtml()}</div>`;
+  if (bag !== null) (el.querySelector('#qp-ask') || el.querySelector('[data-bag]')).focus({ preventScroll: true });
+}
+
+// ---------- painting ----------
+
+// The parts of the page last painted. Repainting the same page (a wrong answer, a hint) keeps those still;
+// only the new parts fade in, and only a newly wrong option shakes. An option that only turns disabled stays still.
+let shown = new Set();
+function keepStill(body, samePage) {
+  const parts = [...body.querySelectorAll(':scope > *, .qp-opt')];
+  const marks = parts.map((el) => el.outerHTML.replace(' disabled=""', ''));
+  if (samePage) parts.forEach((el, i) => el.classList.toggle('still', shown.has(marks[i])));
+  shown = new Set(marks);
+}
+
+function paint(samePage = false) {
+  const p = page(G, S);
+  const src = pic(S.pic);
+  const img = $('#qp-img');
+  $('#qp-pic').hidden = !src;
+  if (src && img.getAttribute('src') !== src) img.src = src;
+  $('#qp-fill').style.backgroundImage = src ? `url(${JSON.stringify(src)})` : '';
+  setBackdrop(src);
+  const ch = G.pages.find((x) => x.id === S.chapter);
+  $('#qp-title').textContent = ch ? [ch.heading, ch.title].filter(Boolean).join(' · ') : Q.title;
+  $('#qp-bar').style.width = `${S.done ? 100 : Math.round((100 * S.at) / Math.max(1, G.pages.length - 1))}%`;
+  $('#qp-bag-n').textContent = S.items.length || '';
+  $('#qp').classList.toggle('full', !S.done && FULL.has(p?.type));
+  const body = $('#qp-body');
+  body.innerHTML = S.done ? resultHtml() : pageHtml(p);
+  keepStill(body, samePage);
+  // A page keeps its buttons in view; the result starts at the ending's title
+  body.scrollTop = S.done ? 0 : body.scrollHeight;
+  paintBag();
+  // Focus stays off the buttons so a run of Space presses never picks an option by accident; a typed answer gets the box
+  if (bag === null) (body.querySelector('#qp-input') || body).focus({ preventScroll: true });
 }
 
 function step(next) {
   if (next === S) return;
+  const samePage = next.at === S.at && next.done === S.done;
+  if (!samePage) typed = '';
   S = next;
+  paint(samePage);
+}
+
+function restart() {
+  S = startState(G, Date.now(), from);
+  talks = new Map();
+  typed = '';
+  bag = null;
   paint();
 }
 
-// What the read-aloud button says: the latest line, or the question with both options, or the feedback after an answer
+// ---------- reading aloud ----------
+
 function speakText() {
-  if (S.stage === 'intro') return Q.background;
-  if (S.stage === 'done') return 'Mission Complete!';
-  if (asking(Q, S)) {
-    const l = Q.levels[S.level];
-    if (S.picked && !solved(Q, S)) return `${l.wrong ? `${l.wrong} ` : ''}Hint: ${l.hint}`;
-    if (solved(Q, S) && l.right) return l.right;
-    return `${l.question} A: ${l.a}. B: ${l.b}.`;
+  if (S.done) return result(G, S).ending?.title || 'Mission Complete!';
+  const p = page(G, S);
+  if (!p) return '';
+  if (p.type === 'chapter') return [p.heading, p.title].filter(Boolean).join('. ');
+  if (p.type === 'item') return [itemOf(p.item)?.name, p.text || itemOf(p.item)?.text].filter(Boolean).join('. ');
+  if (p.type === 'choice') return [p.title, p.text, ...visibleOptions(G, S).map((o) => o.label)].filter(Boolean).join('. ');
+  if (p.type === 'puzzle') {
+    const z = S.puzzle;
+    if (z.wrong && !z.solved) return [p.wrong || 'Not quite. Try again!', ...p.hints.slice(0, z.hints)].join(' ');
+    if (z.solved && p.right) return p.right;
+    return [p.text, ...(p.kind === 'choice' ? p.options.filter(Boolean).map((o, i) => `${LETTERS[i]}: ${o}`) : [])].join('. ');
   }
-  const last = linesOf(Q, S)[S.shown - 1];
-  return last ? last.text : '';
+  return [p.title, p.text].filter(Boolean).join('. ');
 }
 
 function speak() {
   const synth = globalThis.speechSynthesis;
-  if (!synth) return;
+  const text = speakText();
+  if (!synth || !text) return;
   synth.cancel();
-  const u = new SpeechSynthesisUtterance(speakText());
-  u.lang = 'en-US';
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = /[㐀-鿿]/.test(text) ? 'zh-TW' : 'en-US';
   u.rate = 0.9;
   synth.speak(u);
 }
 
 function exit() {
   globalThis.speechSynthesis?.cancel();
+  setBackdrop(null);
   back();
 }
 
-export function playQuest(quest, navigation, { back: onBack }) {
+// ---------- entry ----------
+
+// from: the index of the page to start on (the editor's "play from this page")
+export function playQuest(quest, navigation, { back: onBack, from: start = 0 }) {
   Q = quest;
+  G = playable(Q);
   back = onBack;
-  const names = Q.characters.map((c) => c.name.toLowerCase());
-  colorOf = (name) => SPEAKER_COLORS[Math.max(0, names.indexOf(String(name).toLowerCase())) % SPEAKER_COLORS.length];
+  from = Math.min(Math.max(0, start), Math.max(0, G.pages.length - 1));
   const look = SDG_LOOK[Q.sdg] || SDG_LOOK.other;
-  const panel = $('#qp-panel');
-  panel.style.setProperty('--sdg', look.color);
+  $('#qp').style.setProperty('--sdg', look.color);
   $('#qp-badge').textContent = look.icon;
-  $('#qp-title').textContent = Q.title;
   $('#qp-speak').hidden = !globalThis.speechSynthesis;
-  S = startState();
+  $('#qp-bag-btn').hidden = !G.items.length;
+  for (const [id, key] of [['#qp-speak', 'quiz.play.read'], ['#qp-bag-btn', 'quiz.play.bag'], ['#qp-exit', 'quiz.play.exit']]) {
+    $(id).title = t(key);
+    $(id).setAttribute('aria-label', t(key));
+  }
   navigation.show('scr-quiz-play');
-  paint();
+  restart();
+}
+
+function act(b) {
+  const a = b.dataset.qp;
+  if (a === 'next') step(advance(G, S));
+  if (a === 'pick') step(pick(G, S, b.dataset.id));
+  if (a === 'answer') step(answer(G, S, Number(b.dataset.i)));
+  if (a === 'hint') step(hint(G, S));
+  if (a === 'giveup') step(giveUp(G, S));
+  if (a === 'retry') step(retry(G, S));
+  if (a === 'again') restart();
+  if (a === 'exit') exit();
+}
+
+// A number key picks the option with that number (A, B... also pick a puzzle's options)
+function keyPick(key) {
+  const p = page(G, S);
+  if (S.done || !p) return false;
+  if (p.type === 'choice') {
+    const o = visibleOptions(G, S)[Number(key) - 1];
+    if (o) step(pick(G, S, o.id));
+    return !!o;
+  }
+  if (p.type !== 'puzzle' || p.kind !== 'choice' || key.length !== 1) return false;
+  const i = /^[1-8]$/.test(key) ? Number(key) - 1 : LETTERS.indexOf(key);
+  if (i < 0 || !p.options[i]) return false;
+  step(answer(G, S, i));
+  return true;
 }
 
 export function initPlayer() {
-  $('#qp-foot').addEventListener('click', (e) => {
+  const body = $('#qp-body');
+  body.addEventListener('click', (e) => {
     const b = e.target.closest('[data-qp]');
-    if (!b) return;
-    if (b.dataset.qp === 'next') step(advance(Q, S));
-    if (b.dataset.qp === 'again') { S = startState(); paint(); }
-    if (b.dataset.qp === 'exit') exit();
+    if (b) { if (!b.disabled && b.tagName === 'BUTTON') act(b); return; }
+    if (!e.target.closest('form, .qp-opts, .qp-result')) step(advance(G, S));
   });
-  $('#qp-body').addEventListener('click', (e) => {
-    const b = e.target.closest('[data-qp="pick"]');
-    if (b) { if (!b.disabled) step(choose(Q, S, b.dataset.side)); return; }
-    // A click on the dialogue shows the next line, like the story mode's dialog box
-    if (S.stage === 'level' && !asking(Q, S)) step(advance(Q, S));
-    else if (S.stage === 'ending') step(advance(Q, S));
+  body.addEventListener('submit', (e) => {
+    e.preventDefault();
+    typed = $('#qp-input').value;
+    step(answer(G, S, typed));
+    if (!S.puzzle.solved && !S.puzzle.gaveUp) $('#qp-input')?.select();
   });
+  $('#qp-pic').addEventListener('click', () => step(advance(G, S)));
+  $('#qp-bag').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-bag]');
+    if (e.target === e.currentTarget || b?.dataset.bag === 'close') bag = null;
+    else if (b?.dataset.bag === 'list') bag = '';
+    else if (b?.dataset.bag === 'open') bag = b.dataset.id;
+    else return;
+    paintBag();
+    if (bag === null) $('#qp-bag-btn').focus({ preventScroll: true });
+  });
+  $('#qp-bag').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const it = itemOf(bag);
+    const q = $('#qp-ask').value.trim();
+    if (!it || !q) return;
+    talks.set(it.id, [...(talks.get(it.id) || []), { q, a: replyOf(it, q) || it.miss || t('quiz.play.noReply') }]);
+    paintBag();
+    // The box sits last, under the newest answer. Only the sheet scrolls: scrollIntoView also shifted the player frame
+    const sheet = $('#qp-bag .qp-sheet');
+    sheet.scrollTop = sheet.scrollHeight;
+  });
+  $('#qp-bag-btn').onclick = () => { bag = ''; paintBag(); };
   $('#qp-speak').onclick = speak;
   $('#qp-exit').onclick = exit;
   document.addEventListener('keydown', (e) => {
-    if ($('#scr-quiz-play').hidden || e.target.closest('input, textarea, select') || document.querySelector('.modal:not([hidden])')) return;
-    const key = e.key.toUpperCase();
-    if ((key === 'A' || key === 'B') && asking(Q, S)) { e.preventDefault(); step(choose(Q, S, key)); }
+    if ($('#scr-quiz-play').hidden || document.querySelector('.modal:not([hidden])')) return;
+    if (e.key === 'Escape' && bag !== null) { bag = null; paintBag(); return; }
+    if (bag !== null || e.target.closest('input, textarea, select') || e.ctrlKey || e.altKey || e.metaKey) return;
+    if ((e.key === ' ' || e.key === 'Enter') && !e.target.closest('button')) { e.preventDefault(); step(advance(G, S)); return; }
+    if (keyPick(e.key.toUpperCase())) e.preventDefault();
   });
 }

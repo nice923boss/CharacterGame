@@ -1,9 +1,9 @@
 // Browser port of server/novel_service.py: turn a .txt novel into a new-game draft (world, protagonist, characters,
 // chapters) for the setup form. Parts of the book become notes (NOVEL_PARALLEL calls at a time), then one call adapts
 // all the notes into the draft. Nothing is saved: the player edits the draft and starts the game.
-import { DATA } from './data.js?v=a2430d6da8c1';
-import * as llm from './llm.js?v=a2430d6da8c1';
-import { clip, lastJson, novelMessages, novelNotesMessages, toTrad } from './story.js?v=a2430d6da8c1';
+import { DATA } from './data.js?v=6f163306a287';
+import * as llm from './llm.js?v=6f163306a287';
+import { clip, lastJson, novelMessages, novelNotesMessages, toTrad } from './story.js?v=6f163306a287';
 
 const { MAX_CHARACTERS, LIMIT_SCALE, NOVEL_MAX_CHAPTERS, NOVEL_PART_CHARS, NOVEL_MAX_PARTS, NOVEL_PARALLEL,
   NOVEL_MIN_CHAPTERS } = DATA.limits;

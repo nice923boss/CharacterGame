@@ -24,7 +24,8 @@ export function evictable(cache, keep, max) {
   return drop;
 }
 
-export function createStage(host) {
+// onScene(url): told each time the scene picture changes (main.js blurs it behind the upright frame)
+export function createStage(host, { onScene = () => {} } = {}) {
   const S = {
     bg: null, bgPrev: null, bgFade: 1, bgUrl: null,
     black: 0, blackTarget: 0, onBlack: null,
@@ -153,12 +154,13 @@ export function createStage(host) {
       layout();
       S.cast.forEach((c) => { c.x = c.tx; });
     }
-    p.windowResized = () => fit();
     p.setup = () => {
       p.createCanvas(W, H).parent(host);
       p.pixelDensity(1);
       p.frameRate(60);
       fit(true);
+      // The stage changes shape without a window resize too (the upright frame of the story and the quest player)
+      new ResizeObserver(() => fit()).observe(host);
       if (!vignette) paintVignette();   // a page opened before it has a size skips fit(), but draw needs the vignette
       blob = p.createGraphics(400, 400);
       const b = blob.drawingContext;
@@ -297,6 +299,7 @@ export function createStage(host) {
         S.speaker = null;
         if (url !== S.bgUrl) {
           S.bgUrl = url;
+          onScene(url);
           const ready = image(url);
           if (transition && ready) { S.bg = ready; S.bgPrev = null; S.bgFade = 1; }
           else { S.bgPrev = S.bg || S.bgPrev; S.bg = null; S.bgFade = 0; }   // keep the old picture until the new one loads

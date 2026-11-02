@@ -12,11 +12,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap" rel="stylesheet" crossorigin="anonymous">
-<link rel="stylesheet" href="css/style.css?v=a2430d6da8c1">
+<link rel="stylesheet" href="css/style.css?v=6f163306a287">
+<link rel="stylesheet" href="css/play.css?v=6f163306a287">
 <script src="https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
 <noscript><p class="noscript">千枝物語需要 JavaScript 才能執行，請在瀏覽器設定中開啟 JavaScript 後重新整理頁面。<br><span lang="en">Thousand Branches needs JavaScript. Turn it on in your browser settings and reload the page.</span></p></noscript>
+<div id="backdrop" aria-hidden="true"></div>
 <div id="stage">
   <div id="canvas-host"></div>
 
@@ -109,7 +111,8 @@
         <span class="head-acts"><button class="btn small" data-act="guide" data-i18n="menu.guide">使用說明</button><button class="btn small ghost" id="qz-home-back" data-i18n="common.back">返回</button></span></header>
       <p class="hint" data-i18n="quiz.homeHint"></p>
       <div class="qz-home-acts">
-        <button class="btn primary" id="qz-new" data-i18n="quiz.new">＋ 製作新的闖關遊戲</button>
+        <button class="btn primary" id="qz-new" data-i18n="quiz.new">＋ 製作表單闖關</button>
+        <button class="btn primary" id="qz-new-story" data-i18n="quiz.newStory">＋ 製作劇情闖關</button>
         <button class="btn" id="qz-import" data-i18n="quiz.import">匯入闖關檔</button>
         <input type="file" id="qz-file" accept=".json,application/json" hidden>
       </div>
@@ -135,21 +138,43 @@
     </div>
   </section>
 
-  <section id="scr-quiz-play" class="screen qz-screen" hidden>
-    <div class="panel qp-panel" id="qp-panel">
+  <section id="scr-quiz-story" class="screen qz-screen" hidden>
+    <div class="panel qz-panel qz-edit-panel qs-panel">
+      <header class="panel-head"><h2 data-i18n="qs.title">編輯劇情闖關</h2>
+        <p class="hint" data-i18n="qs.hint"></p>
+        <button class="btn small ghost" id="qs-back" data-i18n="common.back">返回</button></header>
+      <nav class="qs-tabs" id="qs-tabs">
+        <button class="btn small" data-tab="info" data-i18n="qs.tab.info">基本設定</button>
+        <button class="btn small" data-tab="pages" data-i18n="qs.tab.pages">頁面</button>
+        <button class="btn small" data-tab="items" data-i18n="qs.tab.items">道具與人物</button>
+        <button class="btn small" data-tab="scenes" data-i18n="qs.tab.scenes">插圖</button>
+      </nav>
+      <div id="qs-body" class="qz-edit-body qs-body"></div>
+      <input type="file" id="qs-pic-file" accept="image/*" hidden>
+      <footer class="panel-foot">
+        <p class="hint" id="qs-msg" role="status" aria-live="polite"></p>
+        <span class="head-acts">
+          <button class="btn small" id="qs-save" data-i18n="quiz.save">儲存</button>
+          <button class="btn small primary" id="qs-try" data-i18n="quiz.try">儲存並試玩</button>
+        </span>
+      </footer>
+    </div>
+  </section>
+
+  <section id="scr-quiz-play" class="screen" hidden>
+    <div class="qp" id="qp">
+      <div class="qp-fill" id="qp-fill" aria-hidden="true"></div>
       <header class="qp-top">
         <span class="qp-badge" id="qp-badge" aria-hidden="true"></span>
-        <b id="qp-title" lang="en"></b>
-        <span class="qp-progress" id="qp-progress"></span>
-        <button class="btn tiny" id="qp-speak" type="button" data-i18n="quiz.play.speak">🔊 朗讀</button>
-        <button class="btn tiny ghost" id="qp-exit" type="button" data-i18n="quiz.play.exit">離開</button>
+        <b id="qp-title"></b>
+        <button class="qp-icon" id="qp-speak" type="button">🔊</button>
+        <button class="qp-icon" id="qp-bag-btn" type="button">🎒<span id="qp-bag-n"></span></button>
+        <button class="qp-icon" id="qp-exit" type="button">✕</button>
       </header>
-      <div class="qp-dots" id="qp-dots" aria-hidden="true"></div>
-      <div class="qp-main">
-        <figure class="qp-pic" id="qp-pic" hidden><img id="qp-img" alt=""></figure>
-        <div class="qp-body" id="qp-body" aria-live="polite"></div>
-      </div>
-      <footer class="qp-foot" id="qp-foot"></footer>
+      <div class="qp-bar" aria-hidden="true"><i id="qp-bar"></i></div>
+      <figure class="qp-pic" id="qp-pic" hidden><img id="qp-img" alt=""></figure>
+      <div class="qp-body" id="qp-body" tabindex="-1" aria-live="polite"></div>
+      <div class="qp-bag" id="qp-bag" hidden></div>
     </div>
   </section>
 
@@ -170,56 +195,81 @@
             </ol>
             <p class="hint">金鑰只存在這台電腦的瀏覽器裡，不會上傳到本網站。用公用電腦時，用完請到設定清空金鑰。</p>
           </section>
-          <section id="g-zh-quiz"><h3>二、SDGs 英文闖關：做一個五關的英文互動故事</h3>
-            <p>這個模式對應英文課的學習單：每個遊戲有<b>遊戲名稱、主要角色、英文故事背景</b>，共<b>五關</b>。每關有英文對話和一題 A／B 選擇題，<b>只有一個正確答案</b>；答對才能進下一關，答錯會出現英文提示並重新作答。五關都過了，播放結局，最後出現「Mission Complete! 任務完成！」。</p>
-            <p>從標題畫面按「SDGs 英文闖關」進入。</p>
+          <section id="g-zh-quiz"><h3>二、SDGs 英文闖關：做一個英文互動故事</h3>
+            <p>這個模式對應英文課的學習單：每個遊戲有<b>遊戲名稱、主要角色、英文故事背景</b>。從標題畫面按「SDGs 英文闖關」進入，有兩種做法：</p>
+            <ul>
+              <li><b>表單闖關</b>：照學習單一格一格填。每關有英文對話和一題 A／B 選擇題，<b>只有一個正確答案</b>；答對才能進下一關，答錯會出現英文提示並重新作答。<b>關數可以隨時增加或刪除</b>（1 到 20 關）。全部過關後播放結局，最後出現「Mission Complete! 任務完成！」。</li>
+              <li><b>劇情闖關</b>：像互動小說，一頁一頁排出旁白、對話、謎題、道具和分支選擇，可以有好幾個結局。</li>
+            </ul>
+            <p>兩種玩起來是同一個直式畫面，只有製作方式不同。做好的表單闖關也可以在列表按「轉成劇情」，複製一份劇情闖關再加頁面，原本的表單闖關不會變。</p>
           </section>
-          <section id="g-zh-make"><h3>三、製作步驟</h3>
+          <section id="g-zh-make"><h3>三、製作表單闖關</h3>
             <ol>
-              <li><b>按「＋ 製作新的闖關遊戲」</b>。</li>
+              <li><b>按「＋ 製作表單闖關」</b>。</li>
               <li><b>第一步：基本設定</b>。填遊戲名稱，選一個 SDG 主題：SDG 6 乾淨水資源、SDG 11 永續城市與社區、SDG 12 減少浪費、SDG 13 氣候行動，或「其他」（自己填主題）。
                 新增主要角色（可以超過兩位，最多六位），每位寫英文名字和一句介紹。再寫地點、問題、目標，這些可以用中文寫。</li>
-              <li><b>讓 AI 寫英文草稿（選用）</b>。按「AI 幫我寫英文草稿」，大約 1 到 3 分鐘，AI 會依你的設定寫出英文故事背景、五關對話與題目、提示和結局，用簡單英文（約國高中程度）。正確答案會隨機放在 A 或 B。</li>
+              <li><b>讓 AI 寫英文草稿（選用）</b>。在「AI 草稿關數」填要幾關（1 到 10 關），按「AI 幫我寫英文草稿」，大約 1 到 3 分鐘，AI 會依你的設定寫出英文故事背景、各關對話與題目、提示和結局，用簡單英文（約國高中程度）。正確答案會隨機放在 A 或 B。</li>
               <li><b>第二步：修改成自己的作品</b>。每個欄位都可以直接改。每關要有：關卡名稱、至少一句對話（說話者和英文句子）、題目、選項 A、選項 B、勾選哪一個是正確答案、答錯時顯示的英文提示。也可以填「答對時的回饋」「答錯時的回饋」（選填），寫自己的英文回饋句，例如答對時寫「Great! Now the fish can swim in clean water.」；空白就顯示預設的 Correct! 或 Not quite. Try again!，答錯時提示照樣會出現。</li>
+              <li><b>增加、刪除、調整關卡</b>：按「＋ 新增一關」加在最後；每關的 ↑ ↓ 調整順序；「✕ 刪除這關」會連同那關的對話、題目和插圖一起刪除。下方顯示「目前 n 關，最多 20 關」。</li>
               <li><b>結局</b>：寫幾句英文結局對話。「Mission Complete! 任務完成！」會自動加在最後，不用自己打。</li>
-              <li><b>插圖（選用）</b>：開場、五關、結局各一張，共 7 張。在故事背景下方按「🎨 AI 畫出全部缺少的插圖」，或在單張旁按「🎨 AI 畫這張」「🎨 重畫」。每張旁的「插圖描述」用英文寫畫面內容，同一個角色每次都寫一樣的外觀（例如 a girl with a black ponytail in a yellow T-shirt），畫出來比較像同一個人；不要寫名字和文字。描述留空時，AI 依地點與該段第一句對話作畫。不用 AI 也可以：按「📁 用電腦的圖片」或「📁 換成電腦的圖片」選自己的圖（手繪掃描、照片都可以），會取代那一張 AI 插圖；圖片會裁成 4:3 中間的部分，和遊玩畫面一樣。遊玩時插圖顯示在對話左邊。</li>
+              <li><b>插圖（選用）</b>：開場、每一關、結局各一張（例如三關就是 5 張）。在故事背景下方按「🎨 AI 畫出全部缺少的插圖」，或在單張旁按「🎨 AI 畫這張」「🎨 重畫」。每張旁的「插圖描述」用英文寫畫面內容，同一個角色每次都寫一樣的外觀（例如 a girl with a black ponytail in a yellow T-shirt），畫出來比較像同一個人；不要寫名字和文字。描述留空時，AI 依地點與該段第一句對話作畫。不用 AI 也可以：按「📁 用電腦的圖片」或「📁 換成電腦的圖片」選自己的圖（手繪掃描、照片都可以），會取代那一張 AI 插圖；圖片會裁成 4:3 中間的部分，和遊玩畫面一樣。遊玩時插圖顯示在畫面上半部。</li>
               <li>按「儲存並試玩」。如果還有沒填的欄位，下方會列出缺哪一關、缺什麼。</li>
             </ol>
             <p class="hint">不想用 AI 也可以：跳過草稿按鈕，從第二步自己寫。每關的行動都要和你選的 SDG 有關，例如 SDG 6 就是撿垃圾讓河水變乾淨、節約用水、修漏水的水管。</p>
           </section>
-          <section id="g-zh-rules"><h3>四、好題目的寫法</h3>
+          <section id="g-zh-pages"><h3>四、製作劇情闖關</h3>
+            <ol>
+              <li><b>按「＋ 製作劇情闖關」</b>。編輯畫面上方有「基本設定」「頁面」「道具與人物」「插圖」四個分頁。</li>
+              <li><b>基本設定</b>：遊戲名稱、SDG 主題、主要角色。寫對話時可以從清單挑這些角色名字。</li>
+              <li><b>頁面</b>：選好頁面類型，按「＋ 新增」。玩家看到的文字用英文寫。頁面類型有：
+                <ul>
+                  <li>旁白：說書人的話，顯示在下方文字框。對話：角色說的一句話，上方有名牌。</li>
+                  <li>字卡：畫面中央一行大字，適合「Three days later…」這類轉場。章節標題：全畫面的章節卡。</li>
+                  <li>謎題：選擇題（2 到 4 個選項）或打字作答（可接受的答案一行一個，大小寫和句尾標點不影響對錯）。可以寫幾個提示，答錯時依序打開。</li>
+                  <li>任務提示：彈出任務卡片，告訴玩家接下來要做什麼。取得道具：把道具或人物放進背包，或更新背包裡道具的內容。</li>
+                  <li>分支選擇：每個選項跳到不同頁。選項可以設「只能選一次」（選過就消失）或「要先選過」（指定的選項都選過才出現）；整頁可以勾「允許重選一次」，玩到結局後能回來換個選擇。</li>
+                  <li>結局：故事在這頁結束，接著顯示星星和用時。一個故事可以有好幾個結局。</li>
+                </ul>
+                每頁的「下一步跳到」平常接下一頁，也可以跳回分支選擇頁或其他頁。按「▶ 從這頁試玩」直接從那一頁開始玩。</li>
+              <li><b>道具與人物</b>：新增文件（玩家打開來讀，可以藏謎題線索）、圖片、人物。人物可以設「關鍵字問話」：玩家打的字含某個關鍵字，人物就回答對應的話。道具和人物要用「取得道具」頁放進背包，玩家才看得到。</li>
+              <li><b>插圖</b>：新增插圖並寫英文描述，一張插圖可以給很多頁用；頁面的插圖選「沿用前一頁的插圖」就不換圖。按「🎨 AI 畫出全部缺少的插圖」或「📁 用電腦的圖片」，方法和表單闖關一樣，道具和人物也可以有圖。</li>
+              <li>按「儲存並試玩」。缺結局頁、從第 1 頁走不到任何結局、某頁缺內容時，會列出是第幾頁缺什麼。</li>
+            </ol>
+            <p class="hint">劇情闖關目前沒有 AI 草稿，要自己寫。也可以先做表單闖關讓 AI 寫草稿，再到列表按「轉成劇情」，接著加謎題、道具和分支。</p>
+          </section>
+          <section id="g-zh-rules"><h3>五、好題目的寫法</h3>
             <ul>
               <li>兩個選項都要「有人可能會選」，但只有一個對 SDG 比較好。例如「A. Throw the bottles into the river.／B. Put the bottles in the recycling bin.」。</li>
-              <li>提示不要直接說答案，要提醒想法，例如「Hint: Think about what is better for the fish in the river.」。</li>
-              <li>五關要接成一個故事，一關比一關更接近目標。</li>
-              <li>下方「答案」一行會顯示五關的正確答案（例如 1B 2A 3A 4B 5A），方便核對。</li>
+              <li>提示不要直接說答案，要提醒想法，例如「Hint: Think about what is better for the fish in the river.」。有好幾個提示時，第一個提醒方向，後面再越來越接近答案。</li>
+              <li>各關要接成一個故事，一關比一關更接近目標。</li>
+              <li>表單闖關下方「答案」一行會顯示每關的正確答案（例如 1B 2A 3A），方便核對。</li>
             </ul>
           </section>
-          <section id="g-zh-play"><h3>五、遊玩方式</h3>
+          <section id="g-zh-play"><h3>六、遊玩方式</h3>
             <ul>
-              <li>先看故事背景與角色，按「開始闖關」。</li>
-              <li>對話一次出現一句，按「下一句」或點對話區繼續。</li>
-              <li>對話播完出現題目，按 A 或 B（鍵盤也可以按 A、B 鍵）。答錯會出現紅色的回饋與 Hint，再選一次；答對出現 Correct!（或作者寫的回饋），按「下一關」。</li>
-              <li>右上角「🔊 朗讀」會用英文唸出目前的句子、題目、提示或回饋，可以練聽力和發音。</li>
-              <li>過完五關播放結局，最後顯示「Mission Complete! 任務完成！」和星星：全對 3 顆，錯 1 到 2 次 2 顆，錯更多次 1 顆。</li>
+              <li>在闖關列表按「開始玩」。畫面是直式的：上半部是插圖，下半部一次一頁文字；寬螢幕兩側會顯示模糊的同一張圖。</li>
+              <li>點畫面任何地方（或按空白鍵、Enter）繼續，看到「點一下繼續」就是在等你點。</li>
+              <li>題目出現時點選項（鍵盤也可以按 A、B 或數字鍵）。答錯會出現回饋並打開「💡 提示」，再選一次；答對出現 Correct!（或作者寫的回饋），按「繼續」。打字作答的題目看完全部提示還答不出來，可以按「我放棄，看答案」。</li>
+              <li>右上角「🔊 朗讀」用英文唸出目前的句子、題目、提示或回饋，可以練聽力和發音。有道具的劇情闖關會多一個「🎒 背包」，可以讀文件、看圖片，或打字問人物問題。「✕ 離開」結束遊戲。</li>
+              <li>結局後按「看成績」，顯示結局、星星與用時：全對 3 顆，錯 1 到 2 次 2 顆，錯更多次 1 顆。表單闖關的結局是「Mission Complete! 任務完成！」。劇情闖關若有允許重選的抉擇，可以按「回到抉擇點，換個選擇」去看別的結局，星星不受影響。</li>
             </ul>
           </section>
-          <section id="g-zh-share"><h3>六、交作業與分享</h3>
+          <section id="g-zh-share"><h3>七、交作業與分享</h3>
             <ul>
               <li><b>下載</b>：在闖關列表按「下載」，得到一個 <code>.sdgquest.json</code> 檔，已經畫好的插圖也包在裡面，可以交給老師，或傳給同學。</li>
               <li><b>匯入</b>：在闖關列表按「匯入闖關檔」，選擇別人給你的 <code>.sdgquest.json</code>，連同插圖一起載入，就能玩對方的遊戲。</li>
-              <li><b>複製學習單格式</b>：在編輯畫面按「複製學習單格式」，整份內容會依學習單的順序（Game Title、Main Characters、Story Background、Level 1 到 5、Ending、Answer Key）複製起來，可以貼到 Word 或 Google 文件交出。</li>
+              <li><b>複製學習單格式</b>：在表單闖關的編輯畫面按「複製學習單格式」，整份內容會依學習單的順序（Game Title、Main Characters、Story Background、各關 Level、Ending、Answer Key）複製起來，可以貼到 Word 或 Google 文件交出。</li>
               <li>闖關遊戲存在這台電腦的瀏覽器裡。換電腦或清除瀏覽器資料前，請先下載檔案保存。</li>
             </ul>
           </section>
-          <section id="g-zh-story"><h3>七、故事模式（原本的玩法）</h3>
+          <section id="g-zh-story"><h3>八、故事模式（原本的玩法）</h3>
             <ul>
               <li><b>新的故事</b>：選預設世界或自己寫世界與角色，AI 會一邊畫圖一邊寫故事，每一輪給你幾個選項，也可以自己輸入行動。</li>
               <li><b>存檔、讀檔、節點樹</b>：遊戲中右上角可以存檔，節點樹可以回到任何一輪改走別條路。</li>
               <li><b>下載進度到電腦</b>：把故事與圖片打包下載，換電腦時用「讀取資料夾進度」載入。</li>
             </ul>
           </section>
-          <section id="g-zh-faq"><h3>八、遇到問題</h3>
+          <section id="g-zh-faq"><h3>九、遇到問題</h3>
             <ul>
               <li>AI 很忙或等很久：輝達免費額度高峰時會排隊，畫面會顯示等待進度，可以按「立即重試」或「取消」稍後再試。</li>
               <li>顯示金鑰錯誤：回設定重新貼上金鑰並測試。</li>
@@ -237,55 +287,80 @@
             </ol>
             <p class="hint">The key is kept only in this computer's browser. On a shared computer, clear it in Settings when you are done.</p>
           </section>
-          <section id="g-en-quiz"><h3>2. SDGs English Quest: a five-level English story game</h3>
-            <p>This mode follows the English class worksheet: each game has a <b>title, main characters and an English story background</b>, and <b>five levels</b>. Each level has English dialogue and one A/B question with <b>exactly one correct answer</b>. A correct answer opens the next level; a wrong answer shows an English hint and the player tries again. After level 5 the ending plays, then "Mission Complete! 任務完成！".</p>
-            <p>Press "SDGs English Quest" on the title screen.</p>
+          <section id="g-en-quiz"><h3>2. SDGs English Quest: an English interactive story</h3>
+            <p>This mode follows the English class worksheet: each game has a <b>title, main characters and an English story background</b>. Press "SDGs English Quest" on the title screen. There are two ways to make one:</p>
+            <ul>
+              <li><b>Form quest</b>: fill in the worksheet box by box. Each level has English dialogue and one A/B question with <b>exactly one correct answer</b>. A correct answer opens the next level; a wrong answer shows an English hint and the player tries again. <b>Add or delete levels at any time</b> (1 to 20). After the last level the ending plays, then "Mission Complete! 任務完成！".</li>
+              <li><b>Story quest</b>: like an interactive novel, laid out page by page with narration, dialogue, puzzles, items and choices, and it can have several endings.</li>
+            </ul>
+            <p>Both play on the same upright screen; only the making differs. A finished form quest can also be copied as a story quest with "To story" in the list, so you can add pages; the form quest stays as it is.</p>
           </section>
-          <section id="g-en-make"><h3>3. Making a quest</h3>
+          <section id="g-en-make"><h3>3. Making a form quest</h3>
             <ol>
-              <li><b>Press "+ Make a new quest"</b>.</li>
+              <li><b>Press "+ Make a form quest"</b>.</li>
               <li><b>Step 1: basic info</b>. Type the game title and pick an SDG: SDG 6 Clean Water, SDG 11 Sustainable Communities, SDG 12 Reduce Waste, SDG 13 Climate Action, or Other (type your own). Add the main characters (more than two is fine, up to six) with an English name and a short description, then the place, the problem and the goal.</li>
-              <li><b>Let the AI write an English draft (optional)</b>. Press "AI: write an English draft". In about 1 to 3 minutes it writes the background, five levels of dialogue and questions, hints and the ending in simple English. The correct answer is put on A or B at random.</li>
+              <li><b>Let the AI write an English draft (optional)</b>. Set "Levels in the AI draft" (1 to 10), then press "AI: write an English draft". In about 1 to 3 minutes it writes the background, each level's dialogue and question, hints and the ending in simple English. The correct answer is put on A or B at random.</li>
               <li><b>Step 2: make it your own</b>. Edit any field. Every level needs a title, at least one dialogue line (speaker and English text), a question, option A, option B, which option is correct, and a hint for a wrong answer. You can also fill in "Words for a right answer" and "Words for a wrong answer" (optional) with your own English feedback, for example "Great! Now the fish can swim in clean water." Empty ones show the default Correct! or Not quite. Try again!, and a wrong answer still shows the hint.</li>
+              <li><b>Adding, deleting and moving levels</b>: "+ Add a level" adds one at the end; ↑ and ↓ move a level; "✕ Delete this level" deletes it with its dialogue, question and picture. The line below shows how many levels there are (20 at most).</li>
               <li><b>Ending</b>: a few English lines. "Mission Complete! 任務完成！" is added at the end for you.</li>
-              <li><b>Pictures (optional)</b>: one for the opening, one per level and one for the ending, 7 in all. Press "🎨 AI: draw every missing picture" under the background, or "🎨 Draw" / "🎨 Redraw" next to one picture. Each picture has an English description: describe each character's looks the same way every time (for example a girl with a black ponytail in a yellow T-shirt) so they look alike, and leave out names and writing. With an empty description the AI draws from the place and the first line of that part. You can skip the AI too: press "📁 Use my picture" or "📁 Replace with my picture" and pick your own image (a scanned drawing or a photo); it replaces that AI picture and is cut to the middle 4:3 part, the same as the game shows. When playing, the picture shows beside the dialogue.</li>
+              <li><b>Pictures (optional)</b>: one for the opening, one per level and one for the ending (5 for three levels). Press "🎨 AI: draw every missing picture" under the background, or "🎨 Draw" / "🎨 Redraw" next to one picture. Each picture has an English description: describe each character's looks the same way every time (for example a girl with a black ponytail in a yellow T-shirt) so they look alike, and leave out names and writing. With an empty description the AI draws from the place and the first line of that part. You can skip the AI too: press "📁 Use my picture" or "📁 Replace with my picture" and pick your own image (a scanned drawing or a photo); it replaces that AI picture and is cut to the middle 4:3 part, the same as the game shows. When playing, the picture shows in the top half of the screen.</li>
               <li>Press "Save and test". Anything still missing is listed at the bottom.</li>
             </ol>
             <p class="hint">You can skip the AI and write everything yourself. Each level's action should fit your SDG, for example cleaning a river or saving water for SDG 6.</p>
           </section>
-          <section id="g-en-rules"><h3>4. Writing good questions</h3>
+          <section id="g-en-pages"><h3>4. Making a story quest</h3>
+            <ol>
+              <li><b>Press "+ Make a story quest"</b>. The editor has four tabs: Basics, Pages, Items &amp; people, Pictures.</li>
+              <li><b>Basics</b>: the game title, the SDG and the main characters. Their names are offered when you write dialogue.</li>
+              <li><b>Pages</b>: pick a page type and press "+ Add". Text the player sees is written in English. The page types:
+                <ul>
+                  <li>Narration: the narrator speaks in the text box at the bottom. Dialogue: one line from a character, with a name tag.</li>
+                  <li>Caption: one line of large text in the middle, good for "Three days later…". Chapter card: a full-screen chapter card.</li>
+                  <li>Puzzle: picked (2 to 4 options) or typed (accepted answers one per line; case and end punctuation do not matter). Add a few hints; wrong answers open them in order.</li>
+                  <li>Mission note: a pop-up card that says what to do next. Get item: puts an item or a person in the bag, or updates an item in the bag.</li>
+                  <li>Choice: each option goes to its own page. An option can be "Only once" (gone after being picked) or "First pick" (shows once the named options are picked); tick "Allow one more try" so the player can come back after an ending and pick another option.</li>
+                  <li>Ending: the story ends here, then the stars and the time show. A story can have several endings.</li>
+                </ul>
+                Each page's "Then go to" is usually the next page; pick another page to go back to a choice or skip ahead. "▶ Try from here" starts the game on that page.</li>
+              <li><b>Items &amp; people</b>: add documents (the player reads them; they can hide puzzle clues), pictures and people. A person can have "Keyword talk": when the player's words contain a keyword, the person gives that reply. A "Get item" page must put an item or person in the bag before the player can see it.</li>
+              <li><b>Pictures</b>: add a picture with an English description; one picture can be used by many pages, and a page set to "Keep the picture of the page before" does not change it. Use "🎨 AI: draw every missing picture" or "📁 Use my picture" as in a form quest; items and people can have pictures too.</li>
+              <li>Press "Save and test". A missing ending page, no ending reachable from page 1, or a page with empty fields is listed with its page number.</li>
+            </ol>
+            <p class="hint">A story quest has no AI draft yet; you write it yourself. You can also make a form quest with an AI draft, press "To story" in the list, then add puzzles, items and choices.</p>
+          </section>
+          <section id="g-en-rules"><h3>5. Writing good questions</h3>
             <ul>
               <li>Both options should be something a person might choose, but only one is better for the SDG.</li>
-              <li>A hint helps the player think again; it does not just give the answer.</li>
-              <li>The five levels make one story that moves toward the goal.</li>
-              <li>The "Answers" line at the bottom shows the key, for example 1B 2A 3A 4B 5A.</li>
+              <li>A hint helps the player think again; it does not just give the answer. With several hints, the first points the way and later ones come closer to the answer.</li>
+              <li>The levels make one story that moves toward the goal.</li>
+              <li>In a form quest the "Answers" line at the bottom shows the key, for example 1B 2A 3A.</li>
             </ul>
           </section>
-          <section id="g-en-play"><h3>5. Playing</h3>
+          <section id="g-en-play"><h3>6. Playing</h3>
             <ul>
-              <li>Read the background and the characters, then press "Start".</li>
-              <li>Dialogue appears one line at a time: press "Next" or click the dialogue.</li>
-              <li>Answer with A or B (the A and B keys work too). A wrong answer shows feedback and a hint; try again. A correct answer shows Correct! (or the author's own words) and "Next level".</li>
-              <li>"🔊 Read aloud" reads the current line, question, hint or feedback in English.</li>
-              <li>The end shows "Mission Complete! 任務完成！" and stars: 3 with no mistakes, 2 with one or two, 1 with more.</li>
+              <li>Press "Play" in the quest list. The screen is upright: the picture on top, one page of text at a time below it; on a wide screen the same picture shows blurred on both sides.</li>
+              <li>Tap anywhere (or press Space or Enter) to go on; "Tap to continue" means the game is waiting for you.</li>
+              <li>When a question shows, pick an option (the A and B keys or number keys work too). A wrong answer shows feedback and opens a "💡 Hint"; try again. A correct answer shows Correct! (or the author's own words); press "Continue". On a typed question, once every hint is open you can press "I give up, show me the answer".</li>
+              <li>"🔊 Read aloud" at the top right reads the current line, question, hint or feedback in English. A story quest with items also has "🎒 Bag" to read documents, look at pictures or type questions to people. "✕ Exit" ends the game.</li>
+              <li>After the ending press "See results" for the ending, the stars and the time: 3 stars with no mistakes, 2 with one or two, 1 with more. A form quest ends with "Mission Complete! 任務完成！". If a story quest allows another try at a choice, "Go back and choose again" lets you see another ending; the stars stay the same.</li>
             </ul>
           </section>
-          <section id="g-en-share"><h3>6. Handing in and sharing</h3>
+          <section id="g-en-share"><h3>7. Handing in and sharing</h3>
             <ul>
               <li><b>Download</b>: in the quest list press "Download" to get a <code>.sdgquest.json</code> file for your teacher or classmates. The pictures already drawn are inside it.</li>
               <li><b>Import</b>: press "Import quest file" and pick a <code>.sdgquest.json</code> to play someone else's quest, pictures included.</li>
-              <li><b>Copy as worksheet</b>: in the editor, copies the whole quest in worksheet order (Game Title, Main Characters, Story Background, Levels 1 to 5, Ending, Answer Key) to paste into a document.</li>
+              <li><b>Copy as worksheet</b>: in the form quest editor, copies the whole quest in worksheet order (Game Title, Main Characters, Story Background, each Level, Ending, Answer Key) to paste into a document.</li>
               <li>Quests are kept in this computer's browser. Download them before you change computers or clear browser data.</li>
             </ul>
           </section>
-          <section id="g-en-story"><h3>7. Story mode</h3>
+          <section id="g-en-story"><h3>8. Story mode</h3>
             <ul>
               <li><b>New Story</b>: pick a preset world or write your own; the AI writes and draws the story and offers choices each turn, or you type your own action.</li>
               <li><b>Save, Load and the node tree</b>: save from the toolbar; the node tree takes you back to any turn to try another path.</li>
               <li><b>Download Progress</b>: saves stories and pictures to your computer; "Load Progress Folder" brings them back.</li>
             </ul>
           </section>
-          <section id="g-en-faq"><h3>8. Problems</h3>
+          <section id="g-en-faq"><h3>9. Problems</h3>
             <ul>
               <li>The AI is busy or slow: NVIDIA's free service queues at busy times. The wait is shown; press "Retry now" or "Cancel" and try later.</li>
               <li>A key error: paste the key again in Settings and test it.</li>
@@ -426,7 +501,6 @@
       <h3 data-i18n="settings.sec.game">遊戲</h3>
       <label><span data-i18n="settings.speed">文字速度</span><input type="range" id="set-speed" min="10" max="120" step="5"><output id="out-speed"></output></label>
       <p class="hint field" data-i18n="settings.speedHint"></p>
-      <label><span data-i18n="settings.bgm">音樂音量</span><input type="range" id="set-bgm" min="0" max="100" step="5"><output id="out-bgm"></output></label>
       <label><span data-i18n="settings.sfx">音效音量</span><input type="range" id="set-sfx" min="0" max="100" step="5"><output id="out-sfx"></output></label>
       <p class="hint field" data-i18n="settings.volumeHint"></p>
       <label class="check"><input type="checkbox" id="set-weather"><span data-i18n="settings.weather">顯示天氣粒子</span></label>
@@ -518,6 +592,6 @@
   <div id="offline" role="alert" hidden data-i18n="net.offline">網路已中斷，送出會暫停，恢復連線後自動重試</div>
   <footer class="credit" data-i18n="app.credit">製作者：黃政文</footer>
 </div>
-<script type="module" src="js/main.js?v=a2430d6da8c1"></script>
+<script type="module" src="js/main.js?v=6f163306a287"></script>
 </body>
 </html>

@@ -1,21 +1,22 @@
 // Entry point: screen switching, title menu, toolbar and settings wiring.
-import { LOCAL, activeJobs, get, post } from './api.js?v=a2430d6da8c1';
-import { applyStatic, errorText, lang, setLang, t } from './i18n.js?v=a2430d6da8c1';
-import { sound } from './sound.js?v=a2430d6da8c1';
-import { createStage } from './stage.js?v=a2430d6da8c1';
-import { $, bindSettings, confirmBox, esc, openModal, progress, reloadSettings, toast, toastError } from './ui.js?v=a2430d6da8c1';
-import { initSetup, isBatchMode, loadPresets, paintEstimate, resetSetup, setupDirty, startGame } from './setup.js?v=a2430d6da8c1';
-import { currentGameId, enterGame, initGame, leaveGame, openSlots, openTree } from './game.js?v=a2430d6da8c1';
-import { openStories } from './stories.js?v=a2430d6da8c1';
-import { openLog } from './playaids.js?v=a2430d6da8c1';
-import { batchActive, initBatches, refreshBatches, requestNotifyPermission } from './batch.js?v=a2430d6da8c1';
-import { demoGame, enable, initConnect, keyNowText, openOnboard } from './connect.js?v=a2430d6da8c1';
-import { paintBackup, paintStorage, watchStore, watchUpdate } from './upkeep.js?v=a2430d6da8c1';
-import { initQuiz, openQuests } from './quiz.js?v=a2430d6da8c1';
-import { initPlayer } from './quiz_play.js?v=a2430d6da8c1';
+import { LOCAL, activeJobs, get, post } from './api.js?v=6f163306a287';
+import { applyStatic, errorText, lang, setLang, t } from './i18n.js?v=6f163306a287';
+import './i18n_quest.js?v=6f163306a287';
+import { sound } from './sound.js?v=6f163306a287';
+import { createStage } from './stage.js?v=6f163306a287';
+import { $, bindSettings, confirmBox, esc, openModal, progress, reloadSettings, setBackdrop, toast, toastError } from './ui.js?v=6f163306a287';
+import { initSetup, isBatchMode, loadPresets, paintEstimate, resetSetup, setupDirty, startGame } from './setup.js?v=6f163306a287';
+import { currentGameId, enterGame, initGame, leaveGame, openSlots, openTree } from './game.js?v=6f163306a287';
+import { openStories } from './stories.js?v=6f163306a287';
+import { openLog } from './playaids.js?v=6f163306a287';
+import { batchActive, initBatches, refreshBatches, requestNotifyPermission } from './batch.js?v=6f163306a287';
+import { demoGame, enable, initConnect, keyNowText, openOnboard } from './connect.js?v=6f163306a287';
+import { paintBackup, paintStorage, watchStore, watchUpdate } from './upkeep.js?v=6f163306a287';
+import { initQuiz, openQuests } from './quiz.js?v=6f163306a287';
+import { initPlayer } from './quiz_play.js?v=6f163306a287';
 
 document.documentElement.classList.toggle('local', LOCAL);
-const stage = createStage($('#canvas-host'));
+const stage = createStage($('#canvas-host'), { onScene: setBackdrop });
 
 // Where keyboard focus goes when a screen opens and the focused control stayed behind on the old one
 // (the game screen places its own focus)
@@ -28,6 +29,8 @@ const FIRST_CONTROL = {
 
 function showScreen(id) {
   for (const s of document.querySelectorAll('.screen')) s.hidden = s.id !== id;
+  // Playing (the story or a quest) uses the upright frame; on a wide screen the sides show the picture blurred
+  document.body.classList.toggle('portrait', id === 'scr-game' || id === 'scr-quiz-play');
   const at = document.activeElement;
   if (FIRST_CONTROL[id] && (!at || at === document.body || at.closest('.screen[hidden]'))) $(FIRST_CONTROL[id])?.focus();
 }
@@ -37,7 +40,6 @@ async function toTitle() {
   stage.setCast([]);
   stage.setScene(null, { transition: true });
   stage.setPending(false);
-  sound.setMood('mysterious');
   showScreen('scr-title');
   refreshBatches();
   refreshHealth();   // the key test result expires after 10 minutes (B05)
@@ -127,7 +129,7 @@ const actions = {
     const show = (pct) => toast(t('archive.exporting', { pct }), false, 60000, { id: 'archive' });
     show(0);
     try {
-      const r = await (await import('./local/archive.js?v=a2430d6da8c1')).exportProgress(show);
+      const r = await (await import('./local/archive.js?v=6f163306a287')).exportProgress(show);
       // Files that could not be read (a demo picture while offline) are left out: say so
       if (r.skipped) toast(t('archive.exportedSkipped', r), false, 10000, { id: 'archive' });
       else toast(t('archive.exported', r), false, 4000, { id: 'archive' });
@@ -191,7 +193,7 @@ window.addEventListener('beforeunload', (e) => {
 });
 
 bindSettings((s) => {
-  sound.setVolumes(s.bgm / 100, s.sfx / 100);
+  sound.setVolume(s.sfx / 100);
   stage.setWeatherOn(s.weather);
   const root = document.documentElement;
   root.classList.toggle('font-s', s.font === 's');
@@ -362,14 +364,14 @@ if (LOCAL) {
   $('#set-demo').addEventListener('click', async () => {
     if (!(await confirmBox(t('settings.demoAsk'), t('common.ok')))) return;
     try {
-      await (await import('./local/backend.js?v=a2430d6da8c1')).restoreDemo();
+      await (await import('./local/backend.js?v=6f163306a287')).restoreDemo();
       toast(t('settings.demoDone'));
       refreshContinue();
     } catch (e) { console.error(e); toast(t('err.local_internal'), true); }
   });
   $('#set-diag').addEventListener('click', once('diag', async () => {
     try {
-      await (await import('./local/archive.js?v=a2430d6da8c1')).downloadDiag();
+      await (await import('./local/archive.js?v=6f163306a287')).downloadDiag();
       toast(t('settings.diagDone'), false, 6000);
     } catch (e) { console.error(e); toast(t('err.local_internal'), true); }
   }));
@@ -378,7 +380,7 @@ if (LOCAL) {
     if (!files?.length) return;
     toast(t('archive.importing'), false, 60000, { id: 'archive' });
     try {
-      const r = await (await import('./local/archive.js?v=a2430d6da8c1')).importFolder(files);
+      const r = await (await import('./local/archive.js?v=6f163306a287')).importFolder(files);
       if (r.settings) {   // H07, first so the message below is in the restored language
         reloadSettings();
         if (r.settings.lang) switchLang(r.settings.lang);

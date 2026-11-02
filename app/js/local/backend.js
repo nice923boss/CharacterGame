@@ -1,16 +1,16 @@
 // Browser-side stand-in for server/main.py on GitHub Pages: the same /api routes and job events, backed by
 // IndexedDB and the player's own NVIDIA key and relay (both kept in this browser's localStorage only).
-import { DATA } from './data.js?v=a2430d6da8c1';
-import * as store from './store.js?v=a2430d6da8c1';
-import * as images from './images.js?v=a2430d6da8c1';
-import * as turns from './turns.js?v=a2430d6da8c1';
-import * as batch from './batch.js?v=a2430d6da8c1';
-import * as llm from './llm.js?v=a2430d6da8c1';
-import * as quiz from './quiz.js?v=a2430d6da8c1';
-import { hint, probe, relayState, remember, verdict } from './check.js?v=a2430d6da8c1';
-import { analyzeNovel } from './novel.js?v=a2430d6da8c1';
-import { loadOpenCC } from './story.js?v=a2430d6da8c1';
-import { diag, scrubKeys, watchErrors } from './diag.js?v=a2430d6da8c1';
+import { DATA } from './data.js?v=6f163306a287';
+import * as store from './store.js?v=6f163306a287';
+import * as images from './images.js?v=6f163306a287';
+import * as turns from './turns.js?v=6f163306a287';
+import * as batch from './batch.js?v=6f163306a287';
+import * as llm from './llm.js?v=6f163306a287';
+import * as quiz from './quiz.js?v=6f163306a287';
+import { hint, probe, relayState, remember, verdict } from './check.js?v=6f163306a287';
+import { analyzeNovel } from './novel.js?v=6f163306a287';
+import { loadOpenCC } from './story.js?v=6f163306a287';
+import { diag, scrubKeys, watchErrors } from './diag.js?v=6f163306a287';
 
 const KEY = 'cg-nvidia-key';
 const RELAY = 'cg-relay';
@@ -199,6 +199,7 @@ async function route(method, url, body) {
   if (a === 'quiz' && gid === 'import' && method === 'POST') return quiz.importFile(body);
   if (a === 'quiz' && gid && sub === 'file' && method === 'GET') return quiz.exportFile(gid);
   if (a === 'quiz' && gid && sub === 'picture' && method === 'POST') return quiz.putPicture(gid, act, body);
+  if (a === 'quiz' && gid && sub === 'story' && method === 'POST') return quiz.copyAsStory(gid);
   if (a === 'quiz' && gid && method === 'GET') return quiz.load(gid);
   if (a === 'quiz' && gid && method === 'POST') return quiz.save(gid, body);
   if (a === 'quiz' && gid && method === 'DELETE') return quiz.remove(gid);

@@ -1,17 +1,17 @@
 // Game screen controller: plays a node's lines with a typewriter, runs turns over SSE, handles scene
 // changes, asset polling, save/load, the node tree and jumping back to an older node.
-import { del, get, job, post } from './api.js?v=a2430d6da8c1';
-import { sound } from './sound.js?v=a2430d6da8c1';
-import { LIMIT_SCALE, t } from './i18n.js?v=a2430d6da8c1';
+import { del, get, job, post } from './api.js?v=6f163306a287';
+import { sound } from './sound.js?v=6f163306a287';
+import { LIMIT_SCALE, t } from './i18n.js?v=6f163306a287';
 import {
   $, closeModal, confirmBox, esc, helpNode, loadThumbs, openModal, paintWait, progress, settings, statusText, thumbAttr, toast,
   toastError,
-} from './ui.js?v=a2430d6da8c1';
-import { renderTree, untakenOptions } from './tree.js?v=a2430d6da8c1';
+} from './ui.js?v=6f163306a287';
+import { renderTree, untakenOptions } from './tree.js?v=6f163306a287';
 import {
   loadDraft, logLine, logTurn, openLog, openPressMenu, paintCount, paintEndingBack, recordTurnTime, safeEnd, saveDraft, seedLog,
   typicalTurn,
-} from './playaids.js?v=a2430d6da8c1';
+} from './playaids.js?v=6f163306a287';
 
 const G = {
   stage: null, game: null, tree: null, assets: null, currentId: null,
@@ -477,7 +477,6 @@ async function sendInput(kind, text) {
     }
     if (final.replayed && !G.game.batch) toast(t('game.replayed'));   // batch stories replay on every option
     G.currentId = node.id;
-    sound.setMood(node.bgm_mood);
     sound.setWeather(node.weather);
     G.stage.setWeather(node.weather);
     G.final = node;
@@ -587,7 +586,6 @@ export async function enterGame(stage, gid, nodeId, onExit, replay = true) {
     stage.setScene(sceneUrl(G.sceneId), { transition: true });
     stage.setCast([]);
     stage.setPending(!sceneUrl(G.sceneId));
-    sound.setMood('mysterious');
     paintAssetChip();
     sendInput('opening', '');
     return true;
@@ -605,7 +603,6 @@ export async function enterGame(stage, gid, nodeId, onExit, replay = true) {
   } });
   stage.setPending(!sceneUrl(sid));
   stage.setWeather(node.weather);
-  sound.setMood(node.bgm_mood);
   sound.setWeather(node.weather);
   paintAssetChip();
   if (!replay) return true;

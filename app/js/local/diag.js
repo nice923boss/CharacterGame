@@ -1,6 +1,6 @@
 // Diagnostic log of the browser build (J01): retries, model switches, error codes and timings, kept in IndexedDB
 // so a player can download them with a problem report. Events never carry the key or story text.
-import { addDiag } from './store.js?v=a2430d6da8c1';
+import { addDiag } from './store.js?v=6f163306a287';
 
 const clip = (v) => String(v ?? '').slice(0, 200);
 const FIELD_CHARS = 500;   // longest string field kept in one event

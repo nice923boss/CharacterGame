@@ -1,5 +1,5 @@
 // Shared DOM helpers: modals, confirm dialog, toast, progress overlay, settings persisted in localStorage.
-import { t } from './i18n.js?v=a2430d6da8c1';
+import { t } from './i18n.js?v=6f163306a287';
 
 export const $ = (sel) => document.querySelector(sel);
 
@@ -329,10 +329,10 @@ paintOffline();
 
 // patience: seconds to keep queueing when every model is busy; prefer: quality (retry the first model) or speed.
 // auto: seconds before the next line plays by itself (0 off); font: s, m or l; contrast: solid boxes
-const DEFAULTS = { speed: 45, bgm: 55, sfx: 70, weather: true, patience: 300, prefer: 'quality', auto: 0, font: 'm', contrast: false };
+const DEFAULTS = { speed: 45, sfx: 70, weather: true, patience: 300, prefer: 'quality', auto: 0, font: 'm', contrast: false };
 const KEY = 'chienzhi.settings';
 // What the settings controls can hold (index.html); anything else falls back to the default
-const RANGES = { speed: [10, 120], bgm: [0, 100], sfx: [0, 100] };
+const RANGES = { speed: [10, 120], sfx: [0, 100] };
 const CHOICES = { patience: [60, 300, 600, 86400], prefer: ['quality', 'speed'], auto: [0, 1, 2, 3, 5, 8], font: ['s', 'm', 'l'] };
 
 // A hand-edited store or a restored backup (H07) may hold any value: speed 0 would freeze the text, an unknown
@@ -362,10 +362,9 @@ let reload = () => {};
 export const reloadSettings = () => reload();
 
 export function bindSettings(onChange) {
-  const map = { speed: '#set-speed', bgm: '#set-bgm', sfx: '#set-sfx' };
+  const map = { speed: '#set-speed', sfx: '#set-sfx' };
   const paint = () => {
     $('#out-speed').textContent = settings.speed;
-    $('#out-bgm').textContent = settings.bgm;
     $('#out-sfx').textContent = settings.sfx;
   };
   const fill = () => {
@@ -405,4 +404,9 @@ export function bindSettings(onChange) {
   fill();
   paint();
   onChange(settings);
+}
+
+// The picture blurred behind the upright frame on a wide screen; null clears it
+export function setBackdrop(url) {
+  $('#backdrop').style.backgroundImage = url ? `url(${JSON.stringify(url)})` : '';
 }

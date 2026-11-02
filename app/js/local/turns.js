@@ -1,13 +1,13 @@
 // Browser port of server/turn_service.py: world setup and one story turn, reporting through emit(event).
 // A node is written only after the whole turn succeeded, so a cancelled or failed turn leaves the tree as it was.
-import { DATA } from './data.js?v=a2430d6da8c1';
-import * as store from './store.js?v=a2430d6da8c1';
-import * as images from './images.js?v=a2430d6da8c1';
-import * as llm from './llm.js?v=a2430d6da8c1';
+import { DATA } from './data.js?v=6f163306a287';
+import * as store from './store.js?v=6f163306a287';
+import * as images from './images.js?v=6f163306a287';
+import * as llm from './llm.js?v=6f163306a287';
 import {
   Cast, LineStream, applyState, clip, gameLang, lastJson, mostlyAscii, repair, repairMessages, setupMessages, slug,
   turnMessages,
-} from './story.js?v=a2430d6da8c1';
+} from './story.js?v=6f163306a287';
 
 const { MAX_CHARACTERS, MAX_FREE_INPUT, LIMIT_SCALE, BATCH_MAX_SCENES, BATCH_MAX_NODES, NOVEL_MAX_CHAPTERS } = DATA.limits;
 const { LANGS, NARRATOR, MAX_GAME_TITLE } = DATA.parser;

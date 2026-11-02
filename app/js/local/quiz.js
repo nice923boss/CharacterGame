@@ -1,10 +1,12 @@
-// SDGs English quest (browser build only): the AI writes a draft of the five levels and the ending; quests live in
-// IndexedDB. The quest shape and its rules are in ../quest.js.
-import * as store from './store.js?v=a2430d6da8c1';
-import * as llm from './llm.js?v=a2430d6da8c1';
-import * as images from './images.js?v=a2430d6da8c1';
-import { lastJson } from './story.js?v=a2430d6da8c1';
-import { LEVELS, LIMITS, PICTURES, level, lines, normalize, problems, sceneOf, shuffleSides } from '../quest.js?v=a2430d6da8c1';
+// SDGs English quest (browser build only): the AI writes a draft of a simple quest's levels and ending; quests of
+// both modes live in IndexedDB. The quest shapes and their rules are in ../quest.js and ../quest_story.js.
+import * as store from './store.js?v=6f163306a287';
+import * as llm from './llm.js?v=6f163306a287';
+import * as images from './images.js?v=6f163306a287';
+import { lastJson } from './story.js?v=6f163306a287';
+import { DRAFT_LEVELS, LIMITS, level, lines, normalize, problems, shuffleSides } from '../quest.js?v=6f163306a287';
+import { normalizeQuest, questPictures, questProblems, questScene } from '../quest_story.js?v=6f163306a287';
+import { storyFromSimple } from '../quest_pages.js?v=6f163306a287';
 
 const SDG_EN = {
   6: 'SDG 6 Clean Water and Sanitation', 11: 'SDG 11 Sustainable Cities and Communities',
@@ -19,7 +21,7 @@ const SYSTEM = `You write short English learning games for Taiwanese junior and 
 Use simple, clear English (CEFR A2 to B1): short sentences, common words, present or past tense.
 Reply with one JSON object only, no other text.`;
 
-export function draftMessages(q) {
+export function draftMessages(q, count = q.levels.length) {
   const sdg = q.sdg === 'other' ? (q.sdg_other || 'another Sustainable Development Goal') : SDG_EN[q.sdg];
   const cast = q.characters.map((c) => `- ${c.name}${c.who ? `: ${c.who}` : ''}`).join('\n');
   const user = `Write an interactive story game about ${sdg}.
@@ -33,7 +35,7 @@ Problem: ${q.problem}
 Goal: ${q.goal}
 ${q.idea ? `Extra ideas: ${q.idea}\n` : ''}
 Rules:
-1. Exactly ${LEVELS} levels. The story moves forward level by level toward the goal, and every level's action
+1. Exactly ${count} level${count === 1 ? '' : 's'}. The story moves forward level by level toward the goal, and every level's action
    is a real, concrete action for ${sdg}.
 2. Each level has 2 to 4 dialogue lines spoken by the main characters (a "Narrator" line is allowed), then one
    question with two options, A and B.
@@ -57,31 +59,32 @@ JSON shape:
   return [{ role: 'system', content: SYSTEM }, { role: 'user', content: user }];
 }
 
-function draftFrom(d) {
-  if (!d || !Array.isArray(d.levels) || d.levels.length < LEVELS) return null;
-  const levels = d.levels.slice(0, LEVELS).map(level);
+function draftFrom(d, count) {
+  if (!d || !Array.isArray(d.levels) || d.levels.length < count) return null;
+  const levels = d.levels.slice(0, count).map(level);
   const draft = { background: str(d.background, LIMITS.background), levels, ending: lines(d.ending),
     intro_scene: str(d.intro_scene, LIMITS.scene), ending_scene: str(d.ending_scene, LIMITS.scene) };
   const missing = problems({ ...normalize({}), title: 'x', ...draft });
   return missing.length ? null : draft;
 }
 
-// Job: { quest } in; one final event with the draft (background, levels, ending). One repair round when the reply
-// is not a complete game.
+// Job: { quest, count } in (count: levels to write, 1 to DRAFT_LEVELS, the quest's own number when missing); one final
+// event with the draft (background, levels, ending). One repair round when the reply is not a complete game.
 export async function generate(body, emit, conn, signal) {
   const q = normalize(body?.quest);
   if (!q.title || !q.characters.length || !q.problem || !q.goal) throw { code: 'quiz_input' };
+  const count = Math.min(DRAFT_LEVELS, Math.max(1, Math.round(Number(body?.count)) || q.levels.length));
   emit({ type: 'phase', code: 'quiz_draft' });
   const status = (ev) => { if (ev.type === 'status') emit(ev); };
-  const messages = draftMessages(q);
+  const messages = draftMessages(q, count);
   let res = await llm.stream(messages, status, 0.8, conn, signal);
-  let draft = draftFrom(lastJson(res.content));
+  let draft = draftFrom(lastJson(res.content), count);
   if (!draft) {
     emit({ type: 'phase', code: 'quiz_repair' });
     const again = [...messages, { role: 'assistant', content: res.content },
-      { role: 'user', content: `That reply was not a complete game. Reply again with the full JSON object only: exactly ${LEVELS} levels, each with lines, question, options A and B, answer and hint, plus background and ending.` }];
+      { role: 'user', content: `That reply was not a complete game. Reply again with the full JSON object only: exactly ${count} level${count === 1 ? '' : 's'}, each with lines, question, options A and B, answer and hint, plus background and ending.` }];
     res = await llm.stream(again, status, 0.6, conn, signal);
-    draft = draftFrom(lastJson(res.content));
+    draft = draftFrom(lastJson(res.content), count);
   }
   if (!draft) throw { code: 'quiz_bad_reply' };
   emit({ type: 'final', draft: { ...draft, levels: shuffleSides(draft.levels) } });
@@ -104,13 +107,13 @@ function withoutNames(text, characters) {
   }, text);
 }
 
-export const picturePrompt = (q, slot) => `${STYLE}, ${withoutNames(sceneOf(q, slot), q.characters)}, ${TAIL}`;
+export const picturePrompt = (q, slot) => `${STYLE}, ${withoutNames(questScene(q, slot), q.characters)}, ${TAIL}`;
 
-// slot -> address of the picture, for the slots that have one
-export function pictures(id) {
+// slot -> address of the picture, for the quest's slots that have one
+export function pictures(q) {
   const out = {};
-  for (const slot of PICTURES) {
-    const path = picPath(id, slot);
+  for (const slot of questPictures(q)) {
+    const path = picPath(q.id, slot);
     if (store.hasFile(path)) out[slot] = store.fileUrl(path);
   }
   return out;
@@ -122,25 +125,26 @@ export async function drawPictures(id, body, emit, conn, signal) {
   if (!conn.key) throw { code: 'no_key' };
   if (!conn.relay) throw { code: 'no_relay' };
   const q = await load(id);
-  const asked = (Array.isArray(body?.slots) ? body.slots : []).filter((s) => PICTURES.includes(s));
-  const slots = asked.length ? asked : PICTURES.filter((s) => !store.hasFile(picPath(id, s)));
+  const names = questPictures(q);
+  const asked = (Array.isArray(body?.slots) ? body.slots : []).filter((s) => names.includes(s));
+  const slots = asked.length ? asked : names.filter((s) => !store.hasFile(picPath(id, s)));
   for (const [i, slot] of slots.entries()) {
     if (signal?.aborted) throw { code: 'cancelled' };
     emit({ type: 'picture_start', slot, n: i + 1, total: slots.length });
     const blob = await images.picture(picturePrompt(q, slot), PIC_W, PIC_H);
     if (!(await all())[id]) throw { code: 'quiz_missing' };
     await store.putFile(picPath(id, slot), blob);
-    emit({ type: 'picture', slot, pictures: pictures(id) });
+    emit({ type: 'picture', slot, pictures: pictures(q) });
   }
-  emit({ type: 'final', pictures: pictures(id) });
+  emit({ type: 'final', pictures: pictures(q) });
 }
 
 // A picture the author chose on the computer (the editor has already cut it to size) takes the slot's place
 export async function putPicture(id, slot, blob) {
-  if (!(await all())[id]) throw { code: 'quiz_missing' };
-  if (!PICTURES.includes(slot) || !(blob instanceof Blob) || !/^image\/(jpeg|png|webp)$/.test(blob.type)) throw { code: 'quiz_pic_bad' };
+  const q = await load(id);
+  if (!questPictures(q).includes(slot) || !(blob instanceof Blob) || !/^image\/(jpeg|png|webp)$/.test(blob.type)) throw { code: 'quiz_pic_bad' };
   await store.putFile(picPath(id, slot), blob);
-  return { pictures: pictures(id) };
+  return { pictures: pictures(q) };
 }
 
 // ---------- storage ----------
@@ -149,30 +153,55 @@ async function all() { return (await store.kvGet(KV)) || {}; }
 
 export async function list() {
   return Object.values(await all())
-    .map((q) => ({ id: q.id, title: q.title, sdg: q.sdg, updated_at: q.updated_at, ready: !problems(normalize(q)).length }))
+    .map((raw) => normalizeQuest(raw))
+    .map((q) => ({ id: q.id, mode: q.mode, title: q.title, sdg: q.sdg, updated_at: q.updated_at, ready: !questProblems(q).length }))
     .sort((x, y) => String(y.updated_at).localeCompare(String(x.updated_at)));
 }
 
 export async function load(id) {
   const q = (await all())[id];
   if (!q) throw { code: 'quiz_missing' };
-  return { ...normalize(q), pictures: pictures(id) };
+  const quest = normalizeQuest(q);
+  return { ...quest, pictures: pictures(quest) };
 }
 
-// id "new" makes a new quest; returns the saved quest
+// The quest's pictures that no longer belong to it (its level, scene or item was deleted) are deleted
+async function dropOrphans(q) {
+  const keep = new Set(questPictures(q).map((slot) => picPath(q.id, slot)));
+  const prefix = `quiz/${q.id}/`;
+  for (const path of store.filePaths()) if (path.startsWith(prefix) && !keep.has(path)) await store.deleteFile(path);
+}
+
+// id "new" makes a new quest; returns the saved quest. A quest keeps its mode once saved.
 export async function save(id, raw) {
   const quests = await all();
   if (id !== 'new' && !quests[id]) throw { code: 'quiz_missing' };
   const now = store.nowIso();
   const qid = id === 'new' ? `q${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}` : id;
-  const q = { ...normalize(raw), id: qid, created_at: quests[qid]?.created_at || now, updated_at: now };
+  const mode = quests[qid] ? normalizeQuest(quests[qid]).mode : raw?.mode;
+  const q = { ...normalizeQuest({ ...raw, mode }), id: qid, created_at: quests[qid]?.created_at || now, updated_at: now };
   await store.kvPut(KV, { ...quests, [qid]: q });
+  await dropOrphans(q);
   return q;
+}
+
+// A simple quest copied as a new story quest, with its pictures; the simple quest stays as it was
+export async function copyAsStory(id) {
+  const q = await load(id);
+  if (q.mode !== 'simple') throw { code: 'quiz_mode' };
+  const { quest, pictures: names } = storyFromSimple(q);
+  const copy = await save('new', quest);
+  for (const [from, to] of names) {
+    const blob = await store.fileBlob(picPath(id, from));
+    if (blob) await store.putFile(picPath(copy.id, to), blob);
+  }
+  return { ...copy, pictures: pictures(copy) };
 }
 
 // ---------- quest file (.sdgquest.json) ----------
 
 const FILE_KIND = 'sdg-quest';
+const FILE_VERSION = 2;
 const DATA_URL = /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+=*)$/;
 
 async function dataUrl(blob) {
@@ -187,32 +216,35 @@ async function dataUrl(blob) {
 export async function exportFile(id) {
   const { id: _, pictures: __, ...quest } = await load(id);
   const pics = {};
-  for (const slot of PICTURES) {
+  for (const slot of questPictures(quest)) {
     const blob = await store.fileBlob(picPath(id, slot));
     if (blob) pics[slot] = await dataUrl(blob);
   }
-  return { kind: FILE_KIND, version: 1, ...quest, pictures: pics };
+  return { kind: FILE_KIND, version: FILE_VERSION, ...quest, pictures: pics };
 }
 
-// A quest file becomes a new quest; pictures that are not a JPEG, PNG or WebP data URL are left out
+// A quest file (version 1 or 2) becomes a new quest; version 1 files are simple quests with no mode, and their
+// levels get the ids 1 to n, so pictures l1 to l5 stay with their levels. Pictures that are not a JPEG, PNG or WebP
+// data URL are left out.
 export async function importFile(raw) {
   if (raw?.kind !== FILE_KIND) throw { code: 'quiz_file_bad' };
+  if (Number(raw.version) > FILE_VERSION) throw { code: 'quiz_file_new' };
   const q = await save('new', raw);
   let count = 0;
-  for (const slot of PICTURES) {
+  for (const slot of questPictures(q)) {
     const m = DATA_URL.exec(typeof raw.pictures?.[slot] === 'string' ? raw.pictures[slot] : '');
     if (!m) continue;
     const bytes = Uint8Array.from(atob(m[2]), (c) => c.charCodeAt(0));
     await store.putFile(picPath(q.id, slot), new Blob([bytes], { type: m[1] }));
     count += 1;
   }
-  return { ...q, pictures: pictures(q.id), imported_pictures: count };
+  return { ...q, pictures: pictures(q), imported_pictures: count };
 }
 
 export async function remove(id) {
   const { [id]: gone, ...rest } = await all();
   if (!gone) throw { code: 'quiz_missing' };
   await store.kvPut(KV, rest);
-  for (const slot of PICTURES) if (store.hasFile(picPath(id, slot))) await store.deleteFile(picPath(id, slot));
+  for (const path of store.filePaths()) if (path.startsWith(`quiz/${id}/`)) await store.deleteFile(path);
   return { ok: true };
 }

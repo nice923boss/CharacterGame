@@ -1,10 +1,13 @@
-// SDGs English quest: the list of quests, the editor (basic info, AI draft, five levels, ending) and file export.
-// Playing a quest is in quiz_play.js; the storage and the AI draft are in local/quiz.js (browser build only).
-import { del, get, job, post } from './api.js?v=a2430d6da8c1';
-import { t } from './i18n.js?v=a2430d6da8c1';
-import { $, confirmBox, esc, progress, toast, toastError } from './ui.js?v=a2430d6da8c1';
-import { LIMITS, MAX_CHARS, PICTURES, SDGS, SDG_LOOK, normalize, problems } from './quest.js?v=a2430d6da8c1';
-import { playQuest } from './quiz_play.js?v=a2430d6da8c1';
+// SDGs English quest: the list of quests (form and story), the form editor (basic info, AI draft, 1 to 20 levels,
+// ending) and file export. The story editor is quiz_story_edit.js, playing is quiz_play.js; the storage and the AI
+// draft are in local/quiz.js (browser build only).
+import { del, get, job, post } from './api.js?v=6f163306a287';
+import { t } from './i18n.js?v=6f163306a287';
+import { $, confirmBox, esc, progress, toast, toastError } from './ui.js?v=6f163306a287';
+import { DRAFT_LEVELS, LIMITS, MAX_CHARS, MAX_LEVELS, SDGS, SDG_LOOK, newId, newLevel, normalize, picturesOf, problems } from './quest.js?v=6f163306a287';
+import { playQuest } from './quiz_play.js?v=6f163306a287';
+import { drawPics, uploadPic } from './quiz_pics.js?v=6f163306a287';
+import { initStoryEditor, newStory, openStoryEditor } from './quiz_story_edit.js?v=6f163306a287';
 
 export const sdgName = (q) => (q.sdg === 'other' ? q.sdg_other || t('quiz.sdg.other') : t(`quiz.sdg.${q.sdg}`));
 
@@ -13,6 +16,7 @@ let Q = null;       // quest open in the editor
 let dirty = false;
 let pics = {};      // slot -> picture address for the quest in the editor
 let picSlot = '';   // the slot the picture file chooser is open for
+let draftCount = 0; // levels the AI draft writes; 0 until the author picks a number
 
 // ---------- quest list ----------
 
@@ -25,9 +29,10 @@ export async function openQuests() {
     <div class="qz-row" data-id="${esc(r.id)}" style="--sdg:${SDG_LOOK[r.sdg]?.color || SDG_LOOK.other.color}">
       <span class="qz-badge">${SDG_LOOK[r.sdg]?.icon || ''}</span>
       <span class="meta"><b>${esc(r.title || t('quiz.untitled'))}</b>
-        <small>${esc(r.ready ? t('quiz.ready') : t('quiz.unready'))}</small></span>
+        <small>${esc(`${t(`quiz.mode.${r.mode}`)} · ${r.ready ? t('quiz.ready') : t('quiz.unready')}`)}</small></span>
       <button class="btn small primary" data-row="play"${r.ready ? '' : ' disabled'}>${esc(t('quiz.playBtn'))}</button>
       <button class="btn small" data-row="edit">${esc(t('quiz.edit'))}</button>
+      ${r.mode === 'simple' ? `<button class="btn small" data-row="story" title="${esc(t('quiz.toStoryHint'))}">${esc(t('quiz.toStory'))}</button>` : ''}
       <button class="btn small" data-row="export">${esc(t('quiz.export'))}</button>
       <button class="btn small ghost" data-row="delete">${esc(t('common.delete'))}</button>
     </div>`).join('') : `<p class="hint qz-empty">${esc(t('quiz.empty'))}</p>`;
@@ -35,7 +40,17 @@ export async function openQuests() {
 
 async function rowAction(act, id) {
   try {
-    if (act === 'edit') { openEditor(await get(`/api/quiz/${id}`)); return; }
+    if (act === 'edit') {
+      const q = await get(`/api/quiz/${id}`);
+      if (q.mode === 'story') openStoryEditor(q); else openEditor(q);
+      return;
+    }
+    if (act === 'story') {
+      const copy = await post(`/api/quiz/${id}/story`, {});
+      toast(t('quiz.toStoryDone', { title: copy.title || t('quiz.untitled') }));
+      openStoryEditor(copy);
+      return;
+    }
     if (act === 'play') { playQuest(await get(`/api/quiz/${id}`), nav, { back: openQuests }); return; }
     if (act === 'export') { download(await get(`/api/quiz/${id}/file`)); return; }
     if (act === 'delete') {
@@ -76,6 +91,7 @@ function openEditor(quest) {
   pics = quest.pictures || {};
   if (!Q.characters.length) Q.characters = [{ name: '', who: '' }, { name: '', who: '' }];
   dirty = false;
+  draftCount = 0;
   nav.show('scr-quiz-edit');
   render();
   $('#qz-edit-body').scrollTop = 0;
@@ -97,7 +113,8 @@ function linesHtml(path, rows) {
     <button class="btn tiny" data-do="addLine" data-path="${path}">${esc(t('quiz.addLine'))}</button></div>`;
 }
 
-const picName = (slot) => (slot === 'intro' ? t('quiz.pic.intro') : slot === 'ending' ? t('quiz.pic.ending') : t('quiz.levelN', { n: slot.slice(1) }));
+const picName = (slot) => (slot === 'intro' ? t('quiz.pic.intro') : slot === 'ending' ? t('quiz.pic.ending')
+  : t('quiz.levelN', { n: Q.levels.findIndex((l) => `l${l.id}` === slot) + 1 }));
 
 // The picture of one part with its description and a draw / redraw button
 function pictureHtml(slot, sceneKey, scene) {
@@ -114,7 +131,10 @@ function levelHtml(l, i) {
   const p = `levels.${i}`;
   const radio = (side) => `<label class="qz-ans"><input type="radio" name="qz-ans-${i}" data-k="${p}.answer" value="${side}"${l.answer === side ? ' checked' : ''}>
     <span>${esc(t('quiz.correctIs', { side }))}</span></label>`;
-  return `<section class="qz-sec qz-level"><h3>${esc(t('quiz.levelN', { n: i + 1 }))}</h3>
+  const last = Q.levels.length - 1;
+  const tool = (act, text, label, off) => `<button class="btn tiny ghost" data-do="${act}" data-i="${i}" aria-label="${esc(label)}" title="${esc(label)}"${off ? ' disabled' : ''}>${esc(text)}</button>`;
+  return `<section class="qz-sec qz-level"><div class="qz-head"><h3>${esc(t('quiz.levelN', { n: i + 1 }))}</h3>
+    ${tool('lvUp', '↑', t('quiz.lvUp'), i === 0)}${tool('lvDown', '↓', t('quiz.lvDown'), i === last)}${tool('lvDel', `✕ ${t('quiz.lvDel')}`, t('quiz.lvDel'), last === 0)}</div>
     ${field(`${p}.title`, t('quiz.levelTitle'), l.title, { max: LIMITS.levelTitle, lang: 'en', ph: 'Clean the River' })}
     <span class="qz-sub">${esc(t('quiz.dialogue'))}</span>${linesHtml(`${p}.lines`, l.lines)}
     ${field(`${p}.question`, t('quiz.question'), l.question, { max: LIMITS.question, lang: 'en', ph: 'What should they do?' })}
@@ -122,9 +142,11 @@ function levelHtml(l, i) {
     <div class="qz-answers">${radio('A')}${radio('B')}</div>
     ${field(`${p}.hint`, t('quiz.hint'), l.hint, { max: LIMITS.hint, lang: 'en', ph: t('quiz.ph.hint') })}
     <div class="row2">${field(`${p}.right`, t('quiz.right'), l.right, { max: LIMITS.feedback, lang: 'en', ph: `Correct! ${t('quiz.play.correct')}` })}${field(`${p}.wrong`, t('quiz.wrong'), l.wrong, { max: LIMITS.feedback, lang: 'en', ph: 'Not quite. Try again!' })}</div>
-    ${pictureHtml(`l${i + 1}`, `${p}.scene`, l.scene)}
+    ${pictureHtml(`l${l.id}`, `${p}.scene`, l.scene)}
   </section>`;
 }
+
+const levelCount = () => draftCount || Math.min(DRAFT_LEVELS, Q.levels.length);
 
 function render() {
   const body = $('#qz-edit-body');
@@ -147,8 +169,10 @@ function render() {
     ${field('problem', t('quiz.problem'), Q.problem, { area: true, max: LIMITS.problem, ph: t('quiz.ph.problem') })}
     ${field('goal', t('quiz.goal'), Q.goal, { area: true, max: LIMITS.goal, ph: t('quiz.ph.goal') })}
     ${field('idea', t('quiz.idea'), Q.idea, { area: true, max: LIMITS.idea, ph: t('quiz.ph.idea') })}
-    <div class="qz-draft"><button class="btn primary" data-do="draft">${esc(t('quiz.draft'))}</button>
-      <p class="hint">${esc(t('quiz.draftHint'))}</p></div>
+    <div class="qz-draft"><label class="qz-count"><span>${esc(t('quiz.draftCount'))}</span>
+      <input id="qz-count" type="number" min="1" max="${DRAFT_LEVELS}" value="${levelCount()}"></label>
+      <button class="btn primary" data-do="draft">${esc(t('quiz.draft'))}</button>
+      <p class="hint">${esc(t('quiz.draftHint', { max: DRAFT_LEVELS }))}</p></div>
   </section>
   <section class="qz-sec"><h3>${esc(t('quiz.step2'))}</h3>
     ${field('background', t('quiz.background'), Q.background, { area: true, rows: 4, max: LIMITS.background, lang: 'en', ph: t('quiz.ph.background') })}
@@ -157,6 +181,8 @@ function render() {
       <p class="hint">${esc(t('quiz.pic.allHint'))}</p></div>
   </section>
   ${Q.levels.map(levelHtml).join('')}
+  <div class="qz-draft"><button class="btn" data-do="lvAdd"${Q.levels.length >= MAX_LEVELS ? ' disabled' : ''}>${esc(t('quiz.lvAdd'))}</button>
+    <p class="hint">${esc(t('quiz.lvCount', { n: Q.levels.length, max: MAX_LEVELS }))}</p></div>
   <section class="qz-sec"><h3>${esc(t('quiz.endingTitle'))}</h3>
     <span class="qz-sub">${esc(t('quiz.endingHint'))}</span>${linesHtml('ending', Q.ending)}
     ${pictureHtml('ending', 'ending_scene', Q.ending_scene)}
@@ -195,17 +221,20 @@ async function save() {
 
 async function draft() {
   if (!Q.title || !Q.characters.some((c) => c.name) || !Q.problem || !Q.goal) { setMsg(t('quiz.needDraft'), true); return; }
+  const count = levelCount();
   const written = Q.background || Q.levels.some((l) => l.question || l.lines.length);
-  if (written && !(await confirmBox(t('quiz.draftAsk'), t('quiz.draftOk')))) return;
+  if (written && !(await confirmBox(t('quiz.draftAsk', { n: count }), t('quiz.draftOk')))) return;
   let running = null;
   const box = progress(t('quiz.drafting'), t('quiz.draftingSub'), () => running && running.cancel());
-  running = job('/api/quiz/generate', { quest: Q }, (ev) => {
+  running = job('/api/quiz/generate', { quest: Q, count }, (ev) => {
     if (ev.type === 'phase') box.update(`${t(`phase.${ev.code}`)}…`);
     if (ev.type === 'status') box.status(ev, () => running.retryNow());
   });
   try {
     const { draft: d } = await running.done;
-    Object.assign(Q, { background: d.background, levels: d.levels, ending: d.ending, intro_scene: d.intro_scene, ending_scene: d.ending_scene });
+    // A level keeps the id (and so the picture) of the level that was in its place; extra levels get new ids
+    const levels = d.levels.reduce((out, l, i) => [...out, { ...l, id: Q.levels[i]?.id || newId([...Q.levels, ...out]) }], []);
+    Object.assign(Q, { background: d.background, levels, ending: d.ending, intro_scene: d.intro_scene, ending_scene: d.ending_scene });
     dirty = true;
     render();
     $('#qz-edit-body').querySelector('.qz-sec:nth-child(2)')?.scrollIntoView({ block: 'start' });
@@ -218,63 +247,23 @@ async function draft() {
   }
 }
 
-// Draws the given pictures (every missing one when slots is empty); the quest is saved first, the job reads it
-async function drawPics(slots) {
-  if (!slots.length && PICTURES.every((s) => pics[s])) { setMsg(t('quiz.pic.noneMissing')); return; }
-  if (!(await save())) return;
-  let running = null;
-  const box = progress(t('quiz.pic.drawing', { n: 1, total: slots.length || PICTURES.filter((s) => !pics[s]).length }),
-    t('quiz.pic.drawingSub'), () => running && running.cancel());
-  running = job(`/api/quiz/${Q.id}/pictures`, { slots }, (ev) => {
-    if (ev.type === 'picture_start') box.update(t('quiz.pic.drawing', { n: ev.n, total: ev.total }));
-    if (ev.type === 'picture') { pics = ev.pictures; render(); }
-  });
-  try {
-    pics = (await running.done).pictures;
-    render();
-    setMsg(t('quiz.pic.done'));
-  } catch (e) {
-    if (e.code === 'cancelled') setMsg(e.message); else { setMsg(e.message, true); toastError(e); }
-  } finally {
-    box.close();
-  }
+// What the picture tools in quiz_pics.js need from this editor
+const picTools = () => ({ save, setMsg, show: (p) => { pics = p; render(); } });
+const missingPics = () => picturesOf(Q).filter((s) => !pics[s]);
+
+// Deleting a level that has something in it asks first; its picture goes when the quest is saved
+async function deleteLevel(i) {
+  const l = Q.levels[i];
+  const filled = l.title || l.question || l.a || l.b || l.hint || l.scene || l.lines.length || pics[`l${l.id}`];
+  if (filled && !(await confirmBox(t('quiz.lvDelAsk', { n: i + 1 }), t('common.delete')))) return;
+  Q.levels.splice(i, 1);
+  dirty = true;
+  render();
 }
 
-const PIC_W = 960;
-const PIC_H = 720;
-
-// A picture from the computer cut to the 4:3 frame the player shows (its middle), at the AI pictures' size; a
-// transparent PNG gets a white background
-async function fitPicture(file) {
-  const img = await createImageBitmap(file);
-  const scale = Math.max(PIC_W / img.width, PIC_H / img.height);
-  const w = img.width * scale;
-  const h = img.height * scale;
-  const canvas = document.createElement('canvas');
-  canvas.width = PIC_W;
-  canvas.height = PIC_H;
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(0, 0, PIC_W, PIC_H);
-  ctx.drawImage(img, (PIC_W - w) / 2, (PIC_H - h) / 2, w, h);
-  img.close();
-  return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('canvas.toBlob gave nothing'))), 'image/jpeg', 0.9));
-}
-
-// The chosen file takes the place of the slot's picture (an AI one too); the quest is saved first so it has an id
-async function uploadPic(slot, file) {
-  let blob;
-  try { blob = await fitPicture(file); } catch (e) {
-    console.warn('picture file could not be read', file.type, e);
-    setMsg(t('quiz.pic.notImage'), true);
-    return;
-  }
-  if (!(await save())) return;
-  try {
-    pics = (await post(`/api/quiz/${Q.id}/picture/${slot}`, blob)).pictures;
-    render();
-    setMsg(t('quiz.pic.uploaded'));
-  } catch (e) { setMsg(e.message, true); toastError(e); }
+function moveLevel(i, by) {
+  const [l] = Q.levels.splice(i, 1);
+  Q.levels.splice(i + by, 0, l);
 }
 
 // The text of the whole quest laid out like the worksheet, for copying onto paper or into a document
@@ -320,10 +309,12 @@ async function leaveEditor() {
 
 export function initQuiz(navigation) {
   nav = navigation;
-  $('#qz-new').onclick = () => openEditor({});
+  initStoryEditor({ ...navigation, quests: openQuests });
+  $('#qz-new').onclick = () => openEditor({ levels: [{}, {}, {}, {}, {}] });
+  $('#qz-new-story').onclick = () => openStoryEditor(newStory());
   $('#qz-import').onclick = () => $('#qz-file').click();
   $('#qz-file').onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) importFile(f); };
-  $('#qz-pic-file').onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) uploadPic(picSlot, f); };
+  $('#qz-pic-file').onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) uploadPic(picSlot, f, picTools()); };
   $('#qz-home-back').onclick = () => nav.title();
   $('#qz-list').addEventListener('click', (e) => {
     const b = e.target.closest('[data-row]');
@@ -331,6 +322,11 @@ export function initQuiz(navigation) {
   });
   const body = $('#qz-edit-body');
   const onField = (e) => {
+    if (e.target.id === 'qz-count') {
+      draftCount = Math.min(DRAFT_LEVELS, Math.max(1, Math.round(Number(e.target.value)) || 1));
+      if (e.type === 'change') e.target.value = draftCount;
+      return;
+    }
     const el = e.target.closest('[data-k]');
     if (!el || (el.type === 'radio' && !el.checked)) return;
     setAt(el.dataset.k, el.value);
@@ -348,9 +344,13 @@ export function initQuiz(navigation) {
     if (!b) return;
     const act = b.dataset.do;
     if (act === 'draft') { draft(); return; }
-    if (act === 'pic') { drawPics([b.dataset.slot]); return; }
+    if (act === 'pic') { drawPics([b.dataset.slot], missingPics(), picTools()); return; }
     if (act === 'upload') { picSlot = b.dataset.slot; $('#qz-pic-file').click(); return; }
-    if (act === 'picsAll') { drawPics([]); return; }
+    if (act === 'picsAll') { drawPics([], missingPics(), picTools()); return; }
+    if (act === 'lvDel') { deleteLevel(Number(b.dataset.i)); return; }
+    if (act === 'lvUp') moveLevel(Number(b.dataset.i), -1);
+    if (act === 'lvDown') moveLevel(Number(b.dataset.i), 1);
+    if (act === 'lvAdd') Q.levels.push(newLevel(Q.levels));
     if (act === 'addChar') Q.characters.push({ name: '', who: '' });
     if (act === 'delChar') Q.characters.splice(Number(b.dataset.i), 1);
     if (act === 'addLine') at(b.dataset.path).push({ speaker: '', text: '' });
