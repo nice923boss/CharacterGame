@@ -1,15 +1,16 @@
 // Browser-side stand-in for server/main.py on GitHub Pages: the same /api routes and job events, backed by
 // IndexedDB and the player's own NVIDIA key and relay (both kept in this browser's localStorage only).
-import { DATA } from './data.js?v=c8dcf291776f';
-import * as store from './store.js?v=c8dcf291776f';
-import * as images from './images.js?v=c8dcf291776f';
-import * as turns from './turns.js?v=c8dcf291776f';
-import * as batch from './batch.js?v=c8dcf291776f';
-import * as llm from './llm.js?v=c8dcf291776f';
-import { hint, probe, relayState, remember, verdict } from './check.js?v=c8dcf291776f';
-import { analyzeNovel } from './novel.js?v=c8dcf291776f';
-import { loadOpenCC } from './story.js?v=c8dcf291776f';
-import { diag, scrubKeys, watchErrors } from './diag.js?v=c8dcf291776f';
+import { DATA } from './data.js?v=49b38c3c082c';
+import * as store from './store.js?v=49b38c3c082c';
+import * as images from './images.js?v=49b38c3c082c';
+import * as turns from './turns.js?v=49b38c3c082c';
+import * as batch from './batch.js?v=49b38c3c082c';
+import * as llm from './llm.js?v=49b38c3c082c';
+import * as quiz from './quiz.js?v=49b38c3c082c';
+import { hint, probe, relayState, remember, verdict } from './check.js?v=49b38c3c082c';
+import { analyzeNovel } from './novel.js?v=49b38c3c082c';
+import { loadOpenCC } from './story.js?v=49b38c3c082c';
+import { diag, scrubKeys, watchErrors } from './diag.js?v=49b38c3c082c';
 
 const KEY = 'cg-nvidia-key';
 const RELAY = 'cg-relay';
@@ -194,6 +195,10 @@ async function route(method, url, body) {
     lsSet(RELAY, r === DATA.relay ? '' : r);
     return { relay };
   }
+  if (a === 'quiz' && !gid && method === 'GET') return quiz.list();
+  if (a === 'quiz' && gid && method === 'GET') return quiz.load(gid);
+  if (a === 'quiz' && gid && method === 'POST') return quiz.save(gid, body);
+  if (a === 'quiz' && gid && method === 'DELETE') return quiz.remove(gid);
   if (a === 'batches') return batch.list();
   if (a === 'games' && sub === 'batch' && method === 'POST' && act === 'cancel') {
     await store.loadGame(gid);
@@ -296,6 +301,7 @@ export function job(url, body, onEvent) {
         await store.loadGame(parts[1]);
         await images.textTurn(() => turns.runTurn(parts[1], body.parent_id ?? null, body.input || {}, emit, jobConn(), ctrl.signal));
       }
+      else if (parts[0] === 'quiz' && parts[1] === 'generate') await images.textTurn(() => quiz.generate(body, emit, jobConn(), ctrl.signal));
       else if (parts[0] === 'novel' && parts[1] === 'analyze') await analyzeNovel(body, emit, jobConn(), ctrl.signal);
       else throw { code: 'http', params: { status: 404 } };
     } catch (e) {

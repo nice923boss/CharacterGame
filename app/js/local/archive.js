@@ -1,11 +1,11 @@
 // Progress download and folder import for the browser build. The zip mirrors the server's saves/ folder
 // (games/<id>/game.json, tree.json, assets/..., slots.json, autosaves.json), so either side can read it.
-import * as store from './store.js?v=c8dcf291776f';
-import * as images from './images.js?v=c8dcf291776f';
-import { applyBrowserSettings, browserSettings, diagReport, ready } from './backend.js?v=c8dcf291776f';
-import { turnBusy } from './turns.js?v=c8dcf291776f';
-import { writingHere } from './batch.js?v=c8dcf291776f';
-import { DATA } from './data.js?v=c8dcf291776f';
+import * as store from './store.js?v=49b38c3c082c';
+import * as images from './images.js?v=49b38c3c082c';
+import { applyBrowserSettings, browserSettings, diagReport, ready } from './backend.js?v=49b38c3c082c';
+import { turnBusy } from './turns.js?v=49b38c3c082c';
+import { writingHere } from './batch.js?v=49b38c3c082c';
+import { DATA } from './data.js?v=49b38c3c082c';
 
 // Turns in the player's own stories (the bundled demo left out), for the backup reminder on the title screen
 const ownTurns = (games) => games.filter((g) => g.id !== DATA.demo).reduce((n, g) => n + g.nodes, 0);

@@ -1,8 +1,8 @@
 // New-game screen: world presets, protagonist, 1 to 4 characters, then the server setup job.
 // The story is written in the current UI language; presets.json holds one preset set per language.
-import { get, job } from './api.js?v=c8dcf291776f';
-import { errorText, lang, scaleMaxLength, t } from './i18n.js?v=c8dcf291776f';
-import { $, esc, helpNode, progress } from './ui.js?v=c8dcf291776f';
+import { get, job } from './api.js?v=49b38c3c082c';
+import { errorText, lang, scaleMaxLength, t } from './i18n.js?v=49b38c3c082c';
+import { $, esc, helpNode, progress } from './ui.js?v=49b38c3c082c';
 
 const MAX_CHARS = 4;
 // Batch mode limits and timing, from server/config.py and the spike in docs/dev-log.md

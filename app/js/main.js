@@ -1,16 +1,18 @@
 // Entry point: screen switching, title menu, toolbar and settings wiring.
-import { LOCAL, activeJobs, get, post } from './api.js?v=c8dcf291776f';
-import { applyStatic, errorText, lang, setLang, t } from './i18n.js?v=c8dcf291776f';
-import { sound } from './sound.js?v=c8dcf291776f';
-import { createStage } from './stage.js?v=c8dcf291776f';
-import { $, bindSettings, confirmBox, openModal, progress, reloadSettings, toast, toastError } from './ui.js?v=c8dcf291776f';
-import { initSetup, isBatchMode, loadPresets, paintEstimate, resetSetup, setupDirty, startGame } from './setup.js?v=c8dcf291776f';
-import { currentGameId, enterGame, initGame, leaveGame, openSlots, openTree } from './game.js?v=c8dcf291776f';
-import { openStories } from './stories.js?v=c8dcf291776f';
-import { openLog } from './playaids.js?v=c8dcf291776f';
-import { batchActive, initBatches, refreshBatches, requestNotifyPermission } from './batch.js?v=c8dcf291776f';
-import { demoGame, enable, initConnect, keyNowText, openOnboard } from './connect.js?v=c8dcf291776f';
-import { paintBackup, paintStorage, watchStore, watchUpdate } from './upkeep.js?v=c8dcf291776f';
+import { LOCAL, activeJobs, get, post } from './api.js?v=49b38c3c082c';
+import { applyStatic, errorText, lang, setLang, t } from './i18n.js?v=49b38c3c082c';
+import { sound } from './sound.js?v=49b38c3c082c';
+import { createStage } from './stage.js?v=49b38c3c082c';
+import { $, bindSettings, confirmBox, esc, openModal, progress, reloadSettings, toast, toastError } from './ui.js?v=49b38c3c082c';
+import { initSetup, isBatchMode, loadPresets, paintEstimate, resetSetup, setupDirty, startGame } from './setup.js?v=49b38c3c082c';
+import { currentGameId, enterGame, initGame, leaveGame, openSlots, openTree } from './game.js?v=49b38c3c082c';
+import { openStories } from './stories.js?v=49b38c3c082c';
+import { openLog } from './playaids.js?v=49b38c3c082c';
+import { batchActive, initBatches, refreshBatches, requestNotifyPermission } from './batch.js?v=49b38c3c082c';
+import { demoGame, enable, initConnect, keyNowText, openOnboard } from './connect.js?v=49b38c3c082c';
+import { paintBackup, paintStorage, watchStore, watchUpdate } from './upkeep.js?v=49b38c3c082c';
+import { initQuiz, openQuests } from './quiz.js?v=49b38c3c082c';
+import { initPlayer } from './quiz_play.js?v=49b38c3c082c';
 
 document.documentElement.classList.toggle('local', LOCAL);
 const stage = createStage($('#canvas-host'));
@@ -20,6 +22,8 @@ const stage = createStage($('#canvas-host'));
 const FIRST_CONTROL = {
   'scr-title': '#scr-title .menu [data-act]:not([disabled]):not([hidden])',
   'scr-setup': '#world-preset',
+  'scr-quiz': '#qz-new',
+  'scr-guide': '#guide-back',
 };
 
 function showScreen(id) {
@@ -79,6 +83,19 @@ function archiveFail(e) {
 // Story folders in what the player picked (every game.json); those not loaded were damaged, too large or being written
 const storyFolders = (files) => [...files].filter((f) => /(^|\/)game\.json$/.test(f.webkitRelativePath || f.name)).length;
 
+// The usage guide shows the text in the UI language and goes back to the screen it was opened from
+let guideFrom = 'scr-title';
+function openGuide() {
+  guideFrom = [...document.querySelectorAll('.screen')].find((s) => !s.hidden)?.id || 'scr-title';
+  const sections = [...document.querySelectorAll(`.guide-${lang === 'en' ? 'en' : 'zh'} section`)];
+  $('#guide-toc').innerHTML = sections
+    .map((sec) => `<button class="btn tiny" type="button" data-to="${sec.id}">${esc(sec.querySelector('h3').textContent)}</button>`).join('');
+  showScreen('scr-guide');
+  $('#guide-body').scrollTop = 0;
+}
+$('#guide-toc').onclick = (e) => { const b = e.target.closest('[data-to]'); if (b) document.getElementById(b.dataset.to).scrollIntoView({ block: 'start' }); };
+$('#guide-back').onclick = () => showScreen(guideFrom);
+
 const actions = {
   continue: once('continue', async () => {
     const auto = await get('/api/autosave').catch(() => null);
@@ -86,6 +103,8 @@ const actions = {
   }),
   new() { if (needsKey()) openOnboard(); else newStory(); },
   demo() { if ($('#title-demo').dataset.gid) play($('#title-demo').dataset.gid, null); },
+  quiz() { openQuests(); },
+  guide() { openGuide(); },
   load() { openSlots('load', play); },
   stories() { openStories(refreshContinue, play); },
   settings() {
@@ -108,7 +127,7 @@ const actions = {
     const show = (pct) => toast(t('archive.exporting', { pct }), false, 60000, { id: 'archive' });
     show(0);
     try {
-      const r = await (await import('./local/archive.js?v=c8dcf291776f')).exportProgress(show);
+      const r = await (await import('./local/archive.js?v=49b38c3c082c')).exportProgress(show);
       // Files that could not be read (a demo picture while offline) are left out: say so
       if (r.skipped) toast(t('archive.exportedSkipped', r), false, 10000, { id: 'archive' });
       else toast(t('archive.exported', r), false, 4000, { id: 'archive' });
@@ -229,6 +248,8 @@ document.querySelectorAll('[data-lang]').forEach((b) => { b.onclick = () => swit
 applyStatic();
 paintLangButtons();
 initGame();
+initQuiz({ show: showScreen, title: toTitle });
+initPlayer();
 initSetup().catch((e) => toast(t('setup.presetFail', { msg: e.message }), true));
 toTitle();
 initBatches(async (gid) => {
@@ -341,14 +362,14 @@ if (LOCAL) {
   $('#set-demo').addEventListener('click', async () => {
     if (!(await confirmBox(t('settings.demoAsk'), t('common.ok')))) return;
     try {
-      await (await import('./local/backend.js?v=c8dcf291776f')).restoreDemo();
+      await (await import('./local/backend.js?v=49b38c3c082c')).restoreDemo();
       toast(t('settings.demoDone'));
       refreshContinue();
     } catch (e) { console.error(e); toast(t('err.local_internal'), true); }
   });
   $('#set-diag').addEventListener('click', once('diag', async () => {
     try {
-      await (await import('./local/archive.js?v=c8dcf291776f')).downloadDiag();
+      await (await import('./local/archive.js?v=49b38c3c082c')).downloadDiag();
       toast(t('settings.diagDone'), false, 6000);
     } catch (e) { console.error(e); toast(t('err.local_internal'), true); }
   }));
@@ -357,7 +378,7 @@ if (LOCAL) {
     if (!files?.length) return;
     toast(t('archive.importing'), false, 60000, { id: 'archive' });
     try {
-      const r = await (await import('./local/archive.js?v=c8dcf291776f')).importFolder(files);
+      const r = await (await import('./local/archive.js?v=49b38c3c082c')).importFolder(files);
       if (r.settings) {   // H07, first so the message below is in the restored language
         reloadSettings();
         if (r.settings.lang) switchLang(r.settings.lang);

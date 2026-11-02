@@ -1,8 +1,8 @@
 // The NVIDIA key: the settings field, the connection test and the first-run guide (B01-B04, B09, H06).
 // Both builds answer the same routes: the server tests with httpx, the browser build through the relay.
-import { LOCAL, get, post } from './api.js?v=c8dcf291776f';
-import { t } from './i18n.js?v=c8dcf291776f';
-import { $, closeModal, confirmBox, openModal, setNoKeyHelp } from './ui.js?v=c8dcf291776f';
+import { LOCAL, get, post } from './api.js?v=49b38c3c082c';
+import { t } from './i18n.js?v=49b38c3c082c';
+import { $, closeModal, confirmBox, openModal, setNoKeyHelp } from './ui.js?v=49b38c3c082c';
 
 // What gets pasted along with the key: quotes, "Bearer ", line breaks and spaces from a copied snippet (B03),
 // and the invisible zero-width characters web pages and documents put in (\s already covers U+FEFF)

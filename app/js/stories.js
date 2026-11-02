@@ -1,8 +1,8 @@
 // Story list on the title screen: open a story at its latest turn, or delete it; deleted stories wait 7 days in "recently deleted".
-import { del, get, post } from './api.js?v=c8dcf291776f';
-import { t } from './i18n.js?v=c8dcf291776f';
-import { $, closeModal, confirmBox, esc, loadThumbs, openModal, thumbAttr, toast, toastError } from './ui.js?v=c8dcf291776f';
-import { batchRow, rearm, refreshBatches } from './batch.js?v=c8dcf291776f';
+import { del, get, post } from './api.js?v=49b38c3c082c';
+import { t } from './i18n.js?v=49b38c3c082c';
+import { $, closeModal, confirmBox, esc, loadThumbs, openModal, thumbAttr, toast, toastError } from './ui.js?v=49b38c3c082c';
+import { batchRow, rearm, refreshBatches } from './batch.js?v=49b38c3c082c';
 
 const ACTIVE = ['running', 'images'];
 const UNDO_MS = 10000;   // how long the delete notice offers its undo button

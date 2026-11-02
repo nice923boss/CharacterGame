@@ -1,17 +1,17 @@
 // Game screen controller: plays a node's lines with a typewriter, runs turns over SSE, handles scene
 // changes, asset polling, save/load, the node tree and jumping back to an older node.
-import { del, get, job, post } from './api.js?v=c8dcf291776f';
-import { sound } from './sound.js?v=c8dcf291776f';
-import { LIMIT_SCALE, t } from './i18n.js?v=c8dcf291776f';
+import { del, get, job, post } from './api.js?v=49b38c3c082c';
+import { sound } from './sound.js?v=49b38c3c082c';
+import { LIMIT_SCALE, t } from './i18n.js?v=49b38c3c082c';
 import {
   $, closeModal, confirmBox, esc, helpNode, loadThumbs, openModal, paintWait, progress, settings, statusText, thumbAttr, toast,
   toastError,
-} from './ui.js?v=c8dcf291776f';
-import { renderTree, untakenOptions } from './tree.js?v=c8dcf291776f';
+} from './ui.js?v=49b38c3c082c';
+import { renderTree, untakenOptions } from './tree.js?v=49b38c3c082c';
 import {
   loadDraft, logLine, logTurn, openLog, openPressMenu, paintCount, paintEndingBack, recordTurnTime, safeEnd, saveDraft, seedLog,
   typicalTurn,
-} from './playaids.js?v=c8dcf291776f';
+} from './playaids.js?v=49b38c3c082c';
 
 const G = {
   stage: null, game: null, tree: null, assets: null, currentId: null,

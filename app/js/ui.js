@@ -1,5 +1,5 @@
 // Shared DOM helpers: modals, confirm dialog, toast, progress overlay, settings persisted in localStorage.
-import { t } from './i18n.js?v=c8dcf291776f';
+import { t } from './i18n.js?v=49b38c3c082c';
 
 export const $ = (sel) => document.querySelector(sel);
 

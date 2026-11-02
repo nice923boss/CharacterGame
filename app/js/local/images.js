@@ -2,11 +2,11 @@
 // same priorities, automatic re-queues, image modes and redraws, scenes and sprites drawn through the player's
 // relay, sprites cut out with the chroma key. The queue is kept in IndexedDB, so a reload carries on with it.
 // Skipped against the server: ComfyUI, rembg, the iso residue pass and the .raw intermediates.
-import { DATA } from './data.js?v=c8dcf291776f';
-import * as store from './store.js?v=c8dcf291776f';
-import * as llm from './llm.js?v=c8dcf291776f';
-import { diag } from './diag.js?v=c8dcf291776f';
-import { t } from '../i18n.js?v=c8dcf291776f';
+import { DATA } from './data.js?v=49b38c3c082c';
+import * as store from './store.js?v=49b38c3c082c';
+import * as llm from './llm.js?v=49b38c3c082c';
+import { diag } from './diag.js?v=49b38c3c082c';
+import { t } from '../i18n.js?v=49b38c3c082c';
 
 const A = DATA.art;
 const EXPRESSIONS = DATA.parser.EXPRESSIONS;

@@ -2,7 +2,7 @@
 // (B01, B02, B05), plus a relay check that needs no key (B07).
 // Spike 2026-10-03: NVIDIA checks the key before anything else, so a 503 (overloaded) on the text path and a 422
 // (empty body) on the image path still prove the key works; nothing is generated.
-import { DATA } from './data.js?v=c8dcf291776f';
+import { DATA } from './data.js?v=49b38c3c082c';
 
 const TIMEOUT_S = 20;
 const CACHE_S = 600;                   // the title line shows the last result this long (B05)
