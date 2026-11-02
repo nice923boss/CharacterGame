@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SDGs 英文闖關教學</title>
+<style>
+  :root {
+    --bg: #f6f3ec; --card: #ffffff; --text: #26231d; --muted: #6b655a;
+    --line: #e2dccf; --accent: #8a6a1f; --accent-soft: #f3e9cf;
+    --ok: #2f7a43; --bad: #a23b3b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12151d; --card: #1b2030; --text: #ece7db; --muted: #a49d8e;
+      --line: #2c3346; --accent: #d9b45a; --accent-soft: #2e2a1d;
+      --ok: #6fc785; --bad: #e38080;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12151d; --card: #1b2030; --text: #ece7db; --muted: #a49d8e;
+    --line: #2c3346; --accent: #d9b45a; --accent-soft: #2e2a1d;
+    --ok: #6fc785; --bad: #e38080;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 17px/1.75 "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 32px 16px 64px; }
+  header h1 { font-size: 2rem; margin: 0 0 4px; letter-spacing: .04em; }
+  header p { margin: 0; color: var(--muted); }
+  .links { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 8px; }
+  .links a {
+    display: inline-block; padding: 8px 16px; border-radius: 999px; text-decoration: none;
+    border: 1px solid var(--accent); color: var(--accent); font-weight: 600;
+  }
+  .links a.primary { background: var(--accent); color: var(--bg); }
+  nav.toc { margin: 24px 0; padding: 16px 20px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+  nav.toc ol { margin: 0; padding-left: 1.4em; columns: 2; column-gap: 32px; }
+  nav.toc a { color: var(--text); }
+  section { margin: 44px 0; }
+  section > h2 { font-size: 1.4rem; margin: 0 0 6px; padding-bottom: 6px; border-bottom: 2px solid var(--accent); }
+  section > p { margin: 8px 0 16px; }
+  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  figure { margin: 0; background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  figure img { display: block; width: 100%; height: auto; cursor: zoom-in; }
+  figcaption { padding: 10px 14px; font-size: .95rem; color: var(--muted); }
+  figcaption b { color: var(--text); }
+  .tip { background: var(--accent-soft); border-left: 4px solid var(--accent); padding: 10px 14px; border-radius: 6px; margin: 12px 0; }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--accent-soft); }
+  .ok { color: var(--ok); font-weight: 700; }
+  .bad { color: var(--bad); font-weight: 700; }
+  footer { margin-top: 56px; text-align: right; color: var(--muted); font-size: .8rem; }
+  #lightbox {
+    position: fixed; inset: 0; background: rgba(0,0,0,.85); display: none;
+    align-items: center; justify-content: center; padding: 16px; cursor: zoom-out; z-index: 10;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox img { max-width: 100%; max-height: 100%; border-radius: 6px; }
+  @media (max-width: 640px) {
+    nav.toc ol { columns: 1; }
+    header h1 { font-size: 1.6rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>用千枝物語做一個 SDGs 英文闖關</h1>
+    <p>示範題目：The Plastic-Free Night Market（SDG 12 責任消費與生產）。畫面是實際操作截圖，除了第 4 步的兩張，都來自線上版。</p>
+    <div class="links">
+      <a class="primary" href="https://nice923boss.github.io/CharacterGame/app/" target="_blank" rel="noopener">打開線上版 APP</a>
+      <a href="plastic-free-night-market.sdgquest.json" download>下載示範闖關檔</a>
+    </div>
+  </header>
+
+  <nav class="toc">
+    <ol>
+      <li><a href="#s1">進入 SDGs 英文闖關</a></li>
+      <li><a href="#s2">填基本設定</a></li>
+      <li><a href="#s3">設定 AI 金鑰</a></li>
+      <li><a href="#s4">AI 寫出英文草稿</a></li>
+      <li><a href="#s5">檢查與修改每一關</a></li>
+      <li><a href="#s6">AI 畫插圖</a></li>
+      <li><a href="#s7">儲存並開始試玩</a></li>
+      <li><a href="#s8">答錯會看到提示</a></li>
+      <li><a href="#s9">五關一路闖到底</a></li>
+      <li><a href="#s10">結局與任務完成</a></li>
+    </ol>
+  </nav>
+
+  <section id="s1">
+    <h2>1. 進入 SDGs 英文闖關</h2>
+    <p>打開 APP，在首頁按「SDGs 英文闖關」。第一次進來清單是空的，按「製作新的闖關遊戲」開始。</p>
+    <div class="shots">
+      <figure><img src="shots/01-title.jpg" alt="首頁" loading="lazy"><figcaption><b>首頁</b>：中間有「SDGs 英文闖關」按鈕。</figcaption></figure>
+      <figure><img src="shots/02-list-empty.jpg" alt="空的闖關清單" loading="lazy"><figcaption><b>闖關清單</b>：還沒有作品，按左上「製作新的闖關遊戲」。</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="s2">
+    <h2>2. 填基本設定</h2>
+    <p>依照學習單填寫：遊戲名稱、SDG 目標、角色（名字與一句介紹）、地點、問題、目標。問題與目標可以寫中文，AI 會改寫成英文。</p>
+    <div class="shots">
+      <figure><img src="shots/03-setup.jpg" alt="第一步基本設定" loading="lazy"><figcaption><b>第一步</b>：本例選 SDG 12，角色 Amy、Ben、Grandma Lin，地點士林夜市。</figcaption></figure>
+      <figure><img src="shots/04-ai-button.jpg" alt="AI 幫我寫英文草稿按鈕" loading="lazy"><figcaption><b>想法（選填）</b>：本例寫「第四關想要辦一個自備環保杯集點活動」，再按「AI 幫我寫英文草稿」。</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="s3">
+    <h2>3. 設定 AI 金鑰</h2>
+    <p>第一次用 AI 會提醒要先設定 NVIDIA API Key。照視窗步驟到 build.nvidia.com 申請，貼上後按「儲存並測試」。金鑰只存在自己的瀏覽器裡。</p>
+    <div class="shots">
+      <figure><img src="shots/05-need-key.jpg" alt="提示設定金鑰" loading="lazy"><figcaption><b>提示</b>：左上角出現「請先到設定填寫輝達 API Key」。</figcaption></figure>
+      <figure><img src="shots/06-key-setup.jpg" alt="金鑰設定視窗" loading="lazy"><figcaption><b>設定視窗</b>：三個步驟，取得金鑰、貼上測試、開始玩。</figcaption></figure>
+    </div>
+    <p class="tip">金鑰就像密碼，不要貼到作業、簡報或群組裡。</p>
+  </section>
+
+  <section id="s4">
+    <h2>4. AI 寫出英文草稿</h2>
+    <p>AI 依照你的設定寫出故事背景、五關對話、五個 A／B 問題（每題只有一個正確答案）、答錯提示和結局，APP 顯示通常要 1 到 3 分鐘。</p>
+    <div class="shots">
+      <figure><img src="shots/07-ai-drafting.jpg" alt="AI 撰寫中" loading="lazy"><figcaption><b>撰寫中</b>：可以按「取消」停止。（這兩張在本機測試版截取，介面與線上版相同）</figcaption></figure>
+      <figure><img src="shots/08-ai-result.jpg" alt="AI 草稿完成" loading="lazy"><figcaption><b>草稿完成</b>：第二步「英文故事背景」與 Level 1 都填好了。</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="s5">
+    <h2>5. 檢查與修改每一關</h2>
+    <p>AI 寫的只是草稿，一定要自己讀過。每一關可以改標題、對話、問題、選項 A／B、正確答案、答錯提示；結局也能增刪台詞。</p>
+    <div class="shots">
+      <figure><img src="shots/09-level-edit.jpg" alt="編輯 Level 1" loading="lazy"><figcaption><b>Level 1</b>：問題「What should Amy and Ben do first to help?」，正確答案選 B。</figcaption></figure>
+      <figure><img src="shots/10-ending-edit.jpg" alt="編輯結局" loading="lazy"><figcaption><b>結局（Ending）</b>：四句台詞，答完五關後出現。</figcaption></figure>
+    </div>
+    <p class="tip">檢查重點：英文是否讀得懂？正確答案真的只有一個嗎？提示有沒有說明為什麼？</p>
+  </section>
+
+  <section id="s6">
+    <h2>6. AI 畫插圖</h2>
+    <p>開場、五關、結局各一張，共 7 張。按「🎨 AI 畫出全部缺少的插圖」一次畫完（本例約 25 秒）。不滿意的單張可以按「🎨 重畫」。</p>
+    <div class="shots">
+      <figure><img src="shots/11-pictures-drawing.jpg" alt="正在畫 7 張插圖" loading="lazy"><figcaption><b>畫圖中</b>：「AI 正在畫第 1 張插圖，共 7 張」。</figcaption></figure>
+      <figure><img src="shots/12-pictures-done.jpg" alt="插圖完成" loading="lazy"><figcaption><b>完成</b>：每段旁邊出現縮圖，下方是英文「插圖描述」。</figcaption></figure>
+      <figure><img src="shots/13-redraw.jpg" alt="單張重畫" loading="lazy"><figcaption><b>單張重畫</b>：結局第一次把兩個角色畫成一個人，按「🎨 重畫」。</figcaption></figure>
+      <figure><img src="shots/14-redraw-done.jpg" alt="重畫完成" loading="lazy"><figcaption><b>重畫完成</b>：約 7 秒，結局插圖換新。</figcaption></figure>
+    </div>
+    <p class="tip">插圖描述用英文寫，同一個角色每次寫一樣的外觀，例如 a girl with a black ponytail in a yellow T-shirt，畫出來比較像同一個人。不要寫名字和文字。即使這樣，每張圖的長相仍可能有差異，需要時多重畫幾次挑選。</p>
+  </section>
+
+  <section id="s7">
+    <h2>7. 儲存並開始試玩</h2>
+    <p>按「儲存並試玩」。作品會出現在闖關清單，可以再「試玩」「編輯」「下載」分享給同學。</p>
+    <div class="shots">
+      <figure><img src="shots/15-list-saved.jpg" alt="清單中的作品" loading="lazy"><figcaption><b>清單</b>：The Plastic-Free Night Market 已儲存。</figcaption></figure>
+      <figure><img src="shots/16-play-intro.jpg" alt="開場畫面" loading="lazy"><figcaption><b>開場</b>：左邊插圖，右邊故事背景與角色介紹，按「開始闖關」。</figcaption></figure>
+      <figure><img src="shots/17-level1.jpg" alt="Level 1 對話" loading="lazy"><figcaption><b>Level 1</b>：對話一句一句出現，可按「朗讀」聽英文發音。</figcaption></figure>
+      <figure><img src="shots/18-level1-question.jpg" alt="Level 1 問題" loading="lazy"><figcaption><b>問題</b>：從 A、B 兩個選項中選一個。</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="s8">
+    <h2>8. 答錯會看到提示</h2>
+    <p>答錯不會往下走，會顯示提示讓你再想一次；答對才會出現「下一關」。</p>
+    <div class="shots">
+      <figure><img src="shots/19-wrong-hint.jpg" alt="答錯顯示提示" loading="lazy"><figcaption><b class="bad">答錯</b>：選 A 變紅色，出現「Not quite. Try again!」與提示。</figcaption></figure>
+      <figure><img src="shots/20-correct.jpg" alt="答對" loading="lazy"><figcaption><b class="ok">答對</b>：改選 B 變綠色，「Correct! 答對了！」並出現「下一關」。</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="s9">
+    <h2>9. 五關一路闖到底</h2>
+    <p>每一關都有自己的插圖與對話，上方圓點顯示目前進度。</p>
+    <table>
+      <tr><th>關卡</th><th>問題</th><th>正確答案</th></tr>
+      <tr><td>1 See the Problem</td><td>What should Amy and Ben do first to help?</td><td>B 找 Grandma Lin 談塑膠垃圾問題</td></tr>
+      <tr><td>2 A Small Change</td><td>What is the best way to encourage customers to bring cups?</td><td>B 自備杯給小折扣</td></tr>
+      <tr><td>3 Reusable Bags</td><td>How can they reduce plastic bag use effectively?</td><td>A 塑膠袋收費、賣布袋</td></tr>
+      <tr><td>4 Stamp Card Event</td><td>What makes the stamp card event successful for SDG 12?</td><td>A 大力宣傳並說明環保好處</td></tr>
+      <tr><td>5 Market Leaders</td><td>How to make the whole night market plastic-free in the long term?</td><td>A 建立「Green Seller」認證</td></tr>
+    </table>
+    <div class="shots" style="margin-top:16px">
+      <figure><img src="shots/21-level2.jpg" alt="Level 2" loading="lazy"><figcaption><b>Level 2</b>：Grandma Lin 的珍珠奶茶攤。</figcaption></figure>
+      <figure><img src="shots/22-level3.jpg" alt="Level 3" loading="lazy"><figcaption><b>Level 3</b>：夜市入口賣布袋。</figcaption></figure>
+      <figure><img src="shots/23-level4.jpg" alt="Level 4" loading="lazy"><figcaption><b>Level 4</b>：自備環保杯集點卡。</figcaption></figure>
+      <figure><img src="shots/24-level5.jpg" alt="Level 5" loading="lazy"><figcaption><b>Level 5</b>：綠色店家標章。</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="s10">
+    <h2>10. 結局與任務完成</h2>
+    <p>五關都答對後進入結局，最後出現「Mission Complete! 任務完成！」。星星看答錯次數：全對 3 顆，答錯 1 到 2 次 2 顆，更多次 1 顆。</p>
+    <div class="shots">
+      <figure><img src="shots/25-ending.jpg" alt="結局" loading="lazy"><figcaption><b>Ending</b>：幾個月後，士林夜市變成「Green Night Market」。</figcaption></figure>
+      <figure><img src="shots/26-complete-2stars.jpg" alt="任務完成 2 顆星" loading="lazy"><figcaption><b>答錯 1 次</b>：2 顆星。</figcaption></figure>
+      <figure><img src="shots/27-complete-3stars.jpg" alt="任務完成 3 顆星" loading="lazy"><figcaption><b>全部一次答對</b>：3 顆星。</figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>換你做做看</h2>
+    <p>1. 選一個 SDG 目標。 2. 想好 2 到 3 個角色、一個地點、一個問題和目標。 3. 讓 AI 寫草稿，再自己修改英文與答案。 4. 畫插圖、試玩，請同學玩玩看。</p>
+    <p class="tip">下載的闖關檔只包含文字與插圖描述，不含插圖。同學匯入後要自己按「AI 畫出全部缺少的插圖」，畫出來會和原作不同。</p>
+  </section>
+
+  <footer>製作者：黃政文</footer>
+</div>
+
+<div id="lightbox"><img alt=""></div>
+<script>
+  const box = document.getElementById('lightbox');
+  const big = box.querySelector('img');
+  document.querySelectorAll('figure img').forEach((img) => {
+    img.addEventListener('click', () => { big.src = img.src; big.alt = img.alt; box.classList.add('open'); });
+  });
+  box.addEventListener('click', () => box.classList.remove('open'));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') box.classList.remove('open'); });
+</script>
+</body>
+</html>

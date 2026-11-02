@@ -1,0 +1,163 @@
+{
+  "kind": "sdg-quest",
+  "version": 1,
+  "title": "The Plastic-Free Night Market",
+  "sdg": "12",
+  "sdg_other": "",
+  "characters": [
+    {
+      "name": "Amy",
+      "who": "a junior high student who loves the night market"
+    },
+    {
+      "name": "Ben",
+      "who": "Amy's classmate, good at science"
+    },
+    {
+      "name": "Grandma Lin",
+      "who": "an old lady who sells bubble tea at the market"
+    }
+  ],
+  "place": "Shilin Night Market in Taipei",
+  "problem": "夜市每天用掉大量一次性塑膠杯、吸管和塑膠袋，垃圾桶都滿出來",
+  "goal": "讓夜市變成減塑夜市，大家自備杯子和袋子",
+  "idea": "第四關想要辦一個自備環保杯集點活動",
+  "background": "Amy loves the Shilin Night Market. She sees many plastic cups, straws, and bags every night. The trash bins are full. Amy, her classmate Ben, and Grandma Lin want to change this. Their goal is a plastic-free night market where everyone brings their own cups and bags.",
+  "levels": [
+    {
+      "title": "See the Problem",
+      "lines": [
+        {
+          "speaker": "Narrator",
+          "text": "Amy and Ben walk through Shilin Night Market. They see trash bins overflowing with plastic cups and bags."
+        },
+        {
+          "speaker": "Amy",
+          "text": "Look at all this trash, Ben. It is terrible."
+        },
+        {
+          "speaker": "Ben",
+          "text": "Yes. Every drink uses a plastic cup and a straw. This is not responsible consumption."
+        }
+      ],
+      "question": "What should Amy and Ben do first to help?",
+      "a": "Buy more drinks to help the sellers earn money.",
+      "b": "Talk to Grandma Lin about the plastic waste problem.",
+      "answer": "B",
+      "hint": "Understanding the problem and talking to sellers is the first step to reduce waste. Buying more drinks creates more plastic trash.",
+      "scene": "a girl with a black ponytail in a yellow T-shirt and a boy with round glasses in a blue T-shirt point at trash bins overflowing with plastic cups and bags in a busy night market street"
+    },
+    {
+      "title": "A Small Change",
+      "lines": [
+        {
+          "speaker": "Grandma Lin",
+          "text": "Hello, children. Business is good, but I use many plastic cups every day."
+        },
+        {
+          "speaker": "Amy",
+          "text": "Grandma Lin, can we try something new? What if customers bring their own cups?"
+        },
+        {
+          "speaker": "Ben",
+          "text": "Science shows reusable cups save resources. We can start with a small discount."
+        }
+      ],
+      "question": "What is the best way to encourage customers to bring cups?",
+      "a": "Give a free plastic straw to every customer.",
+      "b": "Give a small discount for customers with their own cups.",
+      "answer": "B",
+      "hint": "A discount rewards the good behavior of reducing waste. Giving free plastic straws adds more single-use plastic.",
+      "scene": "an old woman with short grey hair and a green apron behind her bubble tea stall talks with a girl with a black ponytail in a yellow T-shirt and a boy with round glasses in a blue T-shirt, stacks of plastic cups on the counter"
+    },
+    {
+      "title": "Reusable Bags",
+      "lines": [
+        {
+          "speaker": "Narrator",
+          "text": "Many people buy snacks and put them in plastic bags. The ground is dirty with bags."
+        },
+        {
+          "speaker": "Ben",
+          "text": "We need to stop giving plastic bags for free."
+        },
+        {
+          "speaker": "Amy",
+          "text": "Let's sell nice cloth bags at the market entrance."
+        }
+      ],
+      "question": "How can they reduce plastic bag use effectively?",
+      "a": "Charge money for plastic bags and sell reusable cloth bags.",
+      "b": "Give thicker plastic bags so they do not break.",
+      "answer": "A",
+      "hint": "Charging for plastic bags makes people think before taking one. Thicker plastic bags are still single-use waste.",
+      "scene": "a girl with a black ponytail in a yellow T-shirt holds up colorful cloth bags at a night market entrance while a boy with round glasses in a blue T-shirt helps, plastic bags on the ground"
+    },
+    {
+      "title": "Stamp Card Event",
+      "lines": [
+        {
+          "speaker": "Amy",
+          "text": "Our stamp card for reusable cups is ready!"
+        },
+        {
+          "speaker": "Ben",
+          "text": "Great idea. Ten stamps get a free drink. This builds a habit."
+        },
+        {
+          "speaker": "Grandma Lin",
+          "text": "I printed the cards. Let's tell everyone tonight."
+        }
+      ],
+      "question": "What makes the stamp card event successful for SDG 12?",
+      "a": "Promote the event loudly and explain the environmental benefit.",
+      "b": "Keep the event secret so only a few people join.",
+      "answer": "A",
+      "hint": "Public promotion spreads the message of responsible consumption. A secret event does not change public behavior or reduce waste.",
+      "scene": "a girl with a black ponytail in a yellow T-shirt, a boy with round glasses in a blue T-shirt and an old woman with short grey hair and a green apron hand out paper stamp cards to customers holding reusable cups at a bubble tea stall"
+    },
+    {
+      "title": "Market Leaders",
+      "lines": [
+        {
+          "speaker": "Narrator",
+          "text": "Other sellers see Grandma Lin's success. They want to join the movement."
+        },
+        {
+          "speaker": "Ben",
+          "text": "We can make a 'Green Seller' sign for shops that reduce plastic."
+        },
+        {
+          "speaker": "Amy",
+          "text": "Then customers know which shops are eco-friendly."
+        }
+      ],
+      "question": "How to make the whole night market plastic-free in the long term?",
+      "a": "Create a 'Green Seller' certification for all shops to follow.",
+      "b": "Ask the government to close the night market at night.",
+      "answer": "A",
+      "hint": "A certification system encourages all sellers to change their production and consumption habits. Closing the market stops the culture, it does not solve the waste problem.",
+      "scene": "a girl with a black ponytail in a yellow T-shirt and a boy with round glasses in a blue T-shirt hang a green leaf badge on a food stall while happy sellers watch in a night market"
+    }
+  ],
+  "ending": [
+    {
+      "speaker": "Narrator",
+      "text": "Months later, Shilin Night Market is famous as a 'Green Night Market'."
+    },
+    {
+      "speaker": "Grandma Lin",
+      "text": "My hands hurt less from washing cups, and the street is clean."
+    },
+    {
+      "speaker": "Amy",
+      "text": "Everyone brings their own cups and bags now. We did it!"
+    },
+    {
+      "speaker": "Ben",
+      "text": "Responsible consumption works. Less waste, happy market."
+    }
+  ],
+  "intro_scene": "a girl with a black ponytail in a yellow T-shirt and a boy with round glasses in a blue T-shirt stand in a crowded Taipei night market at night, looking at an overflowing trash bin full of plastic cups and bags",
+  "ending_scene": "a clean bright night market full of happy people carrying reusable cups and cloth bags, a girl with a black ponytail in a yellow T-shirt, a boy with round glasses in a blue T-shirt and an old woman with short grey hair and a green apron smiling together in front"
+}
