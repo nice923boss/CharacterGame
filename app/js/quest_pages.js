@@ -1,8 +1,8 @@
 // Both kinds of quest as one list of pages, and the rules for playing that list (pure, tested in
 // quest_pages.test.mjs): the next page, the options a choice page shows, answers, keyword talk, playing a choice
 // again and the result. The screen is quiz_play.js.
-import { sceneOf } from './quest.js?v=6f163306a287';
-import { normalizeStory } from './quest_story.js?v=6f163306a287';
+import { sceneOf } from './quest.js?v=69d1ef9c6b81';
+import { normalizeStory } from './quest_story.js?v=69d1ef9c6b81';
 
 // ---------- a simple quest as pages ----------
 

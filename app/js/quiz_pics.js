@@ -1,9 +1,9 @@
 // Pictures of a quest in both editors (the form in quiz.js, the story in quiz_story_edit.js): drawing them with the
 // AI and taking one from the computer. The editor passes in how to save the quest, where the new pictures go and
 // where messages go: { save() -> saved quest or null, show(pictures), setMsg(text, error) }.
-import { job, post } from './api.js?v=6f163306a287';
-import { t } from './i18n.js?v=6f163306a287';
-import { progress, toastError } from './ui.js?v=6f163306a287';
+import { job, post } from './api.js?v=69d1ef9c6b81';
+import { t } from './i18n.js?v=69d1ef9c6b81';
+import { progress, toastError } from './ui.js?v=69d1ef9c6b81';
 
 // Draws the given pictures, or the missing ones when slots is empty; the quest is saved first, the job reads it
 export async function drawPics(slots, missing, { save, show, setMsg }) {

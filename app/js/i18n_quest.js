@@ -1,6 +1,6 @@
 // UI text of the story quest editor, the quest list's new buttons and the quest player, added to DICT (kept out of
 // i18n.js so that file stays readable). main.js imports this before the other modules.
-import { DICT } from './i18n.js?v=6f163306a287';
+import { DICT } from './i18n.js?v=69d1ef9c6b81';
 
 Object.assign(DICT.zh, {
   // -- quest list and form quest --

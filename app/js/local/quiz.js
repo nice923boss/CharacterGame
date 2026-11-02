@@ -1,12 +1,12 @@
 // SDGs English quest (browser build only): the AI writes a draft of a simple quest's levels and ending; quests of
 // both modes live in IndexedDB. The quest shapes and their rules are in ../quest.js and ../quest_story.js.
-import * as store from './store.js?v=6f163306a287';
-import * as llm from './llm.js?v=6f163306a287';
-import * as images from './images.js?v=6f163306a287';
-import { lastJson } from './story.js?v=6f163306a287';
-import { DRAFT_LEVELS, LIMITS, level, lines, normalize, problems, shuffleSides } from '../quest.js?v=6f163306a287';
-import { normalizeQuest, questPictures, questProblems, questScene } from '../quest_story.js?v=6f163306a287';
-import { storyFromSimple } from '../quest_pages.js?v=6f163306a287';
+import * as store from './store.js?v=69d1ef9c6b81';
+import * as llm from './llm.js?v=69d1ef9c6b81';
+import * as images from './images.js?v=69d1ef9c6b81';
+import { lastJson } from './story.js?v=69d1ef9c6b81';
+import { DRAFT_LEVELS, LIMITS, level, lines, normalize, problems, shuffleSides } from '../quest.js?v=69d1ef9c6b81';
+import { normalizeQuest, questPictures, questProblems, questScene } from '../quest_story.js?v=69d1ef9c6b81';
+import { storyFromSimple } from '../quest_pages.js?v=69d1ef9c6b81';
 
 const SDG_EN = {
   6: 'SDG 6 Clean Water and Sanitation', 11: 'SDG 11 Sustainable Cities and Communities',
@@ -223,13 +223,8 @@ export async function exportFile(id) {
   return { kind: FILE_KIND, version: FILE_VERSION, ...quest, pictures: pics };
 }
 
-// A quest file (version 1 or 2) becomes a new quest; version 1 files are simple quests with no mode, and their
-// levels get the ids 1 to n, so pictures l1 to l5 stay with their levels. Pictures that are not a JPEG, PNG or WebP
-// data URL are left out.
-export async function importFile(raw) {
-  if (raw?.kind !== FILE_KIND) throw { code: 'quiz_file_bad' };
-  if (Number(raw.version) > FILE_VERSION) throw { code: 'quiz_file_new' };
-  const q = await save('new', raw);
+// The file's pictures stored for quest q; pictures that are not a JPEG, PNG or WebP data URL are left out
+async function putPictures(q, raw) {
   let count = 0;
   for (const slot of questPictures(q)) {
     const m = DATA_URL.exec(typeof raw.pictures?.[slot] === 'string' ? raw.pictures[slot] : '');
@@ -238,7 +233,34 @@ export async function importFile(raw) {
     await store.putFile(picPath(q.id, slot), new Blob([bytes], { type: m[1] }));
     count += 1;
   }
+  return count;
+}
+
+function checkFile(raw) {
+  if (raw?.kind !== FILE_KIND) throw { code: 'quiz_file_bad' };
+  if (Number(raw.version) > FILE_VERSION) throw { code: 'quiz_file_new' };
+}
+
+// A quest file (version 1 or 2) becomes a new quest; version 1 files are simple quests with no mode, and their
+// levels get the ids 1 to n, so pictures l1 to l5 stay with their levels.
+export async function importFile(raw) {
+  checkFile(raw);
+  const q = await save('new', raw);
+  const count = await putPictures(q, raw);
   return { ...q, pictures: pictures(q), imported_pictures: count };
+}
+
+// A bundled demo quest file is added under a fixed id, the one the quest has on the live site, so the browser it
+// was written in keeps its own copy instead of getting a second one. A quest already under that id is never replaced.
+export async function addDemo(id, raw) {
+  checkFile(raw);
+  const quests = await all();
+  if (quests[id]) return false;
+  const now = store.nowIso();
+  const q = { ...normalizeQuest(raw), id, created_at: now, updated_at: now };
+  await store.kvPut(KV, { ...quests, [id]: q });
+  await putPictures(q, raw);
+  return true;
 }
 
 export async function remove(id) {

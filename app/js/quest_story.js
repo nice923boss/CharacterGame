@@ -1,8 +1,8 @@
 // Story quests, made page by page (narration, talk, captions, chapter cards, puzzles, notices, items, choices and
 // endings), and the functions that take a quest of either mode. The simple (form) mode is in quest.js; the rules
 // for playing are in quest_pages.js.
-import * as simple from './quest.js?v=6f163306a287';
-import { base, okId, str, withIds } from './quest.js?v=6f163306a287';
+import * as simple from './quest.js?v=69d1ef9c6b81';
+import { base, okId, str, withIds } from './quest.js?v=69d1ef9c6b81';
 
 export const PAGE_TYPES = ['narration', 'talk', 'caption', 'chapter', 'puzzle', 'notice', 'item', 'choice', 'ending'];
 export const ITEM_KINDS = ['doc', 'image', 'person'];

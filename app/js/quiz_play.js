@@ -1,10 +1,10 @@
 // Playing a quest (both kinds) in the upright frame: the picture on top and one page at a time below it, like the
 // story game's dialog box; the bag of items, keyword talk, hints, the result. The rules are quest_pages.js.
-import { t } from './i18n.js?v=6f163306a287';
-import { $, esc, setBackdrop } from './ui.js?v=6f163306a287';
-import { SDG_LOOK } from './quest.js?v=6f163306a287';
+import { t } from './i18n.js?v=69d1ef9c6b81';
+import { $, esc, setBackdrop } from './ui.js?v=69d1ef9c6b81';
+import { SDG_LOOK } from './quest.js?v=69d1ef9c6b81';
 import { playable, startState, page, visibleOptions, advance, pick, answer, hint, canGiveUp, giveUp, replyOf,
-  canRetry, retry, result } from './quest_pages.js?v=6f163306a287';
+  canRetry, retry, result } from './quest_pages.js?v=69d1ef9c6b81';
 
 const KIND_ICON = { doc: '📄', image: '🖼️', person: '🧑' };
 const LETTERS = 'ABCDEFGH';

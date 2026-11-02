@@ -1,13 +1,13 @@
 // SDGs English quest: the list of quests (form and story), the form editor (basic info, AI draft, 1 to 20 levels,
 // ending) and file export. The story editor is quiz_story_edit.js, playing is quiz_play.js; the storage and the AI
 // draft are in local/quiz.js (browser build only).
-import { del, get, job, post } from './api.js?v=6f163306a287';
-import { t } from './i18n.js?v=6f163306a287';
-import { $, confirmBox, esc, progress, toast, toastError } from './ui.js?v=6f163306a287';
-import { DRAFT_LEVELS, LIMITS, MAX_CHARS, MAX_LEVELS, SDGS, SDG_LOOK, newId, newLevel, normalize, picturesOf, problems } from './quest.js?v=6f163306a287';
-import { playQuest } from './quiz_play.js?v=6f163306a287';
-import { drawPics, uploadPic } from './quiz_pics.js?v=6f163306a287';
-import { initStoryEditor, newStory, openStoryEditor } from './quiz_story_edit.js?v=6f163306a287';
+import { del, get, job, post } from './api.js?v=69d1ef9c6b81';
+import { t } from './i18n.js?v=69d1ef9c6b81';
+import { $, confirmBox, esc, progress, toast, toastError } from './ui.js?v=69d1ef9c6b81';
+import { DRAFT_LEVELS, LIMITS, MAX_CHARS, MAX_LEVELS, SDGS, SDG_LOOK, newId, newLevel, normalize, picturesOf, problems } from './quest.js?v=69d1ef9c6b81';
+import { playQuest } from './quiz_play.js?v=69d1ef9c6b81';
+import { drawPics, uploadPic } from './quiz_pics.js?v=69d1ef9c6b81';
+import { initStoryEditor, newStory, openStoryEditor } from './quiz_story_edit.js?v=69d1ef9c6b81';
 
 export const sdgName = (q) => (q.sdg === 'other' ? q.sdg_other || t('quiz.sdg.other') : t(`quiz.sdg.${q.sdg}`));
 

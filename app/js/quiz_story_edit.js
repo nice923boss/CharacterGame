@@ -1,14 +1,14 @@
 // The story editor: a story quest's info, its pages (added, copied, moved and deleted one by one), its items and
 // scenes with their pictures, saving and trying it from any page. The HTML is in quiz_story_forms.js, the rules in
 // quest_story.js. Edits stay as typed; the quest is cleaned up (normalizeStory) when it is read and saved.
-import { post } from './api.js?v=6f163306a287';
-import { t } from './i18n.js?v=6f163306a287';
-import { $, confirmBox, toastError } from './ui.js?v=6f163306a287';
-import { newId } from './quest.js?v=6f163306a287';
-import { STORY_MAX, item, normalizeStory, page, questPictures, storyProblems } from './quest_story.js?v=6f163306a287';
-import { playQuest } from './quiz_play.js?v=6f163306a287';
-import { drawPics, uploadPic } from './quiz_pics.js?v=6f163306a287';
-import { infoHtml, itemsHtml, jumpsOf, pagesHtml, rowHtml, scenesHtml, summary } from './quiz_story_forms.js?v=6f163306a287';
+import { post } from './api.js?v=69d1ef9c6b81';
+import { t } from './i18n.js?v=69d1ef9c6b81';
+import { $, confirmBox, toastError } from './ui.js?v=69d1ef9c6b81';
+import { newId } from './quest.js?v=69d1ef9c6b81';
+import { STORY_MAX, item, normalizeStory, page, questPictures, storyProblems } from './quest_story.js?v=69d1ef9c6b81';
+import { playQuest } from './quiz_play.js?v=69d1ef9c6b81';
+import { drawPics, uploadPic } from './quiz_pics.js?v=69d1ef9c6b81';
+import { infoHtml, itemsHtml, jumpsOf, pagesHtml, rowHtml, scenesHtml, summary } from './quiz_story_forms.js?v=69d1ef9c6b81';
 
 let nav = null;      // { show(screenId), title(), quests() }
 let S = null;        // story quest open in the editor

@@ -1,10 +1,10 @@
 // The HTML of the story editor (quiz_story_edit.js): the page list, one form per page type, the items and the
 // scenes. Every field has data-k with its path in the quest; data-as says how its value is read (num, bool, lines,
 // need); data-redraw asks for the whole tab again after a change. Text the player sees is English (lang="en").
-import { t } from './i18n.js?v=6f163306a287';
-import { esc } from './ui.js?v=6f163306a287';
-import { LIMITS, MAX_CHARS, SDGS, SDG_LOOK } from './quest.js?v=6f163306a287';
-import { ITEM_KINDS, PAGE_TYPES, STORY_LIMITS as L, STORY_MAX } from './quest_story.js?v=6f163306a287';
+import { t } from './i18n.js?v=69d1ef9c6b81';
+import { esc } from './ui.js?v=69d1ef9c6b81';
+import { LIMITS, MAX_CHARS, SDGS, SDG_LOOK } from './quest.js?v=69d1ef9c6b81';
+import { ITEM_KINDS, PAGE_TYPES, STORY_LIMITS as L, STORY_MAX } from './quest_story.js?v=69d1ef9c6b81';
 
 export const ICON = { narration: '📖', talk: '💬', caption: '🔤', chapter: '🔖', puzzle: '🧩', notice: '📌', item: '🎒', choice: '🔀', ending: '🏁' };
 export const KIND_ICON = { doc: '📄', image: '🖼️', person: '🙂' };

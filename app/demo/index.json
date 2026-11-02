@@ -1,7 +1,17 @@
 {
- "version": "510ae3321420",
+ "version": "e70a8c56596c",
  "games": [
   "g_20260925_145203"
+ ],
+ "quests": [
+  {
+   "id": "qmvyx3srfd6t7",
+   "file": "quests/plastic-free-night-market.sdgquest.json"
+  },
+  {
+   "id": "qmvzd297b5a8s",
+   "file": "quests/lights-out-at-harbor-hill.sdgquest.json"
+  }
  ],
  "files": [
   "g_20260925_145203/assets/scenes/ghost_market_entrance.png",
@@ -21,6 +31,8 @@
   "g_20260925_145203/assets/sprites/c2/smile.png",
   "g_20260925_145203/assets/sprites/c2/surprised.png",
   "g_20260925_145203/game.json",
-  "g_20260925_145203/tree.json"
+  "g_20260925_145203/tree.json",
+  "quests/plastic-free-night-market.sdgquest.json",
+  "quests/lights-out-at-harbor-hill.sdgquest.json"
  ]
 }

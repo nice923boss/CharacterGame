@@ -1,16 +1,16 @@
 // Browser-side stand-in for server/main.py on GitHub Pages: the same /api routes and job events, backed by
 // IndexedDB and the player's own NVIDIA key and relay (both kept in this browser's localStorage only).
-import { DATA } from './data.js?v=6f163306a287';
-import * as store from './store.js?v=6f163306a287';
-import * as images from './images.js?v=6f163306a287';
-import * as turns from './turns.js?v=6f163306a287';
-import * as batch from './batch.js?v=6f163306a287';
-import * as llm from './llm.js?v=6f163306a287';
-import * as quiz from './quiz.js?v=6f163306a287';
-import { hint, probe, relayState, remember, verdict } from './check.js?v=6f163306a287';
-import { analyzeNovel } from './novel.js?v=6f163306a287';
-import { loadOpenCC } from './story.js?v=6f163306a287';
-import { diag, scrubKeys, watchErrors } from './diag.js?v=6f163306a287';
+import { DATA } from './data.js?v=69d1ef9c6b81';
+import * as store from './store.js?v=69d1ef9c6b81';
+import * as images from './images.js?v=69d1ef9c6b81';
+import * as turns from './turns.js?v=69d1ef9c6b81';
+import * as batch from './batch.js?v=69d1ef9c6b81';
+import * as llm from './llm.js?v=69d1ef9c6b81';
+import * as quiz from './quiz.js?v=69d1ef9c6b81';
+import { hint, probe, relayState, remember, verdict } from './check.js?v=69d1ef9c6b81';
+import { analyzeNovel } from './novel.js?v=69d1ef9c6b81';
+import { loadOpenCC } from './story.js?v=69d1ef9c6b81';
+import { diag, scrubKeys, watchErrors } from './diag.js?v=69d1ef9c6b81';
 
 const KEY = 'cg-nvidia-key';
 const RELAY = 'cg-relay';
@@ -33,7 +33,11 @@ export const conn = () => ({ key: lsGet(KEY), relay: lsGet(RELAY) || DATA.relay 
 // ---------- start-up and the bundled demo ----------
 
 async function importDemo(force) {
-  if (!force && await store.kvGet('demoVersion')) return 0;   // imported before: never overwrite player progress
+  // Imported before: never overwrite player progress. Demo quests have their own mark, so a browser that got the
+  // stories from an earlier build still gets them.
+  const storiesDone = !force && !!(await store.kvGet('demoVersion'));
+  const questsDone = !force && !!(await store.kvGet('demoQuests'));
+  if (storiesDone && questsDone) return 0;
   let index;
   try {
     index = await (await fetch('demo/index.json', { cache: 'no-cache' })).json();
@@ -46,6 +50,20 @@ async function importDemo(force) {
     if (!res.ok) throw new Error(`HTTP ${res.status} ${url}`);
     return res.json();
   };
+  if (!questsDone) {
+    // Added once; one the player deleted comes back only by restoring the demo, one already there stays as it is
+    let lost = 0;
+    for (const { id, file } of index.quests) {
+      try {
+        await quiz.addDemo(id, await getJson(`demo/${file}`));
+      } catch (e) {
+        console.error('demo quest unavailable', id, e);
+        lost += 1;
+      }
+    }
+    if (!lost) await store.kvPut('demoQuests', index.version);
+  }
+  if (storiesDone) return 0;
   let missing = 0;
   for (const gid of index.games) {
     // After a partial first import, stories that already came in keep the player's progress
