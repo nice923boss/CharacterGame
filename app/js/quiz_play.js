@@ -1,8 +1,8 @@
 // Playing an SDGs English quest: the story background, then five levels (dialogue one line per click, one A/B
 // question; a wrong answer shows the hint and the same question again), then the ending and "Mission Complete!".
-import { t } from './i18n.js?v=b9289d23998c';
-import { $, esc } from './ui.js?v=b9289d23998c';
-import { SDG_LOOK } from './quest.js?v=b9289d23998c';
+import { t } from './i18n.js?v=a2430d6da8c1';
+import { $, esc } from './ui.js?v=a2430d6da8c1';
+import { SDG_LOOK } from './quest.js?v=a2430d6da8c1';
 
 const SPEAKER_COLORS = ['#f2c46d', '#8fd0ff', '#ffa3b5', '#a6e3a1', '#d3b4ff', '#ffcf99'];
 
@@ -92,9 +92,10 @@ function paint() {
         return `<button class="qp-opt${state}" data-qp="pick" data-side="${side}"${solved(Q, S) ? ' disabled' : ''}>
           <b>${side}</b><span lang="en">${esc(text)}</span></button>`;
       };
+      // The author's own words replace the default ones when the level has them
       const feedback = !S.picked ? '' : solved(Q, S)
-        ? `<p class="qp-ok" role="status">✔ Correct! ${esc(t('quiz.play.correct'))}</p>`
-        : `<div class="qp-hint" role="status"><b>✘ Not quite. Try again!</b><p lang="en">💡 Hint: ${esc(l.hint)}</p></div>`;
+        ? `<p class="qp-ok" role="status">✔ ${l.right ? `<span lang="en">${esc(l.right)}</span>` : `Correct! ${esc(t('quiz.play.correct'))}`}</p>`
+        : `<div class="qp-hint" role="status"><b lang="en">✘ ${esc(l.wrong || 'Not quite. Try again!')}</b><p lang="en">💡 Hint: ${esc(l.hint)}</p></div>`;
       ask = `<div class="qp-ask"><p class="qp-q" lang="en">${esc(l.question)}</p>
         <div class="qp-opts">${opt('A', l.a)}${opt('B', l.b)}</div>${feedback}</div>`;
     }
@@ -115,13 +116,14 @@ function step(next) {
   paint();
 }
 
-// What the read-aloud button says: the latest line, or the question with both options, or the hint after a miss
+// What the read-aloud button says: the latest line, or the question with both options, or the feedback after an answer
 function speakText() {
   if (S.stage === 'intro') return Q.background;
   if (S.stage === 'done') return 'Mission Complete!';
   if (asking(Q, S)) {
     const l = Q.levels[S.level];
-    if (S.picked && !solved(Q, S)) return `Hint: ${l.hint}`;
+    if (S.picked && !solved(Q, S)) return `${l.wrong ? `${l.wrong} ` : ''}Hint: ${l.hint}`;
+    if (solved(Q, S) && l.right) return l.right;
     return `${l.question} A: ${l.a}. B: ${l.b}.`;
   }
   const last = linesOf(Q, S)[S.shown - 1];

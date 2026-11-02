@@ -1,7 +1,7 @@
 // Thin client for the FastAPI backend. SSE jobs are POST streams read with fetch.
 // Server errors arrive as codes; Error.message is the translated text and Error.code keeps the code.
-import { errorText } from './i18n.js?v=b9289d23998c';
-import { settings } from './ui.js?v=b9289d23998c';
+import { errorText } from './i18n.js?v=a2430d6da8c1';
+import { settings } from './ui.js?v=a2430d6da8c1';
 
 function fail(code, params = {}) {
   const e = new Error(errorText(code, params));
@@ -42,7 +42,7 @@ async function request(path, init) {
 
 // GitHub Pages build: /api/* runs in this browser (js/local/backend.js) instead of on a server
 export const LOCAL = !!document.querySelector('meta[name="cg-local"]');
-const backend = LOCAL ? import('./local/backend.js?v=b9289d23998c') : null;
+const backend = LOCAL ? import('./local/backend.js?v=a2430d6da8c1') : null;
 const isApi = (path) => path.startsWith('/api/');
 // Local modules throw { code, params } like the server's error events; anything else is a bug
 function asError(e) {

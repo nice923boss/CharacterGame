@@ -1,10 +1,10 @@
 // SDGs English quest (browser build only): the AI writes a draft of the five levels and the ending; quests live in
 // IndexedDB. The quest shape and its rules are in ../quest.js.
-import * as store from './store.js?v=b9289d23998c';
-import * as llm from './llm.js?v=b9289d23998c';
-import * as images from './images.js?v=b9289d23998c';
-import { lastJson } from './story.js?v=b9289d23998c';
-import { LEVELS, LIMITS, PICTURES, level, lines, normalize, problems, sceneOf, shuffleSides } from '../quest.js?v=b9289d23998c';
+import * as store from './store.js?v=a2430d6da8c1';
+import * as llm from './llm.js?v=a2430d6da8c1';
+import * as images from './images.js?v=a2430d6da8c1';
+import { lastJson } from './story.js?v=a2430d6da8c1';
+import { LEVELS, LIMITS, PICTURES, level, lines, normalize, problems, sceneOf, shuffleSides } from '../quest.js?v=a2430d6da8c1';
 
 const SDG_EN = {
   6: 'SDG 6 Clean Water and Sanitation', 11: 'SDG 11 Sustainable Cities and Communities',
@@ -95,7 +95,16 @@ const STYLE = 'colorful anime storybook illustration, cel shaded, warm friendly 
 const TAIL = 'no text, no letters, no words, no signs with writing';
 const picPath = (id, slot) => `quiz/${id}/${slot}.jpg`;
 
-export const picturePrompt = (q, slot) => `${STYLE}, ${sceneOf(q, slot)}, ${TAIL}`;
+// NVIDIA's content filter refuses some first names (Alex, Sam) in any scene, on every seed (2026-11-02 probe), and a
+// name tells the picture nothing, so the cast's names become "a person"
+function withoutNames(text, characters) {
+  return characters.reduce((s, c) => {
+    const name = c.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return s.replace(new RegExp(`(?<![\\p{L}\\p{N}])${name}(?![\\p{L}\\p{N}])`, 'giu'), 'a person');
+  }, text);
+}
+
+export const picturePrompt = (q, slot) => `${STYLE}, ${withoutNames(sceneOf(q, slot), q.characters)}, ${TAIL}`;
 
 // slot -> address of the picture, for the slots that have one
 export function pictures(id) {
@@ -126,6 +135,14 @@ export async function drawPictures(id, body, emit, conn, signal) {
   emit({ type: 'final', pictures: pictures(id) });
 }
 
+// A picture the author chose on the computer (the editor has already cut it to size) takes the slot's place
+export async function putPicture(id, slot, blob) {
+  if (!(await all())[id]) throw { code: 'quiz_missing' };
+  if (!PICTURES.includes(slot) || !(blob instanceof Blob) || !/^image\/(jpeg|png|webp)$/.test(blob.type)) throw { code: 'quiz_pic_bad' };
+  await store.putFile(picPath(id, slot), blob);
+  return { pictures: pictures(id) };
+}
+
 // ---------- storage ----------
 
 async function all() { return (await store.kvGet(KV)) || {}; }
@@ -151,6 +168,45 @@ export async function save(id, raw) {
   const q = { ...normalize(raw), id: qid, created_at: quests[qid]?.created_at || now, updated_at: now };
   await store.kvPut(KV, { ...quests, [qid]: q });
   return q;
+}
+
+// ---------- quest file (.sdgquest.json) ----------
+
+const FILE_KIND = 'sdg-quest';
+const DATA_URL = /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+=*)$/;
+
+async function dataUrl(blob) {
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  let bin = '';
+  // Chunks keep String.fromCharCode under the argument limit
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return `data:${blob.type || 'image/jpeg'};base64,${btoa(bin)}`;
+}
+
+// The quest with its pictures inside, so one file carries the whole game to another browser
+export async function exportFile(id) {
+  const { id: _, pictures: __, ...quest } = await load(id);
+  const pics = {};
+  for (const slot of PICTURES) {
+    const blob = await store.fileBlob(picPath(id, slot));
+    if (blob) pics[slot] = await dataUrl(blob);
+  }
+  return { kind: FILE_KIND, version: 1, ...quest, pictures: pics };
+}
+
+// A quest file becomes a new quest; pictures that are not a JPEG, PNG or WebP data URL are left out
+export async function importFile(raw) {
+  if (raw?.kind !== FILE_KIND) throw { code: 'quiz_file_bad' };
+  const q = await save('new', raw);
+  let count = 0;
+  for (const slot of PICTURES) {
+    const m = DATA_URL.exec(typeof raw.pictures?.[slot] === 'string' ? raw.pictures[slot] : '');
+    if (!m) continue;
+    const bytes = Uint8Array.from(atob(m[2]), (c) => c.charCodeAt(0));
+    await store.putFile(picPath(q.id, slot), new Blob([bytes], { type: m[1] }));
+    count += 1;
+  }
+  return { ...q, pictures: pictures(q.id), imported_pictures: count };
 }
 
 export async function remove(id) {

@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap" rel="stylesheet" crossorigin="anonymous">
-<link rel="stylesheet" href="css/style.css?v=b9289d23998c">
+<link rel="stylesheet" href="css/style.css?v=a2430d6da8c1">
 <script src="https://cdn.jsdelivr.net/npm/p5@1.11.3/lib/p5.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -123,6 +123,7 @@
         <p class="hint" data-i18n="quiz.editHint"></p>
         <button class="btn small ghost" id="qz-edit-back" data-i18n="common.back">返回</button></header>
       <div id="qz-edit-body" class="qz-edit-body"></div>
+      <input type="file" id="qz-pic-file" accept="image/*" hidden>
       <footer class="panel-foot">
         <div><p class="hint" id="qz-key"></p><p class="hint" id="qz-msg" role="status" aria-live="polite"></p></div>
         <span class="head-acts">
@@ -179,9 +180,9 @@
               <li><b>第一步：基本設定</b>。填遊戲名稱，選一個 SDG 主題：SDG 6 乾淨水資源、SDG 11 永續城市與社區、SDG 12 減少浪費、SDG 13 氣候行動，或「其他」（自己填主題）。
                 新增主要角色（可以超過兩位，最多六位），每位寫英文名字和一句介紹。再寫地點、問題、目標，這些可以用中文寫。</li>
               <li><b>讓 AI 寫英文草稿（選用）</b>。按「AI 幫我寫英文草稿」，大約 1 到 3 分鐘，AI 會依你的設定寫出英文故事背景、五關對話與題目、提示和結局，用簡單英文（約國高中程度）。正確答案會隨機放在 A 或 B。</li>
-              <li><b>第二步：修改成自己的作品</b>。每個欄位都可以直接改。每關要有：關卡名稱、至少一句對話（說話者和英文句子）、題目、選項 A、選項 B、勾選哪一個是正確答案、答錯時顯示的英文提示。</li>
+              <li><b>第二步：修改成自己的作品</b>。每個欄位都可以直接改。每關要有：關卡名稱、至少一句對話（說話者和英文句子）、題目、選項 A、選項 B、勾選哪一個是正確答案、答錯時顯示的英文提示。也可以填「答對時的回饋」「答錯時的回饋」（選填），寫自己的英文回饋句，例如答對時寫「Great! Now the fish can swim in clean water.」；空白就顯示預設的 Correct! 或 Not quite. Try again!，答錯時提示照樣會出現。</li>
               <li><b>結局</b>：寫幾句英文結局對話。「Mission Complete! 任務完成！」會自動加在最後，不用自己打。</li>
-              <li><b>插圖（選用）</b>：開場、五關、結局各一張，共 7 張。在故事背景下方按「🎨 AI 畫出全部缺少的插圖」，或在單張旁按「🎨 AI 畫這張」「🎨 重畫」。每張旁的「插圖描述」用英文寫畫面內容，同一個角色每次都寫一樣的外觀（例如 a girl with a black ponytail in a yellow T-shirt），畫出來比較像同一個人；不要寫名字和文字。描述留空時，AI 依地點與該段第一句對話作畫。遊玩時插圖顯示在對話左邊。</li>
+              <li><b>插圖（選用）</b>：開場、五關、結局各一張，共 7 張。在故事背景下方按「🎨 AI 畫出全部缺少的插圖」，或在單張旁按「🎨 AI 畫這張」「🎨 重畫」。每張旁的「插圖描述」用英文寫畫面內容，同一個角色每次都寫一樣的外觀（例如 a girl with a black ponytail in a yellow T-shirt），畫出來比較像同一個人；不要寫名字和文字。描述留空時，AI 依地點與該段第一句對話作畫。不用 AI 也可以：按「📁 用電腦的圖片」或「📁 換成電腦的圖片」選自己的圖（手繪掃描、照片都可以），會取代那一張 AI 插圖；圖片會裁成 4:3 中間的部分，和遊玩畫面一樣。遊玩時插圖顯示在對話左邊。</li>
               <li>按「儲存並試玩」。如果還有沒填的欄位，下方會列出缺哪一關、缺什麼。</li>
             </ol>
             <p class="hint">不想用 AI 也可以：跳過草稿按鈕，從第二步自己寫。每關的行動都要和你選的 SDG 有關，例如 SDG 6 就是撿垃圾讓河水變乾淨、節約用水、修漏水的水管。</p>
@@ -198,15 +199,15 @@
             <ul>
               <li>先看故事背景與角色，按「開始闖關」。</li>
               <li>對話一次出現一句，按「下一句」或點對話區繼續。</li>
-              <li>對話播完出現題目，按 A 或 B（鍵盤也可以按 A、B 鍵）。答錯會出現紅色的 Hint，再選一次；答對出現 Correct!，按「下一關」。</li>
-              <li>右上角「🔊 朗讀」會用英文唸出目前的句子、題目或提示，可以練聽力和發音。</li>
+              <li>對話播完出現題目，按 A 或 B（鍵盤也可以按 A、B 鍵）。答錯會出現紅色的回饋與 Hint，再選一次；答對出現 Correct!（或作者寫的回饋），按「下一關」。</li>
+              <li>右上角「🔊 朗讀」會用英文唸出目前的句子、題目、提示或回饋，可以練聽力和發音。</li>
               <li>過完五關播放結局，最後顯示「Mission Complete! 任務完成！」和星星：全對 3 顆，錯 1 到 2 次 2 顆，錯更多次 1 顆。</li>
             </ul>
           </section>
           <section id="g-zh-share"><h3>六、交作業與分享</h3>
             <ul>
-              <li><b>下載</b>：在闖關列表按「下載」，得到一個 <code>.sdgquest.json</code> 檔，可以交給老師，或傳給同學。</li>
-              <li><b>匯入</b>：在闖關列表按「匯入闖關檔」，選擇別人給你的 <code>.sdgquest.json</code>，就能玩對方的遊戲。</li>
+              <li><b>下載</b>：在闖關列表按「下載」，得到一個 <code>.sdgquest.json</code> 檔，已經畫好的插圖也包在裡面，可以交給老師，或傳給同學。</li>
+              <li><b>匯入</b>：在闖關列表按「匯入闖關檔」，選擇別人給你的 <code>.sdgquest.json</code>，連同插圖一起載入，就能玩對方的遊戲。</li>
               <li><b>複製學習單格式</b>：在編輯畫面按「複製學習單格式」，整份內容會依學習單的順序（Game Title、Main Characters、Story Background、Level 1 到 5、Ending、Answer Key）複製起來，可以貼到 Word 或 Google 文件交出。</li>
               <li>闖關遊戲存在這台電腦的瀏覽器裡。換電腦或清除瀏覽器資料前，請先下載檔案保存。</li>
             </ul>
@@ -245,9 +246,9 @@
               <li><b>Press "+ Make a new quest"</b>.</li>
               <li><b>Step 1: basic info</b>. Type the game title and pick an SDG: SDG 6 Clean Water, SDG 11 Sustainable Communities, SDG 12 Reduce Waste, SDG 13 Climate Action, or Other (type your own). Add the main characters (more than two is fine, up to six) with an English name and a short description, then the place, the problem and the goal.</li>
               <li><b>Let the AI write an English draft (optional)</b>. Press "AI: write an English draft". In about 1 to 3 minutes it writes the background, five levels of dialogue and questions, hints and the ending in simple English. The correct answer is put on A or B at random.</li>
-              <li><b>Step 2: make it your own</b>. Edit any field. Every level needs a title, at least one dialogue line (speaker and English text), a question, option A, option B, which option is correct, and a hint for a wrong answer.</li>
+              <li><b>Step 2: make it your own</b>. Edit any field. Every level needs a title, at least one dialogue line (speaker and English text), a question, option A, option B, which option is correct, and a hint for a wrong answer. You can also fill in "Words for a right answer" and "Words for a wrong answer" (optional) with your own English feedback, for example "Great! Now the fish can swim in clean water." Empty ones show the default Correct! or Not quite. Try again!, and a wrong answer still shows the hint.</li>
               <li><b>Ending</b>: a few English lines. "Mission Complete! 任務完成！" is added at the end for you.</li>
-              <li><b>Pictures (optional)</b>: one for the opening, one per level and one for the ending, 7 in all. Press "🎨 AI: draw every missing picture" under the background, or "🎨 Draw" / "🎨 Redraw" next to one picture. Each picture has an English description: describe each character's looks the same way every time (for example a girl with a black ponytail in a yellow T-shirt) so they look alike, and leave out names and writing. With an empty description the AI draws from the place and the first line of that part. When playing, the picture shows beside the dialogue.</li>
+              <li><b>Pictures (optional)</b>: one for the opening, one per level and one for the ending, 7 in all. Press "🎨 AI: draw every missing picture" under the background, or "🎨 Draw" / "🎨 Redraw" next to one picture. Each picture has an English description: describe each character's looks the same way every time (for example a girl with a black ponytail in a yellow T-shirt) so they look alike, and leave out names and writing. With an empty description the AI draws from the place and the first line of that part. You can skip the AI too: press "📁 Use my picture" or "📁 Replace with my picture" and pick your own image (a scanned drawing or a photo); it replaces that AI picture and is cut to the middle 4:3 part, the same as the game shows. When playing, the picture shows beside the dialogue.</li>
               <li>Press "Save and test". Anything still missing is listed at the bottom.</li>
             </ol>
             <p class="hint">You can skip the AI and write everything yourself. Each level's action should fit your SDG, for example cleaning a river or saving water for SDG 6.</p>
@@ -264,15 +265,15 @@
             <ul>
               <li>Read the background and the characters, then press "Start".</li>
               <li>Dialogue appears one line at a time: press "Next" or click the dialogue.</li>
-              <li>Answer with A or B (the A and B keys work too). A wrong answer shows a hint; try again. A correct answer shows Correct! and "Next level".</li>
-              <li>"🔊 Read aloud" reads the current line, question or hint in English.</li>
+              <li>Answer with A or B (the A and B keys work too). A wrong answer shows feedback and a hint; try again. A correct answer shows Correct! (or the author's own words) and "Next level".</li>
+              <li>"🔊 Read aloud" reads the current line, question, hint or feedback in English.</li>
               <li>The end shows "Mission Complete! 任務完成！" and stars: 3 with no mistakes, 2 with one or two, 1 with more.</li>
             </ul>
           </section>
           <section id="g-en-share"><h3>6. Handing in and sharing</h3>
             <ul>
-              <li><b>Download</b>: in the quest list press "Download" to get a <code>.sdgquest.json</code> file for your teacher or classmates.</li>
-              <li><b>Import</b>: press "Import quest file" and pick a <code>.sdgquest.json</code> to play someone else's quest.</li>
+              <li><b>Download</b>: in the quest list press "Download" to get a <code>.sdgquest.json</code> file for your teacher or classmates. The pictures already drawn are inside it.</li>
+              <li><b>Import</b>: press "Import quest file" and pick a <code>.sdgquest.json</code> to play someone else's quest, pictures included.</li>
               <li><b>Copy as worksheet</b>: in the editor, copies the whole quest in worksheet order (Game Title, Main Characters, Story Background, Levels 1 to 5, Ending, Answer Key) to paste into a document.</li>
               <li>Quests are kept in this computer's browser. Download them before you change computers or clear browser data.</li>
             </ul>
@@ -517,6 +518,6 @@
   <div id="offline" role="alert" hidden data-i18n="net.offline">網路已中斷，送出會暫停，恢復連線後自動重試</div>
   <footer class="credit" data-i18n="app.credit">製作者：黃政文</footer>
 </div>
-<script type="module" src="js/main.js?v=b9289d23998c"></script>
+<script type="module" src="js/main.js?v=a2430d6da8c1"></script>
 </body>
 </html>

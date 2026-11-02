@@ -1,7 +1,8 @@
 // Browser port of server/llm_client.py. Calls go to the player's CORS relay with the player's own NVIDIA key;
 // the same retry groups, cooldowns, RPM window, watchdogs and content filter as the server.
-import { DATA } from './data.js?v=b9289d23998c';
-import { diag } from './diag.js?v=b9289d23998c';
+import { DATA } from './data.js?v=a2430d6da8c1';
+import { diag } from './diag.js?v=a2430d6da8c1';
+import { probe } from './check.js?v=a2430d6da8c1';
 
 const L = DATA.llm;
 // Failure kinds as in the server, plus network (this browser cannot reach the relay) and upstream (the relay
@@ -235,7 +236,12 @@ async function attempt(cand, messages, emit, temperature, conn, signal) {
       const text = (await resp.text().catch(() => '')).slice(0, 300);
       if (status === 403 && text.includes('origin_not_allowed')) throw { code: 'relay_origin' };
       if (status === 429 && text.includes('relay_quota')) throw { code: 'relay_quota' };
-      if (status === 401 || status === 403) throw { code: 'key_rejected' };
+      if (status === 401 || status === 403) {
+        // NVIDIA now and then refuses a good key for a moment (see images.js draw): only a key the smallest
+        // request refuses too stops the story; otherwise this answer is retried like a busy one
+        if ((await probe('text', conn)).state === 'key_rejected') throw { code: 'key_rejected' };
+        throw new AttemptFailure('transient', `HTTP ${status}`, false, null, status);
+      }
       if (status === 502 && text.includes('upstream_unreachable')) throw new AttemptFailure('upstream', text, false, null, status);
       if (status === 410 || (status === 404 && MODEL_GONE.test(text))) {
         console.warn(`llm ${cand.model}: model not found or retired, check the candidate list`);

@@ -2,11 +2,12 @@
 // same priorities, automatic re-queues, image modes and redraws, scenes and sprites drawn through the player's
 // relay, sprites cut out with the chroma key. The queue is kept in IndexedDB, so a reload carries on with it.
 // Skipped against the server: ComfyUI, rembg, the iso residue pass and the .raw intermediates.
-import { DATA } from './data.js?v=b9289d23998c';
-import * as store from './store.js?v=b9289d23998c';
-import * as llm from './llm.js?v=b9289d23998c';
-import { diag } from './diag.js?v=b9289d23998c';
-import { t } from '../i18n.js?v=b9289d23998c';
+import { DATA } from './data.js?v=a2430d6da8c1';
+import * as store from './store.js?v=a2430d6da8c1';
+import * as llm from './llm.js?v=a2430d6da8c1';
+import { diag } from './diag.js?v=a2430d6da8c1';
+import { probe } from './check.js?v=a2430d6da8c1';
+import { t } from '../i18n.js?v=a2430d6da8c1';
 
 const A = DATA.art;
 const EXPRESSIONS = DATA.parser.EXPRESSIONS;
@@ -14,11 +15,13 @@ export const P_SCENE = 0; export const P_SPEAKER = 1; export const P_CALM = 2; e
 const QUEUE = 'imageQueue';         // kv record holding the queue between page loads
 const FRONT_FRESH_MS = 10000;       // a front tab that stopped announcing itself this long ago no longer counts
 
-// retryable: false when trying the same prompt again later cannot help (filtered prompt, refused key)
+// retryable: false when trying the same prompt again later cannot help (filtered prompt, refused key).
+// code: set when the player has to fix something first (key_rejected: the key itself is wrong)
 class ImageFailed extends Error {
-  constructor(message, retryable = true) {
+  constructor(message, retryable = true, code = null) {
     super(message);
     this.retryable = retryable;
+    this.code = code;
   }
 }
 
@@ -352,6 +355,7 @@ async function draw(prompt, seed) {
   if (!relay) throw new ImageFailed(t('img.noRelay'), false);
   const body = JSON.stringify({ prompt: soften(prompt), width: A.SIZE, height: A.SIZE, seed: seed % 2 ** 31, steps: A.STEPS });
   let data;
+  let keyOk = null;   // checked on the first refusal only
   for (const backoff of [...A.RETRY_BACKOFF_S, null]) {
     await llm.imageSlot();
     const ctrl = new AbortController();
@@ -373,11 +377,17 @@ async function draw(prompt, seed) {
       clearTimeout(timer);
     }
     if (data) break;
-    if (res.status === 429 && (await res.text().catch(() => '')).includes('relay_quota')) {
-      throw new ImageFailed(t('err.relay_quota'), false);
-    }
-    if (res.status === 401 || res.status === 403) throw new ImageFailed(t('img.keyRejected', { status: res.status }), false);
-    if (!A.RETRY_STATUS.includes(res.status) || backoff === null) {
+    const text = await res.text().catch(() => '');
+    if (res.status === 429 && text.includes('relay_quota')) throw new ImageFailed(t('err.relay_quota'), false);
+    if (res.status === 403 && text.includes('origin_not_allowed')) throw new ImageFailed(t('err.relay_origin'), false);
+    if (res.status === 401 || res.status === 403) {
+      // NVIDIA now and then refuses a good key for a moment (2026-11-02: a player's 403, then the same key drew
+      // 14 pictures in a row), so the key is checked on the smallest text request, as saving it does. Refused
+      // there too, the key is wrong; accepted, this answer is retried like a busy one
+      if (keyOk === null) keyOk = (await probe('text', { key, relay })).state !== 'key_rejected';
+      if (!keyOk) throw new ImageFailed(t('img.keyRejected', { status: res.status }), false, 'key_rejected');
+      if (backoff === null) throw new ImageFailed(t('img.refused', { status: res.status }));
+    } else if (!A.RETRY_STATUS.includes(res.status) || backoff === null) {
       // NVIDIA also answers 404 while a function is briefly unavailable, so a later round may still work
       throw new ImageFailed(t('img.http', { status: res.status }), A.RETRY_STATUS.includes(res.status) || res.status === 404);
     }
@@ -402,7 +412,7 @@ export async function picture(prompt, width, height) {
   try {
     img = await fitDrawn(draw(prompt, Math.floor(Math.random() * 2 ** 31)), width, height);
   } catch (e) {
-    if (e instanceof ImageFailed) throw { code: 'picture_failed', params: { reason: e.message } };
+    if (e instanceof ImageFailed) throw e.code ? { code: e.code } : { code: 'picture_failed', params: { reason: e.message } };
     throw e;
   }
   const cv = new OffscreenCanvas(width, height);

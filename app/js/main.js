@@ -1,18 +1,18 @@
 // Entry point: screen switching, title menu, toolbar and settings wiring.
-import { LOCAL, activeJobs, get, post } from './api.js?v=b9289d23998c';
-import { applyStatic, errorText, lang, setLang, t } from './i18n.js?v=b9289d23998c';
-import { sound } from './sound.js?v=b9289d23998c';
-import { createStage } from './stage.js?v=b9289d23998c';
-import { $, bindSettings, confirmBox, esc, openModal, progress, reloadSettings, toast, toastError } from './ui.js?v=b9289d23998c';
-import { initSetup, isBatchMode, loadPresets, paintEstimate, resetSetup, setupDirty, startGame } from './setup.js?v=b9289d23998c';
-import { currentGameId, enterGame, initGame, leaveGame, openSlots, openTree } from './game.js?v=b9289d23998c';
-import { openStories } from './stories.js?v=b9289d23998c';
-import { openLog } from './playaids.js?v=b9289d23998c';
-import { batchActive, initBatches, refreshBatches, requestNotifyPermission } from './batch.js?v=b9289d23998c';
-import { demoGame, enable, initConnect, keyNowText, openOnboard } from './connect.js?v=b9289d23998c';
-import { paintBackup, paintStorage, watchStore, watchUpdate } from './upkeep.js?v=b9289d23998c';
-import { initQuiz, openQuests } from './quiz.js?v=b9289d23998c';
-import { initPlayer } from './quiz_play.js?v=b9289d23998c';
+import { LOCAL, activeJobs, get, post } from './api.js?v=a2430d6da8c1';
+import { applyStatic, errorText, lang, setLang, t } from './i18n.js?v=a2430d6da8c1';
+import { sound } from './sound.js?v=a2430d6da8c1';
+import { createStage } from './stage.js?v=a2430d6da8c1';
+import { $, bindSettings, confirmBox, esc, openModal, progress, reloadSettings, toast, toastError } from './ui.js?v=a2430d6da8c1';
+import { initSetup, isBatchMode, loadPresets, paintEstimate, resetSetup, setupDirty, startGame } from './setup.js?v=a2430d6da8c1';
+import { currentGameId, enterGame, initGame, leaveGame, openSlots, openTree } from './game.js?v=a2430d6da8c1';
+import { openStories } from './stories.js?v=a2430d6da8c1';
+import { openLog } from './playaids.js?v=a2430d6da8c1';
+import { batchActive, initBatches, refreshBatches, requestNotifyPermission } from './batch.js?v=a2430d6da8c1';
+import { demoGame, enable, initConnect, keyNowText, openOnboard } from './connect.js?v=a2430d6da8c1';
+import { paintBackup, paintStorage, watchStore, watchUpdate } from './upkeep.js?v=a2430d6da8c1';
+import { initQuiz, openQuests } from './quiz.js?v=a2430d6da8c1';
+import { initPlayer } from './quiz_play.js?v=a2430d6da8c1';
 
 document.documentElement.classList.toggle('local', LOCAL);
 const stage = createStage($('#canvas-host'));
@@ -127,7 +127,7 @@ const actions = {
     const show = (pct) => toast(t('archive.exporting', { pct }), false, 60000, { id: 'archive' });
     show(0);
     try {
-      const r = await (await import('./local/archive.js?v=b9289d23998c')).exportProgress(show);
+      const r = await (await import('./local/archive.js?v=a2430d6da8c1')).exportProgress(show);
       // Files that could not be read (a demo picture while offline) are left out: say so
       if (r.skipped) toast(t('archive.exportedSkipped', r), false, 10000, { id: 'archive' });
       else toast(t('archive.exported', r), false, 4000, { id: 'archive' });
@@ -362,14 +362,14 @@ if (LOCAL) {
   $('#set-demo').addEventListener('click', async () => {
     if (!(await confirmBox(t('settings.demoAsk'), t('common.ok')))) return;
     try {
-      await (await import('./local/backend.js?v=b9289d23998c')).restoreDemo();
+      await (await import('./local/backend.js?v=a2430d6da8c1')).restoreDemo();
       toast(t('settings.demoDone'));
       refreshContinue();
     } catch (e) { console.error(e); toast(t('err.local_internal'), true); }
   });
   $('#set-diag').addEventListener('click', once('diag', async () => {
     try {
-      await (await import('./local/archive.js?v=b9289d23998c')).downloadDiag();
+      await (await import('./local/archive.js?v=a2430d6da8c1')).downloadDiag();
       toast(t('settings.diagDone'), false, 6000);
     } catch (e) { console.error(e); toast(t('err.local_internal'), true); }
   }));
@@ -378,7 +378,7 @@ if (LOCAL) {
     if (!files?.length) return;
     toast(t('archive.importing'), false, 60000, { id: 'archive' });
     try {
-      const r = await (await import('./local/archive.js?v=b9289d23998c')).importFolder(files);
+      const r = await (await import('./local/archive.js?v=a2430d6da8c1')).importFolder(files);
       if (r.settings) {   // H07, first so the message below is in the restored language
         reloadSettings();
         if (r.settings.lang) switchLang(r.settings.lang);

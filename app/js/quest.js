@@ -8,7 +8,7 @@ export const SDG_LOOK = {
 };
 // Field limits; the editor uses the same numbers for maxlength
 export const LIMITS = { title: 80, name: 30, who: 120, place: 200, problem: 300, goal: 300, idea: 400, background: 900,
-  levelTitle: 80, line: 300, question: 300, option: 200, hint: 300, sdgOther: 80, scene: 400 };
+  levelTitle: 80, line: 300, question: 300, option: 200, hint: 300, feedback: 300, sdgOther: 80, scene: 400 };
 // One picture per stage of the game: the story background, each level, the ending
 export const PICTURES = ['intro', 'l1', 'l2', 'l3', 'l4', 'l5', 'ending'];
 export const MAX_CHARS = 6;
@@ -26,12 +26,14 @@ export function lines(rows) {
     .filter((r) => r.text);
 }
 
+// right / wrong: the author's own words after a right or a wrong answer (optional; the player has default words)
 export function level(raw) {
   const o = raw?.options && typeof raw.options === 'object' ? raw.options : {};
   return {
     title: levelTitle(raw?.title), lines: lines(raw?.lines), question: str(raw?.question, LIMITS.question),
     a: str(raw?.a ?? o.A ?? o.a, LIMITS.option), b: str(raw?.b ?? o.B ?? o.b, LIMITS.option),
-    answer: answer(raw?.answer), hint: str(raw?.hint, LIMITS.hint), scene: str(raw?.scene, LIMITS.scene),
+    answer: answer(raw?.answer), hint: str(raw?.hint, LIMITS.hint),
+    right: str(raw?.right, LIMITS.feedback), wrong: str(raw?.wrong, LIMITS.feedback), scene: str(raw?.scene, LIMITS.scene),
   };
 }
 

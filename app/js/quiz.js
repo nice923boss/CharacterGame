@@ -1,10 +1,10 @@
 // SDGs English quest: the list of quests, the editor (basic info, AI draft, five levels, ending) and file export.
 // Playing a quest is in quiz_play.js; the storage and the AI draft are in local/quiz.js (browser build only).
-import { del, get, job, post } from './api.js?v=b9289d23998c';
-import { t } from './i18n.js?v=b9289d23998c';
-import { $, confirmBox, esc, progress, toast, toastError } from './ui.js?v=b9289d23998c';
-import { LIMITS, MAX_CHARS, PICTURES, SDGS, SDG_LOOK, normalize, problems } from './quest.js?v=b9289d23998c';
-import { playQuest } from './quiz_play.js?v=b9289d23998c';
+import { del, get, job, post } from './api.js?v=a2430d6da8c1';
+import { t } from './i18n.js?v=a2430d6da8c1';
+import { $, confirmBox, esc, progress, toast, toastError } from './ui.js?v=a2430d6da8c1';
+import { LIMITS, MAX_CHARS, PICTURES, SDGS, SDG_LOOK, normalize, problems } from './quest.js?v=a2430d6da8c1';
+import { playQuest } from './quiz_play.js?v=a2430d6da8c1';
 
 export const sdgName = (q) => (q.sdg === 'other' ? q.sdg_other || t('quiz.sdg.other') : t(`quiz.sdg.${q.sdg}`));
 
@@ -12,6 +12,7 @@ let nav = null;     // { show(screenId), title() } from main.js
 let Q = null;       // quest open in the editor
 let dirty = false;
 let pics = {};      // slot -> picture address for the quest in the editor
+let picSlot = '';   // the slot the picture file chooser is open for
 
 // ---------- quest list ----------
 
@@ -36,7 +37,7 @@ async function rowAction(act, id) {
   try {
     if (act === 'edit') { openEditor(await get(`/api/quiz/${id}`)); return; }
     if (act === 'play') { playQuest(await get(`/api/quiz/${id}`), nav, { back: openQuests }); return; }
-    if (act === 'export') { download(await get(`/api/quiz/${id}`)); return; }
+    if (act === 'export') { download(await get(`/api/quiz/${id}/file`)); return; }
     if (act === 'delete') {
       const q = await get(`/api/quiz/${id}`);
       if (!(await confirmBox(t('quiz.deleteAsk', { title: q.title || t('quiz.untitled') }), t('common.delete')))) return;
@@ -46,9 +47,9 @@ async function rowAction(act, id) {
   } catch (e) { toastError(e); }
 }
 
+// q: the quest file with its pictures inside (exportFile in local/quiz.js)
 function download(q) {
-  const { id, pictures, ...rest } = q;
-  const blob = new Blob([JSON.stringify({ kind: 'sdg-quest', version: 1, ...rest }, null, 2)], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify(q, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = `${(q.title || 'quest').replace(/[\\/:*?"<>|]+/g, '_').slice(0, 60)}.sdgquest.json`;
@@ -58,10 +59,9 @@ function download(q) {
 
 async function importFile(file) {
   try {
-    const raw = JSON.parse(await file.text());
-    if (raw?.kind !== 'sdg-quest') throw new Error('kind');
-    await post('/api/quiz/new', normalize(raw));
-    toast(t('quiz.imported', { title: raw.title || t('quiz.untitled') }));
+    const q = await post('/api/quiz/import', JSON.parse(await file.text()));
+    const title = q.title || t('quiz.untitled');
+    toast(q.imported_pictures ? t('quiz.importedPics', { title, n: q.imported_pictures }) : t('quiz.imported', { title }));
     openQuests();
   } catch (e) {
     console.warn('quest import failed', e);
@@ -105,7 +105,8 @@ function pictureHtml(slot, sceneKey, scene) {
     ${pics[slot] ? `<img src="${esc(pics[slot])}" alt="${esc(picName(slot))}">` : `<span class="qz-nopic">${esc(t('quiz.pic.none'))}</span>`}
     <div>${field(sceneKey, t(sceneKey === 'intro_scene' ? 'quiz.introScene' : sceneKey === 'ending_scene' ? 'quiz.endingScene' : 'quiz.scene'), scene,
       { area: true, max: LIMITS.scene, lang: 'en', ph: t('quiz.ph.scene') })}
-      <button class="btn tiny" data-do="pic" data-slot="${slot}">${esc(t(pics[slot] ? 'quiz.pic.redraw' : 'quiz.pic.draw'))}</button></div>
+      <button class="btn tiny" data-do="pic" data-slot="${slot}">${esc(t(pics[slot] ? 'quiz.pic.redraw' : 'quiz.pic.draw'))}</button>
+      <button class="btn tiny" data-do="upload" data-slot="${slot}">${esc(t(pics[slot] ? 'quiz.pic.replace' : 'quiz.pic.upload'))}</button></div>
   </div>`;
 }
 
@@ -120,6 +121,7 @@ function levelHtml(l, i) {
     <div class="row2">${field(`${p}.a`, t('quiz.optA'), l.a, { max: LIMITS.option, lang: 'en' })}${field(`${p}.b`, t('quiz.optB'), l.b, { max: LIMITS.option, lang: 'en' })}</div>
     <div class="qz-answers">${radio('A')}${radio('B')}</div>
     ${field(`${p}.hint`, t('quiz.hint'), l.hint, { max: LIMITS.hint, lang: 'en', ph: t('quiz.ph.hint') })}
+    <div class="row2">${field(`${p}.right`, t('quiz.right'), l.right, { max: LIMITS.feedback, lang: 'en', ph: `Correct! ${t('quiz.play.correct')}` })}${field(`${p}.wrong`, t('quiz.wrong'), l.wrong, { max: LIMITS.feedback, lang: 'en', ph: 'Not quite. Try again!' })}</div>
     ${pictureHtml(`l${i + 1}`, `${p}.scene`, l.scene)}
   </section>`;
 }
@@ -238,6 +240,43 @@ async function drawPics(slots) {
   }
 }
 
+const PIC_W = 960;
+const PIC_H = 720;
+
+// A picture from the computer cut to the 4:3 frame the player shows (its middle), at the AI pictures' size; a
+// transparent PNG gets a white background
+async function fitPicture(file) {
+  const img = await createImageBitmap(file);
+  const scale = Math.max(PIC_W / img.width, PIC_H / img.height);
+  const w = img.width * scale;
+  const h = img.height * scale;
+  const canvas = document.createElement('canvas');
+  canvas.width = PIC_W;
+  canvas.height = PIC_H;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, PIC_W, PIC_H);
+  ctx.drawImage(img, (PIC_W - w) / 2, (PIC_H - h) / 2, w, h);
+  img.close();
+  return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('canvas.toBlob gave nothing'))), 'image/jpeg', 0.9));
+}
+
+// The chosen file takes the place of the slot's picture (an AI one too); the quest is saved first so it has an id
+async function uploadPic(slot, file) {
+  let blob;
+  try { blob = await fitPicture(file); } catch (e) {
+    console.warn('picture file could not be read', file.type, e);
+    setMsg(t('quiz.pic.notImage'), true);
+    return;
+  }
+  if (!(await save())) return;
+  try {
+    pics = (await post(`/api/quiz/${Q.id}/picture/${slot}`, blob)).pictures;
+    render();
+    setMsg(t('quiz.pic.uploaded'));
+  } catch (e) { setMsg(e.message, true); toastError(e); }
+}
+
 // The text of the whole quest laid out like the worksheet, for copying onto paper or into a document
 export function worksheetText(q) {
   const say = (rows) => rows.map((l) => (l.speaker ? `${l.speaker}: ${l.text}` : l.text)).join('\n');
@@ -246,7 +285,8 @@ export function worksheetText(q) {
     `Story Background:\n${q.background}`];
   q.levels.forEach((l, i) => {
     parts.push(`Level ${i + 1}: ${l.title}\n${say(l.lines)}\nQuestion: ${l.question}\nA. ${l.a}\nB. ${l.b}\n` +
-      `Correct Answer: ${l.answer}\nHint: ${l.hint}`);
+      `Correct Answer: ${l.answer}\nHint: ${l.hint}` +
+      `${l.right ? `\nIf Correct: ${l.right}` : ''}${l.wrong ? `\nIf Wrong: ${l.wrong}` : ''}`);
   });
   parts.push(`Ending:\n${say(q.ending)}\nMission Complete! 任務完成！`);
   parts.push(`Answer Key: ${q.levels.map((l, i) => `${i + 1}${l.answer}`).join(' ')}`);
@@ -283,6 +323,7 @@ export function initQuiz(navigation) {
   $('#qz-new').onclick = () => openEditor({});
   $('#qz-import').onclick = () => $('#qz-file').click();
   $('#qz-file').onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) importFile(f); };
+  $('#qz-pic-file').onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) uploadPic(picSlot, f); };
   $('#qz-home-back').onclick = () => nav.title();
   $('#qz-list').addEventListener('click', (e) => {
     const b = e.target.closest('[data-row]');
@@ -308,6 +349,7 @@ export function initQuiz(navigation) {
     const act = b.dataset.do;
     if (act === 'draft') { draft(); return; }
     if (act === 'pic') { drawPics([b.dataset.slot]); return; }
+    if (act === 'upload') { picSlot = b.dataset.slot; $('#qz-pic-file').click(); return; }
     if (act === 'picsAll') { drawPics([]); return; }
     if (act === 'addChar') Q.characters.push({ name: '', who: '' });
     if (act === 'delChar') Q.characters.splice(Number(b.dataset.i), 1);

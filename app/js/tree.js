@@ -2,8 +2,8 @@
 // consecutive turns in the same scene wrapped in a labelled box. Hover shows the turn, click jumps there.
 // Branches a batch could not write hang off their parent as red stubs; clicking one writes it again.
 // Options nobody picked yet hang off their turn as dashed stubs; clicking one starts writing from there.
-import { errorText, t } from './i18n.js?v=b9289d23998c';
-import { $, esc } from './ui.js?v=b9289d23998c';
+import { errorText, t } from './i18n.js?v=a2430d6da8c1';
+import { $, esc } from './ui.js?v=a2430d6da8c1';
 
 const DX = 58;
 const DY = 46;

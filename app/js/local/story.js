@@ -1,6 +1,6 @@
 // Browser port of server/turn_parser.py and server/prompts.py. The prompt text and constants come from
 // data.js, which tools/build_pages.py exports from the Python modules, so both versions send the same prompts.
-import { DATA } from './data.js?v=b9289d23998c';
+import { DATA } from './data.js?v=a2430d6da8c1';
 
 const P = DATA.parser;
 const PR = DATA.prompts;
@@ -15,7 +15,7 @@ const EMPH_RE = /\*{1,2}([^*]+?)\*{1,2}/g;
 let convert = (s) => s;
 export async function loadOpenCC() {
   try {
-    const OpenCC = await import('../../vendor/cn2t.js?v=b9289d23998c');
+    const OpenCC = await import('../../vendor/cn2t.js?v=a2430d6da8c1');
     convert = OpenCC.Converter({ from: 'cn', to: 'twp' });
     return true;
   } catch (e) {
