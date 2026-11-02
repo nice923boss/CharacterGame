@@ -469,6 +469,10 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .qz-ans input { width: auto; }
 .qz-draft { display: flex; align-items: center; gap: 1.6cqh; margin-top: 1cqh; }
 .qz-draft .hint { flex: 1; }
+.qz-pic { display: grid; grid-template-columns: 24cqh 1fr; gap: 1.4cqh; align-items: start; margin-top: 1cqh; }
+.qz-pic img, .qz-nopic { width: 24cqh; aspect-ratio: 4 / 3; border-radius: 0.8cqh; border: 0.15cqh solid var(--gold-dim); object-fit: cover; }
+.qz-nopic { display: grid; place-items: center; font-size: 1.8cqh; color: var(--muted); background: rgba(255, 255, 255, 0.04); }
+.qz-pic label { margin-top: 0; }
 #qz-key { color: var(--gold); }
 #qz-msg.error { color: var(--danger); }
 
@@ -482,6 +486,10 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 .qp-dots i { width: 2cqh; height: 2cqh; border-radius: 50%; border: 0.25cqh solid var(--sdg); }
 .qp-dots i.now { box-shadow: 0 0 1cqh var(--sdg); }
 .qp-dots i.done { background: var(--sdg); }
+.qp-main { flex: 1; min-height: 0; display: flex; gap: 2cqh; }
+.qp-pic { flex: 0 0 46%; margin: 0; align-self: flex-start; }
+.qp-pic img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 1.4cqh; border: 0.3cqh solid var(--sdg);
+  box-shadow: 0 1cqh 3cqh rgba(0, 0, 0, 0.5); }
 .qp-body { flex: 1; overflow-y: auto; padding: 0 1cqh; cursor: pointer; font-size: 2.5cqh; line-height: 1.5; }
 .qp-body h3 { font-size: 2.8cqh; color: var(--sdg); margin-top: 0.4cqh; }
 .qp-bg { font-size: 2.6cqh; }
@@ -538,7 +546,10 @@ html[lang="en"] .guide-zh, html:not([lang="en"]) .guide-en { display: none; }
   .qz-line, .qz-char { grid-template-columns: 1fr auto; }
   .qz-line > input:first-child { grid-column: 1 / -1; }
   .qz-draft { flex-direction: column; align-items: stretch; }
+  .qz-pic { grid-template-columns: 1fr; }
   .qp-opts { grid-template-columns: 1fr; }
+  .qp-main { flex-direction: column; }
+  .qp-pic { flex: none; width: 60%; align-self: center; }
   .qp-mission { font-size: 4.6cqh; }
   .panel-foot { flex-wrap: wrap; }
 }

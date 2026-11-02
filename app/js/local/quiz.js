@@ -1,9 +1,10 @@
 // SDGs English quest (browser build only): the AI writes a draft of the five levels and the ending; quests live in
 // IndexedDB. The quest shape and its rules are in ../quest.js.
-import * as store from './store.js?v=49b38c3c082c';
-import * as llm from './llm.js?v=49b38c3c082c';
-import { lastJson } from './story.js?v=49b38c3c082c';
-import { LEVELS, LIMITS, level, lines, normalize, problems, shuffleSides } from '../quest.js?v=49b38c3c082c';
+import * as store from './store.js?v=de84f38ef71d';
+import * as llm from './llm.js?v=de84f38ef71d';
+import * as images from './images.js?v=de84f38ef71d';
+import { lastJson } from './story.js?v=de84f38ef71d';
+import { LEVELS, LIMITS, PICTURES, level, lines, normalize, problems, sceneOf, shuffleSides } from '../quest.js?v=de84f38ef71d';
 
 const SDG_EN = {
   6: 'SDG 6 Clean Water and Sanitation', 11: 'SDG 11 Sustainable Cities and Communities',
@@ -42,20 +43,25 @@ Rules:
    answer is A").
 5. The ending has 2 to 4 dialogue lines that show the goal reached.
 6. "background" is 2 to 4 sentences: who the characters are, where they are, the problem and the goal.
+7. Every "scene" (one per level, plus "intro_scene" and "ending_scene") is one English sentence describing a
+   picture for that moment: the place, the people and what they are doing. Describe how the people look (age,
+   hair, clothes) the same way every time instead of using their names. No words or signs in the picture.
 
 JSON shape:
 {"background": "...",
  "levels": [{"title": "Short level title, without the level number", "lines": [{"speaker": "Name", "text": "..."}],
              "question": "What should they do?", "options": {"A": "...", "B": "..."}, "answer": "A",
-             "hint": "..."}],
- "ending": [{"speaker": "Name", "text": "..."}]}`;
+             "hint": "...", "scene": "..."}],
+ "ending": [{"speaker": "Name", "text": "..."}],
+ "intro_scene": "...", "ending_scene": "..."}`;
   return [{ role: 'system', content: SYSTEM }, { role: 'user', content: user }];
 }
 
 function draftFrom(d) {
   if (!d || !Array.isArray(d.levels) || d.levels.length < LEVELS) return null;
   const levels = d.levels.slice(0, LEVELS).map(level);
-  const draft = { background: str(d.background, LIMITS.background), levels, ending: lines(d.ending) };
+  const draft = { background: str(d.background, LIMITS.background), levels, ending: lines(d.ending),
+    intro_scene: str(d.intro_scene, LIMITS.scene), ending_scene: str(d.ending_scene, LIMITS.scene) };
   const missing = problems({ ...normalize({}), title: 'x', ...draft });
   return missing.length ? null : draft;
 }
@@ -81,6 +87,43 @@ export async function generate(body, emit, conn, signal) {
   emit({ type: 'final', draft: { ...draft, levels: shuffleSides(draft.levels) } });
 }
 
+// ---------- pictures ----------
+
+const PIC_W = 960;
+const PIC_H = 720;
+const STYLE = 'colorful anime storybook illustration, cel shaded, warm friendly mood, detailed background';
+const TAIL = 'no text, no letters, no words, no signs with writing';
+const picPath = (id, slot) => `quiz/${id}/${slot}.jpg`;
+
+export const picturePrompt = (q, slot) => `${STYLE}, ${sceneOf(q, slot)}, ${TAIL}`;
+
+// slot -> address of the picture, for the slots that have one
+export function pictures(id) {
+  const out = {};
+  for (const slot of PICTURES) {
+    const path = picPath(id, slot);
+    if (store.hasFile(path)) out[slot] = store.fileUrl(path);
+  }
+  return out;
+}
+
+// Job: { slots } in (all missing pictures when empty); one "picture" event per drawn picture, then the final
+// event with every picture the quest has. The quest is read as saved, so the editor saves first.
+export async function drawPictures(id, body, emit, signal) {
+  const q = await load(id);
+  const asked = (Array.isArray(body?.slots) ? body.slots : []).filter((s) => PICTURES.includes(s));
+  const slots = asked.length ? asked : PICTURES.filter((s) => !store.hasFile(picPath(id, s)));
+  for (const [i, slot] of slots.entries()) {
+    if (signal?.aborted) throw { code: 'cancelled' };
+    emit({ type: 'picture_start', slot, n: i + 1, total: slots.length });
+    const blob = await images.picture(picturePrompt(q, slot), PIC_W, PIC_H);
+    if (!(await all())[id]) throw { code: 'quiz_missing' };
+    await store.putFile(picPath(id, slot), blob);
+    emit({ type: 'picture', slot, pictures: pictures(id) });
+  }
+  emit({ type: 'final', pictures: pictures(id) });
+}
+
 // ---------- storage ----------
 
 async function all() { return (await store.kvGet(KV)) || {}; }
@@ -94,7 +137,7 @@ export async function list() {
 export async function load(id) {
   const q = (await all())[id];
   if (!q) throw { code: 'quiz_missing' };
-  return normalize(q);
+  return { ...normalize(q), pictures: pictures(id) };
 }
 
 // id "new" makes a new quest; returns the saved quest
@@ -112,5 +155,6 @@ export async function remove(id) {
   const { [id]: gone, ...rest } = await all();
   if (!gone) throw { code: 'quiz_missing' };
   await store.kvPut(KV, rest);
+  for (const slot of PICTURES) if (store.hasFile(picPath(id, slot))) await store.deleteFile(picPath(id, slot));
   return { ok: true };
 }

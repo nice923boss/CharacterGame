@@ -3,11 +3,11 @@
 // checkpoint, so a closed or reloaded page picks up at the first branch not written yet. Turns run up to
 // BATCH_CONCURRENCY at a time, fewer while the model is busy; a failed branch waits outside its slot before each
 // retry, and whatever still fails gets one more try after the whole pass.
-import { DATA } from './data.js?v=49b38c3c082c';
-import * as store from './store.js?v=49b38c3c082c';
-import * as images from './images.js?v=49b38c3c082c';
-import * as turns from './turns.js?v=49b38c3c082c';
-import { diag } from './diag.js?v=49b38c3c082c';
+import { DATA } from './data.js?v=de84f38ef71d';
+import * as store from './store.js?v=de84f38ef71d';
+import * as images from './images.js?v=de84f38ef71d';
+import * as turns from './turns.js?v=de84f38ef71d';
+import { diag } from './diag.js?v=de84f38ef71d';
 
 const { BATCH_CONCURRENCY, BATCH_TURN_RETRIES, BATCH_RETRY_WAITS_S, BATCH_TAIL_WAIT_S, BATCH_GROW_AFTER } = DATA.limits;
 const IMAGE_POLL_MS = 5000;

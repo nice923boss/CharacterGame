@@ -1,9 +1,9 @@
 // Batch progress on the title screen, and the "tree finished" notice: in-game popup, sound and a browser notification.
 // The server keeps working with the page closed; the notice needs this page open (it is found by polling).
-import { LOCAL, get } from './api.js?v=49b38c3c082c';
-import { errorText, t } from './i18n.js?v=49b38c3c082c';
-import { sound } from './sound.js?v=49b38c3c082c';
-import { $, confirmBox, esc, toast } from './ui.js?v=49b38c3c082c';
+import { LOCAL, get } from './api.js?v=de84f38ef71d';
+import { errorText, t } from './i18n.js?v=de84f38ef71d';
+import { sound } from './sound.js?v=de84f38ef71d';
+import { $, confirmBox, esc, toast } from './ui.js?v=de84f38ef71d';
 
 const POLL_MS = 5000;
 const ACK_KEY = 'chienzhi.batchAcked';

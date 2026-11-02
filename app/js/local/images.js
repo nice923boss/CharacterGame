@@ -2,11 +2,11 @@
 // same priorities, automatic re-queues, image modes and redraws, scenes and sprites drawn through the player's
 // relay, sprites cut out with the chroma key. The queue is kept in IndexedDB, so a reload carries on with it.
 // Skipped against the server: ComfyUI, rembg, the iso residue pass and the .raw intermediates.
-import { DATA } from './data.js?v=49b38c3c082c';
-import * as store from './store.js?v=49b38c3c082c';
-import * as llm from './llm.js?v=49b38c3c082c';
-import { diag } from './diag.js?v=49b38c3c082c';
-import { t } from '../i18n.js?v=49b38c3c082c';
+import { DATA } from './data.js?v=de84f38ef71d';
+import * as store from './store.js?v=de84f38ef71d';
+import * as llm from './llm.js?v=de84f38ef71d';
+import { diag } from './diag.js?v=de84f38ef71d';
+import { t } from '../i18n.js?v=de84f38ef71d';
 
 const A = DATA.art;
 const EXPRESSIONS = DATA.parser.EXPRESSIONS;
@@ -393,6 +393,14 @@ async function draw(prompt, seed) {
   }
   const bytes = Uint8Array.from(atob(art.base64), (c) => c.charCodeAt(0));
   return createImageBitmap(new Blob([bytes]));
+}
+
+// One picture for an SDGs quest (local/quiz.js), drawn outside the story queue: a JPEG of the given size
+export async function picture(prompt, width, height) {
+  const img = await fitDrawn(draw(prompt, Math.floor(Math.random() * 2 ** 31)), width, height);
+  const cv = new OffscreenCanvas(width, height);
+  cv.getContext('2d').putImageData(img, 0, 0);
+  return cv.convertToBlob({ type: 'image/jpeg', quality: 0.88 });
 }
 
 // For tools/js_tests: draw one image with a given connection, without starting the queue (it needs IndexedDB)

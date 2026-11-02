@@ -1,8 +1,8 @@
 // Playing an SDGs English quest: the story background, then five levels (dialogue one line per click, one A/B
 // question; a wrong answer shows the hint and the same question again), then the ending and "Mission Complete!".
-import { t } from './i18n.js?v=49b38c3c082c';
-import { $, esc } from './ui.js?v=49b38c3c082c';
-import { SDG_LOOK } from './quest.js?v=49b38c3c082c';
+import { t } from './i18n.js?v=de84f38ef71d';
+import { $, esc } from './ui.js?v=de84f38ef71d';
+import { SDG_LOOK } from './quest.js?v=de84f38ef71d';
 
 const SPEAKER_COLORS = ['#f2c46d', '#8fd0ff', '#ffa3b5', '#a6e3a1', '#d3b4ff', '#ffcf99'];
 
@@ -49,7 +49,16 @@ function bubble(l) {
   return `<div class="qp-line" style="--who:${colorOf(l.speaker)}"><b lang="en">${esc(l.speaker)}</b><p lang="en">${esc(l.text)}</p></div>`;
 }
 
+// The picture for the part being played: the opening, the level, or the ending (also on the last screen)
+function paintPicture() {
+  const slot = S.stage === 'intro' ? 'intro' : S.stage === 'level' ? `l${S.level + 1}` : 'ending';
+  const src = Q.pictures?.[slot];
+  $('#qp-pic').hidden = !src;
+  if (src && $('#qp-img').getAttribute('src') !== src) $('#qp-img').src = src;
+}
+
 function paint() {
+  paintPicture();
   const body = $('#qp-body');
   const foot = $('#qp-foot');
   const total = Q.levels.length;

@@ -8,7 +8,9 @@ export const SDG_LOOK = {
 };
 // Field limits; the editor uses the same numbers for maxlength
 export const LIMITS = { title: 80, name: 30, who: 120, place: 200, problem: 300, goal: 300, idea: 400, background: 900,
-  levelTitle: 80, line: 300, question: 300, option: 200, hint: 300, sdgOther: 80 };
+  levelTitle: 80, line: 300, question: 300, option: 200, hint: 300, sdgOther: 80, scene: 400 };
+// One picture per stage of the game: the story background, each level, the ending
+export const PICTURES = ['intro', 'l1', 'l2', 'l3', 'l4', 'l5', 'ending'];
 export const MAX_CHARS = 6;
 const MAX_LINES = 8;
 
@@ -29,7 +31,7 @@ export function level(raw) {
   return {
     title: levelTitle(raw?.title), lines: lines(raw?.lines), question: str(raw?.question, LIMITS.question),
     a: str(raw?.a ?? o.A ?? o.a, LIMITS.option), b: str(raw?.b ?? o.B ?? o.b, LIMITS.option),
-    answer: answer(raw?.answer), hint: str(raw?.hint, LIMITS.hint),
+    answer: answer(raw?.answer), hint: str(raw?.hint, LIMITS.hint), scene: str(raw?.scene, LIMITS.scene),
   };
 }
 
@@ -50,6 +52,7 @@ export function normalize(raw) {
     place: str(q.place, LIMITS.place), problem: str(q.problem, LIMITS.problem), goal: str(q.goal, LIMITS.goal),
     idea: str(q.idea, LIMITS.idea), background: str(q.background, LIMITS.background),
     levels, ending: lines(q.ending),
+    intro_scene: str(q.intro_scene, LIMITS.scene), ending_scene: str(q.ending_scene, LIMITS.scene),
     created_at: str(q.created_at, 40), updated_at: str(q.updated_at, 40),
   };
 }
@@ -77,4 +80,14 @@ export function shuffleSides(levels, rand = Math.random) {
     if (rand() < 0.5) return l;
     return { ...l, a: l.b, b: l.a, answer: l.answer === 'A' ? 'B' : 'A' };
   });
+}
+
+// The English description a picture is drawn from: the one written for it, or one made from the place, the level
+// and its first line when it was left empty
+export function sceneOf(q, slot) {
+  const first = (rows) => rows[0]?.text || '';
+  if (slot === 'intro') return q.intro_scene || `${q.place}. ${q.background.split('. ')[0]}`;
+  if (slot === 'ending') return q.ending_scene || `${q.place}. ${first(q.ending)}`;
+  const l = q.levels[Number(slot.slice(1)) - 1];
+  return l.scene || `${q.place}. ${l.title}. ${first(l.lines)}`;
 }
